@@ -2,6 +2,23 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v0.5.0 — phase-04: hmm validation (2026-08-18)
+
+- `src/fxradar/validate.py` + CLI `python -m fxradar.validate` → `reports/hmm_validation.md`
+  with `regimes_timeline_{pair}.png` (close + regime bands, "out-of-sample →" divider at
+  2017-01-01, design-system colours) and `regime_durations.png`.
+- Sections: (1) regime anatomy train vs OOS (frequency, mean duration, ann. vol, mean daily
+  return, worst drawdown inside each label); (2) 5-seed stability table with an honest
+  paragraph (EURUSD mean 71 % < 80 % warning; trend/chop split is the fragile part);
+  (3) naive baseline — "stressed" when vol_20 > trailing 250-day 80th percentile — agreement,
+  Cohen's kappa and dated lead/lag episodes (the HMM does not systematically lead: 4 leads vs
+  14 lags across matched episodes); (4) economic-meaning check — toy MA(50/200) rule's Sharpe
+  per regime OOS: the "trend best / chop worst" claim FAILS and is reported as such;
+  (5) plots; (6) Limitations (daily data, label noise, descriptive not predictive, frozen
+  naming rule + SNB, single train window, Gaussian emissions).
+- Tests (`tests/test_validate.py`, 7): max drawdown, Sharpe, run lengths, causal naive rule
+  (truncation), episode/lead-lag logic, lagged MA rule (+ causality), table shapes.
+
 ## v0.4.0 — phase-03: hmm with filtered probabilities (2026-08-18)
 
 - `src/fxradar/hmm_model.py`: one 4-state `GaussianHMM(covariance_type="full", n_iter=1000,
