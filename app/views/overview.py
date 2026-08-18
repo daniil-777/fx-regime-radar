@@ -60,6 +60,29 @@ def load_json(path: str, mtime: float) -> dict:
     return json.loads(p.read_text()) if p.exists() else {}
 
 
+def _live_record_tile(rec: dict) -> tuple[str, str, str, str]:
+    """KPI tile for the live forward-test record (data/live_record.json, written by the pipeline):
+    Brier since deploy once 20 forecasts have resolved, otherwise how far the warm-up has got."""
+    if not rec:
+        return ("live record", "–", "no ledger yet", ui.MUTED)
+    m = rec.get("metrics")
+    if m and m.get("brier") is not None:
+        beats = m.get("base_rate_brier") is not None and m["brier"] < m["base_rate_brier"]
+        return (
+            "live record · Brier",
+            f"{m['brier']:.3f}",
+            f"{rec['n_resolved']} resolved since {rec['since']} · "
+            + ("beats base rate" if beats else "not beating base rate"),
+            ui.REGIME_COLORS["calm"] if beats else ui.REGIME_COLORS["chop"],
+        )
+    return (
+        "live record",
+        "warming up",
+        f"{rec.get('n_resolved', 0)}/{rec.get('min_resolved', 20)} resolved · since {rec.get('since') or '—'}",
+        ui.MUTED,
+    )
+
+
 @st.cache_data(show_spinner=False)
 def regime_runs(path: str, mtime: float, pair: str) -> pd.DataFrame:
     """Consecutive same-regime days merged into bands: regime, start, end (light pandas)."""
@@ -242,6 +265,11 @@ ui.kpi_strip(
         ),
         ui.kpi(
             "as of", f"{data_through:%Y-%m-%d}", "time machine" if time_machine else "latest data"
+        ),
+        ui.kpi(
+            *_live_record_tile(
+                load_json(str(DATA_DIR / "live_record.json"), _mtime(DATA_DIR / "live_record.json"))
+            )
         ),
     ]
 )

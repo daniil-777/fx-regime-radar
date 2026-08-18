@@ -104,6 +104,24 @@ against the artifacts, and this tool only speaks about what it computed.</p>
 
 ui.card(
     """
+<p><b>A backtest is a claim about the past; the ledger is the record.</b> Every weekday, right after scoring,
+the pipeline writes the forecasts it just published — one row per market for the newest date only: regime,
+5-day change risk, siren percentile — into an append-only ledger whose rows are SHA-256 hash-chained
+(each row's hash covers the previous row's hash), so an edited or deleted row is detectable and the chain
+is re-verified in CI. Nothing is ever backfilled: a forecast counts only if it was written down while its day
+was the newest observation, i.e. before its outcome could be known.</p>
+<p>Five trading days later each row is <i>resolved</i> against the regimes that actually arrived, using the
+forecaster's own label definition, and the resolved rows are scored with the very same code as the frozen
+test set — PR-AUC, precision/recall at the frozen threshold, Brier — never accuracy. Numbers are withheld
+("warming up") until 20 forecasts have resolved; a model refit starts a new segment so it can never rewrite
+the old record. The Overview tile "live record" and the README table read this file; nothing here is
+recomputed in the app.</p>
+""",
+    title="The live record — what the deployed models actually said",
+)
+
+ui.card(
+    """
 <ul>
 <li><b>Daily data only.</b> Intraday storms are averaged away; the source's daily close is a start-of-day snapshot,
 so returns run one day behind highs and lows.</li>

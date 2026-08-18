@@ -1,0 +1,30 @@
+{
+ "generated_at_utc": "2026-08-18T12:11:36Z",
+ "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
+ "since": "2026-08-17",
+ "through": "2026-08-17",
+ "days_recorded": 1,
+ "n_forecasts": 3,
+ "n_resolved": 0,
+ "n_pending": 3,
+ "n_all_segments": 3,
+ "threshold": 0.33,
+ "min_resolved": 20,
+ "chain_ok": true,
+ "metrics": null,
+ "status": "warming up",
+ "frozen_test": {
+  "pr_auc": 0.5477499602640477,
+  "precision": 0.4184247538677918,
+  "recall": 0.6611111111111111,
+  "brier": 0.14858058094978333,
+  "base_rate_pr_auc": 0.22813688212927757,
+  "base_rate_brier": 0.17612132329637215,
+  "pos_rate": 0.22813688212927757,
+  "n": 3945,
+  "test_start": "2023-01-01",
+  "threshold": 0.33
+ },
+ "added_today": 3,
+ "resolved_today": 0
+}

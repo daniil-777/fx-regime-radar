@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import advisor, arcade, config, data, features, forecaster, narrate, siren
+from fxradar import advisor, arcade, config, data, features, forecaster, ledger, narrate, siren
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -84,6 +84,7 @@ def stage_forecaster(ctx: dict) -> None:
     ctx["regimes"] = ctx["regimes"].merge(scored, on=["date", "pair"], how="left")
     ctx["regimes"]["model_version"] = ctx["regimes"]["model_version"] + f"|fc={meta['version']}"
     ctx["model_versions"]["forecaster"] = meta["version"]
+    ctx["forecaster_meta"] = meta  # threshold + frozen scoreboard, reused by the ledger stage
     latest = ctx["regimes"].sort_values("date").groupby("pair").tail(1)
     log.info(
         "forecaster: %s",
@@ -108,6 +109,31 @@ def stage_siren(ctx: dict) -> None:
     latest = ctx["regimes"].sort_values("date").groupby("pair").tail(1)
     log.info(
         "siren: %s", ", ".join(f"{r.pair} pct={r.anomaly_pct:.0f}" for r in latest.itertuples())
+    )
+
+
+def stage_ledger(ctx: dict) -> None:
+    """Live forward-test record: append today's forecasts (newest date per pair) to the append-only
+    hash-chained ledger, resolve rows whose 5-day window has completed, score them like the frozen
+    test. Files (ledger, live_record.json, badge, README block) are written in the write stage."""
+    new_ledger, summary = ledger.record(ctx["regimes"], ctx["forecaster_meta"])
+    ctx["ledger"], ctx["live_record"] = new_ledger, summary
+    ctx.setdefault("extra_writers", {})["ledger.parquet + live_record.json (+ README block)"] = (
+        lambda c: ledger.write_outputs(
+            c["ledger"],
+            c["live_record"],
+            readme_path=ledger.README_PATH if config.UNIVERSE_NAME == "fx" else None,
+        )
+    )
+    m = summary["metrics"]
+    log.info(
+        "ledger: +%d recorded, %d resolved today; %d/%d resolved since %s — %s",
+        summary["added_today"],
+        summary["resolved_today"],
+        summary["n_resolved"],
+        summary["n_forecasts"],
+        summary["since"],
+        f"Brier {m['brier']:.3f} PR-AUC {m['pr_auc']}" if m else summary["status"],
     )
 
 
@@ -189,6 +215,9 @@ register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
+register(
+    "ledger", stage_ledger
+)  # forward record of what was just published (before outcomes exist)
 register("narrator", stage_narrator)  # narrates the finished numbers
 register(
     "advisor", stage_advisor

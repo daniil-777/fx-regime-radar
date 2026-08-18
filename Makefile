@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -15,6 +15,15 @@ setup:            ## create venv and install everything (idempotent)
 
 test:             ## run the test suite quietly
 	$(PYTHON) -m pytest -q
+
+ledger:           ## append today's forecasts to the live forward-test ledger from the committed artifacts
+	$(PYTHON) -m fxradar.ledger --record
+
+# After forking: point the README badges (ci / daily / rust / live record) at your repository.
+#   make set-repo REPO=you/fx-regime-radar
+set-repo:         ## replace the OWNER/REPO badge placeholder in README.md
+	@test -n "$(REPO)" || (echo "usage: make set-repo REPO=owner/name" && exit 1)
+	sed -i.bak "s#OWNER/REPO#$(REPO)#g" README.md && rm -f README.md.bak
 
 lint:             ## static checks: ruff (lint) + black (format check)
 	$(BIN)/ruff check .

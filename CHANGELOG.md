@@ -20,6 +20,39 @@ All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.
 - `tools/screenshot.py`: `--width/--height/--mobile/--eval` (device emulation, software WebGL, DOM
   introspection); AppTest `test_mobile_bar_mirrors_sidebar_controls_both_ways`.
 
+## v2.9.0 — live forward-test ledger + real badges (2026-08-18)
+
+- `src/fxradar/ledger.py`: append-only, SHA-256 hash-chained record of every forecast the pipeline
+  publishes — one row per pair for the NEWEST date only (never backfilled: a forecast counts only
+  if it was written down while its day was the latest observation, i.e. before the outcome could
+  be known). Rows carry regime, change_risk_5d, anomaly_pct, model_version, recorded_at_utc,
+  prev_hash → row_hash (chain over the forecast fields only). Five trading days later rows are
+  *resolved* with `forecaster.build_labels`' definition verbatim and scored with `forecaster.metrics`
+  (PR-AUC, precision/recall at the frozen threshold 0.22, Brier, plus base-rate Brier — never
+  accuracy). Metrics are null until 20 rows have resolved and PR-AUC is null with one class
+  (degenerate → null, never 0). A model refit starts a new segment; the headline scores the current
+  segment only. `record()` refuses to append to a broken chain. Outputs: `data/ledger.parquet`,
+  `data/live_record.json`, `data/badges/live_record.json` (shields.io endpoint schema), and the
+  README block between `<!-- live-record:start/end -->` markers (fx universe only). CLI
+  `python -m fxradar.ledger --record` / `make ledger`; both universes seeded (2026-08-17 close).
+- Pipeline: new `ledger` stage after siren, before narrator; files written in the write stage
+  (all-or-nothing preserved). `stage_forecaster` keeps `forecaster_meta` in ctx.
+- README: **Track record — frozen test vs live forward record** headline table right under the intro
+  (frozen 2019+ column beside the live column, warming up until 20 resolved, chain status, updated
+  date). Badges are now REAL: `ci` (new `.github/workflows/ci.yml`: ruff + black + pytest + ledger
+  chain verification, on every push/PR; data commits carry [skip ci]), `daily refresh`, `rust engine`
+  workflow badges, and a dynamic `live record` shields endpoint fed by the pipeline. `OWNER/REPO`
+  placeholder: `make set-repo REPO=you/name`, and the daily job substitutes `github.repository` on
+  its first run. `daily.yml` now commits `README.md` alongside `data/`.
+- App: Overview KPI tile "live record" (Brier since deploy vs base rate once warm, else warm-up
+  progress); Methodology card "The live record — what the deployed models actually said".
+- Tests (`tests/test_ledger.py`, 12 + 2 pipeline): newest-date-only + idempotent + forward-only
+  append, tamper/delete/relabel breaks the chain, resolution == `forecaster.build_labels` exactly
+  (day-by-day replay), idempotent resolve, summary null while warming up then equal to
+  `forecaster.metrics`, current-segment scoring, single-class nulls, README block idempotent and
+  local, warming-up renderers, twelve-run round trip through disk, broken chain refused, stage
+  order + deferred writes; total 133.
+
 ## v2.8.0 — advisor + app shell (2026-08-18)
 
 - `src/fxradar/advisor.py`: Market Stability Index (0–100; weights regime 0.35, change risk 0.20,

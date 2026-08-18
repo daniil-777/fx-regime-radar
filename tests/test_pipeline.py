@@ -75,3 +75,33 @@ def test_simulated_failure_env_var(monkeypatch, tmp_path, prices_sample) -> None
 
 def test_registered_stage_order() -> None:
     assert [n for n, _ in run_daily.STAGES][:3] == ["data", "features", "hmm"]
+
+
+def test_ledger_stage_runs_after_siren_and_before_narrator() -> None:
+    names = [n for n, _ in run_daily.STAGES]
+    assert names.index("siren") < names.index("ledger") < names.index("narrator")
+
+
+def test_ledger_stage_records_and_defers_writes_to_write_stage(monkeypatch, tmp_path) -> None:
+    from fxradar import ledger
+
+    monkeypatch.setattr(ledger, "LEDGER_PATH", tmp_path / "ledger.parquet")
+    dates = pd.bdate_range("2026-01-05", periods=8)
+    regimes = pd.concat(
+        pd.DataFrame(
+            {
+                "date": dates,
+                "pair": p,
+                "regime": "calm",
+                "change_risk_5d": 0.1,
+                "anomaly_pct": 10.0,
+                "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
+            }
+        )
+        for p in ["EURUSD", "USDCHF"]
+    )
+    ctx = {"regimes": regimes, "forecaster_meta": {"threshold": 0.22, "train_pos_rate": 0.17}}
+    run_daily.stage_ledger(ctx)
+    assert len(ctx["ledger"]) == 2 and ctx["live_record"]["added_today"] == 2
+    assert not (tmp_path / "ledger.parquet").exists()  # nothing on disk until the write stage
+    assert "ledger.parquet + live_record.json (+ README block)" in ctx["extra_writers"]
