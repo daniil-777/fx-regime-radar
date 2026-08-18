@@ -22,18 +22,14 @@ ui.inject_css()
 VIEWS = Path(__file__).resolve().parent / "views"
 pages = {
     "Radar": [
-        st.Page(
-            str(VIEWS / "overview.py"), title="Overview", icon=":material/radar:", default=True
-        ),
-        st.Page(str(VIEWS / "advisor.py"), title="Advisor", icon=":material/tune:"),
+        st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
+        st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
     ],
     "Research": [
-        st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab", icon=":material/science:"),
-        st.Page(str(VIEWS / "arcade.py"), title="Arcade", icon=":material/sports_esports:"),
+        st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab"),
+        st.Page(str(VIEWS / "arcade.py"), title="Arcade"),
     ],
-    "About": [
-        st.Page(str(VIEWS / "methodology.py"), title="Methodology", icon=":material/menu_book:")
-    ],
+    "About": [st.Page(str(VIEWS / "methodology.py"), title="Methodology")],
 }
 nav = st.navigation(pages, position="sidebar")
 nav.run()

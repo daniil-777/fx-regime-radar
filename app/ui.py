@@ -64,8 +64,8 @@ div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label, div[
 .fx-kpi-s {{ color: {MUTED}; font-size: 0.76rem; margin-top: 2px; }}
 .fx-section {{ font-weight: 600; font-size: 1.0rem; margin: 18px 0 8px 2px; letter-spacing: -0.01em; }}
 .fx-alert {{ display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 8px; border: 1px solid {BORDER}; margin-bottom: 6px; font-size: 0.84rem; }}
-[data-testid="stSidebarNav"] a, [data-testid="stSidebarNavItems"] a {{ font-family: {FONT_UI}; }}
-[data-testid="stSidebarNav"] span, section[data-testid="stSidebar"] li span {{ color: {TEXT}; }}
+[data-testid="stSidebarNav"] a span:not([data-testid="stIconMaterial"]) {{ color: {TEXT}; font-family: {FONT_UI}; }}
+[data-testid="stSidebarNav"] a {{ border-radius: 8px; }}
 [data-testid="stSidebarNavSeparator"] {{ border-color: {BORDER}; }}
 div[data-testid="stExpander"] details {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; }}
 button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1px solid {BORDER}; background: {SURFACE}; color: {TEXT}; }}
