@@ -2,6 +2,29 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.0.1 — phase-06: automation (2026-08-18)
+
+- `pipelines/run_daily.py`: single orchestrator — stages `data → features → hmm → write`,
+  registered with one line each (`register(name, fn)`) so phases 07–09 plug in. Models are
+  LOADED (from `models/manifest.json`), never fitted. All compute runs in memory and every
+  artifact is written in the final stage only, so any failure leaves `data/` untouched
+  (verified: simulated failure → exit 1, files unchanged). Per-stage timings logged; full run
+  ≈ 4 s locally. Idempotent: a rerun produces byte-identical parquet files. Writes
+  `data/pipeline_status.json` (last run, data-through date, row counts, model versions, ECB
+  check, timings) — the app shows "updated … UTC" from it. `FXRADAR_SIMULATE_FAILURE=<stage>`
+  rehearses the failure path.
+- `.github/workflows/daily.yml`: cron weekdays 06:00 UTC + `workflow_dispatch`; Python 3.11
+  with pip cache; runs the pipeline; commits `data/` as `data: daily refresh [skip ci]`;
+  `permissions: contents: write`; no secrets.
+- `.github/workflows/refit.yml` (manual, inputs train_end + version) and `make refit
+  TRAIN_END=… HMM_VERSION=…`: deliberate expanding-window refit that bumps the model version
+  via `models/manifest.json`, regenerates the validation report and re-scores.
+  `python -m fxradar.hmm_model` gained `--train-end/--version`.
+- README: "Run locally" + "Deploy" (GitHub → Streamlit Community Cloud click-path, secrets
+  note for phase 09, refit policy, failure honesty).
+- Tests (`tests/test_pipeline.py`): success writes all artifacts + status; failure leaves the
+  last good state and exits nonzero; simulated-failure env var; stage order.
+
 ## v1.0.0 — phase-05: dashboard v1 (2026-08-18) — first shippable
 
 - `app/ui.py` owns the look: Google Fonts (Inter + JetBrains Mono), Streamlit chrome hidden,

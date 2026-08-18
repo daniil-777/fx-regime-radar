@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import json
 import os
 import sys
 from pathlib import Path
@@ -16,7 +17,16 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parent)
 )  # so `import ui` works under `streamlit run`
 import ui  # noqa: E402
-from fxradar.config import DISCLAIMER, PAIRS, PRICES_PATH, REGIMES_PATH, VAL_START  # noqa: E402
+from fxradar.config import (
+    DATA_DIR,
+    DISCLAIMER,
+    PAIRS,
+    PRICES_PATH,
+    REGIMES_PATH,
+    VAL_START,
+)  # noqa: E402
+
+STATUS_PATH = DATA_DIR / "pipeline_status.json"
 
 st.set_page_config(
     page_title="FX Regime Radar", page_icon="📡", layout="wide", initial_sidebar_state="expanded"
@@ -89,9 +99,21 @@ def anatomy(mtime_r: float, mtime_p: float, pair: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+@st.cache_data(show_spinner=False)
+def load_status(mtime: float) -> dict:
+    return json.loads(STATUS_PATH.read_text()) if STATUS_PATH.exists() else {}
+
+
 regimes = load_regimes(_mtime(REGIMES_PATH))
 prices = load_prices(_mtime(PRICES_PATH))
+status = load_status(_mtime(STATUS_PATH))
 data_through = regimes["date"].max()
+updated = status.get("last_run_utc", "")
+updated_txt = (
+    f' · updated <span class="fx-num">{html.escape(updated[:16].replace("T", " "))} UTC</span>'
+    if updated
+    else ""
+)
 
 # --------------------------------------------------------------------------------------
 # sidebar: pair selector + disclaimer only
@@ -106,7 +128,7 @@ with st.sidebar:
 st.markdown(
     f'<div class="fx-header"><div><span class="fx-wordmark">FX Regime Radar</span>'
     f'<span class="fx-sub">market weather, updated daily</span></div>'
-    f'<div class="fx-right">Data through <span class="fx-num">{data_through:%Y-%m-%d}</span></div></div>',
+    f'<div class="fx-right">Data through <span class="fx-num">{data_through:%Y-%m-%d}</span>{updated_txt}</div></div>',
     unsafe_allow_html=True,
 )
 

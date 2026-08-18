@@ -1,0 +1,29 @@
+{
+  "last_run_utc": "2026-08-18T09:31:40Z",
+  "data_through": "2026-08-17",
+  "rows": {
+    "prices": 16840,
+    "features": 16660,
+    "regimes": 16660
+  },
+  "model_versions": {
+    "hmm": "0.4.0"
+  },
+  "ecb_check": {
+    "EURUSD": {
+      "n_compared": 764,
+      "mean_abs_pct": 0.20070331502688027,
+      "max_abs_pct": 2.2389805612301137
+    },
+    "USDCHF": {
+      "n_compared": 764,
+      "mean_abs_pct": 0.23132528056757656,
+      "max_abs_pct": 2.010446310950397
+    }
+  },
+  "stage_seconds": {
+    "data": 2.5,
+    "features": 0.04,
+    "hmm": 1.66
+  }
+}

@@ -1,0 +1,45 @@
+name: refit-models
+
+# Deliberate, manual model refits (monthly is a sensible cadence). NOT part of the daily job.
+# A refit changes the training window and the model version, which invalidates the frozen
+# out-of-sample evaluation — the validation report is regenerated in the same run and the
+# reviewer must read it before merging the resulting commit.
+on:
+  workflow_dispatch:
+    inputs:
+      train_end:
+        description: "Last training date (expanding window), e.g. 2024-12-31"
+        required: true
+      version:
+        description: "New HMM model version tag, e.g. 0.4.1"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  refit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Refit HMM on the expanded window and re-score
+        run: |
+          python -m fxradar.hmm_model --refit --train-end "${{ github.event.inputs.train_end }}" --version "${{ github.event.inputs.version }}" --stability
+          python -m fxradar.validate
+          python pipelines/run_daily.py
+      - name: Commit models, manifest, artifacts and the new validation report
+        run: |
+          git config user.name "fx-regime-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add models/ data/ reports/
+          git commit -m "models: hmm refit v${{ github.event.inputs.version }} (train <= ${{ github.event.inputs.train_end }})"
+          git push

@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline
+.PHONY: setup test lint fmt run pipeline refit
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -28,4 +28,14 @@ run:              ## start the Streamlit app (reads artifacts only)
 	$(BIN)/streamlit run app/app.py
 
 pipeline:         ## run the daily pipeline (the only place heavy compute happens)
+	$(PYTHON) pipelines/run_daily.py
+
+# Deliberate model refit (monthly cadence). Example:
+#   make refit TRAIN_END=2024-12-31 HMM_VERSION=0.4.1
+# Refits invalidate the frozen out-of-sample evaluation, so the validation report is rebuilt.
+TRAIN_END   ?= 2016-12-31
+HMM_VERSION ?= 0.4.0
+refit:            ## refit HMM on an expanded window, bump model version, re-validate, re-score
+	$(PYTHON) -m fxradar.hmm_model --refit --train-end $(TRAIN_END) --version $(HMM_VERSION) --stability
+	$(PYTHON) -m fxradar.validate
 	$(PYTHON) pipelines/run_daily.py

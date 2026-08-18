@@ -16,6 +16,7 @@ today a storm?" — only the first exists in real time.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -212,10 +213,34 @@ def load_bundle(
     return HMMBundle(**payload)
 
 
+def manifest_path(models_dir: Path = config.MODELS_DIR) -> Path:
+    return models_dir / "manifest.json"
+
+
+def read_manifest(models_dir: Path = config.MODELS_DIR) -> dict:
+    """models/manifest.json tells the pipeline WHICH model version to load (written by refits)."""
+    path = manifest_path(models_dir)
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def write_manifest(models_dir: Path = config.MODELS_DIR, **entries) -> None:
+    m = read_manifest(models_dir)
+    m.update(entries)
+    manifest_path(models_dir).write_text(json.dumps(m, indent=2))
+
+
+def current_hmm_version(models_dir: Path = config.MODELS_DIR) -> str:
+    return read_manifest(models_dir).get("hmm", {}).get("version", HMM_VERSION)
+
+
 def load_bundles(
     pairs: list[str] | None = None, models_dir: Path = config.MODELS_DIR
 ) -> dict[str, HMMBundle]:
-    return {p: load_bundle(p, models_dir=models_dir) for p in (pairs or config.PAIRS)}
+    """Load the bundles named in models/manifest.json (fallback: this module's HMM_VERSION)."""
+    version = current_hmm_version(models_dir)
+    return {
+        p: load_bundle(p, version=version, models_dir=models_dir) for p in (pairs or config.PAIRS)
+    }
 
 
 # --------------------------------------------------------------------------------------
@@ -273,7 +298,14 @@ def main() -> None:
     parser.add_argument(
         "--refit",
         action="store_true",
-        help="refit on the train window (default: load saved models)",
+        help="refit on the train window (default: load saved models). Refits are deliberate: "
+        "they invalidate the frozen out-of-sample evaluation, so re-run `python -m fxradar.validate`.",
+    )
+    parser.add_argument(
+        "--train-end", default=None, help="last training date (default config.TRAIN_END)"
+    )
+    parser.add_argument(
+        "--version", default=None, help="version tag for the new bundles (default HMM_VERSION)"
     )
     parser.add_argument(
         "--stability", action="store_true", help="also run the 5-seed stability check"
@@ -283,15 +315,22 @@ def main() -> None:
 
     feats = pd.read_parquet(config.FEATURES_PATH)
     bundles: dict[str, HMMBundle] = {}
-    for pair, g in feats.groupby("pair", sort=True):
-        path = bundle_path(pair)
-        if args.refit or not path.exists():
-            bundles[pair] = fit_hmm(g)
-            save_bundle(bundles[pair])
-            print(f"{pair}: fitted on {int(train_mask(g['date']).sum())} train rows -> {path}")
-        else:
-            bundles[pair] = load_bundle(pair)
-            print(f"{pair}: loaded {path}")
+    if args.refit:
+        train_end = args.train_end or config.TRAIN_END
+        version = args.version or HMM_VERSION
+        for pair, g in feats.groupby("pair", sort=True):
+            b = fit_hmm(g, train_end=train_end)
+            b.version = version
+            bundles[pair] = b
+            path = save_bundle(b)
+            n_train = int(train_mask(g["date"], train_end).sum())
+            print(f"{pair}: fitted on {n_train} train rows (<= {train_end}) -> {path}")
+        stamp = pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%dT%H:%MZ")
+        write_manifest(hmm={"version": version, "train_end": train_end, "refit_utc": stamp})
+        print(f"manifest -> hmm version {version}, train_end {train_end}")
+    else:
+        bundles = load_bundles()
+        print(f"loaded hmm bundles v{current_hmm_version()} for {', '.join(bundles)}")
     regimes = score_all(feats, bundles)
     write_artifacts(feats, regimes)
 
