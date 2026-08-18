@@ -94,4 +94,15 @@ expanding refit is planned.</li>
     title="Limitations",
 )
 
+# arcade badge hook: reading this page unlocks "methodology reader" for the current nickname
+if st.session_state.get("nick"):
+    try:
+        from fxradar import arcade
+
+        _conn = arcade.connect()
+        arcade.record_event(_conn, st.session_state["nick"], "methodology_opened")
+        _conn.close()
+    except Exception:  # the reading surface must never break because of the game
+        pass
+
 ui.footer(DISCLAIMER)

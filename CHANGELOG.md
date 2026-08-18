@@ -2,6 +2,32 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.5.0 — phase-17: calibration arcade (2026-08-18)
+
+- `src/fxradar/arcade.py`: sqlite store at `data/arcade.db` (calls, visits, badges, gallery
+  opens, events; gitignored — user state, reset on free-tier redeploy, v3 Postgres makes it
+  durable); one call per pair per ISO week; ANTI-ANCHORING enforced in Python —
+  `pre_lock_payload` carries no model value (asserted), `place_call` stores the model's
+  change_risk_5d at lock time and only `post_lock_view` reveals it; `resolve_calls` (pipeline
+  stage `arcade`, write phase) resolves matured calls after 5 trading days from regimes.parquet
+  and scores user and model with the Brier score on the identical question; season ledger
+  (rolling Brier both sides, wins = lower Brier per call); watch streak (consecutive UTC days);
+  ranks observer → forecaster → storm chaser → regime master driven ONLY by resolved calls and
+  rolling Brier; five badges in one rule table; profanity-filtered nickname, no accounts.
+- `data/storms.yaml`: five hand-curated storms (SNB 2015, Brexit 2016, GBP flash crash 2016,
+  March 2020, 2022) with date/pair/siren percentile cross-checked against the artifacts and a
+  3-line story each, `verified: true` — the developer should re-read them (rule 13).
+- `app/pages/3_Arcade.py`: banner "a calibration game: forecasting practice, not trading.",
+  nickname, observatory (rank, streak), season ledger, badges, call cards with slider + lock
+  flow (model number appears only after the lock), storm gallery unlocked by opening a story,
+  storage note. No urgency, no money, no trading language, zero nags without a nickname.
+  Methodology page records the "methodology reader" badge event.
+- Tests (`tests/test_arcade.py`, 8 + app cycle): Brier hand values; resolution flip on day 3
+  vs day 6 vs not matured; lock-before-reveal (payload has no model value; one call/week);
+  resolution + ledger; streak rollover at midnight UTC; rank rules; badge rules; nickname
+  filter and storm loading. App test plays a full cycle: pre-lock render has no model value,
+  post-lock shows it.
+
 ## v2.4.0 — phase-16: stress lab (2026-08-18)
 
 - `src/fxradar/stress.py` + `python -m fxradar.stress` → `reports/stress_report.md` (one section

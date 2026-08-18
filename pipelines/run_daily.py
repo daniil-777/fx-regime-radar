@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import config, data, features, forecaster, narrate, siren
+from fxradar import arcade, config, data, features, forecaster, narrate, siren
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -120,6 +120,22 @@ def stage_narrator(ctx: dict) -> None:
     log.info("narrator: %s", ", ".join(f"{p}={r['source']}" for p, r in report.items()))
 
 
+def stage_arcade(ctx: dict) -> None:
+    """Resolve matured arcade calls (5 trading days elapsed) against the freshly scored regimes.
+    The sqlite file is a state store, not an artifact; it is only touched if it exists."""
+    if not arcade.DB_PATH.exists():
+        log.info("arcade: no data/arcade.db yet — nothing to resolve")
+        return
+
+    def _resolve(c: dict) -> None:
+        conn = arcade.connect()
+        n = arcade.resolve_calls(conn, c["regimes"])
+        conn.close()
+        log.info("arcade: resolved %d matured calls", n)
+
+    ctx.setdefault("extra_writers", {})["arcade.db (resolutions)"] = _resolve
+
+
 def stage_write(ctx: dict) -> None:
     """Write every artifact at once (only reached when all compute stages succeeded)."""
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -150,7 +166,8 @@ register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
-register("narrator", stage_narrator)  # always last: it narrates the finished numbers
+register("narrator", stage_narrator)  # narrates the finished numbers
+register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 
 # --------------------------------------------------------------------------------------

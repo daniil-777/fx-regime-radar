@@ -25,3 +25,6 @@ dist/
 
 # rust build artifacts
 rust/**/target/
+
+# arcade state store (sqlite) — user state, not an artifact
+data/arcade.db

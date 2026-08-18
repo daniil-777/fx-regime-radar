@@ -1,3 +1,3 @@
 """FX Regime Radar — a weather station for currency markets (regimes, change risk, anomalies)."""
 
-__version__ = "2.4.0"
+__version__ = "2.5.0"

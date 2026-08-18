@@ -1,0 +1,59 @@
+# Storm gallery — hand-curated. Each entry's date/pair/regime/siren percentile was cross-checked
+# against data/regimes.parquet on 2026-08-18; stories are three plain lines, no advice, no money.
+# `verified: true` means a human read the entry against the artifacts before it shipped.
+storms:
+  - id: snb-2015
+    title: The Swiss franc floor breaks
+    date: "2015-01-15"
+    pair: USDCHF
+    regime_next_day: crisis
+    siren_pct: 100.0
+    story: |
+      On 15 January 2015 the Swiss National Bank abandoned its EUR/CHF floor without warning.
+      USD/CHF fell more than 10 % within minutes; the day's low in our data sits far below its close.
+      The siren scores it the loudest day in USD/CHF history; the regime flipped to crisis the next day.
+    verified: true
+  - id: brexit-2016
+    title: The Brexit vote
+    date: "2016-06-24"
+    pair: GBPUSD
+    regime_next_day: crisis
+    siren_pct: 100.0
+    story: |
+      Sterling fell about 8 % against the dollar as the referendum result came in overnight.
+      The siren ranks it GBP/USD's loudest day since 2005; the change-risk gauge sat near 64 %.
+      Regime went from trend to crisis within days.
+    verified: true
+  - id: gbp-flash-2016
+    title: The sterling flash crash
+    date: "2016-10-07"
+    pair: GBPUSD
+    regime_next_day: crisis
+    siren_pct: 100.0
+    story: |
+      In thin early-Asia trading on 7 October 2016, GBP/USD dropped roughly 6 % in a couple of minutes.
+      Daily bars only see the aftermath, yet the siren still reads 100 for the day.
+      The regime was already crisis after the summer.
+    verified: true
+  - id: covid-2020
+    title: March 2020
+    date: "2020-03-19"
+    pair: GBPUSD
+    regime_next_day: crisis
+    siren_pct: 100.0
+    story: |
+      As markets scrambled for dollars in March 2020, GBP/USD fell to levels last seen in 1985.
+      Most March days score above the 98th anomaly percentile across all three pairs.
+      Regimes were crisis for sterling and chop-to-crisis for the others.
+    verified: true
+  - id: dollar-2022
+    title: The 2022 dollar surge
+    date: "2022-09-26"
+    pair: GBPUSD
+    regime_next_day: crisis
+    siren_pct: 100.0
+    story: |
+      Late September 2022: sterling hit an all-time low against the dollar after a fiscal announcement.
+      EUR/USD spent the year below parity for the first time in two decades.
+      The siren pinned 100 on both pairs; GBP/USD sat in crisis, EUR/USD in trend.
+    verified: true

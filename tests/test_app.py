@@ -46,3 +46,23 @@ def test_strategy_lab_page_renders_with_banner_and_disclaimer() -> None:
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     assert any("not a live trading system" in m.value for m in at.markdown)
     assert len(at.get("plotly_chart")) == 2
+
+
+def test_arcade_page_lock_before_reveal_cycle(tmp_path, monkeypatch) -> None:
+    from fxradar import arcade
+
+    monkeypatch.setattr(arcade, "DB_PATH", tmp_path / "arcade.db")
+    at = _run("app/pages/3_Arcade.py")
+    assert not at.exception, at.exception
+    assert any("calibration game" in m.value for m in at.markdown)
+    at.text_input[0].set_value("tester").run()
+    assert not at.exception, at.exception
+    pre = " ".join(m.value for m in at.markdown)
+    assert (
+        "model (revealed after lock)" not in pre
+    )  # anti-anchoring: nothing model-side before the lock
+    at.slider[0].set_value(40).run()
+    at.button[0].click().run()
+    assert not at.exception, at.exception
+    post = " ".join(m.value for m in at.markdown)
+    assert "model (revealed after lock)" in post and "40%" in post
