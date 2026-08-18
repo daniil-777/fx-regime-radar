@@ -30,10 +30,13 @@ FONT_MONO = "'JetBrains Mono', 'SF Mono', Menlo, monospace"
 CSS = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-#MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stDecoration"], .stDeployButton {{ display: none !important; visibility: hidden !important; }}
+#MainMenu, footer, [data-testid="stToolbarActions"], [data-testid="stAppDeployButton"], [data-testid="stMainMenu"], [data-testid="stMainMenuButton"], [data-testid="stDecoration"], [data-testid="stStatusWidget"], .stDeployButton {{ display: none !important; visibility: hidden !important; }}
+header[data-testid="stHeader"] {{ background: transparent !important; pointer-events: none; }}
+header[data-testid="stHeader"] button {{ pointer-events: auto; background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 8px; color: {TEXT}; }}
+[data-testid="stSidebarCollapseButton"] button, [data-testid="stSidebarCollapsedControl"] button {{ color: {MUTED}; }}
 html, body, [data-testid="stAppViewContainer"], .stApp {{ background: {BG} !important; color: {TEXT}; font-family: {FONT_UI}; }}
 [data-testid="stSidebar"] {{ background: {SURFACE} !important; border-right: 1px solid {BORDER}; }}
-[data-testid="stSidebar"] * {{ font-family: {FONT_UI}; }}
+[data-testid="stSidebar"] *:not([data-testid="stIconMaterial"]):not(.material-symbols-rounded) {{ font-family: {FONT_UI}; }}
 .block-container {{ padding-top: 1.6rem; padding-bottom: 2rem; max-width: 1280px; }}
 h1, h2, h3, h4 {{ font-family: {FONT_UI}; color: {TEXT}; letter-spacing: -0.01em; }}
 p, li, label, .stMarkdown {{ color: {TEXT}; }}
@@ -70,6 +73,37 @@ div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label, div[
 div[data-testid="stExpander"] details {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; }}
 button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1px solid {BORDER}; background: {SURFACE}; color: {TEXT}; }}
 .stButton > button:hover {{ border-color: #60A5FA; color: #60A5FA; }}
+.fx-table-wrap {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
+.fx-mobile-bar {{ display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: -4px 0 10px 0; }}
+.fx-mobile-hint {{ color: {MUTED}; font-size: 0.74rem; }}
+.st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}
+/* ---- responsive: one layout that adapts (no device sniffing) --------------------------- */
+@media (min-width: 769px) {{ .st-key-fx_mobile_bar {{ display: none; }} }}
+@media (max-width: 768px) {{
+  .block-container {{ padding: 3.4rem 0.85rem 2rem 0.85rem !important; }}  /* room for the » sidebar button */
+  .fx-header {{ flex-direction: column; align-items: flex-start; gap: 2px; margin-bottom: 10px; }}
+  .fx-wordmark {{ font-size: 1.35rem; }}
+  .fx-sub {{ display: block; margin-left: 0; font-size: 0.85rem; }}
+  .fx-right {{ text-align: left; font-size: 0.78rem; }}
+  .fx-kpis {{ grid-template-columns: 1fr 1fr; gap: 8px; }}
+  .fx-kpi {{ padding: 10px 12px; }}
+  .fx-kpi-v {{ font-size: 1.15rem; }}
+  .fx-card {{ padding: 14px; margin-bottom: 10px; }}
+  .fx-pill-lg {{ padding: 6px 12px; font-size: 1rem; }}
+  .fx-table {{ font-size: 0.8rem; }}
+  .fx-table th, .fx-table td {{ padding: 6px 8px; white-space: nowrap; }}
+  .fx-section {{ margin-top: 12px; }}
+  [data-testid="stSidebar"] {{ width: min(86vw, 330px) !important; }}
+  .stButton > button, [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}  /* touch targets */
+}}
+@media (max-width: 1024px) {{
+  /* tablets (sidebar still open): three-across blocks become two-across instead of squeezing */
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {{ min-width: calc(50% - 8px); }}
+  .fx-kpis {{ grid-template-columns: 1fr 1fr; }}
+}}
+@media (max-width: 640px) {{
+  .st-key-fx_orb {{ display: none; }}   /* the 3-D orb is decorative; phones get the numbers only */
+}}
 </style>
 """
 
@@ -210,8 +244,8 @@ def sparkline_svg(values: pd.Series, color: str, width: int = 220, height: int =
     ys = [height - 2 - (val - lo) / span * (height - 4) for val in v]
     pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys, strict=True))
     return (
-        f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="display:block;margin-top:10px">'
-        f'<polyline fill="none" stroke="{color}" stroke-width="1.6" stroke-linejoin="round" points="{pts}"/>'
+        f'<svg width="100%" height="{height}" viewBox="0 0 {width} {height}" preserveAspectRatio="none" style="display:block;margin-top:10px;max-width:{width}px">'
+        f'<polyline fill="none" stroke="{color}" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="{pts}"/>'
         f'<circle cx="{xs[-1]:.1f}" cy="{ys[-1]:.1f}" r="2.4" fill="{color}"/></svg>'
     )
 
@@ -232,7 +266,7 @@ def html_table(df: pd.DataFrame, formats: dict[str, str] | None = None) -> str:
             else:
                 cells.append(f"<td>{html.escape(str(val))}</td>")
         rows.append("<tr>" + "".join(cells) + "</tr>")
-    return f'<table class="fx-table"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
+    return f'<div class="fx-table-wrap"><table class="fx-table"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
 
 
 def sidebar(disclaimer: str) -> None:
@@ -277,16 +311,77 @@ def universe_selector() -> tuple[str, object, dict]:
     current = st.session_state.get("universe", names[0])
     if current not in names:
         current = names[0]
+    # widget value lives in session state (seeded here, no `index=`): the sidebar selectbox and the
+    # mobile bar's segmented control are two views of the same choice, kept equal by callbacks
+    st.session_state.setdefault("universe_select", current)
+    if st.session_state["universe_select"] not in names:
+        st.session_state["universe_select"] = names[0]
+    st.session_state["_universe_names"] = names
     with st.sidebar:
         label = st.selectbox(
             "Universe",
             names,
-            index=names.index(current),
             format_func=lambda n: universes.get(n).label,
             key="universe_select",
+            on_change=_sync_state("universe_select", "m_universe"),
         )
     st.session_state["universe"] = label
     return label, universes.get(label), config.universe_dirs(label)
+
+
+def _sync_state(src: str, dst: str):
+    """Callback factory: copy widget `src` into widget `dst` (both keyed in session state).
+    A deselected segmented control yields None — then restore `src` from `dst` instead."""
+
+    def _cb() -> None:
+        value = st.session_state.get(src)
+        if value is None:
+            st.session_state[src] = st.session_state.get(dst)
+        else:
+            st.session_state[dst] = value
+
+    return _cb
+
+
+def mobile_bar(uni=None, pairs: list[str] | None = None) -> None:
+    """Compact controls for small screens (hidden on desktop by CSS, where the sidebar shows).
+    Universe + market as segmented controls; episode / as-of date stay in the side panel."""
+    from fxradar import universes
+
+    names = st.session_state.get("_universe_names") or []
+    with st.container(key="fx_mobile_bar"):
+        cols = st.columns([1, 1]) if (len(names) > 1 and pairs) else [st.container(), None]
+        if len(names) > 1:
+            st.session_state.setdefault(
+                "m_universe", st.session_state.get("universe_select", names[0])
+            )
+            with cols[0]:
+                st.segmented_control(
+                    "Universe",
+                    names,
+                    format_func=lambda n: universes.get(n).label,
+                    key="m_universe",
+                    on_change=_sync_state("m_universe", "universe_select"),
+                    label_visibility="collapsed",
+                )
+        if pairs and uni is not None:
+            side_key, m_key = f"pair_{uni.name}", f"m_pair_{uni.name}"
+            st.session_state.setdefault(m_key, st.session_state.get(side_key, pairs[0]))
+            with cols[1] if cols[1] is not None else cols[0]:
+                st.segmented_control(
+                    "Market",
+                    pairs,
+                    format_func=uni.display,
+                    key=m_key,
+                    on_change=_sync_state(m_key, side_key),
+                    label_visibility="collapsed",
+                )
+        hint = (
+            "Episode replay, the as-of date and the other pages live in the side panel (» top left)."
+            if pairs
+            else "The other pages live in the side panel (» top left)."
+        )
+        st.markdown(f'<div class="fx-mobile-hint">{hint}</div>', unsafe_allow_html=True)
 
 
 # ---- shared scenario controls (Overview + Advisor) ------------------------------------------
@@ -306,12 +401,16 @@ def scenario_controls(uni, pairs: list[str], regimes_all: pd.DataFrame):
         qp_asof = None
     with st.sidebar:
         st.markdown('<div class="fx-side-h">Market</div>', unsafe_allow_html=True)
+        side_key = f"pair_{uni.name}"
+        st.session_state.setdefault(side_key, qp_pair or pairs[0])
+        if st.session_state[side_key] not in pairs:
+            st.session_state[side_key] = pairs[0]
         pair = st.selectbox(
             "Pair",
             pairs,
-            index=pairs.index(qp_pair) if qp_pair else 0,
             format_func=uni.display,
-            key=f"pair_{uni.name}",
+            key=side_key,
+            on_change=_sync_state(side_key, f"m_pair_{uni.name}"),
         )
         st.markdown('<div class="fx-side-h">Scenario explorer</div>', unsafe_allow_html=True)
         episode = st.selectbox(

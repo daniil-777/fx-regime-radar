@@ -34,6 +34,7 @@ st.markdown(
     f'<span class="fx-sub">{html.escape(arcade.BANNER)}</span></div></div>',
     unsafe_allow_html=True,
 )
+ui.mobile_bar()
 st.markdown(
     '<div class="fx-card" style="padding:12px 16px"><span class="fx-muted">Once a week per pair you say how likely it is that the regime label changes within the next five trading days, and lock it. '
     "Only then do you see the model's number for the same question. Five trading days later both are scored with the Brier score — the same rule weather forecasters are judged by. "

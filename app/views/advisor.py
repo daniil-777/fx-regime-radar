@@ -91,6 +91,7 @@ st.markdown(
     f'<div class="fx-right">as of <span class="fx-num">{html.escape(snap["as_of"])}</span></div></div>',
     unsafe_allow_html=True,
 )
+ui.mobile_bar(UNI, PAIRS)
 if time_machine:
     label = episode if not episode.startswith("today") else f"viewing as of {snap['as_of']}"
     st.markdown(

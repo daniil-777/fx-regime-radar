@@ -1,31 +1,45 @@
 """Full-page screenshot of the running Streamlit app via Chrome DevTools Protocol (dev tool only).
 
-Usage: .venv/bin/python tools/screenshot.py http://localhost:8501/ docs/screenshots/dashboard_v1.png [wait_s]
+Usage:
+  .venv/bin/python tools/screenshot.py URL OUT.png [--wait 8] [--width 1440] [--height 1600]
+                                       [--mobile] [--eval "JS expression"]
+--mobile emulates a touch device (mobile viewport, 2x pixel ratio) so Streamlit's responsive
+layout behaves as it does on a phone. --eval prints the value of a JS expression (page introspection).
 Needs Google Chrome installed; uses the `websockets` package that Streamlit already depends on.
 """
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import base64
 import json
 import subprocess
-import sys
 import time
 import urllib.request
 
 import websockets
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+PORT = 9333
 
 
-async def shoot(url: str, out: str, wait_s: float, width: int = 1440, height: int = 1600) -> None:
+async def shoot(
+    url: str,
+    out: str,
+    wait_s: float,
+    width: int,
+    height: int,
+    mobile: bool = False,
+    js: str | None = None,
+) -> None:
     proc = subprocess.Popen(
         [
             CHROME,
             "--headless=new",
-            "--disable-gpu",
-            "--remote-debugging-port=9333",
+            "--use-angle=swiftshader",  # software WebGL so the orb renders like a real browser
+            "--enable-unsafe-swiftshader",
+            f"--remote-debugging-port={PORT}",
             f"--window-size={width},{height}",
             "about:blank",
         ],
@@ -35,7 +49,7 @@ async def shoot(url: str, out: str, wait_s: float, width: int = 1440, height: in
     try:
         for _ in range(50):
             try:
-                tabs = json.load(urllib.request.urlopen("http://127.0.0.1:9333/json"))
+                tabs = json.load(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/json"))
                 break
             except Exception:
                 time.sleep(0.2)
@@ -52,17 +66,38 @@ async def shoot(url: str, out: str, wait_s: float, width: int = 1440, height: in
                     if msg.get("id") == mid:
                         return msg.get("result", {})
 
+            if mobile:
+                await call(
+                    "Emulation.setDeviceMetricsOverride",
+                    width=width,
+                    height=height,
+                    deviceScaleFactor=2,
+                    mobile=True,
+                )
+                await call("Emulation.setTouchEmulationEnabled", enabled=True)
             await call("Page.navigate", url=url)
             await asyncio.sleep(wait_s)  # let the Streamlit websocket render everything
+            if js:
+                res = await call(
+                    "Runtime.evaluate", expression=js, returnByValue=True, awaitPromise=True
+                )
+                print(res.get("result", {}).get("value"))
             shot = await call("Page.captureScreenshot", format="png", captureBeyondViewport=True)
             with open(out, "wb") as f:
                 f.write(base64.b64decode(shot["data"]))
-            print(f"saved {out} ({width}x{height})")
+            print(f"saved {out} ({width}x{height}{' mobile' if mobile else ''})")
     finally:
         proc.terminate()
 
 
 if __name__ == "__main__":
-    url, out = sys.argv[1], sys.argv[2]
-    wait = float(sys.argv[3]) if len(sys.argv) > 3 else 8.0
-    asyncio.run(shoot(url, out, wait))
+    ap = argparse.ArgumentParser()
+    ap.add_argument("url")
+    ap.add_argument("out")
+    ap.add_argument("--wait", type=float, default=8.0)
+    ap.add_argument("--width", type=int, default=1440)
+    ap.add_argument("--height", type=int, default=1600)
+    ap.add_argument("--mobile", action="store_true")
+    ap.add_argument("--eval", dest="js", default=None)
+    a = ap.parse_args()
+    asyncio.run(shoot(a.url, a.out, a.wait, a.width, a.height, a.mobile, a.js))

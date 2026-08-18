@@ -18,6 +18,7 @@ st.markdown(
     '<div class="fx-header"><div><span class="fx-wordmark">Methodology</span><span class="fx-sub">how the weather station works</span></div></div>',
     unsafe_allow_html=True,
 )
+ui.mobile_bar()
 
 ui.card(
     """

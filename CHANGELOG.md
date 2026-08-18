@@ -2,6 +2,24 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.8.1 — responsive pass: desktop, tablet, phone (2026-08-18)
+
+- Regime orb fits its column: responsive square wrapper, canvas sized to the space it gets
+  (`ResizeObserver`), `st.iframe(width="stretch")`; the orb column widened to `[1, 5]` and
+  vertically centred with the chart title (it used to be clipped to a slice in a 1/8 column).
+- One layout that adapts (no device sniffing): `@media` rules in `app/ui.py` — stacked header, 2×2
+  KPI grid, tighter cards, scrollable tables (`.fx-table-wrap`), ≥ 40 px touch targets, orb hidden
+  ≤ 640 px, three-across blocks two-across on tablets ≤ 1024 px, responsive sparklines.
+- Mobile control bar (`ui.mobile_bar`): universe + market as `st.segmented_control`, hidden on
+  desktop by CSS; kept equal to the sidebar selectboxes by `on_change` callbacks (widget values now
+  live in session state — no `index=`, no Streamlit "default + session state" warning).
+  `initial_sidebar_state="auto"` (collapsed on phones); the header stays (transparent, click-through)
+  so the » open-sidebar button is reachable — it was hidden together with the toolbar before, which
+  also stranded desktop users who collapsed the sidebar. Sidebar icon font no longer overridden
+  (collapse arrow rendered as the ligature text `keyboard_double_arrow_left`).
+- `tools/screenshot.py`: `--width/--height/--mobile/--eval` (device emulation, software WebGL, DOM
+  introspection); AppTest `test_mobile_bar_mirrors_sidebar_controls_both_ways`.
+
 ## v2.8.0 — advisor + app shell (2026-08-18)
 
 - `src/fxradar/advisor.py`: Market Stability Index (0–100; weights regime 0.35, change risk 0.20,

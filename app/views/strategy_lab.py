@@ -59,6 +59,7 @@ st.markdown(
     f'<span class="fx-sub">{UNI.label} · do the signals survive costs?</span></div></div>',
     unsafe_allow_html=True,
 )
+ui.mobile_bar()
 st.markdown(
     f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:12px 16px">'
     f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:600">Research demonstration on daily data — not a live trading system.</span> '

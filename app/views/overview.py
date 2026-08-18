@@ -173,6 +173,9 @@ st.markdown(
     f'<div class="fx-right">{right}</div></div>',
     unsafe_allow_html=True,
 )
+ui.mobile_bar(
+    UNI, PAIRS
+)  # phones: universe + market pills (hidden on desktop, sidebar rules there)
 if time_machine:
     st.markdown(
         f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:10px 16px;margin-bottom:12px">'
@@ -314,9 +317,9 @@ if sel is not None and pair in api_latest:
         {**sel.to_dict(), **{k: v for k, v in api_latest[pair].items() if k in sel.index}}
     )
 orb_col, title_col = st.columns([1, 5], vertical_alignment="center")
-with (
-    orb_col
-):  # the regime orb: a display of the same numbers as the card (regime, change risk, siren)
+# the regime orb: a display of the same numbers as the card (regime, change risk, siren);
+# the keyed container is a CSS hook (hidden on phones, where it would only push the chart down)
+with orb_col, st.container(key="fx_orb"):
     if sel is not None:
         orb.render(
             str(sel["regime"]),

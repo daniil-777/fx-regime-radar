@@ -33,10 +33,10 @@ def test_dashboard_renders_with_disclaimer_in_sidebar_and_footer() -> None:
 def test_scenario_explorer_time_machine_and_universe_switch() -> None:
     """Switching universe swaps pairs; jumping to an episode shows the as-of banner and hides the future."""
     at = _run("app/views/overview.py")
-    if "crypto" in at.sidebar.selectbox[0].options:
+    if "Crypto majors" in at.sidebar.selectbox[0].options:  # options are display labels
         at.sidebar.selectbox[0].set_value("crypto").run()
         assert not at.exception, at.exception
-        assert at.sidebar.selectbox[1].options[0] == "BTC-USD"
+        assert at.sidebar.selectbox[1].options[0] == "BTC/USD"
     episodes = at.sidebar.selectbox[2].options
     assert len(episodes) >= 2 and episodes[0] == "today (latest data)"
     at.sidebar.selectbox[2].set_value(episodes[1]).run()
@@ -117,3 +117,26 @@ def test_router_and_advisor_render() -> None:
     assert not at.exception, at.exception
     txt = " ".join(m.value for m in at.markdown)
     assert "never predicts price direction" in txt
+
+
+def test_mobile_bar_mirrors_sidebar_controls_both_ways() -> None:
+    """The phone-sized control bar (segmented controls) and the sidebar selectboxes are two views of
+    one choice: changing either one moves the other, and no Streamlit warning is raised."""
+    at = _run("app/views/overview.py")
+    assert not at.exception, at.exception
+    assert not at.warning and not at.error
+    seg = at.segmented_control
+    if "Crypto majors" not in at.sidebar.selectbox[0].options:  # options are display labels
+        pytest.skip("crypto universe not built")
+    # segmented controls: [universe, pair]
+    assert seg[0].value == "fx" and seg[1].value == "EURUSD"
+    seg[1].set_value("GBPUSD").run()  # mobile pill -> sidebar selectbox
+    assert not at.exception, at.exception
+    assert at.sidebar.selectbox[1].value == "GBPUSD"
+    at.sidebar.selectbox[1].set_value("USDCHF").run()  # sidebar -> mobile pill
+    assert at.segmented_control[1].value == "USDCHF"
+    at.segmented_control[0].set_value("crypto").run()  # universe via the mobile bar
+    assert not at.exception, at.exception
+    assert at.sidebar.selectbox[0].value == "crypto"
+    assert at.sidebar.selectbox[1].options[0] == "BTC/USD"
+    assert not at.warning and not at.error

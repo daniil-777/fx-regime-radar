@@ -213,6 +213,19 @@ layout shift if WebGL/three.js is unavailable, no sound, no faces. Measured cost
 render submission (≈ 2 % of one core at 60 fps under software GL; less on a real GPU). Screenshots of all states:
 `docs/screenshots/orb/`. The v3 React port will use react-three-fiber with the same presets.
 
+## Runs on desktop, tablet and phone
+
+One layout that adapts — no device sniffing, no separate mobile app. Responsive CSS in `app/ui.py`
+(`@media` blocks) does the work: on phones the header stacks, the KPI strip becomes a 2×2 grid, cards
+and columns stack, tables scroll inside their own box (the page never scrolls sideways), touch targets
+are ≥ 40 px, the decorative 3-D orb is hidden, and a compact control bar (universe · market as
+segmented controls) appears at the top because Streamlit collapses the sidebar on small screens — the
+bar and the sidebar are two views of the same choice, kept in sync by callbacks. Episode replay and the
+as-of date stay in the side panel (the » button, top left). Tablets keep the sidebar and show
+three-across blocks two-across. Verify any width with the dev tool:
+`.venv/bin/python tools/screenshot.py http://localhost:8501/ out.png --width 390 --height 844 --mobile`.
+Screenshots: `docs/screenshots/mobile_overview.png`, `docs/screenshots/mobile_sidebar.png`.
+
 ## Interview material
 
 `docs/model_cards.md` (one card per model), `docs/INTERVIEW_NOTES.md` (answers in the developer's

@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ui  # noqa: E402
 
 st.set_page_config(
-    page_title="FX Regime Radar", page_icon="📡", layout="wide", initial_sidebar_state="expanded"
+    page_title="FX Regime Radar", page_icon="📡", layout="wide", initial_sidebar_state="auto"
 )
 ui.inject_css()
 
