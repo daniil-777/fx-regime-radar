@@ -2,6 +2,39 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v0.4.0 — phase-03: hmm with filtered probabilities (2026-08-18)
+
+- `src/fxradar/hmm_model.py`: one 4-state `GaussianHMM(covariance_type="full", n_iter=1000,
+  random_state=42)` per pair on `[ret_1d, vol_20, mom_20]`, StandardScaler and model fit on
+  the TRAIN window only (≤ 2016-12-31, `config.TRAIN_END`).
+- `filtered_probs`: forward algorithm (per-frame Gaussian log-likelihoods + transition matrix,
+  logsumexp-normalised each step) → P(state_t | obs ≤ t). Smoothed posteriors
+  (`predict_proba`) are never used for any output. Tested against brute-force prefix
+  recompute (60-row toy, atol 1e-8) and for truncation invariance; a companion test shows
+  smoothed posteriors are NOT truncation-invariant.
+- Frozen naming rule from train-period per-state stats: lowest mean vol_20 = calm, highest =
+  crisis, of the middle two the larger |mean mom_20| = trend, other = chop. Persisted with the
+  model. Honest note: for USDCHF the "crisis" state collapsed onto the 20 SNB-shock days
+  (2015-01-16 → 2015-02-12; mean vol_20 65 %), so its 2008–11 stress carries the "chop" name
+  — reported as-is for the phase-04 honesty report (clipping inputs was tried and made seed
+  stability worse, so the spec-exact setup is kept).
+- Outputs per pair/day: `regime`, `regime_prob`, `hmm_entropy` (nats, max ln 4),
+  `days_in_regime`, `vol_trend` (sign of the 10-day change in vol_20), `model_version`
+  ("hmm=0.4.0"). Written to `data/regimes.parquet` (the CLAUDE.md contract name — no
+  `_base` variant; phases 07/08 enrich it in place) and the three post-HMM columns appended
+  to `data/features.parquet`.
+- Models: `models/hmm_{pair}_v0.4.0.joblib` (plain dict payload: model, scaler, mapping,
+  train_end, version, features). CLI `python -m fxradar.hmm_model [--refit] [--stability]`
+  loads saved models by default (never refits in the daily path).
+- Results: mean regime_prob 0.96–0.98; transition-matrix diagonals 0.95–0.985 (sticky).
+  5-seed label agreement vs seed 42: EURUSD 0.53–1.00 (mean 0.71, below the 80 % warning),
+  GBPUSD 0.40–1.00 (mean 0.86), USDCHF 0.59–0.99 (mean 0.81) — EM local optima; discussed
+  honestly in phase 04.
+- Tests (`tests/test_hmm.py`, 10): filtering vs brute force, causality, frame log-likelihood
+  vs hmmlearn, naming rule, run length, score outputs + truncation invariance, train-only
+  scaler, bundle round trip, saved-model sanity (diag > 0.8, 4 states, permutation),
+  contract of the artifacts.
+
 ## v0.3.0 — phase-02: feature engine (2026-08-18)
 
 - `src/fxradar/features.py`: `build_features(prices)` computes the base contract features per
