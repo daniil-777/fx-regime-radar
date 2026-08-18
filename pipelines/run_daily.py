@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import config, data, features, forecaster
+from fxradar import config, data, features, forecaster, siren
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -93,6 +93,23 @@ def stage_forecaster(ctx: dict) -> None:
     )
 
 
+def stage_siren(ctx: dict) -> None:
+    bundle = siren.load_bundle()
+    contract, detail = siren.score(bundle, siren.joined(ctx["features"], ctx["regimes"]))
+    ctx["regimes"] = ctx["regimes"].merge(contract, on=["date", "pair"], how="left")
+    ctx["regimes"]["model_version"] = (
+        ctx["regimes"]["model_version"] + f"|siren={bundle['version']}"
+    )
+    ctx["model_versions"]["siren"] = bundle["version"]
+    ctx.setdefault("extra_writers", {})["siren_detail.parquet"] = lambda c, d=detail: d.to_parquet(
+        siren.DETAIL_PATH, index=False
+    )
+    latest = ctx["regimes"].sort_values("date").groupby("pair").tail(1)
+    log.info(
+        "siren: %s", ", ".join(f"{r.pair} pct={r.anomaly_pct:.0f}" for r in latest.itertuples())
+    )
+
+
 def stage_write(ctx: dict) -> None:
     """Write every artifact at once (only reached when all compute stages succeeded)."""
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -122,6 +139,7 @@ register("data", stage_data)
 register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
+register("siren", stage_siren)
 
 
 # --------------------------------------------------------------------------------------

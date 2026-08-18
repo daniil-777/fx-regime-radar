@@ -141,6 +141,26 @@ def risk_gauge(p: float, drivers: list[str] | None = None) -> str:
     )
 
 
+def siren_color(pct: float) -> str:
+    """Anomaly percentile band: muted <90, amber 90–98, crisis red >98."""
+    return MUTED if pct < 90 else (REGIME_COLORS["chop"] if pct <= 98 else REGIME_COLORS["crisis"])
+
+
+def siren_dial(pct: float, label: str) -> str:
+    """Compact dial: a ring whose filled arc is the anomaly percentile, coloured by band."""
+    pct = max(0.0, min(100.0, float(pct)))
+    color = siren_color(pct)
+    r, c = 26, 2 * 3.14159 * 26
+    dash = c * pct / 100
+    return (
+        f'<div style="display:flex;align-items:center;gap:14px">'
+        f'<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="{r}" fill="none" stroke="{BORDER}" stroke-width="6"/>'
+        f'<circle cx="32" cy="32" r="{r}" fill="none" stroke="{color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{dash:.1f} {c:.1f}" transform="rotate(-90 32 32)"/>'
+        f'<text x="32" y="37" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="{TEXT}">{pct:.0f}</text></svg>'
+        f'<div><div style="font-weight:600">{html.escape(label)}</div><div class="fx-muted" style="font-size:0.8rem">anomaly percentile</div></div></div>'
+    )
+
+
 def card(body_html: str, title: str | None = None) -> None:
     """Render a card (surface, 1px border, 12px radius, 20px padding)."""
     head = f"<h3>{html.escape(title)}</h3>" if title else ""

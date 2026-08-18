@@ -270,4 +270,40 @@ ui.card(
     title=f"Regime anatomy — {pair[:3]}/{pair[3:]}",
 )
 
+# --------------------------------------------------------------------------------------
+# anomaly siren
+# --------------------------------------------------------------------------------------
+if "anomaly_pct" in regimes.columns:
+    st.markdown(
+        '<div style="font-weight:600;margin:6px 0 8px 2px">Anomaly siren — how unlike a calm day is today?</div>',
+        unsafe_allow_html=True,
+    )
+    scols = st.columns(len(PAIRS))
+    for col, p in zip(scols, PAIRS, strict=True):
+        g = regimes[regimes["pair"] == p].sort_values("date")
+        latest = g.iloc[-1]
+        two_years = g[g["date"] >= g["date"].max() - pd.DateOffset(years=2)]
+        body = ui.siren_dial(latest["anomaly_pct"], f"{p[:3]}/{p[3:]}") + ui.sparkline_svg(
+            two_years["anomaly_pct"], ui.siren_color(latest["anomaly_pct"]), width=300, height=40
+        )
+        body += (
+            '<div class="fx-kv"><span>2-year anomaly percentile</span><span class="fx-num">'
+            + f'{two_years["anomaly_pct"].iloc[-1]:.0f}'
+            + "</span></div>"
+        )
+        with col:
+            ui.card(body)
+    loud = (
+        regimes[regimes["pair"] == pair]
+        .nlargest(8, "anomaly_score")[["date", "regime", "anomaly_score", "anomaly_pct"]]
+        .copy()
+    )
+    loud["date"] = loud["date"].dt.strftime("%Y-%m-%d")
+    loud = loud.rename(columns={"anomaly_score": "score", "anomaly_pct": "percentile"})
+    ui.card(
+        '<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">The days the autoencoder found hardest to reconstruct — history the model never learnt as "normal". Detection only: nothing here predicts.</div>'
+        + ui.html_table(loud, {"score": "{:.2f}", "percentile": "{:.1f}"}),
+        title=f"Loudest days in history — {pair[:3]}/{pair[3:]}",
+    )
+
 ui.footer(DISCLAIMER, "· Regimes are filtered (causal) HMM states; see Methodology.")

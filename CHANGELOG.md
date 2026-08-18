@@ -2,6 +2,29 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.2.0 — phase-08: anomaly siren (2026-08-18)
+
+- `src/fxradar/siren.py`: `MLPRegressor(hidden_layer_sizes=(8, 3, 8), max_iter=3000,
+  early_stopping=True, random_state=42)` autoencoder on the 9 continuous features, scaler +
+  model fit ONLY on train-period calm days with regime_prob > 0.7 (2 788 days, 2005-04-07 →
+  2016-12-30), pooled across pairs, no pair one-hots (pair-agnostic by design — documented).
+- Scoring: `anomaly_score` = mean squared reconstruction error; `anomaly_pct` = percentile
+  against the calm-train distribution; per-feature squared errors + nearest historical
+  neighbour (same pair, train period, ±10 days excluded) in `data/siren_detail.parquet`
+  (for the phase-09 explainer). Scoring is truncation-invariant (tested).
+- `reports/siren_validation.md` + `siren_anomaly_pct.png`: SNB 2015-01-15 is USDCHF's
+  loudest day in history (rank 1, pct 100); Brexit 2016-06-24 rank 1 for GBPUSD; the
+  2016-10-07 flash crash pct 100 (rank 139); March 2020: 68–82 % of days ≥ 98th pct. Honest
+  reading: many merely-volatile days also scream; it detects, it does not predict.
+- `models/siren_v1.2.0.joblib` (dict payload); manifest entry; pipeline stage `siren`
+  registered — `regimes.parquet` now matches the full contract (model_version
+  "hmm=0.4.0|fc=1.1.0|siren=1.2.0").
+- Dashboard "Anomaly siren" section: SVG dial per pair (muted <90, amber 90–98, red >98),
+  2-year sparkline, "Loudest days in history" table for the selected pair.
+- Tests (`tests/test_siren.py`, 6): (8,3,8) architecture, scaler/model fit only on calm train
+  days (date range + labels asserted), truncation invariance, percentile + outlier behaviour,
+  neighbour exclusion window, saved-model SNB check.
+
 ## v1.1.0 — phase-07: forecaster (2026-08-18)
 
 - `src/fxradar/forecaster.py`: pooled XGBoost classifier for "regime changes within the next
