@@ -55,7 +55,21 @@ p, li, label, .stMarkdown {{ color: {TEXT}; }}
 .fx-table td {{ padding: 8px 10px; border-bottom: 1px solid {BORDER}; font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
 .fx-table td:first-child {{ font-family: {FONT_UI}; }}
 .fx-footer {{ color: {MUTED}; font-size: 0.8rem; margin-top: 28px; padding-top: 12px; border-top: 1px solid {BORDER}; }}
-div[data-testid="stSelectbox"] label {{ color: {MUTED}; }}
+div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label, div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSlider"] label {{ color: {MUTED}; font-size: 0.8rem; }}
+.fx-side-h {{ color: {MUTED}; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 14px 0 -6px 0; }}
+.fx-kpis {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 4px 0 14px 0; }}
+.fx-kpi {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; padding: 12px 14px; }}
+.fx-kpi-l {{ color: {MUTED}; font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; }}
+.fx-kpi-v {{ font-size: 1.35rem; font-weight: 600; margin-top: 2px; }}
+.fx-kpi-s {{ color: {MUTED}; font-size: 0.76rem; margin-top: 2px; }}
+.fx-section {{ font-weight: 600; font-size: 1.0rem; margin: 18px 0 8px 2px; letter-spacing: -0.01em; }}
+.fx-alert {{ display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 8px; border: 1px solid {BORDER}; margin-bottom: 6px; font-size: 0.84rem; }}
+[data-testid="stSidebarNav"] a, [data-testid="stSidebarNavItems"] a {{ font-family: {FONT_UI}; }}
+[data-testid="stSidebarNav"] span, section[data-testid="stSidebar"] li span {{ color: {TEXT}; }}
+[data-testid="stSidebarNavSeparator"] {{ border-color: {BORDER}; }}
+div[data-testid="stExpander"] details {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; }}
+button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1px solid {BORDER}; background: {SURFACE}; color: {TEXT}; }}
+.stButton > button:hover {{ border-color: #60A5FA; color: #60A5FA; }}
 </style>
 """
 
@@ -273,3 +287,102 @@ def universe_selector() -> tuple[str, object, dict]:
         )
     st.session_state["universe"] = label
     return label, universes.get(label), config.universe_dirs(label)
+
+
+# ---- shared scenario controls (Overview + Advisor) ------------------------------------------
+def scenario_controls(uni, pairs: list[str], regimes_all: pd.DataFrame):
+    """Sidebar: pair, named-episode jump, free 'as of' date. Deep links: ?pair=&asof=.
+    Returns (pair, as_of Timestamp, time_machine bool, episode label)."""
+    latest_date = regimes_all["date"].max()
+    episodes: dict[str, tuple | None] = {"today (latest data)": None}
+    for p, events in uni.known_events.items():
+        for d, label in events:
+            episodes[f"{label} — {uni.display(p)} {d}"] = (pd.Timestamp(d), p)
+    qp = st.query_params if hasattr(st, "query_params") else {}
+    qp_pair = qp.get("pair") if qp.get("pair") in pairs else None
+    try:
+        qp_asof = pd.Timestamp(qp.get("asof")) if qp.get("asof") else None
+    except Exception:
+        qp_asof = None
+    with st.sidebar:
+        st.markdown('<div class="fx-side-h">Market</div>', unsafe_allow_html=True)
+        pair = st.selectbox(
+            "Pair",
+            pairs,
+            index=pairs.index(qp_pair) if qp_pair else 0,
+            format_func=uni.display,
+            key=f"pair_{uni.name}",
+        )
+        st.markdown('<div class="fx-side-h">Scenario explorer</div>', unsafe_allow_html=True)
+        episode = st.selectbox(
+            "Jump to an episode", list(episodes), index=0, key=f"episode_{uni.name}"
+        )
+        ep = episodes[episode]
+        use_link = qp_asof is not None and not st.session_state.get("_asof_from_url")
+        default_date = (ep[0] if ep else (qp_asof if use_link else latest_date)).date()
+        if qp_asof is not None:
+            st.session_state["_asof_from_url"] = True
+        as_of_date = st.date_input(
+            "or pick an 'as of' date",
+            value=default_date,
+            key=f"asof_{uni.name}_{episode}_{qp_asof.date() if qp_asof is not None else ''}",
+            min_value=(regimes_all["date"].min() + pd.Timedelta(days=30)).date(),
+            max_value=latest_date.date(),
+        )
+        st.caption("Everything is filtered/causal, so any past date can be replayed honestly.")
+    as_of = min(pd.Timestamp(as_of_date), latest_date)
+    st.session_state["scenario"] = {"pair": pair, "as_of": str(as_of.date()), "episode": episode}
+    return pair, as_of, as_of < latest_date, episode
+
+
+def kpi(label: str, value: str, sub: str = "", color: str = TEXT) -> str:
+    """One KPI tile (HTML) for the strip at the top of a page."""
+    return (
+        f'<div class="fx-kpi"><div class="fx-kpi-l">{html.escape(label)}</div>'
+        f'<div class="fx-kpi-v fx-num" style="color:{color}">{value}</div>'
+        f'<div class="fx-kpi-s">{sub}</div></div>'
+    )
+
+
+def kpi_strip(tiles: list[str]) -> None:
+    st.markdown('<div class="fx-kpis">' + "".join(tiles) + "</div>", unsafe_allow_html=True)
+
+
+def stability_color(score: float) -> str:
+    return (
+        REGIME_COLORS["calm"]
+        if score >= 75
+        else (
+            REGIME_COLORS["trend"]
+            if score >= 55
+            else (REGIME_COLORS["chop"] if score >= 35 else REGIME_COLORS["crisis"])
+        )
+    )
+
+
+def gauge_svg(score: float, size: int = 120, label: str = "") -> str:
+    """Semi-circular gauge for a 0..100 score, coloured by band."""
+    score = max(0.0, min(100.0, float(score)))
+    color = stability_color(score)
+    r = size * 0.42
+    cx, cy = size / 2, size * 0.58
+    import math
+
+    def pt(a):
+        return cx + r * math.cos(math.pi * (1 - a)), cy - r * math.sin(math.pi * (1 - a))
+
+    x0, y0 = pt(0.0)
+    x1, y1 = pt(score / 100.0)
+    xe, ye = pt(1.0)
+    large = 1 if score > 50 else 0
+    return (
+        f'<svg width="{size}" height="{size * 0.66}" viewBox="0 0 {size} {size * 0.66}">'
+        f'<path d="M {x0:.1f} {y0:.1f} A {r:.1f} {r:.1f} 0 1 1 {xe:.1f} {ye:.1f}" fill="none" stroke="{BORDER}" stroke-width="{size * 0.08:.1f}" stroke-linecap="round"/>'
+        + (
+            f'<path d="M {x0:.1f} {y0:.1f} A {r:.1f} {r:.1f} 0 {large} 1 {x1:.1f} {y1:.1f}" fill="none" stroke="{color}" stroke-width="{size * 0.08:.1f}" stroke-linecap="round"/>'
+            if score > 0.5
+            else ""
+        )
+        + f'<text x="{cx}" y="{cy - 2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="{size * 0.2:.0f}" fill="{TEXT}">{score:.0f}</text>'
+        f'<text x="{cx}" y="{cy + size * 0.13:.1f}" text-anchor="middle" font-family="Inter, sans-serif" font-size="{size * 0.09:.0f}" fill="{MUTED}">{html.escape(label)}</text></svg>'
+    )

@@ -15,8 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import ui  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
-st.set_page_config(page_title="Strategy lab — FX Regime Radar", page_icon="📡", layout="wide")
-ui.inject_css()
 ui.sidebar(DISCLAIMER)
 UNI_NAME, UNI, DIRS = ui.universe_selector()
 DATA_DIR = DIRS["data"]

@@ -15,8 +15,6 @@ import ui  # noqa: E402
 from fxradar import arcade  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
-st.set_page_config(page_title="Arcade — FX Regime Radar", page_icon="📡", layout="wide")
-ui.inject_css()
 ui.sidebar(DISCLAIMER)
 UNI_NAME, UNI, DIRS = ui.universe_selector()
 PAIRS = list(UNI.pairs)

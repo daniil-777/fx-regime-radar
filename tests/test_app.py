@@ -19,7 +19,7 @@ def _run(path: str):
 
 def test_dashboard_renders_with_disclaimer_in_sidebar_and_footer() -> None:
     t0 = time.time()
-    at = _run("app/app.py")
+    at = _run("app/views/overview.py")
     elapsed = time.time() - t0
     assert not at.exception, at.exception
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
@@ -32,7 +32,7 @@ def test_dashboard_renders_with_disclaimer_in_sidebar_and_footer() -> None:
 
 def test_scenario_explorer_time_machine_and_universe_switch() -> None:
     """Switching universe swaps pairs; jumping to an episode shows the as-of banner and hides the future."""
-    at = _run("app/app.py")
+    at = _run("app/views/overview.py")
     if "crypto" in at.sidebar.selectbox[0].options:
         at.sidebar.selectbox[0].set_value("crypto").run()
         assert not at.exception, at.exception
@@ -48,7 +48,7 @@ def test_scenario_explorer_time_machine_and_universe_switch() -> None:
 
 
 def test_methodology_page_renders_with_disclaimer() -> None:
-    at = _run("app/pages/1_Methodology.py")
+    at = _run("app/views/methodology.py")
     assert not at.exception, at.exception
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     assert any(config.DISCLAIMER in m.value for m in at.markdown)
@@ -59,7 +59,7 @@ def test_strategy_lab_page_renders_with_banner_and_disclaimer() -> None:
 
     if not (STRATEGY_PATH.exists() and METRICS_PATH.exists()):
         pytest.skip("strategy artifacts not built")
-    at = _run("app/pages/2_Strategy_lab.py")
+    at = _run("app/views/strategy_lab.py")
     assert not at.exception, at.exception
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     assert any("not a live trading system" in m.value for m in at.markdown)
@@ -70,7 +70,7 @@ def test_arcade_page_lock_before_reveal_cycle(tmp_path, monkeypatch) -> None:
     from fxradar import arcade
 
     monkeypatch.setattr(arcade, "DB_PATH", tmp_path / "arcade.db")
-    at = _run("app/pages/3_Arcade.py")
+    at = _run("app/views/arcade.py")
     assert not at.exception, at.exception
     assert any("calibration game" in m.value for m in at.markdown)
     at.text_input[0].set_value("tester").run()
@@ -103,3 +103,17 @@ def test_orb_html_render_smoke() -> None:
     assert '"regime": "calm"' in orb.orb_html(
         "unknown", 0.0, 0.0
     )  # unknown -> calm preset, never crashes
+
+
+def test_router_and_advisor_render() -> None:
+    at = _run("app/app.py")  # the st.navigation entrypoint runs the default (Overview) page
+    assert not at.exception, at.exception
+    at = _run("app/views/advisor.py")
+    assert not at.exception, at.exception
+    txt = " ".join(m.value for m in at.markdown)
+    assert "risk budget" in txt and "overall stability" in txt and "never which way" in txt
+    assert not any(w in txt.lower() for w in [" buy ", " sell "])  # never a direction on the page
+    at.text_input[0].set_value("should I buy now?").run()
+    assert not at.exception, at.exception
+    txt = " ".join(m.value for m in at.markdown)
+    assert "never predicts price direction" in txt

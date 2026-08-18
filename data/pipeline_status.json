@@ -1,5 +1,5 @@
 {
-  "last_run_utc": "2026-08-18T09:42:51Z",
+  "last_run_utc": "2026-08-18T11:26:25Z",
   "data_through": "2026-08-17",
   "rows": {
     "prices": 16840,
@@ -24,11 +24,13 @@
     }
   },
   "stage_seconds": {
-    "data": 1.76,
+    "data": 1.83,
     "features": 0.04,
-    "hmm": 1.74,
-    "forecaster": 1.48,
+    "hmm": 1.84,
+    "forecaster": 1.4,
     "siren": 0.46,
-    "narrator": 0.91
+    "narrator": 0.91,
+    "advisor": 0.18,
+    "arcade": 0.0
   }
 }

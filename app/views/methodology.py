@@ -11,8 +11,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import ui  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
-st.set_page_config(page_title="Methodology — FX Regime Radar", page_icon="📡", layout="wide")
-ui.inject_css()
 ui.sidebar(DISCLAIMER)
 ui.universe_selector()
 
@@ -77,6 +75,30 @@ out-of-sample period begins (2017). Everything to the right is data the model ha
 The regime anatomy table is computed on that out-of-sample period only.</p>
 """,
     title="Out of sample",
+)
+
+ui.card(
+    """
+<p><b>Market Stability Index (0–100).</b> A transparent weighted mix of five instability signals, each 0–1:
+the filtered regime (calm 0 · trend 0.35 · chop 0.55 · crisis 1, blended with the residual probability
+mass) at 35 %, the 5-day regime-change probability at 20 %, the siren percentile above 80 at 20 %, the
+volatility front (vol_ratio above 1) at 15 %, and the regime model's entropy at 10 %. 100 = fair, below 55
+unsettled, below 35 stormy. It describes conditions, not direction, and it computes nothing new — every
+input is already on the Overview.</p>
+<p><b>Durability.</b> A hidden Markov regime with self-transition probability <i>p</i> lasts 1/(1−<i>p</i>) days
+on average. We show that typical length beside the current run. The model is memoryless: a long run is not
+"due" to end — the change-risk gauge, not the age, carries that information.</p>
+<p><b>Risk budget.</b> The share of <i>your own</i> normal position size the models justify right now: 100 %
+by default; ×(1 − change risk) when change risk exceeds 30 %; ×0.5 in crisis, ×0.8 in chop; ×0.7 when the siren
+is above 90; 0 when it is above 98 (the siren stop). It is the same overlay the strategy layer is stress-tested
+with. It never contains a direction, and the calculator only converts it into a notional for your capital and
+volatility target.</p>
+<p><b>Ask the radar.</b> The assistant receives a JSON snapshot of these numbers and a fixed instruction: answer
+only from the JSON, never predict prices or say buy/sell, never add outside facts; list the fields used. Without
+an API key it answers from templates. It does not search the web — anything found there could not be verified
+against the artifacts, and this tool only speaks about what it computed.</p>
+""",
+    title="The Advisor page — stability, durability, risk budget",
 )
 
 ui.card(

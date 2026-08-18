@@ -105,7 +105,7 @@ The deliverable is the framework and the honesty — a research demonstration, n
 ```
 src/fxradar/      config · data · features · hmm_model · validate · forecaster · siren · narrate
 pipelines/        run_daily.py — the only place heavy compute happens
-app/              app.py, ui.py (design system), pages/1_Methodology.py — reads artifacts only
+app/              app.py (router), views/{overview,advisor,strategy_lab,arcade,methodology}.py, ui.py, orb.py — reads artifacts only
 data/             prices/features/regimes parquet, report.json, pipeline_status.json (committed)
 models/           hmm_*_v0.4.0.joblib, forecaster_v1.1.0.json, siren_v1.2.0.joblib, manifest.json
 reports/          validation markdown + png plots (HMM, forecaster, siren)
@@ -174,6 +174,19 @@ Run it: `cargo run --release --bin fxradar-serve -- --bundle models/bundle_v1.4.
 (port 8080), or `docker compose up` (Rust service on :8080, dashboard on :8501 reading live state
 from it). `POST /api/score` takes `{"pair": "USDCHF", "windows": [{pair, dates, close, high, low} × 3]}`
 with ≥ 600 rows per pair (see `docs/bundle_format.md`).
+
+## The Advisor — how stable, how durable, how much (never which way)
+
+The one page most tools get wrong. It never says buy or sell (rules 4/5); it says what the models can
+defend: a **Market Stability Index** (0–100, transparent weights over regime, change risk, siren,
+volatility front and model uncertainty), **regime durability** (typical run length 1/(1−p) from the
+HMM's self-transition probability vs the current run), a **risk budget** per market — the share of *your*
+normal position size the models justify, with reasons (crisis ½, chop 0.8, ×(1−risk) above 30 %,
+siren stop above 98) — an inverse-vol **allocation** across markets, a beginner **sizing calculator**
+(capital × vol-target ÷ realised vol × budget, capped 2×), and **Ask the radar**: an LLM that answers
+plain-language questions strictly from a JSON snapshot of these numbers (no web, no opinions, cites the
+fields it used; template answers without a key). Everything works in the scenario explorer, so you can
+ask "how much risk on 2022-11-09?" and get the honest answer: FTX day, BTC 35 % of normal size, ETH/LTC 0.
 
 ## Universes and the scenario explorer
 

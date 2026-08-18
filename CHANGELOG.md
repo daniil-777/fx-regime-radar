@@ -2,6 +2,27 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.8.0 — advisor + app shell (2026-08-18)
+
+- `src/fxradar/advisor.py`: Market Stability Index (0–100; weights regime 0.35, change risk 0.20,
+  siren 0.20, vol front 0.15, entropy 0.10; words Fair/Unsettled/Stormy/Severe), regime
+  durability (1/(1−p) typical run vs current, memoryless note), risk budget (share of the user's
+  own normal size: ×(1−risk) above 0.30, crisis ½, chop 0.8, siren >90 ×0.7, >98 → 0) with
+  reasons, inverse-vol allocation, sizing calculator (capped 2×), `snapshot()` evidence base per
+  universe/as-of, and `answer()` — LLM Q&A grounded ONLY in the snapshot with a guardrail system
+  prompt (never direction/buy/sell/outside facts, cites fields) and template answers (direction
+  questions are refused). Pipeline stage `advisor` writes `data/advisor.json` per universe.
+- App shell: `app/app.py` is now a router (`st.navigation`: Radar → Overview, Advisor; Research →
+  Strategy lab, Arcade; About → Methodology), pages moved to `app/views/`; shared sidebar
+  (universe · market · scenario explorer) via `ui.scenario_controls`; KPI strip + alerts (crisis,
+  siren, high change risk) on Overview; new Advisor view (stability gauges, durability, risk
+  budgets with reasons, allocation, calculator, Ask the radar, snapshot expander); CSS polish
+  (KPI tiles, section headers, alerts, buttons, expanders, nav). Methodology explains the index,
+  durability, budget and the Q&A guardrails; README section.
+- Tests: advisor logic (bounds/monotonicity, durability math, budget rules incl. no direction
+  words, allocation, sizing, snapshot + template guardrails), router + advisor render, views
+  paths; total 118.
+
 ## v2.7.0 — universes + scenario explorer (2026-08-18)
 
 - `src/fxradar/universes.py`: one record per instrument set (pairs, tickers, bounds, splits,

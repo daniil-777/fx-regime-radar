@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import arcade, config, data, features, forecaster, narrate, siren
+from fxradar import advisor, arcade, config, data, features, forecaster, narrate, siren
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -120,6 +120,29 @@ def stage_narrator(ctx: dict) -> None:
     log.info("narrator: %s", ", ".join(f"{p}={r['source']}" for p, r in report.items()))
 
 
+def stage_advisor(ctx: dict) -> None:
+    """Stability index, durability, risk budgets and allocation from the finished numbers."""
+    diag = {
+        p: {b.mapping[i]: float(b.model.transmat_[i, i]) for i in range(hm.N_STATES)}
+        for p, b in hm.load_bundles().items()
+    }
+    ctx["advisor"] = advisor.snapshot(
+        ctx["regimes"], ctx["features"], ctx["prices"], transmat_diag=diag
+    )
+    ctx.setdefault("extra_writers", {})["advisor.json"] = lambda c: (
+        config.DATA_DIR / "advisor.json"
+    ).write_text(json.dumps(c["advisor"], indent=1, default=float))
+    ms = ctx["advisor"]["markets"]
+    log.info(
+        "advisor: overall stability %.0f (%s); %s",
+        ctx["advisor"]["overall_stability"],
+        ctx["advisor"]["overall_word"],
+        ", ".join(
+            f"{p} {m['stability']:.0f}/{m['risk_budget']['budget']:.0%}" for p, m in ms.items()
+        ),
+    )
+
+
 def stage_arcade(ctx: dict) -> None:
     """Resolve matured arcade calls (5 trading days elapsed) against the freshly scored regimes.
     The sqlite file is a state store, not an artifact; it is only touched if it exists."""
@@ -167,6 +190,9 @@ register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
 register("narrator", stage_narrator)  # narrates the finished numbers
+register(
+    "advisor", stage_advisor
+)  # stability / durability / risk budgets from the finished numbers
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

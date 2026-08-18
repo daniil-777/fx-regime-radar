@@ -1,7 +1,7 @@
 {
   "EURUSD": {
     "text": "EUR/USD is in a calm regime (calm) with 100% confidence, now on day 79 of this regime. The model puts the chance of a regime change within five trading days at 1%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 76).",
-    "generated_at": "2026-08-18T09:42:50Z",
+    "generated_at": "2026-08-18T11:26:24Z",
     "source": "template",
     "stats": {
       "pair": "EURUSD",
@@ -22,7 +22,7 @@
   },
   "USDCHF": {
     "text": "USD/CHF is in a calm regime (calm) with 100% confidence, now on day 124 of this regime. The model puts the chance of a regime change within five trading days at 1%, which is low, driven mainly by how unsure the regime model is, this being the Swiss franc and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 25).",
-    "generated_at": "2026-08-18T09:42:50Z",
+    "generated_at": "2026-08-18T11:26:24Z",
     "source": "template",
     "stats": {
       "pair": "USDCHF",
@@ -43,7 +43,7 @@
   },
   "GBPUSD": {
     "text": "GBP/USD is in a calm regime (calm) with 100% confidence, now on day 2 of this regime. The model puts the chance of a regime change within five trading days at 6%, which is low, driven mainly by the three-month volatility backdrop, how long the current regime has lasted and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 65).",
-    "generated_at": "2026-08-18T09:42:50Z",
+    "generated_at": "2026-08-18T11:26:24Z",
     "source": "template",
     "stats": {
       "pair": "GBPUSD",
