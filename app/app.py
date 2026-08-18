@@ -12,6 +12,8 @@ from pathlib import Path
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Hosted deploys sometimes skip `pip install -e .`; the package lives in src/ next to app/.
+sys.path.insert(1, str(Path(__file__).resolve().parents[1] / "src"))
 import ui  # noqa: E402
 
 st.set_page_config(

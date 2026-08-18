@@ -14,7 +14,7 @@ changes (with SHAP explanations), and a tiny autoencoder *detects* days that loo
 day it has seen. A short LLM call then narrates the computed numbers in plain English. Nothing
 here predicts price direction — by design.
 
-**Live app:** _link placeholder — add after deploying to Streamlit Community Cloud (see Deploy)._
+**Live app:** https://fx-regime-radar.streamlit.app · **Code:** https://github.com/daniil-777/fx-regime-radar
 
 ## Track record — frozen test vs live forward record
 
@@ -154,9 +154,12 @@ To retrain: `python -m fxradar.hmm_model --refit`, `python -m fxradar.forecaster
 
 1. **Push to GitHub.** `.github/workflows/daily.yml` runs weekdays at 06:00 UTC (and on demand),
    refreshes `data/` and commits `data: daily refresh [skip ci]`. Check the first run is green.
-2. **Streamlit Community Cloud** (free): https://share.streamlit.io → *New app* → repo, branch,
-   main file `app/app.py` → *Deploy*. It redeploys on every commit, so the daily data commit keeps
-   it fresh; the header shows "Data through …" and "updated …" from the artifacts.
+2. **Streamlit Community Cloud** (free): https://share.streamlit.io → *Create app* → repo
+   `daniil-777/fx-regime-radar`, branch `main`, main file `app/app.py`, app URL
+   `fx-regime-radar` → *Advanced settings*: Python **3.11** → *Deploy*. `requirements.txt` ends
+   with `-e .` so the `fxradar` package installs; `.python-version` pins 3.11. It redeploys on
+   every commit, so the daily data commit keeps it fresh; the header shows "Data through …" and
+   "updated …" from the artifacts.
 3. **Secrets (optional).** Live narration needs `ANTHROPIC_API_KEY` under *App settings → Secrets*
    on Streamlit Cloud and as a GitHub repository secret. Without it everything runs on the
    deterministic template. Cost with it: ≈ 5 cents per month (three Haiku calls per weekday).
