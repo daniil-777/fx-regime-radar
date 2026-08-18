@@ -175,6 +175,15 @@ Run it: `cargo run --release --bin fxradar-serve -- --bundle models/bundle_v1.4.
 from it). `POST /api/score` takes `{"pair": "USDCHF", "windows": [{pair, dates, close, high, low} × 3]}`
 with ≥ 600 rows per pair (see `docs/bundle_format.md`).
 
+## The regime orb
+
+The dashboard hero carries an ambient three.js particle orb for the selected pair: regime → colour and motion,
+change risk → jitter, siren → a decaying pulse (`app/orb.py`; four presets mirrored in Python and JS). ≤ 900
+particles, paused when the tab is hidden, gentle drift under `prefers-reduced-motion`, flat regime dot with zero
+layout shift if WebGL/three.js is unavailable, no sound, no faces. Measured cost ≈ 0.3 ms per frame of JS +
+render submission (≈ 2 % of one core at 60 fps under software GL; less on a real GPU). Screenshots of all states:
+`docs/screenshots/orb/`. The v3 React port will use react-three-fiber with the same presets.
+
 ## Interview material
 
 `docs/model_cards.md` (one card per model), `docs/INTERVIEW_NOTES.md` (answers in the developer's

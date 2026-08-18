@@ -66,3 +66,22 @@ def test_arcade_page_lock_before_reveal_cycle(tmp_path, monkeypatch) -> None:
     assert not at.exception, at.exception
     post = " ".join(m.value for m in at.markdown)
     assert "model (revealed after lock)" in post and "40%" in post
+
+
+def test_orb_html_render_smoke() -> None:
+    import sys
+
+    sys.path.insert(0, str(config.ROOT / "app"))
+    import orb
+
+    for regime in ["calm", "trend", "chop", "crisis"]:
+        h = orb.orb_html(regime, 0.4, 99.0, size=120, pair="EURUSD")
+        assert orb.REGIME_COLORS[regime] in h and "three.min.js" in h and '"pulse": true' in h
+        assert (
+            h.count("orb-wrap") >= 1 and "prefers-reduced-motion" in h and "visibilitychange" in h
+        )
+    assert set(orb.PRESETS) == {"calm", "trend", "chop", "crisis"} and orb.PARTICLES <= 1000
+    assert '"pulse": false' in orb.orb_html("calm", 0.0, 50.0)
+    assert '"regime": "calm"' in orb.orb_html(
+        "unknown", 0.0, 0.0
+    )  # unknown -> calm preset, never crashes

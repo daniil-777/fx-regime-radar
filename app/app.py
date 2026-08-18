@@ -16,6 +16,7 @@ import streamlit as st
 sys.path.insert(
     0, str(Path(__file__).resolve().parent)
 )  # so `import ui` works under `streamlit run`
+import orb  # noqa: E402
 import ui  # noqa: E402
 from fxradar.config import (
     DATA_DIR,
@@ -277,11 +278,28 @@ fig.update_layout(
 )
 # legend pills for the bands
 legend = " ".join(ui.regime_pill(r) for r in REGIME_ORDER)
-st.markdown(
-    f'<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 -4px 2px">'
-    f'<span style="font-weight:600">{pair[:3]}/{pair[3:]} — close with filtered regime bands</span><span>{legend}</span></div>',
-    unsafe_allow_html=True,
-)
+sel = regimes[regimes["pair"] == pair].sort_values("date").iloc[-1]
+if pair in api_latest:
+    sel = pd.Series(
+        {**sel.to_dict(), **{k: v for k, v in api_latest[pair].items() if k in sel.index}}
+    )
+orb_col, title_col = st.columns([1, 7])
+with (
+    orb_col
+):  # the regime orb: a display of the same numbers as the card (regime, change risk, siren)
+    orb.render(
+        str(sel["regime"]),
+        float(sel.get("change_risk_5d", 0.0) or 0.0),
+        float(sel.get("anomaly_pct", 0.0) or 0.0),
+        size=150,
+        pair=pair,
+    )
+with title_col:
+    st.markdown(
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin:34px 0 -4px 2px">'
+        f'<span style="font-weight:600">{pair[:3]}/{pair[3:]} — close with filtered regime bands</span><span>{legend}</span></div>',
+        unsafe_allow_html=True,
+    )
 st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
 # --------------------------------------------------------------------------------------

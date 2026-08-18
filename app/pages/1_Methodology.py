@@ -68,6 +68,9 @@ recomputes everything on a truncated history and checks that the overlapping row
 
 ui.card(
     """
+<p><b>The orb</b> on the dashboard is a display of the same numbers as the cards: the regime sets its colour and
+motion (calm drifts, trend spins, chop jitters, crisis is fast and chaotic), the change risk multiplies the jitter,
+and a siren reading above 98 fires a decaying pulse. It computes nothing.</p>
 <p>The model is trained once on 2005–2016 and scored forward; the dashed line on the chart marks where the
 out-of-sample period begins (2017). Everything to the right is data the model had never seen when it was fitted.
 The regime anatomy table is computed on that out-of-sample period only.</p>

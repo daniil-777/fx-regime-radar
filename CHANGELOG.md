@@ -2,6 +2,25 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.6.0 — phase-18: regime orb (2026-08-18)
+
+- `app/orb.py`: self-contained three.js (r128 from cdnjs) particle orb rendered via `st.iframe`
+  (successor of `components.v1.html`), one hero orb for the selected pair beside the chart
+  title (one WebGL context; the HTML card grid stays static — no layout shift). Four presets
+  (calm slow drift / trend directional spin / chop high jitter / crisis fast chaos) in one JS
+  object mirroring the Python `PRESETS` dict; regime → colour + motion, jitter × (1 +
+  change_risk_5d), decaying pulse when anomaly_pct > 98. A display of the parquet numbers —
+  computes nothing.
+- Discipline: 900 particles (≤ 1 000), rAF paused on `document.hidden`, `prefers-reduced-motion`
+  → gentle drift with zero jitter/chaos, three.js/WebGL failure → the flat regime dot in the same
+  box (verified: fallback keeps the 220 px wrap height), hover/tap caption "what am I looking
+  at", no sound, no faces, no orb on the reading pages. Snippet ≈ 7 KB; three.js ≈ 150 KB gz
+  from CDN. Measured JS + render cost 0.23–0.34 ms per frame under headless software GL ≈ 2 %
+  of one core at 60 fps (screens: `docs/screenshots/orb/orb_states.png` — calm, trend, chop,
+  crisis, crisis pulse, reduced motion, fallback).
+- Methodology page: one line on the mapping. `docs/DEMO_SCRIPT.md`: the orb beat. README: orb
+  section + v3 react-three-fiber note. Test: orb render smoke (presets, pulse flag, fallbacks).
+
 ## v2.5.0 — phase-17: calibration arcade (2026-08-18)
 
 - `src/fxradar/arcade.py`: sqlite store at `data/arcade.db` (calls, visits, badges, gallery

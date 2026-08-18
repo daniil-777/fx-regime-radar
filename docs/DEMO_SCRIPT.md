@@ -11,6 +11,11 @@ probability that the regime is different within five trading days, and the three
 drove that number today. The paragraph underneath is a three-sentence narration of exactly these
 numbers — from a small language model when a key is set, from a template otherwise; the badge tells you which."
 
+**0:30 — The orb.** "That sphere next to the chart title is the selected pair's mood: green and slow when calm,
+blue and spinning in a trend, amber and jittery in chop, red and chaotic in crisis; the change-risk number multiplies
+the jitter and the siren makes it pulse. *Switch pairs and let it change mood on camera.* It's a display of the same
+parquet numbers as the cards — it computes nothing — and it respects reduced-motion settings."
+
 **0:35 — Timeline.** "The chart is the close with the regime painted behind it. *Click max.* The dashed
 line is 2017: everything to the right is out of sample — the model was fitted on 2005–2016 and has
 scored forward since. 2008, 2011, 2015, 2020, 2022 show up in red as you would hope; the calm
