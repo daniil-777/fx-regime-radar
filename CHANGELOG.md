@@ -2,6 +2,28 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.0.0 — phase-05: dashboard v1 (2026-08-18) — first shippable
+
+- `app/ui.py` owns the look: Google Fonts (Inter + JetBrains Mono), Streamlit chrome hidden,
+  card class (#131A26 surface, 1px #232D3F border, 12px radius, 20px padding), regime pills
+  in the four regime colours, one Plotly dark template (`fxradar_dark`) reused everywhere,
+  helpers `regime_pill`, `card`, `confidence_bar`, `sparkline_svg`, `html_table`, `sidebar`,
+  `footer`.
+- `app/app.py`: header (wordmark, "market weather, updated daily", right-aligned "Data
+  through …" from the artifact); hero row with one weather card per pair (pair, big regime
+  pill, confidence bar, "day N of this regime", last close, inline-SVG 20-day sparkline);
+  main panel with pair selector — Plotly close chart with merged regime bands (shapes), the
+  out-of-sample divider at 2017-01-01 with annotation, 1y/3y/max range buttons; out-of-sample
+  regime anatomy table (same definitions as the phase-04 report). Reads only
+  `data/regimes.parquet` + `data/prices.parquet` (light pandas, no model imports).
+- `st.cache_data` loaders keyed by file mtime; measured first paint ≈ 1.2 s cold, 0.1 s warm.
+- `app/pages/1_Methodology.py`: pipeline, HMM + mood metaphor, filtered vs smoothed in two
+  sentences, out-of-sample note, full Limitations. Disclaimer in sidebar + footer on every page.
+- `docs/screenshots/dashboard_v1.png` (headless Chrome via `tools/screenshot.py`, main
+  content crop). Sidebar holds only the pair selector and the disclaimer.
+- Tests (`tests/test_app.py`): both pages render from artifacts without exceptions, carry the
+  disclaimer in sidebar and footer, one Plotly figure, load-time budget.
+
 ## v0.5.0 — phase-04: hmm validation (2026-08-18)
 
 - `src/fxradar/validate.py` + CLI `python -m fxradar.validate` → `reports/hmm_validation.md`

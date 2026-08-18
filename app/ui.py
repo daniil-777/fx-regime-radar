@@ -1,1 +1,175 @@
-"""Shared UI helpers for the Streamlit app: CSS injection, cards, pills, and the single Plotly dark template (phase 05)."""
+"""Shared UI for the Streamlit app: CSS (fonts, cards, pills), the single Plotly dark template,
+and small HTML helpers. Everything visual lives here so pages stay thin (CLAUDE.md design system).
+"""
+
+from __future__ import annotations
+
+import html
+
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.io as pio
+import streamlit as st
+
+# ---- design tokens ---------------------------------------------------------------------
+BG = "#0B0F17"
+SURFACE = "#131A26"
+BORDER = "#232D3F"
+TEXT = "#E7ECF4"
+MUTED = "#8A94A6"
+REGIME_COLORS = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
+REGIME_BLURB = {
+    "calm": "low volatility, quiet drift",
+    "trend": "moderate volatility, persistent direction",
+    "chop": "moderate volatility, no direction",
+    "crisis": "high volatility, storm conditions",
+}
+FONT_UI = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+FONT_MONO = "'JetBrains Mono', 'SF Mono', Menlo, monospace"
+
+CSS = f"""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+#MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stDecoration"], .stDeployButton {{ display: none !important; visibility: hidden !important; }}
+html, body, [data-testid="stAppViewContainer"], .stApp {{ background: {BG} !important; color: {TEXT}; font-family: {FONT_UI}; }}
+[data-testid="stSidebar"] {{ background: {SURFACE} !important; border-right: 1px solid {BORDER}; }}
+[data-testid="stSidebar"] * {{ font-family: {FONT_UI}; }}
+.block-container {{ padding-top: 1.6rem; padding-bottom: 2rem; max-width: 1280px; }}
+h1, h2, h3, h4 {{ font-family: {FONT_UI}; color: {TEXT}; letter-spacing: -0.01em; }}
+p, li, label, .stMarkdown {{ color: {TEXT}; }}
+.fx-num {{ font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
+.fx-muted {{ color: {MUTED}; }}
+.fx-card {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; padding: 20px; margin-bottom: 14px; }}
+.fx-card h3 {{ margin: 0 0 8px 0; font-size: 1.05rem; font-weight: 600; }}
+.fx-header {{ display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }}
+.fx-wordmark {{ font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; }}
+.fx-sub {{ color: {MUTED}; margin-left: 12px; font-size: 0.95rem; }}
+.fx-right {{ color: {MUTED}; font-size: 0.85rem; text-align: right; }}
+.fx-pill {{ display: inline-block; padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.02em; text-transform: uppercase; }}
+.fx-pill-lg {{ padding: 8px 18px; font-size: 1.15rem; }}
+.fx-bar {{ height: 8px; border-radius: 4px; background: {BORDER}; overflow: hidden; margin: 8px 0 4px 0; }}
+.fx-bar > div {{ height: 100%; border-radius: 4px; }}
+.fx-kv {{ display: flex; justify-content: space-between; font-size: 0.85rem; color: {MUTED}; }}
+.fx-table {{ width: 100%; border-collapse: collapse; font-size: 0.86rem; }}
+.fx-table th {{ text-align: left; color: {MUTED}; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid {BORDER}; }}
+.fx-table td {{ padding: 8px 10px; border-bottom: 1px solid {BORDER}; font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
+.fx-table td:first-child {{ font-family: {FONT_UI}; }}
+.fx-footer {{ color: {MUTED}; font-size: 0.8rem; margin-top: 28px; padding-top: 12px; border-top: 1px solid {BORDER}; }}
+div[data-testid="stSelectbox"] label {{ color: {MUTED}; }}
+</style>
+"""
+
+
+def inject_css() -> None:
+    """Inject the design system once per page run."""
+    st.markdown(CSS, unsafe_allow_html=True)
+
+
+# ---- Plotly template (defined once, reused everywhere) ---------------------------------
+def _register_template() -> None:
+    if "fxradar_dark" in pio.templates:
+        return
+    tpl = go.layout.Template()
+    tpl.layout = go.Layout(
+        paper_bgcolor=BG,
+        plot_bgcolor=SURFACE,
+        font=dict(family=FONT_UI, color=TEXT, size=12),
+        xaxis=dict(
+            gridcolor=BORDER, zeroline=False, linecolor=BORDER, tickfont=dict(family=FONT_MONO)
+        ),
+        yaxis=dict(
+            gridcolor=BORDER, zeroline=False, linecolor=BORDER, tickfont=dict(family=FONT_MONO)
+        ),
+        margin=dict(l=40, r=20, t=40, b=40),
+        legend=dict(bgcolor="rgba(0,0,0,0)", orientation="h", y=1.05, x=0),
+        hoverlabel=dict(
+            bgcolor=SURFACE, bordercolor=BORDER, font=dict(family=FONT_MONO, color=TEXT)
+        ),
+        colorway=[
+            TEXT,
+            REGIME_COLORS["trend"],
+            REGIME_COLORS["calm"],
+            REGIME_COLORS["chop"],
+            REGIME_COLORS["crisis"],
+        ],
+    )
+    pio.templates["fxradar_dark"] = tpl
+
+
+_register_template()
+PLOTLY_TEMPLATE = "fxradar_dark"
+
+
+# ---- HTML helpers ----------------------------------------------------------------------
+def regime_pill(name: str, large: bool = False) -> str:
+    """Coloured pill for a regime name."""
+    color = REGIME_COLORS.get(name, MUTED)
+    cls = "fx-pill fx-pill-lg" if large else "fx-pill"
+    return f'<span class="{cls}" style="background:{color}22;color:{color};border:1px solid {color}55">{html.escape(name)}</span>'
+
+
+def confidence_bar(p: float, color: str = TEXT, label: str = "confidence") -> str:
+    """Horizontal bar for a probability in [0, 1] with a mono-font readout."""
+    pct = max(0.0, min(1.0, float(p))) * 100
+    return (
+        f'<div class="fx-kv"><span>{html.escape(label)}</span><span class="fx-num">{pct:.0f}%</span></div>'
+        f'<div class="fx-bar"><div style="width:{pct:.1f}%;background:{color}"></div></div>'
+    )
+
+
+def card(body_html: str, title: str | None = None) -> None:
+    """Render a card (surface, 1px border, 12px radius, 20px padding)."""
+    head = f"<h3>{html.escape(title)}</h3>" if title else ""
+    st.markdown(f'<div class="fx-card">{head}{body_html}</div>', unsafe_allow_html=True)
+
+
+def sparkline_svg(values: pd.Series, color: str, width: int = 220, height: int = 44) -> str:
+    """Inline SVG sparkline (no Plotly overhead for tiny charts)."""
+    v = pd.Series(values, dtype=float).dropna().to_numpy()
+    if len(v) < 2:
+        return ""
+    lo, hi = float(v.min()), float(v.max())
+    span = hi - lo if hi > lo else 1.0
+    xs = [i * (width - 2) / (len(v) - 1) + 1 for i in range(len(v))]
+    ys = [height - 2 - (val - lo) / span * (height - 4) for val in v]
+    pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys, strict=True))
+    return (
+        f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="display:block;margin-top:10px">'
+        f'<polyline fill="none" stroke="{color}" stroke-width="1.6" stroke-linejoin="round" points="{pts}"/>'
+        f'<circle cx="{xs[-1]:.1f}" cy="{ys[-1]:.1f}" r="2.4" fill="{color}"/></svg>'
+    )
+
+
+def html_table(df: pd.DataFrame, formats: dict[str, str] | None = None) -> str:
+    """Styled HTML table; `formats` maps column -> format spec (e.g. '{:.1f}')."""
+    formats = formats or {}
+    head = "".join(f"<th>{html.escape(str(c))}</th>" for c in df.columns)
+    rows = []
+    for _, r in df.iterrows():
+        cells = []
+        for c in df.columns:
+            val = r[c]
+            if c in formats and pd.notna(val):
+                cells.append(f"<td>{formats[c].format(val)}</td>")
+            elif isinstance(val, float) and pd.isna(val):
+                cells.append('<td class="fx-muted">–</td>')
+            else:
+                cells.append(f"<td>{html.escape(str(val))}</td>")
+        rows.append("<tr>" + "".join(cells) + "</tr>")
+    return f'<table class="fx-table"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
+
+
+def sidebar(disclaimer: str) -> None:
+    """Sidebar chrome: wordmark + disclaimer (page-specific widgets are added by the page)."""
+    with st.sidebar:
+        st.markdown(
+            '<div class="fx-wordmark" style="font-size:1.1rem">FX Regime Radar</div>',
+            unsafe_allow_html=True,
+        )
+        st.caption(disclaimer)
+
+
+def footer(disclaimer: str, extra: str = "") -> None:
+    st.markdown(
+        f'<div class="fx-footer">{html.escape(disclaimer)} {extra}</div>', unsafe_allow_html=True
+    )
