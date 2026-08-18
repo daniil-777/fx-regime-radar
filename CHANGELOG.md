@@ -2,6 +2,23 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.2.0 — phase-14: backtest engine (2026-08-18)
+
+- `src/fxradar/backtest.py`: `run_backtest(positions, prices, features, cost_cfg)` — daily bars
+  only; THE LAG LAW inside the engine (positions shifted one day: a signal formed at close t
+  earns t+1); `CostConfig(base_bps=1, vol_mult=80)` → cost_bps_t = base + vol_mult·vol_20_t
+  (measured calm ≈ 5 bp, crisis 12–16 bp; crisis/calm 2.4× EURUSD, 3.1× GBPUSD, 8× USDCHF)
+  charged on turnover |pos_t − pos_{t−1}|; daily frame + metrics gross AND net per pair and
+  pooled (CAGR, ann vol, Sharpe, max drawdown, annual turnover, cost drag, hit rate);
+  `metrics_table()`; `data/backtests.parquet` (date, strategy, pair, pos, ret_gross, ret_net,
+  cost_bps) with the always-long demo strategy.
+- Demo (always long, all pairs, 2005-03 → 2026-08): net CAGR −0.9 %, Sharpe −0.19, max DD −30 %.
+- Tests (`tests/test_backtest.py`, 6): constant long = asset return − exactly one entry cost;
+  daily sign flip cost bleed to the cent; THE FORESIGHT TEST (same-day-close signal: Sharpe > 10
+  with the lag disabled, |Sharpe| < 1 with it enforced); cost monotonicity in vol_mult; clipping
+  + gross/net contract; cost scaling. Note: the spec's `sign(ret_{t+1})` is written as
+  `sign(ret_t)` in engine indexing — the sin being tested is contemporaneous lookahead.
+
 ## v2.1.0 — phase-13: axum service (2026-08-18)
 
 - `rust/fxradar-serve` binary `fxradar-serve` (axum 0.8 + tokio + tracing): startup gate in
