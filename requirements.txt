@@ -1,0 +1,18 @@
+# Top-level dependencies, pinned to current major versions (phase 00).
+# Sub-dependencies are resolved by pip; only what we import directly is listed.
+pandas>=2.2,<3        # 2.x line on purpose: pandas 3 changed defaults; ML stack validated on 2.x
+numpy>=2.0,<3
+pyarrow>=24,<25
+yfinance>=1.0,<2
+requests>=2.32,<3
+hmmlearn>=0.3,<0.4
+scikit-learn>=1.5,<2
+xgboost>=3.0,<4
+shap>=0.48,<1
+plotly>=6.0,<7
+streamlit>=1.45,<2
+anthropic>=0.60,<1
+joblib>=1.4,<2
+pytest>=9,<10
+black>=26,<27
+ruff>=0.12,<1

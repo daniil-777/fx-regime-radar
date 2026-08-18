@@ -1,0 +1,15 @@
+# Design system (CLAUDE.md): dark theme, one accent, no default-Streamlit look.
+[theme]
+base = "dark"
+primaryColor = "#60A5FA"            # accent (regime "trend" blue)
+backgroundColor = "#0B0F17"         # page background
+secondaryBackgroundColor = "#131A26" # cards / sidebar surface
+textColor = "#E7ECF4"
+font = "sans serif"
+
+[server]
+headless = true
+runOnSave = false
+
+[browser]
+gatherUsageStats = false

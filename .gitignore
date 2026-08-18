@@ -1,0 +1,24 @@
+# virtual environments
+.venv/
+venv/
+env/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# secrets — never committed (CLAUDE.md rule 9)
+.streamlit/secrets.toml
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# NOTE: data/ and models/ are COMMITTED on purpose — the app reads artifacts,
+# the pipeline writes them (CLAUDE.md rule 8). Do not ignore them.
