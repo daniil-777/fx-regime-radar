@@ -10,6 +10,7 @@ scikit-learn>=1.5,<2
 xgboost>=3.0,<4
 shap>=0.48,<1
 plotly>=6.0,<7
+matplotlib>=3.9,<4   # static png plots for reports/ (phase 01+)
 streamlit>=1.45,<2
 anthropic>=0.60,<1
 joblib>=1.4,<2
