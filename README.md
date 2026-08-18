@@ -75,6 +75,21 @@ fragile), the HMM does not systematically lead a one-line vol rule, and a toy tr
 ([reports/siren_validation.md](reports/siren_validation.md)) shows the SNB shock of 2015-01-15 as
 USD/CHF's loudest day in history and Brexit as GBP/USD's.
 
+### Strategy layer (phases 14–16) — the honest part
+
+A lag-law backtest engine (`backtest.py`), three mechanical strategies with an insurance overlay
+and a blend (`strategies.py`), and a stress lab (`stress.py`) turn the signals into risk decisions
+and then attack them. Result, stated up front and confirmed: **after realistic, volatility-scaled
+costs there is no edge.** Test-period (2019+) net Sharpe: S1 trend −1.23, S2 mean reversion −1.36,
+S3 regime gate −1.30, blend −2.18; gross Sharpe is negative for three of four, so the **breakeven
+cost multiplier is 0** — nothing here survives its own transaction costs. Cost drag runs 4–7 %/yr;
+one extra day of lag barely matters (there was little to lose); a ×1.5 crisis-return shock deepens
+the worst drawdown by only 0.5 % because the siren stop and crisis-flat gate take risk off; block
+bootstrap puts the blend's one-year max drawdown at −6 % median / −10 % 5th-percentile pain; a ±30 %
+parameter sweep is a flat negative plateau (nothing overfit, nothing good). Reports:
+[strategy_eval.md](reports/strategy_eval.md), [stress_report.md](reports/stress_report.md).
+The deliverable is the framework and the honesty — a research demonstration, not a trading system.
+
 ## Limitations
 
 - **Daily data only**; Yahoo's daily close is a start-of-day snapshot, so returns run a day behind highs/lows.

@@ -211,4 +211,68 @@ with c2:
         title="Strategy correlation (test)",
     )
 
+# ---- stress panel ------------------------------------------------------------------------
+STRESS = DATA_DIR / "stress_tests.json"
+if STRESS.exists():
+    stress = json.loads(STRESS.read_text())
+    st.markdown(
+        '<div style="font-weight:600;margin:10px 0 6px 2px">Stress lab — replays, breakeven cost, bootstrapped drawdowns</div>',
+        unsafe_allow_html=True,
+    )
+    s1, s2 = st.columns([3, 2])
+    with s1:
+        rep = pd.DataFrame(stress["replays"])
+        rep_tbl = rep.assign(
+            **{
+                "return": rep["return"] * 100,
+                "max DD": rep["max_drawdown"] * 100,
+                "worst day": rep["worst_day"] * 100,
+            }
+        )[["window", "strategy", "return", "max DD", "worst day"]]
+        be = pd.DataFrame(stress["breakeven"])[
+            ["strategy", "gross_sharpe", "sharpe_at_1x", "breakeven_cost_mult"]
+        ].rename(
+            columns={
+                "gross_sharpe": "gross Sharpe",
+                "sharpe_at_1x": "net Sharpe",
+                "breakeven_cost_mult": "breakeven cost ×",
+            }
+        )
+        ui.card(
+            '<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">Breakeven cost multiplier — the multiple of the cost model at which net Sharpe crosses zero (0 = no edge even at zero cost).</div>'
+            + ui.html_table(
+                be,
+                {"gross Sharpe": "{:+.2f}", "net Sharpe": "{:+.2f}", "breakeven cost ×": "{:.2f}"},
+            )
+            + '<div class="fx-muted" style="font-size:0.82rem;margin:14px 0 8px 0">Historical replays (net, all pairs): SNB week, COVID crash, 2022 — %.</div>'
+            + ui.html_table(
+                rep_tbl, {"return": "{:+.1f}", "max DD": "{:.1f}", "worst day": "{:.2f}"}
+            ),
+            title="Breakeven cost and replays",
+        )
+    with s2:
+        boot = pd.DataFrame(stress["bootstrap"]).rename(
+            columns={
+                "median_max_dd": "median",
+                "p5_pain_max_dd": "5th pct pain",
+                "p95_max_dd": "95th pct",
+            }
+        )
+        for c in ["median", "5th pct pain", "95th pct"]:
+            boot[c] = boot[c] * 100
+        png = Path(__file__).resolve().parents[2] / "reports" / "stress_bootstrap_dd.png"
+        ui.card(
+            '<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">One-year max drawdown, 1 000 block-bootstrapped paths (20-day blocks), %.</div>'
+            + ui.html_table(
+                boot, {"median": "{:.1f}", "5th pct pain": "{:.1f}", "95th pct": "{:.1f}"}
+            ),
+            title="Bootstrapped drawdowns",
+        )
+        if png.exists():
+            st.image(str(png), width="stretch")
+    st.markdown(
+        f'<div class="fx-muted" style="font-size:0.82rem;margin:4px 2px 0 2px">{stress["verdicts"]["costs"]}</div>',
+        unsafe_allow_html=True,
+    )
+
 ui.footer(DISCLAIMER, "· Research demonstration on daily data — not a live trading system.")

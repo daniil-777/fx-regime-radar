@@ -1,0 +1,372 @@
+{
+ "replays": [
+  {
+   "window": "SNB week (Jan 2015)",
+   "strategy": "S1_trend",
+   "return": 0.005638813123215014,
+   "max_drawdown": -0.0036182238227444596,
+   "worst_day": -0.008453960889725831,
+   "days": 10
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "strategy": "S1_trend",
+   "return": -0.011943349740253795,
+   "max_drawdown": -0.02539139957505343,
+   "worst_day": -0.017308253249036596,
+   "days": 29
+  },
+  {
+   "window": "2022",
+   "strategy": "S1_trend",
+   "return": -0.04955376825926483,
+   "max_drawdown": -0.11607211694460218,
+   "worst_day": -0.017015020949037483,
+   "days": 260
+  },
+  {
+   "window": "SNB week (Jan 2015)",
+   "strategy": "S2_meanrev",
+   "return": -0.002214196878636665,
+   "max_drawdown": -0.010553389985923811,
+   "worst_day": -0.0028147679334886125,
+   "days": 10
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "strategy": "S2_meanrev",
+   "return": -0.05884954858086999,
+   "max_drawdown": -0.0630571806452409,
+   "worst_day": -0.021271543787082126,
+   "days": 29
+  },
+  {
+   "window": "2022",
+   "strategy": "S2_meanrev",
+   "return": -0.1784327212087765,
+   "max_drawdown": -0.18314274972219036,
+   "worst_day": -0.023864876351105114,
+   "days": 260
+  },
+  {
+   "window": "SNB week (Jan 2015)",
+   "strategy": "S3_regime_gate",
+   "return": 0.007179558881173387,
+   "max_drawdown": -0.0034318387277523232,
+   "worst_day": -0.006336003687641127,
+   "days": 10
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "strategy": "S3_regime_gate",
+   "return": -0.005406120869061337,
+   "max_drawdown": -0.01885096899810701,
+   "worst_day": -0.01560109501317077,
+   "days": 29
+  },
+  {
+   "window": "2022",
+   "strategy": "S3_regime_gate",
+   "return": -0.08509460142329184,
+   "max_drawdown": -0.13073554673280696,
+   "worst_day": -0.014437163211829447,
+   "days": 260
+  },
+  {
+   "window": "SNB week (Jan 2015)",
+   "strategy": "BLEND",
+   "return": 0.0035707867261220994,
+   "max_drawdown": -0.0022865415400554756,
+   "worst_day": -0.002286541540055373,
+   "days": 10
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "strategy": "BLEND",
+   "return": -0.021082096967183772,
+   "max_drawdown": -0.021714163708639433,
+   "worst_day": -0.01540185709280163,
+   "days": 29
+  },
+  {
+   "window": "2022",
+   "strategy": "BLEND",
+   "return": -0.11316619233297542,
+   "max_drawdown": -0.1303112660992043,
+   "worst_day": -0.012814069597970601,
+   "days": 260
+  }
+ ],
+ "siren_fired": [
+  {
+   "window": "SNB week (Jan 2015)",
+   "pair": "EURUSD",
+   "siren_days": 5,
+   "first": "2015-01-19",
+   "last": "2015-01-23"
+  },
+  {
+   "window": "SNB week (Jan 2015)",
+   "pair": "USDCHF",
+   "siren_days": 7,
+   "first": "2015-01-15",
+   "last": "2015-01-23"
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "pair": "EURUSD",
+   "siren_days": 15,
+   "first": "2020-03-09",
+   "last": "2020-03-31"
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "pair": "GBPUSD",
+   "siren_days": 18,
+   "first": "2020-03-03",
+   "last": "2020-03-31"
+  },
+  {
+   "window": "COVID crash (Feb\u2013Mar 2020)",
+   "pair": "USDCHF",
+   "siren_days": 15,
+   "first": "2020-03-09",
+   "last": "2020-03-31"
+  },
+  {
+   "window": "2022",
+   "pair": "EURUSD",
+   "siren_days": 27,
+   "first": "2022-03-07",
+   "last": "2022-11-21"
+  },
+  {
+   "window": "2022",
+   "pair": "GBPUSD",
+   "siren_days": 80,
+   "first": "2022-02-25",
+   "last": "2022-12-16"
+  },
+  {
+   "window": "2022",
+   "pair": "USDCHF",
+   "siren_days": 30,
+   "first": "2022-05-20",
+   "last": "2022-12-06"
+  }
+ ],
+ "breakeven": [
+  {
+   "strategy": "S1_trend",
+   "gross_sharpe": -0.2984516953275332,
+   "sharpe_at_1x": -1.2336279817600486,
+   "breakeven_cost_mult": 0.0
+  },
+  {
+   "strategy": "S2_meanrev",
+   "gross_sharpe": 0.12169789002490024,
+   "sharpe_at_1x": -1.3601249013923664,
+   "breakeven_cost_mult": 0.1
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "gross_sharpe": -0.026560668770189838,
+   "sharpe_at_1x": -1.3022489378782238,
+   "breakeven_cost_mult": 0.0
+  },
+  {
+   "strategy": "BLEND",
+   "gross_sharpe": -0.12973957900747862,
+   "sharpe_at_1x": -2.1773603872274934,
+   "breakeven_cost_mult": 0.0
+  }
+ ],
+ "cost_shocks": [
+  {
+   "strategy": "S1_trend",
+   "cost_mult": 1.0,
+   "sharpe_net": -1.2336279817600486,
+   "cagr_net": -0.06931964766870347
+  },
+  {
+   "strategy": "S1_trend",
+   "cost_mult": 2.0,
+   "sharpe_net": -2.1621507464788623,
+   "cagr_net": -0.11759417931843219
+  },
+  {
+   "strategy": "S1_trend",
+   "cost_mult": 3.0,
+   "sharpe_net": -3.076848345867792,
+   "cagr_net": -0.16338133923184484
+  },
+  {
+   "strategy": "S1_trend",
+   "cost_mult": 5.0,
+   "sharpe_net": -4.838840532444364,
+   "cagr_net": -0.24799631622906437
+  },
+  {
+   "strategy": "S2_meanrev",
+   "cost_mult": 1.0,
+   "sharpe_net": -1.3601249013923664,
+   "cagr_net": -0.06682151039171513
+  },
+  {
+   "strategy": "S2_meanrev",
+   "cost_mult": 2.0,
+   "sharpe_net": -2.821158901575624,
+   "cagr_net": -0.13339168960684522
+  },
+  {
+   "strategy": "S2_meanrev",
+   "cost_mult": 3.0,
+   "sharpe_net": -4.244509114109387,
+   "cagr_net": -0.19523879177191206
+  },
+  {
+   "strategy": "S2_meanrev",
+   "cost_mult": 5.0,
+   "sharpe_net": -6.922254789195553,
+   "cagr_net": -0.3060734512303074
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "cost_mult": 1.0,
+   "sharpe_net": -1.3022489378782238,
+   "cagr_net": -0.044842774620992176
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "cost_mult": 2.0,
+   "sharpe_net": -2.5582455863247517,
+   "cagr_net": -0.08629756207779582
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "cost_mult": 3.0,
+   "sharpe_net": -3.773508198670445,
+   "cagr_net": -0.12596634252674077
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "cost_mult": 5.0,
+   "sharpe_net": -6.015227461531339,
+   "cagr_net": -0.2002481734744448
+  },
+  {
+   "strategy": "BLEND",
+   "cost_mult": 1.0,
+   "sharpe_net": -2.1773603872274934,
+   "cagr_net": -0.05739941545909477
+  },
+  {
+   "strategy": "BLEND",
+   "cost_mult": 2.0,
+   "sharpe_net": -4.172221411508642,
+   "cagr_net": -0.10809682217728556
+  },
+  {
+   "strategy": "BLEND",
+   "cost_mult": 3.0,
+   "sharpe_net": -6.069066197049993,
+   "cagr_net": -0.15608300283019072
+  },
+  {
+   "strategy": "BLEND",
+   "cost_mult": 5.0,
+   "sharpe_net": -9.444161699652396,
+   "cagr_net": -0.2444907284208323
+  }
+ ],
+ "execution": [
+  {
+   "strategy": "S1_trend",
+   "sharpe_net": -1.2336279817600486,
+   "sharpe_extra_lag": -1.0581464709048112,
+   "decay": 0.17548151085523744
+  },
+  {
+   "strategy": "S2_meanrev",
+   "sharpe_net": -1.3601249013923664,
+   "sharpe_extra_lag": -1.2635883800359777,
+   "decay": 0.09653652135638868
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "sharpe_net": -1.3022489378782238,
+   "sharpe_extra_lag": -1.3037533241874928,
+   "decay": -0.001504386309268968
+  },
+  {
+   "strategy": "BLEND",
+   "sharpe_net": -2.177360387227494,
+   "sharpe_extra_lag": -1.983590123961364,
+   "decay": 0.19377026326612978
+  }
+ ],
+ "vol_shock": [
+  {
+   "strategy": "S1_trend",
+   "max_dd_base": -0.4323923943953287,
+   "max_dd_shock": -0.42701402483476947,
+   "sharpe_base": -1.2336279817600486,
+   "sharpe_shock": -1.1806251252431608
+  },
+  {
+   "strategy": "S2_meanrev",
+   "max_dd_base": -0.42863820206011916,
+   "max_dd_shock": -0.4337628688791333,
+   "sharpe_base": -1.3601249013923664,
+   "sharpe_shock": -1.3532803957895467
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "max_dd_base": -0.3086639368352563,
+   "max_dd_shock": -0.3025482512519144,
+   "sharpe_base": -1.3022489378782238,
+   "sharpe_shock": -1.2335503849138187
+  },
+  {
+   "strategy": "BLEND",
+   "max_dd_base": -0.37310846811190423,
+   "max_dd_shock": -0.37137378196347304,
+   "sharpe_base": -2.177360387227494,
+   "sharpe_shock": -2.1426057077303993
+  }
+ ],
+ "bootstrap": [
+  {
+   "strategy": "S1_trend",
+   "median_max_dd": -0.09362882222148772,
+   "p5_pain_max_dd": -0.15657170808386872,
+   "p95_max_dd": -0.04620099387357869
+  },
+  {
+   "strategy": "S2_meanrev",
+   "median_max_dd": -0.08091736578593017,
+   "p5_pain_max_dd": -0.15734796496047881,
+   "p95_max_dd": -0.03625380684817156
+  },
+  {
+   "strategy": "S3_regime_gate",
+   "median_max_dd": -0.058947081439018,
+   "p5_pain_max_dd": -0.105632367831701,
+   "p95_max_dd": -0.026579884968164026
+  },
+  {
+   "strategy": "BLEND",
+   "median_max_dd": -0.06174227936843396,
+   "p5_pain_max_dd": -0.10203727036141708,
+   "p95_max_dd": -0.03108321009181178
+  }
+ ],
+ "verdicts": {
+  "replays": "Worst window/strategy: S2_meanrev in 2022 (max DD -18.3%, worst day -2.39%). Siren stop fired on 197 pair-days across the three windows (see table) \u2014 the overlay was flat exactly when it was supposed to be.",
+  "costs": "No strategy has a positive gross Sharpe on the test set, so the breakeven cost multiplier is 0 for S1_trend, S3_regime_gate, BLEND \u2014 there is no edge to pay costs from. BLEND breakeven 0\u00d7 the modelled cost. A practitioner reads this row first: nothing here survives its own transaction costs.",
+  "execution": "One extra day of lag changes net Sharpe by -0.00 to +0.19. The decay is small, which mostly reflects how little there was to lose; the numbers are reported as they are.",
+  "vol": "Scaling crisis-regime returns by 1.5x deepens the worst max drawdown by only 0.5% (-43.2% \u2192 -43.4%): crisis exposure is small because the siren stop and the crisis-flat gate take risk off in exactly those days \u2014 the overlay does its job. The base drawdowns themselves are dreadful; the shock is not what makes them so.",
+  "bootstrap": "BLEND one-year max drawdown: median -6.2%, 5th-percentile pain case -10.2% (20-day blocks keep the autocorrelation that day-shuffling would destroy).",
+  "robustness": "Across \u00b130 % of every parameter the BLEND's net Sharpe stays within a band of 0.86 (widest for siren_stop) \u2014 a flat, negative plateau: nothing is overfit to a spike, and nothing is good either. Parameters were not changed after seeing this."
+ }
+}

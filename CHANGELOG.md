@@ -2,6 +2,26 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.4.0 — phase-16: stress lab (2026-08-18)
+
+- `src/fxradar/stress.py` + `python -m fxradar.stress` → `reports/stress_report.md` (one section
+  per test, a verdict sentence each, summary table), `stress_bootstrap_dd.png`,
+  `stress_robustness.png`, `data/stress_tests.json` for the app.
+- Tests run: (1) historical replays — SNB week Jan 2015, COVID crash Feb–Mar 2020, 2022 —
+  return / max DD / worst day per strategy + the siren stop's firing dates (197 pair-days);
+  (2) cost shocks at 2×/3×/5× and the BREAKEVEN COST multiplier (S1 0, S2 0.1, S3 0, BLEND 0 —
+  no strategy has a positive gross Sharpe on the test set except S2 barely, so there is no edge
+  to pay costs from); (3) execution shock, one extra day of lag (Sharpe change −0.00…+0.19);
+  (4) volatility shock, crisis returns ×1.5 (worst DD deepens 0.5 % only — the overlay takes risk
+  off in crisis); (5) 20-day block bootstrap, 1 000 one-year paths (BLEND median max DD −6.2 %,
+  5th-pct pain −10.2 %); (6) ±30 % parameter robustness heatmaps (BLEND net Sharpe band 0.86: a
+  flat negative plateau — nothing overfit, nothing good). Nothing was re-tuned.
+- Strategy-lab page: compact stress panel (breakeven table, replays, bootstrapped drawdowns +
+  histogram). README results section updated with the strategy-layer verdict.
+- Tests (`tests/test_stress.py`, 4): moving-block bootstrap preserves autocorrelation
+  (vs day-shuffle) and shape; params override restores; breakeven semantics (positive gross →
+  positive multiplier, negative gross → 0); window stats.
+
 ## v2.3.0 — phase-15: strategies and blend (2026-08-18)
 
 - `src/fxradar/strategies.py`: S1 trend (clip(mom_20/3 %)), S2 mean reversion (−clip(z_5d, ±2)/2
