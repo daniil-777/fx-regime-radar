@@ -2,6 +2,17 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.3.1 — phase-10: polish (2026-08-18)
+
+- README rewritten: hero screenshot, pitch, live-link placeholder, mermaid architecture, "How it
+  works", Results with the frozen test-set scoreboard + calibration plot, Limitations promoted,
+  repo tour, run locally, deploy, disclaimer, badges.
+- `docs/model_cards.md` (HMM, forecaster, siren, narrator), `docs/INTERVIEW_NOTES.md` (nine
+  answers in the developer's voice, each with a hard follow-up), `docs/DEMO_SCRIPT.md`
+  (90-second walkthrough), fresh `docs/screenshots/dashboard.png`.
+- Code pass: ruff + black clean, return-type hints on all public functions, build-kit files
+  (`START_HERE.md`, `USAGE.md`) moved to `docs/`, no stray files. 77 tests green.
+
 ## v1.3.0 — phase-09: narrator (2026-08-18)
 
 - `src/fxradar/narrate.py`: `build_stats(pair)` (numbers only: regime, regime_prob,

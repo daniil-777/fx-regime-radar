@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Iterator
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
@@ -119,7 +120,7 @@ def download_prices(
 # --------------------------------------------------------------------------------------
 # corrupted-print filters (data quality, not modelling)
 # --------------------------------------------------------------------------------------
-def _per_pair(prices: pd.DataFrame):
+def _per_pair(prices: pd.DataFrame) -> Iterator[pd.DataFrame]:
     """Yield (index, sorted group) per pair; refuse ambiguous frames."""
     if not prices.index.is_unique:
         raise ValueError("prices must have a unique index")

@@ -11,6 +11,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -218,7 +219,7 @@ def economic_check(df: pd.DataFrame) -> pd.DataFrame:
 # --------------------------------------------------------------------------------------
 # 5. plots
 # --------------------------------------------------------------------------------------
-def _style():
+def _style() -> Any:
     import matplotlib
 
     matplotlib.use("Agg")

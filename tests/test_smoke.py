@@ -16,7 +16,7 @@ MODULES = [
 
 
 def test_version() -> None:
-    assert fxradar.__version__ == "1.3.0"
+    assert fxradar.__version__ == "1.3.1"
 
 
 def test_all_modules_import() -> None:
