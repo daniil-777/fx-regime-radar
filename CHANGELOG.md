@@ -2,6 +2,26 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.9.1 — regime space: the feature space in 3-D (2026-08-18)
+
+- New page `app/views/regime_space.py` (Radar → Regime space): the HMM's feature space rendered in WebGL,
+  the only 3-D *chart* in the app (the orb is ambient) because the third axis is a real dimension,
+  not a decorated time series.
+  *State-space portrait*: one point per day at (realised vol log, 1-month momentum, selectable third
+  axis), coloured by the day's filtered regime; regime centres; a 20–120-day trail to the ringed as-of
+  marker; other pairs' same-day ghosts; ▶ replays the last year (~125 Plotly frames, every 2nd day,
+  hover text computed once — the frame build is the page's cost, ≈ 0.45 s warm). *Regime landscape*:
+  numpy 2-D histogram + binomial blur → density terrain over (vol, momentum), surface colour = dominant
+  regime per cell in vol order (calm→crisis) so adjacent regimes get adjacent colour bands; empty cells
+  are cut out (NaN) and inherit the nearest populated cell's colour index (else Plotly's per-face colour
+  interpolation paints rainbow rims). *Geometry readout*: vol percentile, momentum, z-scored distance to
+  each regime centre — labelled as a reading aid, distinct from the HMM probability.
+- Reads `features.parquet` + `regimes.parquet` only, filtered to the as-of date (scenario explorer and
+  deep links `?pair=&asof=` work); both universes; no new dependency (Plotly; scipy `distance_transform_edt`
+  is already installed with scikit-learn).
+- Router: `Regime space` under Radar; README section + repo tour; screenshots
+  `docs/screenshots/regime_space{,_snb}.png`; AppTest `test_regime_space_page_renders_and_replays`.
+
 ## v2.8.1 — responsive pass: desktop, tablet, phone (2026-08-18)
 
 - Regime orb fits its column: responsive square wrapper, canvas sized to the space it gets

@@ -1,6 +1,6 @@
 """FX Regime Radar — app entrypoint (router). Reads small artifacts only (CLAUDE.md rule 8).
 
-Navigation: Overview · Advisor · Strategy lab · Arcade · Methodology. Every page shares the design
+Navigation: Overview · Advisor · Regime space · Strategy lab · Arcade · Methodology. Every page shares the design
 system (app/ui.py), the universe switch, and — where it makes sense — the scenario explorer.
 """
 
@@ -26,6 +26,7 @@ pages = {
     "Radar": [
         st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
         st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
+        st.Page(str(VIEWS / "regime_space.py"), title="Regime space"),
     ],
     "Research": [
         st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab"),

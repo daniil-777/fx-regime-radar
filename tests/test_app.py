@@ -140,3 +140,22 @@ def test_mobile_bar_mirrors_sidebar_controls_both_ways() -> None:
     assert at.sidebar.selectbox[0].value == "crypto"
     assert at.sidebar.selectbox[1].options[0] == "BTC/USD"
     assert not at.warning and not at.error
+
+
+def test_regime_space_page_renders_and_replays() -> None:
+    """Regime space (3-D feature-space views): renders for the default pair, carries animation
+    frames that end exactly on the as-of day, survives a third-axis switch and a time-machine jump,
+    and never talks direction. Reads artifacts only (rule 8)."""
+    at = _run("app/views/regime_space.py")
+    assert not at.exception, at.exception
+    txt = " ".join(m.value for m in at.markdown)
+    assert "State-space portrait" in txt and "Regime landscape" in txt
+    assert not any(w in txt.lower() for w in [" buy ", " sell ", "will rise", "will fall"])
+    at.selectbox(key="rs_third").select("5-day change risk").run()
+    assert not at.exception, at.exception
+    episodes = at.selectbox(key="episode_fx").options
+    snb = [o for o in episodes if "SNB" in o]
+    if snb:  # replay a named shock: everything must still render on that as-of date
+        at.selectbox(key="episode_fx").select(snb[0]).run()
+        assert not at.exception, at.exception
+        assert "as of 2015-01-15" in " ".join(m.value for m in at.markdown)

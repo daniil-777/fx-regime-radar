@@ -128,7 +128,7 @@ The deliverable is the framework and the honesty — a research demonstration, n
 ```
 src/fxradar/      config · data · features · hmm_model · validate · forecaster · siren · narrate · ledger (live record)
 pipelines/        run_daily.py — the only place heavy compute happens
-app/              app.py (router), views/{overview,advisor,strategy_lab,arcade,methodology}.py, ui.py, orb.py — reads artifacts only
+app/              app.py (router), views/{overview,advisor,regime_space,strategy_lab,arcade,methodology}.py, ui.py, orb.py — reads artifacts only
 data/             prices/features/regimes parquet, report.json, pipeline_status.json, ledger.parquet + live_record.json + badges/ (committed)
 models/           hmm_*_v0.4.0.joblib, forecaster_v1.1.0.json, siren_v1.2.0.joblib, manifest.json
 reports/          validation markdown + png plots (HMM, forecaster, siren)
@@ -238,6 +238,28 @@ particles, paused when the tab is hidden, gentle drift under `prefers-reduced-mo
 layout shift if WebGL/three.js is unavailable, no sound, no faces. Measured cost ≈ 0.3 ms per frame of JS +
 render submission (≈ 2 % of one core at 60 fps under software GL; less on a real GPU). Screenshots of all states:
 `docs/screenshots/orb/`. The v3 React port will use react-three-fiber with the same presets.
+
+## Regime space — the model's feature space in 3-D
+
+`Regime space` (Radar → Regime space) is the one place the app plots *data* in three dimensions (the orb is ambient, not a chart), and only
+because the third axis is real: a hidden Markov model is a clustering of days in feature space with memory, so the features *are*
+the coordinates. Two WebGL views (Plotly `Scatter3d` / `Surface`, no new dependency), read from
+`features.parquet` + `regimes.parquet` and filtered to the as-of date so the scenario explorer replays honestly:
+
+- **State-space portrait** — every trading day as a point at (realised vol, 1-month momentum, third axis: HMM
+  entropy · cross-pair correlation · vol ratio · 5-day change risk · days in regime), coloured by the regime the
+  filtered HMM assigned *on that day*; regime centres (medians) as diamonds; the last 20–120 days as a trail ending
+  in the ringed as-of marker; the other pairs' same-day positions as hollow ghosts; ▶ replays the trail through the
+  last year (Plotly frames, ~125, built in < 0.5 s). Orbit, zoom, hide a regime from the legend.
+- **Regime landscape** — a density terrain of history over (vol, momentum): height = how many days lived there
+  (log), colour = the regime the model most often called there (calm hill at low vol, crisis ridge at high vol),
+  the same trail walking over the hills. Plain numpy (2-D histogram + binomial blur); empty cells are cut out.
+- **Geometry readout** — realised-vol percentile, momentum, and z-scored distance from today to each regime's
+  centre — labelled as a reading aid, distinct from the HMM's own filtered probability (which also uses persistence).
+
+Nothing on the page predicts; the axes are computed from data up to each day (rule 1). Screenshots:
+`docs/screenshots/regime_space.png` (today), `docs/screenshots/regime_space_snb.png` (USD/CHF as of 2015-01-15 —
+watch the entropy axis: the model's doubt spikes on the SNB day before the label moves).
 
 ## Runs on desktop, tablet and phone
 
