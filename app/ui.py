@@ -117,6 +117,30 @@ def confidence_bar(p: float, color: str = TEXT, label: str = "confidence") -> st
     )
 
 
+def risk_color(p: float) -> str:
+    """Band colour for a change-risk probability: <20 % muted, 20–40 % amber, >40 % crisis red."""
+    pct = float(p) * 100
+    return MUTED if pct < 20 else (REGIME_COLORS["chop"] if pct <= 40 else REGIME_COLORS["crisis"])
+
+
+def risk_gauge(p: float, drivers: list[str] | None = None) -> str:
+    """Horizontal change-risk gauge with band colour and the top drivers beneath."""
+    pct = max(0.0, min(1.0, float(p))) * 100
+    color = risk_color(p)
+    ticks = "".join(
+        f'<div style="position:absolute;left:{t}%;top:-2px;width:1px;height:12px;background:{BORDER}"></div>'
+        for t in (20, 40)
+    )
+    drv = ""
+    if drivers:
+        drv = f'<div class="fx-muted" style="font-size:0.75rem;margin-top:4px">drivers: {html.escape(", ".join(str(d) for d in drivers))}</div>'
+    return (
+        f'<div class="fx-kv" style="margin-top:10px"><span>5-day change risk</span><span class="fx-num" style="color:{color}">{pct:.0f}%</span></div>'
+        f'<div class="fx-bar" style="position:relative;overflow:visible"><div style="width:{pct:.1f}%;background:{color}"></div>{ticks}</div>'
+        f"{drv}"
+    )
+
+
 def card(body_html: str, title: str | None = None) -> None:
     """Render a card (surface, 1px border, 12px radius, 20px padding)."""
     head = f"<h3>{html.escape(title)}</h3>" if title else ""

@@ -149,6 +149,11 @@ for col, p in zip(cols, PAIRS, strict=True):
         f'<span>last close <span class="fx-num">{closes.iloc[-1]:.4f}</span></span></div>'
         f"{ui.sparkline_svg(closes, color)}"
         f'<div class="fx-kv"><span>20-day close</span><span class="fx-num">{(closes.iloc[-1] / closes.iloc[0] - 1) * 100:+.2f}%</span></div>'
+        + (
+            ui.risk_gauge(latest["change_risk_5d"], list(latest["top_drivers"]))
+            if "change_risk_5d" in latest and pd.notna(latest["change_risk_5d"])
+            else ""
+        )
     )
     with col:
         ui.card(body)

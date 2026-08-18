@@ -1,5 +1,5 @@
 {
-  "last_run_utc": "2026-08-18T09:31:40Z",
+  "last_run_utc": "2026-08-18T09:37:54Z",
   "data_through": "2026-08-17",
   "rows": {
     "prices": 16840,
@@ -7,7 +7,8 @@
     "regimes": 16660
   },
   "model_versions": {
-    "hmm": "0.4.0"
+    "hmm": "0.4.0",
+    "forecaster": "1.1.0"
   },
   "ecb_check": {
     "EURUSD": {
@@ -22,8 +23,9 @@
     }
   },
   "stage_seconds": {
-    "data": 2.5,
-    "features": 0.04,
-    "hmm": 1.66
+    "data": 1.58,
+    "features": 0.03,
+    "hmm": 1.71,
+    "forecaster": 1.1
   }
 }

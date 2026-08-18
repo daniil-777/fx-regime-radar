@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import config, data, features
+from fxradar import config, data, features, forecaster
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -77,6 +77,22 @@ def stage_hmm(ctx: dict) -> None:
     )
 
 
+def stage_forecaster(ctx: dict) -> None:
+    model, meta = forecaster.load_model()  # saved xgboost json + meta (threshold, calibration)
+    matrix = forecaster.build_matrix(ctx["features"], ctx["regimes"])
+    scored = forecaster.score(model, matrix, meta)
+    ctx["regimes"] = ctx["regimes"].merge(scored, on=["date", "pair"], how="left")
+    ctx["regimes"]["model_version"] = ctx["regimes"]["model_version"] + f"|fc={meta['version']}"
+    ctx["model_versions"]["forecaster"] = meta["version"]
+    latest = ctx["regimes"].sort_values("date").groupby("pair").tail(1)
+    log.info(
+        "forecaster: %s",
+        ", ".join(
+            f"{r.pair} risk={r.change_risk_5d:.2f} {r.top_drivers}" for r in latest.itertuples()
+        ),
+    )
+
+
 def stage_write(ctx: dict) -> None:
     """Write every artifact at once (only reached when all compute stages succeeded)."""
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -105,6 +121,7 @@ def stage_write(ctx: dict) -> None:
 register("data", stage_data)
 register("features", stage_features)
 register("hmm", stage_hmm)
+register("forecaster", stage_forecaster)
 
 
 # --------------------------------------------------------------------------------------

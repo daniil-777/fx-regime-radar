@@ -3,5 +3,9 @@
     "version": "0.4.0",
     "train_end": "2016-12-31",
     "refit_utc": "2026-08-18T09:00Z"
+  },
+  "forecaster": {
+    "version": "1.1.0",
+    "trained_utc": "2026-08-18T11:37Z"
   }
 }

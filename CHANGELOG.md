@@ -2,6 +2,32 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.1.0 — phase-07: forecaster (2026-08-18)
+
+- `src/fxradar/forecaster.py`: pooled XGBoost classifier for "regime changes within the next
+  5 trading days". Labels look forward; every feature is causal (matrix truncation-invariance
+  test). Features exactly per spec (10 numeric incl. filtered HMM outputs + 3 regime one-hots
+  + 2 pair one-hots). Time-ordered splits with a 5-day embargo on both sides of every boundary
+  (tested). Fixed hyper-parameters, `scale_pos_weight` from train (4.88), early stopping on
+  val (iteration 283). No grid search — deliberate.
+- Probabilities are Platt-recalibrated on VALIDATION (a=0.95, b=−1.30): `scale_pos_weight`
+  makes raw probabilities over-predict (raw Brier 0.128 vs 0.102 calibrated); both are shown.
+  Threshold 0.22 chosen on val for recall ≥ 60 %.
+- `reports/forecaster_eval.md` (+ `forecaster_calibration.png`, `forecaster_shap.png`), test
+  set scored ONCE and frozen: PR-AUC 0.548 vs logistic 0.431, base rate 0.162, one-feature
+  rule 0.143; precision 0.45 / recall 0.59 at the threshold; Brier 0.102 (logistic 0.116).
+  Honest interpretation paragraph. Never accuracy.
+- SHAP TreeExplainer: beeswarm png; per-day top-3 |SHAP| feature names → `top_drivers`.
+- Model persisted as `models/forecaster_v1.1.0.json` (+ `.meta.json` with threshold,
+  calibration, features, scoreboard); registered in `models/manifest.json`. Pipeline stage
+  `forecaster` registered in `run_daily.py`; `regimes.parquet` now carries `change_risk_5d`
+  and `top_drivers` (model_version "hmm=0.4.0|fc=1.1.0").
+- Dashboard: "5-day change risk" gauge on every weather card (muted <20 %, amber 20–40 %,
+  red >40 %) with the top drivers beneath.
+- Tests (`tests/test_forecaster.py`, 8): label semantics, embargo gaps, matrix truncation
+  invariance, exact feature list, threshold rule, Platt calibration recovers a known
+  distortion, top-driver extraction, saved-model contract.
+
 ## v1.0.1 — phase-06: automation (2026-08-18)
 
 - `pipelines/run_daily.py`: single orchestrator — stages `data → features → hmm → write`,
