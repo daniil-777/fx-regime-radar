@@ -51,9 +51,10 @@ def orb_html(
         " · siren pulse" if cfg["pulse"] else ""
     )
     return f"""
-<div id="orb-wrap" style="width:{size}px;height:{size}px;position:relative;font-family:Inter,-apple-system,sans-serif;">
+<style>html,body{{margin:0;padding:0;overflow:hidden;background:transparent}}</style>
+<div id="orb-wrap" style="width:100%;max-width:{size}px;aspect-ratio:1/1;margin:0 auto;position:relative;font-family:Inter,-apple-system,sans-serif;">
   <div id="orb-dot" title="{html.escape(caption)}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-    <div style="width:{size // 3}px;height:{size // 3}px;border-radius:50%;background:{color}33;border:2px solid {color};box-shadow:0 0 24px {color}55;"></div>
+    <div style="width:34%;height:34%;border-radius:50%;background:{color}33;border:2px solid {color};box-shadow:0 0 24px {color}55;"></div>
   </div>
   <canvas id="orb" style="position:absolute;inset:0;display:none;" title="{html.escape(caption)}"></canvas>
   <div id="orb-cap" style="position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-size:10px;color:#8A94A6;opacity:0;transition:opacity .2s;pointer-events:none;">what am I looking at? {html.escape(caption)} — colour and motion follow the regime, jitter follows change risk, a pulse follows the siren</div>
@@ -75,9 +76,15 @@ def orb_html(
     if (!window.THREE) throw new Error('three.js not loaded');
     renderer = new THREE.WebGLRenderer({{canvas: canvas, alpha: true, antialias: true, powerPreference: 'low-power'}});
   }} catch (e) {{ window.__orbFallback = String(e); return; }}  // flat dot stays: zero layout shift
-  const size = CFG.size;
+  // Fit the drawing buffer to the space the column actually gives us (the wrap is a responsive
+  // square, max CFG.size px) — a fixed-size canvas in a narrow column was clipped to a slice.
+  const fit = () => Math.max(24, Math.min(CFG.size, Math.round(wrap.clientWidth || CFG.size)));
+  let size = fit();
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(size, size, false);
+  if (window.ResizeObserver) {{
+    new ResizeObserver(() => {{ const s = fit(); if (s !== size) {{ size = s; renderer.setSize(s, s, false); }} }}).observe(wrap);
+  }}
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100); camera.position.z = 3.2;
   const N = Math.min(CFG.particles, 1000), base = new Float32Array(N * 3), pos = new Float32Array(N * 3);
@@ -129,7 +136,9 @@ def render(
     """Embed the orb in the Streamlit page (fixed height: no layout shift whatever happens inside)."""
     html_doc = orb_html(regime, change_risk, anomaly_pct, size, pair)
     if hasattr(st, "iframe"):  # Streamlit >= 1.61: the successor of components.v1.html
-        st.iframe(html_doc, width=size + 8, height=size + 24)
+        st.iframe(
+            html_doc, width="stretch", height=size + 24
+        )  # fills the column, canvas fits itself
     else:  # older Streamlit
         import streamlit.components.v1 as components
 

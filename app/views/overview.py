@@ -313,7 +313,7 @@ if sel is not None and pair in api_latest:
     sel = pd.Series(
         {**sel.to_dict(), **{k: v for k, v in api_latest[pair].items() if k in sel.index}}
     )
-orb_col, title_col = st.columns([1, 7])
+orb_col, title_col = st.columns([1, 5], vertical_alignment="center")
 with (
     orb_col
 ):  # the regime orb: a display of the same numbers as the card (regime, change risk, siren)
@@ -327,7 +327,7 @@ with (
         )
 with title_col:
     st.markdown(
-        f'<div style="display:flex;justify-content:space-between;align-items:center;margin:34px 0 -4px 2px">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 -4px 2px">'
         f'<span style="font-weight:600">{UNI.display(pair)} — close with filtered regime bands{" · as of " + as_of.strftime("%Y-%m-%d") if time_machine else ""}</span><span>{legend}</span></div>',
         unsafe_allow_html=True,
     )
