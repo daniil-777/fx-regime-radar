@@ -4,6 +4,11 @@ All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.
 
 ## v2.10.1 — always-on deploy: Docker + Oracle Always-Free (2026-08-18)
 
+- Cloud Run path: image honours `$PORT`; `deploy/cloudbuild.yaml` (Cloud Build, no local Docker);
+  `.github/workflows/cloudrun.yml` (build → Artifact Registry → `gcloud run deploy`, session affinity,
+  1 h timeout, min-instances configurable; inactive until `GCP_PROJECT` is set; also runs after each
+  successful `daily-refresh`); guide `docs/DEPLOY_CLOUD_RUN.md` with cost notes.
+
 - `deploy/`: self-contained app image (`Dockerfile`, python:3.11-slim, non-root, healthcheck; every
   dependency has aarch64 wheels so it builds on Ampere A1), `docker-compose.yml` (app + Caddy with
   automatic HTTPS via `SITE_ADDRESS`, restart policies, artifacts bind-mounted from the git checkout),

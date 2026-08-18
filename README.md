@@ -170,7 +170,10 @@ To retrain: `python -m fxradar.hmm_model --refit`, `python -m fxradar.forecaster
    script for an **Oracle Cloud Always-Free VM** (`deploy/cloud-init.yaml`) — step by step in
    [docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md); €0/month, loads in ~1 s, survives reboots. The
    `docker image` GitHub Action builds and health-checks the image on every relevant push.
-   Locally (with Docker): `make docker` → http://localhost.
+   Locally (with Docker): `make docker` → http://localhost. Prefer managed containers? The same image
+   deploys to **Google Cloud Run** (HTTPS URL, zero ops, ≈ $8–10/month kept warm or free with cold
+   starts) — [docs/DEPLOY_CLOUD_RUN.md](docs/DEPLOY_CLOUD_RUN.md); the `cloud run` workflow redeploys
+   after every daily refresh once `GCP_PROJECT` / `GCP_SA_KEY` are set.
 3. **Secrets (optional).** Live narration needs `ANTHROPIC_API_KEY` under *App settings → Secrets*
    on Streamlit Cloud and as a GitHub repository secret. Without it everything runs on the
    deterministic template. Cost with it: ≈ 5 cents per month (three Haiku calls per weekday).

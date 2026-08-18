@@ -33,7 +33,9 @@ COPY reports ./reports
 
 RUN chown -R radar:radar /app
 USER radar
+# PORT is injected by Cloud Run (8080); everywhere else the default 8501 applies.
+ENV PORT=8501
 EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD curl -fs http://127.0.0.1:8501/_stcore/health || exit 1
-CMD ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+  CMD curl -fs "http://127.0.0.1:${PORT}/_stcore/health" || exit 1
+CMD ["sh", "-c", "exec streamlit run app/app.py --server.port=${PORT} --server.address=0.0.0.0"]

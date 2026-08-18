@@ -1,0 +1,23 @@
+# Cloud Build: build the app image with deploy/Dockerfile and push it to Artifact Registry.
+#   gcloud builds submit --config deploy/cloudbuild.yaml --substitutions _REGION=europe-west1,_REPO=fxradar .
+# No local Docker needed. Used by docs/DEPLOY_CLOUD_RUN.md (manual path) and the cloudrun workflow.
+substitutions:
+  _REGION: europe-west1
+  _REPO: fxradar
+  _IMAGE: app
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - deploy/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}
+      - -t
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest
+      - .
+images:
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest
+options:
+  logging: CLOUD_LOGGING_ONLY
