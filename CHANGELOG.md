@@ -2,6 +2,29 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v0.3.0 — phase-02: feature engine (2026-08-18)
+
+- `src/fxradar/features.py`: `build_features(prices)` computes the base contract features per
+  pair — `ret_1d` (log return), `vol_20`/`vol_60` (rolling sample std × √252, ddof=1),
+  `vol_ratio` (5-day vol / vol_60, the "storm front"), `mom_20`, `rng_hl` (10-day mean of
+  (high−low)/close), `corr_20`, `ret_5d_abs`. Strictly causal; first 60 rows per pair dropped
+  as warm-up; no scaling (models own their scalers).
+- `corr_20` — deliberate, documented readings of the spec: (a) returns are put on one sign
+  convention before correlating (USDCHF negated via `config.USD_BASE_PAIRS`, so every column
+  is foreign-currency-vs-USD; the literal un-flipped mean gives medians −0.07/+0.04/−0.71
+  because the +/− legs cancel, the flipped one gives 0.75/0.64/0.71 — a comparable
+  "dollar-factor strength" across pairs); (b) each of the two correlations is computed on the
+  dates both pairs traded and as-of aligned backward onto the pair's own dates (a hole in one
+  pair only freezes that leg); (c) an undefined (zero-variance) window yields NaN, never a
+  stale value.
+- CLI `python -m fxradar.features`: prices.parquet → `data/features.parquet` (16 660 rows ×
+  10, 2005-03-28 → 2026-08-17), prints shape, rows per pair, date range and NaN report (0).
+- Tests (`tests/test_features.py`, 12): contract schema/dtypes, no post-warm-up NaNs, toy
+  constant series, hand-computed vol_20/vol_60/vol_ratio/mom_20/ret_1d/rng_hl/ret_5d_abs,
+  corr_20 mean-of-two + sign convention + hole + zero-variance semantics, TRUNCATION
+  INVARIANCE (drop last 30 rows per pair; `assert_frame_equal(check_exact=True)`), one-pair
+  truncation, shifting-start drift check. Verified on the full real history for k = 1, 5, 30.
+
 ## v0.2.0 — phase-01: data loader (2026-08-18)
 
 - `src/fxradar/data.py`: `download_prices` (yfinance `EURUSD=X`, `CHF=X`, `GBPUSD=X`; 3 attempts

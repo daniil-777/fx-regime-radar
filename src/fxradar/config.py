@@ -22,6 +22,10 @@ YF_TICKERS: dict[str, str] = {
     "GBPUSD": "GBPUSD=X",
 }
 
+# Pairs quoted with USD as the BASE currency (price = foreign units per 1 USD). Their returns
+# have the opposite sign to EURUSD/GBPUSD for the same "dollar move"; corr_20 flips them.
+USD_BASE_PAIRS: frozenset[str] = frozenset({"USDCHF"})
+
 # Plausible price ranges used as sanity bounds (a broken feed fails loudly, not silently).
 PRICE_BOUNDS: dict[str, tuple[float, float]] = {
     "EURUSD": (0.7, 2.0),
