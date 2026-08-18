@@ -35,3 +35,16 @@ make test       # pytest (no network needed)
 
 If a daily fetch fails, the pipeline exits nonzero, nothing under `data/` changes, and the app keeps
 serving the last good state with its "Data through" date — no silent staleness.
+
+## Narration (phase 09)
+
+Each weather card carries three plain-English sentences generated from the computed numbers only
+(regime, confidence, age, 5-day change risk and its drivers, anomaly status). With
+`ANTHROPIC_API_KEY` set — locally in the environment or `.streamlit/secrets.toml` (gitignored), on
+Streamlit Cloud under *App settings → Secrets*, on GitHub as a repository secret passed to the
+daily workflow — the sentences come from `claude-haiku-4-5` (badge **AI**); without a key, or on
+any API failure, a deterministic template writes them (badge **auto**). The model never sees
+anything but a small JSON of numbers and never predicts prices or gives advice.
+
+**Cost:** three calls per weekday, roughly 450 input + 120 output tokens each, at Haiku pricing
+($1 / $5 per million tokens) ≈ $0.002 per day — about **5 cents per month**.

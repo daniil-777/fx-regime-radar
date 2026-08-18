@@ -33,9 +33,11 @@ jobs:
 
       - name: Run the daily pipeline (loads saved models, never trains)
         run: python pipelines/run_daily.py
-        # No secrets here on purpose: the pipeline runs fully without a key
-        # (the phase-09 narrator falls back to its template). ANTHROPIC_API_KEY,
-        # when added, is passed as a repository secret — never written to files.
+        env:
+          # Optional. When the repository secret is absent this is empty and the
+          # narrator uses its deterministic template — the run still succeeds.
+          # The key only ever lives in memory; nothing writes it to files or logs.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Commit refreshed artifacts
         run: |

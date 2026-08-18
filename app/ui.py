@@ -161,6 +161,21 @@ def siren_dial(pct: float, label: str) -> str:
     )
 
 
+def narration(entry: dict | None) -> str:
+    """Quote-style narration paragraph with a tiny source badge (AI / auto) and its timestamp."""
+    if not entry or not entry.get("text"):
+        return ""
+    ai = entry.get("source") == "llm"
+    badge_color = REGIME_COLORS["trend"] if ai else MUTED
+    badge = f'<span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{badge_color};background:{badge_color}22;border:1px solid {badge_color}55">{"AI" if ai else "auto"}</span>'
+    when = html.escape(str(entry.get("generated_at", ""))[:16].replace("T", " "))
+    return (
+        f'<div style="margin-top:12px;padding:10px 12px;border-left:3px solid {BORDER};color:{TEXT};font-size:0.86rem;line-height:1.45">'
+        f"{html.escape(entry['text'])}"
+        f'<div class="fx-muted" style="font-size:0.72rem;margin-top:6px">{badge} &nbsp;{when} UTC</div></div>'
+    )
+
+
 def card(body_html: str, title: str | None = None) -> None:
     """Render a card (surface, 1px border, 12px radius, 20px padding)."""
     head = f"<h3>{html.escape(title)}</h3>" if title else ""

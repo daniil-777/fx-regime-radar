@@ -23,6 +23,7 @@ from fxradar.config import (
     PAIRS,
     PRICES_PATH,
     REGIMES_PATH,
+    REPORT_PATH,
     VAL_START,
 )  # noqa: E402
 
@@ -104,9 +105,15 @@ def load_status(mtime: float) -> dict:
     return json.loads(STATUS_PATH.read_text()) if STATUS_PATH.exists() else {}
 
 
+@st.cache_data(show_spinner=False)
+def load_report(mtime: float) -> dict:
+    return json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {}
+
+
 regimes = load_regimes(_mtime(REGIMES_PATH))
 prices = load_prices(_mtime(PRICES_PATH))
 status = load_status(_mtime(STATUS_PATH))
+report = load_report(_mtime(REPORT_PATH))
 data_through = regimes["date"].max()
 updated = status.get("last_run_utc", "")
 updated_txt = (
@@ -154,6 +161,7 @@ for col, p in zip(cols, PAIRS, strict=True):
             if "change_risk_5d" in latest and pd.notna(latest["change_risk_5d"])
             else ""
         )
+        + ui.narration(report.get(p))
     )
     with col:
         ui.card(body)

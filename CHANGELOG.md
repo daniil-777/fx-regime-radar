@@ -2,6 +2,26 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.3.0 — phase-09: narrator (2026-08-18)
+
+- `src/fxradar/narrate.py`: `build_stats(pair)` (numbers only: regime, regime_prob,
+  days_in_regime, change_risk_5d, top_drivers, anomaly_pct, nearest-neighbour date, 5-day
+  return); `narrate(stats)` via the Anthropic SDK — model `claude-haiku-4-5`, temperature 0.3,
+  max_tokens 350, the verbatim guardrail system prompt, user content = the stats JSON only;
+  key from env or Streamlit secrets; SDK retries (2, backoff); `template_narrate` writes the
+  same three sentences deterministically; `narrate_with_fallback` never raises. Output
+  `data/report.json` = {pair: {text, generated_at, source: "llm"|"template", stats}}.
+- Pipeline stage `narrator` registered LAST; without a key the pipeline succeeds on the
+  template path (verified). `daily.yml` passes the optional `ANTHROPIC_API_KEY` repository
+  secret as an env var (empty → template).
+- Dashboard: quote-style narration on every weather card with an AI/auto badge and timestamp;
+  the app never calls the API (reads `report.json` only).
+- README: how to add the key (GitHub secret, Streamlit secrets), cost estimate ≈ 5 ¢/month.
+- Tests (`tests/test_narrate.py`, 5): template = exactly three sentences containing the regime
+  and the risk figure (+ neighbour only when anomaly_pct > 90); missing key never raises; API
+  failure falls back; mocked client receives the system prompt, model/temperature/max_tokens,
+  and ONLY JSON-derived user content; build_stats types.
+
 ## v1.2.0 — phase-08: anomaly siren (2026-08-18)
 
 - `src/fxradar/siren.py`: `MLPRegressor(hidden_layer_sizes=(8, 3, 8), max_iter=3000,

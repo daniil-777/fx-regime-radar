@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import config, data, features, forecaster, siren
+from fxradar import config, data, features, forecaster, narrate, siren
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -101,6 +101,7 @@ def stage_siren(ctx: dict) -> None:
         ctx["regimes"]["model_version"] + f"|siren={bundle['version']}"
     )
     ctx["model_versions"]["siren"] = bundle["version"]
+    ctx["siren_detail"] = detail
     ctx.setdefault("extra_writers", {})["siren_detail.parquet"] = lambda c, d=detail: d.to_parquet(
         siren.DETAIL_PATH, index=False
     )
@@ -108,6 +109,15 @@ def stage_siren(ctx: dict) -> None:
     log.info(
         "siren: %s", ", ".join(f"{r.pair} pct={r.anomaly_pct:.0f}" for r in latest.itertuples())
     )
+
+
+def stage_narrator(ctx: dict) -> None:
+    """After ALL scoring: three sentences per pair from computed numbers (LLM or template)."""
+    detail = ctx.get("siren_detail")
+    report = narrate.build_report(regimes=ctx["regimes"], detail=detail, prices=ctx["prices"])
+    ctx["report"] = report
+    ctx.setdefault("extra_writers", {})["report.json"] = lambda c: narrate.write_report(c["report"])
+    log.info("narrator: %s", ", ".join(f"{p}={r['source']}" for p, r in report.items()))
 
 
 def stage_write(ctx: dict) -> None:
@@ -140,6 +150,7 @@ register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
+register("narrator", stage_narrator)  # always last: it narrates the finished numbers
 
 
 # --------------------------------------------------------------------------------------
