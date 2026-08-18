@@ -1,0 +1,30 @@
+# FX Regime Radar — the wall, in two containers.
+#   app   : Streamlit dashboard (Python, reads artifacts; optionally reads live state from the API)  -> :8501
+#   serve : Rust scoring service (reads ONLY the model bundle + regimes.parquet; refuses to start
+#           unless every golden vector reproduces)                                                     -> :8080
+services:
+  serve:
+    build:
+      context: .
+      dockerfile: rust/fxradar-serve/Dockerfile
+    ports: ["8080:8080"]
+    volumes:
+      - ./models/bundle_v1.4.0:/bundle:ro
+      - ./data:/data:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  app:
+    image: python:3.11-slim
+    working_dir: /repo
+    command: sh -c "pip install -q -r requirements.txt -e . && streamlit run app/app.py --server.port 8501 --server.headless true"
+    ports: ["8501:8501"]
+    volumes:
+      - .:/repo
+    environment:
+      FXRADAR_API_URL: http://serve:8080   # weather cards read live state from the Rust service
+    depends_on:
+      serve:
+        condition: service_healthy

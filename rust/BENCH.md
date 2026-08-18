@@ -16,4 +16,16 @@ that reproduces Python bit-for-bit from raw prices; a streaming server that carr
 day's filtered probabilities and rolling sums would be one to two orders of magnitude faster, at
 the cost of state to keep correct. For a daily product with three pairs, 0.43 ms is irrelevant.
 
-Service latencies (phase 13) are recorded below when measured.
+## Service (phase 13) — `POST /api/score`, 1 000 sequential requests
+
+`tools/load_check.py http://127.0.0.1:8080 1000` (real 600-day windows for all three pairs per
+request, ~55 KB JSON each; laptop, localhost):
+
+| measure | result |
+|---|---|
+| server-side scoring latency (engine only, from `/api/health` counters) | **p50 0.42 ms · p99 0.48 ms** |
+| client-observed round trip (JSON parse + engine + serialise, Python `urllib`) | p50 0.99 ms · p99 1.46 ms · max 3.9 ms |
+| sequential throughput | ≈ 980 req/s |
+
+Start-up gate on bundle v1.4.0: hash verification + 302-golden self-test ≈ 0.5 s before the port
+is bound. p99 is what matters: a trading system lives on its worst common case, not its average.

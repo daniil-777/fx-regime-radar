@@ -18,7 +18,9 @@ fn synthetic(n: usize, seed: u64) -> Vec<f64> {
     let mut c = 1.0;
     let mut out = Vec::with_capacity(n);
     for _ in 0..n {
-        s = s.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        s = s
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         let u = ((s >> 11) as f64) / ((1u64 << 53) as f64) - 0.5;
         c *= (0.01 * u).exp();
         out.push(c);
@@ -28,7 +30,11 @@ fn synthetic(n: usize, seed: u64) -> Vec<f64> {
 
 #[test]
 fn constant_prices_give_zero_returns_and_vol() {
-    let w = vec![window("EURUSD", &[1.1; 100]), window("GBPUSD", &[1.3; 100]), window("USDCHF", &[0.9; 100])];
+    let w = vec![
+        window("EURUSD", &[1.1; 100]),
+        window("GBPUSD", &[1.3; 100]),
+        window("USDCHF", &[0.9; 100]),
+    ];
     let rows = build_features(&w, "EURUSD", &["USDCHF".to_string()]).unwrap();
     assert_eq!(rows.len(), 100 - WARMUP_ROWS);
     for r in &rows {
@@ -43,7 +49,11 @@ fn constant_prices_give_zero_returns_and_vol() {
 #[test]
 fn hand_computed_vol_20_and_mom_20() {
     let close = synthetic(80, 1);
-    let w = vec![window("EURUSD", &close), window("GBPUSD", &synthetic(80, 2)), window("USDCHF", &synthetic(80, 3))];
+    let w = vec![
+        window("EURUSD", &close),
+        window("GBPUSD", &synthetic(80, 2)),
+        window("USDCHF", &synthetic(80, 3)),
+    ];
     let rows = build_features(&w, "EURUSD", &["USDCHF".to_string()]).unwrap();
     let last = rows.last().unwrap();
     let r = log_returns(&close);
@@ -56,7 +66,11 @@ fn hand_computed_vol_20_and_mom_20() {
 
 #[test]
 fn truncation_invariance() {
-    let full = vec![window("EURUSD", &synthetic(300, 4)), window("GBPUSD", &synthetic(300, 5)), window("USDCHF", &synthetic(300, 6))];
+    let full = vec![
+        window("EURUSD", &synthetic(300, 4)),
+        window("GBPUSD", &synthetic(300, 5)),
+        window("USDCHF", &synthetic(300, 6)),
+    ];
     let cut: Vec<PairWindow> = full
         .iter()
         .map(|w| PairWindow {
@@ -77,8 +91,16 @@ fn truncation_invariance() {
 
 #[test]
 fn logsumexp_is_stable() {
-    assert_abs_diff_eq!(logsumexp(&[-1000.0, -1000.0]), -1000.0 + 2f64.ln(), epsilon = 1e-12);
-    assert_abs_diff_eq!(logsumexp(&[1000.0, 1000.0]), 1000.0 + 2f64.ln(), epsilon = 1e-9);
+    assert_abs_diff_eq!(
+        logsumexp(&[-1000.0, -1000.0]),
+        -1000.0 + 2f64.ln(),
+        epsilon = 1e-12
+    );
+    assert_abs_diff_eq!(
+        logsumexp(&[1000.0, 1000.0]),
+        1000.0 + 2f64.ln(),
+        epsilon = 1e-9
+    );
     assert!(logsumexp(&[f64::NEG_INFINITY, f64::NEG_INFINITY]).is_infinite());
     assert_abs_diff_eq!(logsumexp(&[0.0]), 0.0, epsilon = 1e-15);
 }

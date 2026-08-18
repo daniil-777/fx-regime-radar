@@ -56,9 +56,19 @@ fn list_f64(f: &Field, row: usize, col: &str) -> Result<Vec<f64>> {
         Field::ListInternal(list) => list
             .elements()
             .iter()
-            .map(|e| field_f64(e).ok_or_else(|| EngineError::Golden { row, column: col.into(), reason: "non-numeric element".into() }))
+            .map(|e| {
+                field_f64(e).ok_or_else(|| EngineError::Golden {
+                    row,
+                    column: col.into(),
+                    reason: "non-numeric element".into(),
+                })
+            })
             .collect(),
-        _ => Err(EngineError::Golden { row, column: col.into(), reason: "not a list".into() }),
+        _ => Err(EngineError::Golden {
+            row,
+            column: col.into(),
+            reason: "not a list".into(),
+        }),
     }
 }
 
@@ -67,19 +77,44 @@ fn parse_row(row: &Row, idx: usize, pairs: &[String]) -> Result<Golden> {
     for (name, field) in row.get_column_iter() {
         cols.insert(name.clone(), field.clone());
     }
-    let get = |c: &str| cols.get(c).ok_or_else(|| EngineError::Golden { row: idx, column: c.into(), reason: "missing".into() });
-    let date = field_days(get("date")?).ok_or_else(|| EngineError::Golden { row: idx, column: "date".into(), reason: "not a timestamp".into() })?;
+    let get = |c: &str| {
+        cols.get(c).ok_or_else(|| EngineError::Golden {
+            row: idx,
+            column: c.into(),
+            reason: "missing".into(),
+        })
+    };
+    let date = field_days(get("date")?).ok_or_else(|| EngineError::Golden {
+        row: idx,
+        column: "date".into(),
+        reason: "not a timestamp".into(),
+    })?;
     let pair = match get("pair")? {
         Field::Str(s) => s.clone(),
-        _ => return Err(EngineError::Golden { row: idx, column: "pair".into(), reason: "not a string".into() }),
+        _ => {
+            return Err(EngineError::Golden {
+                row: idx,
+                column: "pair".into(),
+                reason: "not a string".into(),
+            })
+        }
     };
     let regime = match get("regime")? {
         Field::Str(s) => s.clone(),
-        _ => return Err(EngineError::Golden { row: idx, column: "regime".into(), reason: "not a string".into() }),
+        _ => {
+            return Err(EngineError::Golden {
+                row: idx,
+                column: "regime".into(),
+                reason: "not a string".into(),
+            })
+        }
     };
     let mut windows = Vec::new();
     for p in pairs {
-        let dates = list_f64(get(&format!("{p}_dates"))?, idx, &format!("{p}_dates"))?.into_iter().map(|v| v as i64).collect();
+        let dates = list_f64(get(&format!("{p}_dates"))?, idx, &format!("{p}_dates"))?
+            .into_iter()
+            .map(|v| v as i64)
+            .collect();
         windows.push(PairWindow {
             pair: p.clone(),
             dates,
@@ -90,19 +125,39 @@ fn parse_row(row: &Row, idx: usize, pairs: &[String]) -> Result<Golden> {
     }
     let mut expected = BTreeMap::new();
     for (name, field) in &cols {
-        if name.starts_with("feat_") || name.starts_with("prob_") || matches!(name.as_str(), "regime_prob" | "hmm_entropy" | "days_in_regime" | "change_risk_5d" | "anomaly_score" | "anomaly_pct") {
+        if name.starts_with("feat_")
+            || name.starts_with("prob_")
+            || matches!(
+                name.as_str(),
+                "regime_prob"
+                    | "hmm_entropy"
+                    | "days_in_regime"
+                    | "change_risk_5d"
+                    | "anomaly_score"
+                    | "anomaly_pct"
+            )
+        {
             if let Some(v) = field_f64(field) {
                 expected.insert(name.clone(), v);
             }
         }
     }
-    Ok(Golden { date, pair, windows, expected, regime })
+    Ok(Golden {
+        date,
+        pair,
+        windows,
+        expected,
+        regime,
+    })
 }
 
 /// Read goldens.parquet from the bundle directory.
 pub fn read_goldens(engine: &Engine) -> Result<Vec<Golden>> {
     let path = engine.bundle.path("goldens.parquet");
-    let file = File::open(&path).map_err(|source| EngineError::Io { path: path.display().to_string(), source })?;
+    let file = File::open(&path).map_err(|source| EngineError::Io {
+        path: path.display().to_string(),
+        source,
+    })?;
     let reader = SerializedFileReader::new(file)?;
     let pairs = engine.bundle.spec.pairs.clone();
     let mut out = Vec::new();
@@ -158,7 +213,10 @@ pub fn run(engine: &mut Engine) -> Result<(Vec<DiffRow>, bool)> {
                 None => upd(name, f64::INFINITY),
             }
         }
-        upd("regime_mismatch", if s.regime == g.regime { 0.0 } else { 1.0 });
+        upd(
+            "regime_mismatch",
+            if s.regime == g.regime { 0.0 } else { 1.0 },
+        );
         if s.date != g.date {
             upd("date_mismatch", 1.0);
         }
@@ -177,16 +235,30 @@ pub fn run(engine: &mut Engine) -> Result<(Vec<DiffRow>, bool)> {
         };
         let ok = d <= tol;
         all_ok &= ok;
-        table.push(DiffRow { output: name, max_abs_diff: d, tolerance: tol, ok });
+        table.push(DiffRow {
+            output: name,
+            max_abs_diff: d,
+            tolerance: tol,
+            ok,
+        });
     }
     Ok((table, all_ok))
 }
 
 /// Render the diff table as text (for logs).
 pub fn format_table(table: &[DiffRow], n_goldens: usize) -> String {
-    let mut s = format!("{:<22} {:>14} {:>12}  ok   ({} goldens)\n", "output", "max_abs_diff", "tolerance", n_goldens);
+    let mut s = format!(
+        "{:<22} {:>14} {:>12}  ok   ({} goldens)\n",
+        "output", "max_abs_diff", "tolerance", n_goldens
+    );
     for r in table {
-        s.push_str(&format!("{:<22} {:>14.3e} {:>12.3e}  {}\n", r.output, r.max_abs_diff, r.tolerance, if r.ok { "✓" } else { "✗" }));
+        s.push_str(&format!(
+            "{:<22} {:>14.3e} {:>12.3e}  {}\n",
+            r.output,
+            r.max_abs_diff,
+            r.tolerance,
+            if r.ok { "✓" } else { "✗" }
+        ));
     }
     s
 }

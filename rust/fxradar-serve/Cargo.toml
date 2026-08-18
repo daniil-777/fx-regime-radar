@@ -1,6 +1,6 @@
 [package]
 name = "fxradar-serve"
-version = "2.0.0"
+version = "2.1.0"
 edition = "2021"
 description = "FX Regime Radar — production scoring engine (reads only the model bundle; no Python)"
 license = "MIT"
@@ -14,6 +14,10 @@ path = "src/lib.rs"
 name = "selftest"
 path = "src/bin/selftest.rs"
 
+[[bin]]
+name = "fxradar-serve"
+path = "src/bin/serve.rs"
+
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -24,6 +28,12 @@ sha2 = "0.10"
 hex = "0.4"
 ort = { version = "2.0.0-rc.13", default-features = false, features = ["std", "ndarray", "download-binaries", "tls-native", "copy-dylibs", "api-27"] }
 parquet = { version = "59", default-features = false, features = ["snap"] }
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal"] }
+tower-http = { version = "0.6", features = ["trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+clap = { version = "4", features = ["derive"] }
 
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false }

@@ -45,7 +45,11 @@ pub enum EngineError {
     #[error("unknown pair {0}")]
     UnknownPair(String),
     #[error("not enough history for {pair}: {rows} rows, need at least {need}")]
-    InsufficientHistory { pair: String, rows: usize, need: usize },
+    InsufficientHistory {
+        pair: String,
+        rows: usize,
+        need: usize,
+    },
     #[error("window for {pair} has mismatched lengths (dates {dates}, close {close}, high {high}, low {low})")]
     RaggedWindow {
         pair: String,

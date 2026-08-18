@@ -2,6 +2,32 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.1.0 — phase-13: axum service (2026-08-18)
+
+- `rust/fxradar-serve` binary `fxradar-serve` (axum 0.8 + tokio + tracing): startup gate in
+  order — load bundle → verify SHA-256 → run the full golden self-test in-process → only then bind.
+  Failure logs the diff table via `tracing` and exits 1; `--skip-selftest` exists and logs a loud
+  warning. Demonstrated: a tampered `goldens.parquet` is refused (hash mismatch); a corrupted
+  golden with a matching hash is refused by the self-test (`change_risk_5d 5.0e-2 > 1e-6 ✗`,
+  "REFUSING TO START").
+- Endpoints: `GET /api/health` (bundle version, git commit, selftest status/timestamp/worst
+  diffs, uptime, in-memory p50/p99 of scoring latency), `GET /api/regimes/{pair}` (latest row from
+  `data/regimes.parquet` via a read-only state store, + `served_by`), `POST /api/score` (raw
+  windows for all pairs → full Rust path → ScoredRow JSON). JSON errors with proper status codes
+  (400 bad window / unknown pair, 404, 503, 500); request logging with latency (tower-http trace).
+- Load check (`tools/load_check.py`, 1 000 real requests): server-side p50 0.42 ms / p99 0.48 ms,
+  round trip p50 0.99 ms / p99 1.46 ms; recorded in `rust/BENCH.md`. Live proof: `/api/score` on
+  today's USDCHF window reproduces the pipeline's numbers (risk 0.013451, anomaly pct 24.9).
+- `rust/fxradar-serve/Dockerfile` (multi-stage rust → debian-slim) and `docker-compose.yml`
+  (service :8080 with bundle + data mounted read-only, dashboard :8501 with `FXRADAR_API_URL`).
+  Docker was not available on the build machine; the service was verified natively.
+- Dashboard: `FXRADAR_API_URL` switch — weather cards take their latest state from
+  `GET /api/regimes/*` with a "served by rust v2.1.0" badge next to the timestamp; default
+  behaviour unchanged (parquet).
+- README "Production serving" section with the wall diagram, the startup-gate story and the
+  measured latencies. Rust integration tests: bundle replay + tampered manifest refused; rustfmt
+  + clippy clean.
+
 ## v2.0.0 — phase-12: rust inference engine (2026-08-18)
 
 - `rust/fxradar-serve/` (cargo crate, edition 2021): `bundle.rs` (manifest SHA-256 verification

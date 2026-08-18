@@ -2,7 +2,8 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use fxradar_serve::{selftest, Bundle, Engine};
 
 fn bench_scoring(c: &mut Criterion) {
-    let dir = std::env::var("FXRADAR_BUNDLE").unwrap_or_else(|_| "../../models/bundle_v1.4.0".to_string());
+    let dir = std::env::var("FXRADAR_BUNDLE")
+        .unwrap_or_else(|_| "../../models/bundle_v1.4.0".to_string());
     let bundle = Bundle::load(&dir).expect("bundle");
     let mut engine = Engine::new(bundle).expect("engine");
     let goldens = selftest::read_goldens(&engine).expect("goldens");

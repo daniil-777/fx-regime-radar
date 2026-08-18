@@ -2,6 +2,7 @@
 //! (mirrors `src/fxradar/features.py`). No lookahead: row i uses rows <= i only.
 
 use crate::error::{EngineError, Result};
+use serde::{Deserialize, Serialize};
 
 pub const ANNUALIZE: f64 = 15.874_507_866_387_544; // sqrt(252)
 pub const WARMUP_ROWS: usize = 60;
@@ -17,7 +18,7 @@ pub const BASE_FEATURES: [&str; 8] = [
 ];
 
 /// Raw daily bars for one pair, oldest first. `dates` are days since the Unix epoch.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PairWindow {
     pub pair: String,
     pub dates: Vec<i64>,
@@ -130,7 +131,14 @@ fn rolling_std(x: &[f64], w: usize) -> Vec<f64> {
 
 /// corr component of `target` with `other`: computed on the dates BOTH traded (returns non-NaN),
 /// rolling 20 common days, then as-of aligned backward onto `target`'s own dates.
-fn corr_component(target: &PairWindow, t_ret: &[f64], other: &PairWindow, o_ret: &[f64], flip_t: bool, flip_o: bool) -> Vec<f64> {
+fn corr_component(
+    target: &PairWindow,
+    t_ret: &[f64],
+    other: &PairWindow,
+    o_ret: &[f64],
+    flip_t: bool,
+    flip_o: bool,
+) -> Vec<f64> {
     // common dates with finite returns on both sides
     let mut oi = 0usize;
     let mut common: Vec<(i64, f64, f64)> = Vec::new();
@@ -138,7 +146,11 @@ fn corr_component(target: &PairWindow, t_ret: &[f64], other: &PairWindow, o_ret:
         while oi < other.dates.len() && other.dates[oi] < d {
             oi += 1;
         }
-        if oi < other.dates.len() && other.dates[oi] == d && t_ret[ti].is_finite() && o_ret[oi].is_finite() {
+        if oi < other.dates.len()
+            && other.dates[oi] == d
+            && t_ret[ti].is_finite()
+            && o_ret[oi].is_finite()
+        {
             let a = if flip_t { -t_ret[ti] } else { t_ret[ti] };
             let b = if flip_o { -o_ret[oi] } else { o_ret[oi] };
             common.push((d, a, b));
@@ -173,7 +185,11 @@ fn corr_component(target: &PairWindow, t_ret: &[f64], other: &PairWindow, o_ret:
 
 /// Compute the base features of `pair` from windows of ALL pairs (corr_20 needs the others).
 /// Returns rows AFTER the warm-up (the first `WARMUP_ROWS` rows are dropped, like Python).
-pub fn build_features(windows: &[PairWindow], pair: &str, usd_base_pairs: &[String]) -> Result<Vec<FeatureRow>> {
+pub fn build_features(
+    windows: &[PairWindow],
+    pair: &str,
+    usd_base_pairs: &[String],
+) -> Result<Vec<FeatureRow>> {
     for w in windows {
         w.validate()?;
     }
@@ -205,10 +221,21 @@ pub fn build_features(windows: &[PairWindow], pair: &str, usd_base_pairs: &[Stri
 
     let mut rows = Vec::with_capacity(n - WARMUP_ROWS);
     for i in WARMUP_ROWS..n {
-        let mom = if i >= 20 { close[i] / close[i - 20] - 1.0 } else { f64::NAN };
-        let r5 = if i >= 5 { (close[i] / close[i - 5] - 1.0).abs() } else { f64::NAN };
+        let mom = if i >= 20 {
+            close[i] / close[i - 20] - 1.0
+        } else {
+            f64::NAN
+        };
+        let r5 = if i >= 5 {
+            (close[i] / close[i - 5] - 1.0).abs()
+        } else {
+            f64::NAN
+        };
         let rng = if i >= 9 {
-            (i - 9..=i).map(|j| (target.high[j] - target.low[j]) / target.close[j]).sum::<f64>() / 10.0
+            (i - 9..=i)
+                .map(|j| (target.high[j] - target.low[j]) / target.close[j])
+                .sum::<f64>()
+                / 10.0
         } else {
             f64::NAN
         };

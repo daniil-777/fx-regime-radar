@@ -110,10 +110,31 @@ def load_report(mtime: float) -> dict:
     return json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {}
 
 
+API_URL = os.environ.get("FXRADAR_API_URL", "").rstrip("/")
+
+
+@st.cache_data(show_spinner=False, ttl=60)
+def load_api_latest(api_url: str) -> dict:
+    """Latest scored state per pair from the Rust service (GET /api/regimes/{pair}); {} on any failure."""
+    if not api_url:
+        return {}
+    import urllib.request
+
+    out: dict = {}
+    for p in PAIRS:
+        try:
+            with urllib.request.urlopen(f"{api_url}/api/regimes/{p}", timeout=2) as r:
+                out[p] = json.loads(r.read())
+        except Exception:
+            return {}
+    return out
+
+
 regimes = load_regimes(_mtime(REGIMES_PATH))
 prices = load_prices(_mtime(PRICES_PATH))
 status = load_status(_mtime(STATUS_PATH))
 report = load_report(_mtime(REPORT_PATH))
+api_latest = load_api_latest(API_URL)
 data_through = regimes["date"].max()
 updated = status.get("last_run_utc", "")
 updated_txt = (
@@ -121,6 +142,12 @@ updated_txt = (
     if updated
     else ""
 )
+if api_latest:  # the Rust service is answering: say so next to the timestamp
+    served = str(next(iter(api_latest.values())).get("served_by", "rust"))
+    updated_txt += (
+        f' <span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{ui.REGIME_COLORS["trend"]};'
+        f'background:{ui.REGIME_COLORS["trend"]}22;border:1px solid {ui.REGIME_COLORS["trend"]}55">served by {html.escape(served)}</span>'
+    )
 
 # --------------------------------------------------------------------------------------
 # sidebar: pair selector + disclaimer only
@@ -145,6 +172,10 @@ st.markdown(
 cols = st.columns(len(PAIRS))
 for col, p in zip(cols, PAIRS, strict=True):
     latest = regimes[regimes["pair"] == p].sort_values("date").iloc[-1]
+    if p in api_latest:  # live state from the Rust service (same fields as the parquet row)
+        latest = pd.Series(
+            {**latest.to_dict(), **{k: v for k, v in api_latest[p].items() if k in latest.index}}
+        )
     color = ui.REGIME_COLORS[latest["regime"]]
     closes = prices[prices["pair"] == p].sort_values("date")["close"].tail(20)
     body = (

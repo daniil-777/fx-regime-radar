@@ -71,7 +71,10 @@ impl Engine {
             let raw: Vec<f64> = params
                 .features
                 .iter()
-                .map(|f| r.get(f).ok_or_else(|| EngineError::Shape(format!("unknown hmm feature {f}"))))
+                .map(|f| {
+                    r.get(f)
+                        .ok_or_else(|| EngineError::Shape(format!("unknown hmm feature {f}")))
+                })
                 .collect::<Result<_>>()?;
             x.push(hmm::scale(params, &raw));
         }
@@ -102,16 +105,27 @@ impl Engine {
 
         // forecaster (float32 in, [1,2] probabilities out) + Platt calibration
         let fc = &self.bundle.forecaster;
-        let xf: Vec<f32> = fc
-            .features
-            .iter()
-            .map(|f| feats.get(f).copied().map(|v| v as f32).ok_or_else(|| EngineError::Shape(format!("missing forecaster feature {f}"))))
-            .collect::<Result<_>>()?;
+        let xf: Vec<f32> =
+            fc.features
+                .iter()
+                .map(|f| {
+                    feats.get(f).copied().map(|v| v as f32).ok_or_else(|| {
+                        EngineError::Shape(format!("missing forecaster feature {f}"))
+                    })
+                })
+                .collect::<Result<_>>()?;
         let n_fc = xf.len();
         let input = Tensor::from_array(([1usize, n_fc], xf))?;
-        let outputs = self.forecaster.run(ort::inputs![fc.onnx_input.as_str() => input])?;
-        let (_, probs_fc) = outputs[fc.onnx_output_probabilities.as_str()].try_extract_tensor::<f32>()?;
-        let p_raw = probs_fc.get(1).copied().ok_or_else(|| EngineError::Shape("forecaster output".into()))? as f64;
+        let outputs = self
+            .forecaster
+            .run(ort::inputs![fc.onnx_input.as_str() => input])?;
+        let (_, probs_fc) =
+            outputs[fc.onnx_output_probabilities.as_str()].try_extract_tensor::<f32>()?;
+        let p_raw = probs_fc
+            .get(1)
+            .copied()
+            .ok_or_else(|| EngineError::Shape("forecaster output".into()))?
+            as f64;
         let p_cal = platt(p_raw, fc.calibration.a, fc.calibration.b);
 
         // siren (float64 in/out) -> MSE -> percentile vs calm-train scores
@@ -121,7 +135,8 @@ impl Engine {
             .iter()
             .enumerate()
             .map(|(i, f)| {
-                feats.get(f)
+                feats
+                    .get(f)
                     .copied()
                     .map(|v| (v - si.scaler_mean[i]) / si.scaler_scale[i])
                     .ok_or_else(|| EngineError::Shape(format!("missing siren feature {f}")))
@@ -129,12 +144,22 @@ impl Engine {
             .collect::<Result<_>>()?;
         let n_si = xs.len();
         let input = Tensor::from_array(([1usize, n_si], xs.clone()))?;
-        let outputs = self.siren.run(ort::inputs![si.onnx_input.as_str() => input])?;
+        let outputs = self
+            .siren
+            .run(ort::inputs![si.onnx_input.as_str() => input])?;
         let (_, recon) = outputs[si.onnx_output.as_str()].try_extract_tensor::<f64>()?;
         if recon.len() != n_si {
-            return Err(EngineError::Shape(format!("siren output len {} != {n_si}", recon.len())));
+            return Err(EngineError::Shape(format!(
+                "siren output len {} != {n_si}",
+                recon.len()
+            )));
         }
-        let score = recon.iter().zip(xs.iter()).map(|(r, x)| (r - x) * (r - x)).sum::<f64>() / n_si as f64;
+        let score = recon
+            .iter()
+            .zip(xs.iter())
+            .map(|(r, x)| (r - x) * (r - x))
+            .sum::<f64>()
+            / n_si as f64;
         let pct = percentile_of(&si.train_scores_sorted, score);
 
         let mut named_probs = BTreeMap::new();

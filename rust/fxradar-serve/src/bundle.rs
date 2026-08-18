@@ -107,10 +107,11 @@ impl Bundle {
         let manifest: Manifest = read_json(&dir, "manifest.json")?;
         Self::verify_hashes(&dir, &manifest)?;
         let spec_bytes = read(&dir.join("feature_spec.yaml"))?;
-        let spec: FeatureSpec = serde_yaml::from_slice(&spec_bytes).map_err(|source| EngineError::Yaml {
-            file: "feature_spec.yaml".into(),
-            source,
-        })?;
+        let spec: FeatureSpec =
+            serde_yaml::from_slice(&spec_bytes).map_err(|source| EngineError::Yaml {
+                file: "feature_spec.yaml".into(),
+                source,
+            })?;
         let mut hmm = BTreeMap::new();
         for pair in &spec.pairs {
             let params: HmmParams = read_json(&dir, &format!("hmm_{pair}.json"))?;

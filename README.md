@@ -128,6 +128,38 @@ To retrain: `python -m fxradar.hmm_model --refit`, `python -m fxradar.forecaster
 If a daily fetch fails, the pipeline exits nonzero, nothing under `data/` changes, and the app keeps
 serving the last good state with its "Data through" date.
 
+## Production serving (the wall)
+
+```mermaid
+flowchart LR
+    subgraph research [Python — research side]
+        T[train / validate / narrate] --> X[python -m fxradar.export]
+    end
+    X -->|json + onnx + yaml + parquet<br/>manifest with SHA-256| B[(models/bundle_v1.4.0)]
+    subgraph prod [Rust — production side, imports nothing from Python]
+        B --> V[verify hashes] --> S[golden-vector self-test<br/>302 rows, raw prices → outputs] --> P{parity?}
+        P -->|yes| A[axum: /api/health · /api/regimes/pair · /api/score]
+        P -->|no| D[log diff table, exit 1<br/>refuse to serve]
+    end
+    A --> UI[Streamlit cards<br/>FXRADAR_API_URL set → 'served by rust' badge]
+```
+
+The Rust crate (`rust/fxradar-serve`) computes the same features from raw price windows, runs the
+HMM forward filter with precomputed precision matrices, and calls the two ONNX models. Before it
+binds a port it replays every golden vector and compares with Python's exact outputs (features
+1e-8, model outputs 1e-6, labels exact); on the shipped bundle the worst feature difference is
+1e-13 and the worst model-output difference 3.8e-7. If any output diverges — or any file hash
+does — it logs the table and exits nonzero: it would rather die than serve numbers that disagree
+with research. `--skip-selftest` exists for development and logs a loud warning.
+
+Measured (`rust/BENCH.md`): 0.43 ms per full single-row scoring path; service p50 0.42 ms /
+p99 0.48 ms server-side, ~1 ms round trip; ~2 260 rows/s single-threaded.
+
+Run it: `cargo run --release --bin fxradar-serve -- --bundle models/bundle_v1.4.0 --data-dir data`
+(port 8080), or `docker compose up` (Rust service on :8080, dashboard on :8501 reading live state
+from it). `POST /api/score` takes `{"pair": "USDCHF", "windows": [{pair, dates, close, high, low} × 3]}`
+with ≥ 600 rows per pair (see `docs/bundle_format.md`).
+
 ## Interview material
 
 `docs/model_cards.md` (one card per model), `docs/INTERVIEW_NOTES.md` (answers in the developer's

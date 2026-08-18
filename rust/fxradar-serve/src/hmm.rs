@@ -23,7 +23,10 @@ pub fn frame_log_likelihood(p: &HmmParams, x: &[f64]) -> Result<Vec<f64>> {
         let mu = &p.means[k];
         let prec = &p.precisions[k];
         if mu.len() != d || prec.len() != d {
-            return Err(EngineError::Shape(format!("hmm state {k}: dim {d} vs means {}", mu.len())));
+            return Err(EngineError::Shape(format!(
+                "hmm state {k}: dim {d} vs means {}",
+                mu.len()
+            )));
         }
         let mut maha = 0.0;
         for i in 0..d {

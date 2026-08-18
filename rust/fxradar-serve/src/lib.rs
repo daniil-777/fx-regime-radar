@@ -11,6 +11,7 @@ pub mod features;
 pub mod hmm;
 pub mod infer;
 pub mod selftest;
+pub mod state_store;
 
 pub use bundle::Bundle;
 pub use error::EngineError;

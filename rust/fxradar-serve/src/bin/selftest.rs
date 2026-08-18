@@ -5,7 +5,9 @@ use fxradar_serve::{selftest, Bundle, Engine};
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    let dir = std::env::args().nth(1).unwrap_or_else(|| "models/bundle_v1.4.0".to_string());
+    let dir = std::env::args()
+        .nth(1)
+        .unwrap_or_else(|| "models/bundle_v1.4.0".to_string());
     match run(&dir) {
         Ok(true) => ExitCode::SUCCESS,
         Ok(false) => {
