@@ -140,9 +140,11 @@ def run_backtest(
     features: pd.DataFrame,
     cost_cfg: CostConfig | None = None,
     *,
+    max_position: float = 1.0,
     _disable_lag_for_tests: bool = False,
 ) -> BacktestResult:
-    """positions: date, pair, pos in [-1, 1] decided from information up to day t.
+    """positions: date, pair, pos in [-max_position, max_position] decided from information up to
+    day t (default 1.0 = unlevered; the phase-15 overlay passes its leverage cap of 2.0).
 
     The engine shifts positions by one day (the lag law) so a signal formed at close t earns the
     return of t+1; `_disable_lag_for_tests` exists ONLY so the foresight test can prove that the
@@ -154,7 +156,7 @@ def run_backtest(
     df = px.merge(positions[["date", "pair", "pos"]], on=["date", "pair"], how="left")
     df = df.merge(features[["date", "pair", "vol_20"]], on=["date", "pair"], how="left")
     df = df.sort_values(["pair", "date"]).reset_index(drop=True)
-    df["pos"] = df["pos"].clip(-1.0, 1.0)
+    df["pos"] = df["pos"].clip(-abs(max_position), abs(max_position))
     df["pos"] = df.groupby("pair")["pos"].transform(lambda s: s.fillna(0.0))
     # positions held DURING day t = decision made at close t-1 (lag law)
     held = df["pos"] if _disable_lag_for_tests else df.groupby("pair")["pos"].shift(1).fillna(0.0)

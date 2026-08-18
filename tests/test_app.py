@@ -34,3 +34,15 @@ def test_methodology_page_renders_with_disclaimer() -> None:
     assert not at.exception, at.exception
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     assert any(config.DISCLAIMER in m.value for m in at.markdown)
+
+
+def test_strategy_lab_page_renders_with_banner_and_disclaimer() -> None:
+    from fxradar.strategies import METRICS_PATH, STRATEGY_PATH
+
+    if not (STRATEGY_PATH.exists() and METRICS_PATH.exists()):
+        pytest.skip("strategy artifacts not built")
+    at = _run("app/pages/2_Strategy_lab.py")
+    assert not at.exception, at.exception
+    assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
+    assert any("not a live trading system" in m.value for m in at.markdown)
+    assert len(at.get("plotly_chart")) == 2

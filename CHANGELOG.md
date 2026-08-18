@@ -2,6 +2,32 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.3.0 — phase-15: strategies and blend (2026-08-18)
+
+- `src/fxradar/strategies.py`: S1 trend (clip(mom_20/3 %)), S2 mean reversion (−clip(z_5d, ±2)/2
+  with z = 5-day return / expected std), S3 regime gate (S1 in trend, S2 in chop, ½·S1 in calm,
+  flat in crisis) — mechanical rules, no fitted direction. Insurance overlay on every strategy:
+  ×(1 − change_risk_5d) above 0.30, flat when anomaly_pct > 98 (siren stop), vol targeting to
+  10 % per pair on the strategy's own trailing 60-day realised vol, leverage capped at 2×
+  (engine `max_position`). Blend: monthly inverse-vol weights from trailing 120-day pooled net
+  vol, lagged (causal). One PARAMS block, fixed on train+val, comment forbids further tuning;
+  test 2019+ scored once.
+- `reports/strategy_eval.md` + `strategy_equity.png` (net equity, EURUSD regime underlay,
+  validation/test dividers): gross vs net for train/val/test, per-regime net Sharpe
+  attribution, correlation matrix, the mutual-insurance verdict (blend max DD does NOT beat the
+  best single strategy in the test sample), vol-target/cap note (cap binds 46–81 % of days →
+  realised 6–9 %), honest closing paragraph. Test net Sharpe: S1_trend -1.23, S2_meanrev -1.36, S3_regime_gate -1.30, BLEND -2.18. Expected outcome, stated
+  in advance: after realistic costs the edge is absent; the framework and the honesty are the
+  deliverable.
+- Artifacts: `data/backtests.parquet` (S1–S3 + BLEND), `data/strategy_metrics.json`,
+  `data/strategy_attribution.json`. Dashboard page `2_Strategy_lab.py`: net equity, drawdowns,
+  gross/net metrics with period selector, per-regime attribution, correlation, banner
+  "research demonstration on daily data — not a live trading system".
+- Tests (`tests/test_strategies.py`, 6): overlay forces flat on siren days and scales by risk;
+  strategies in [−1, 1] and causal; regime-gate semantics; vol targeting on train (10 % ± 2 %
+  or capped-and-below, never hotter); blend weights monthly/inverse-vol/causal; leverage never
+  above cap in the saved backtests. Plus the Strategy-lab app smoke test.
+
 ## v2.2.0 — phase-14: backtest engine (2026-08-18)
 
 - `src/fxradar/backtest.py`: `run_backtest(positions, prices, features, cost_cfg)` — daily bars
