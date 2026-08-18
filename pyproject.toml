@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fxradar"
-version = "1.4.0"
+version = "2.0.0"
 description = "FX Regime Radar — a weather station for currency markets (regimes, change risk, anomalies)."
 requires-python = ">=3.11"
 readme = "README.md"

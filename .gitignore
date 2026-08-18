@@ -22,3 +22,6 @@ dist/
 
 # NOTE: data/ and models/ are COMMITTED on purpose — the app reads artifacts,
 # the pipeline writes them (CLAUDE.md rule 8). Do not ignore them.
+
+# rust build artifacts
+rust/**/target/

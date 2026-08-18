@@ -2,6 +2,26 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.0.0 — phase-12: rust inference engine (2026-08-18)
+
+- `rust/fxradar-serve/` (cargo crate, edition 2021): `bundle.rs` (manifest SHA-256 verification
+  FIRST, serde structs for hmm json / sidecars / feature spec), `features.rs` (exact
+  feature-spec semantics from raw price windows incl. pairwise as-of `corr_20`; warm-up 60 rows),
+  `hmm.rs` (Gaussian log-likelihood with precomputed precisions/log-dets, forward filter with
+  log-sum-exp, entropy, run lengths), `infer.rs` (`Engine`: forecaster.onnx + siren.onnx via
+  `ort` 2.0.0-rc.13, Platt calibration, rank percentile → `ScoredRow`), `selftest.rs` + the
+  `selftest` binary (parquet goldens → end-to-end replay → per-output max-abs-diff table, exit 2
+  on divergence). `thiserror` error enum; no `unwrap`/`expect` in library code; no network, no
+  file writes; no Python.
+- Self-test on bundle v1.4.0 (302 goldens): PASS — features ≤ 1.1e-13, filtered probs ≤ 1.9e-13,
+  regime labels exact, change_risk_5d 3.8e-7, anomaly_score 8e-13, anomaly_pct within one rank.
+- Rust tests: constant series, hand-computed vol_20/mom_20/ret_1d, truncation invariance,
+  logsumexp stability. `cargo clippy --all-targets -D warnings` clean, `cargo fmt` clean.
+- `criterion` benchmark → `rust/BENCH.md`: 0.43 ms per full single-row path, ≈ 2 260 rows/s.
+- CI: `.github/workflows/rust.yml` (fmt, clippy, tests, selftest against the committed bundle).
+- Bundle rebuilt (manifest git commit/timestamp); export doc note that `probabilities` is a plain
+  [n, 2] tensor.
+
 ## v1.4.0 — phase-11: model bundle export (2026-08-18)
 
 - `src/fxradar/export.py` + `python -m fxradar.export` → `models/bundle_v1.4.0/`, the ONLY

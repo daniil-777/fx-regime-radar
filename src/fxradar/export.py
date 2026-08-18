@@ -80,7 +80,7 @@ def export_forecaster(out: Path, x_val: pd.DataFrame) -> dict:
         model,
         initial_types=[("input", FloatTensorType([None, len(forecaster.FEATURES)]))],
         target_opset=15,
-    )
+    )  # outputs: label (int64), probabilities (float [n, 2]) — a plain tensor, no ZipMap
     (out / "forecaster.onnx").write_bytes(onx.SerializeToString())
     ref_model, _ = forecaster.load_model()
     p_ref = ref_model.predict_proba(x_val[forecaster.FEATURES])[:, 1]
