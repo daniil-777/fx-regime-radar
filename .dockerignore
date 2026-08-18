@@ -1,0 +1,18 @@
+# keep the app image small: no venv, git history, Rust build tree, tests, screenshots or notebooks
+.venv
+.git
+.github
+rust
+tests
+docs
+assets
+tools
+scripts
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+.streamlit/secrets.toml
+data/arcade.db
+deploy/.env
+deploy/refresh.log

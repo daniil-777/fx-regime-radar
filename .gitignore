@@ -28,3 +28,7 @@ rust/**/target/
 
 # arcade state store (sqlite) — user state, not an artifact
 data/arcade.db
+
+# production deploy (server-side only)
+deploy/.env
+deploy/refresh.log

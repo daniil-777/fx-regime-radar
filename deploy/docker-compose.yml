@@ -1,0 +1,48 @@
+# Production stack: the app behind Caddy (HTTPS when a domain is set). Always-on: both containers
+# restart with the host. Artifacts come from the git checkout on the host — deploy/refresh.sh pulls
+# the daily data commit and restarts the app (rebuilds only when code changed).
+#
+#   cd deploy && cp .env.example .env   # edit SITE_ADDRESS (and ANTHROPIC_API_KEY, optional)
+#   docker compose up -d --build        # first start; later: ./refresh.sh (cron does it nightly)
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: fxradar-app:local
+    restart: unless-stopped
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}   # optional: Advisor Q&A via the LLM; template without it
+      FXRADAR_API_URL: ${FXRADAR_API_URL:-}       # optional: Rust scoring service (see docker-compose.yml at root)
+    volumes:
+      - ../data:/app/data          # read-write only for the arcade's local sqlite (gitignored)
+      - ../models:/app/models:ro
+      - ../reports:/app/reports:ro
+    expose: ["8501"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://127.0.0.1:8501/_stcore/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data        # certificates persist across restarts
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
+  caddy_config:

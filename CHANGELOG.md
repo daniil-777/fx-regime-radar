@@ -2,6 +2,16 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.10.1 — always-on deploy: Docker + Oracle Always-Free (2026-08-18)
+
+- `deploy/`: self-contained app image (`Dockerfile`, python:3.11-slim, non-root, healthcheck; every
+  dependency has aarch64 wheels so it builds on Ampere A1), `docker-compose.yml` (app + Caddy with
+  automatic HTTPS via `SITE_ADDRESS`, restart policies, artifacts bind-mounted from the git checkout),
+  `Caddyfile`, `refresh.sh` (nightly `git pull` → restart on artifact-only changes, rebuild on code
+  changes), `cloud-init.yaml` (Docker install, iptables 80/443, clone, first build, cron),
+  `.env.example`; `.dockerignore`; `make docker` / `make docker-down`; CI workflow `docker image`
+  (build + health check); guide `docs/DEPLOY_ORACLE.md`; README Deploy section updated.
+
 ## v2.10.0 — phase 19 (plan “24”): signature 3-D visuals, display layer only (2026-08-18)
 
 - `src/fxradar/viz3d.py`: `simplex_coords` (exact `probs @ V`, order asserted, rows validated,

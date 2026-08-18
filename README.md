@@ -163,6 +163,14 @@ To retrain: `python -m fxradar.hmm_model --refit`, `python -m fxradar.forecaster
    with `-e .` so the `fxradar` package installs; `.python-version` pins 3.11. It redeploys on
    every commit, so the daily data commit keeps it fresh; the header shows "Data through …" and
    "updated …" from the artifacts.
+   *Community Cloud sleeps idle apps* (a "wake up" screen after ~12 h without visitors). For an
+   **always-on** deployment use the Docker path: `deploy/` holds a self-contained app image
+   (`deploy/Dockerfile`, amd64 + arm64), a Caddy reverse proxy with automatic HTTPS
+   (`deploy/docker-compose.yml`), a nightly artifact refresh (`deploy/refresh.sh`) and a first-boot
+   script for an **Oracle Cloud Always-Free VM** (`deploy/cloud-init.yaml`) — step by step in
+   [docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md); €0/month, loads in ~1 s, survives reboots. The
+   `docker image` GitHub Action builds and health-checks the image on every relevant push.
+   Locally (with Docker): `make docker` → http://localhost.
 3. **Secrets (optional).** Live narration needs `ANTHROPIC_API_KEY` under *App settings → Secrets*
    on Streamlit Cloud and as a GitHub repository secret. Without it everything runs on the
    deterministic template. Cost with it: ≈ 5 cents per month (three Haiku calls per weekday).

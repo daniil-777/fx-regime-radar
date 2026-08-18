@@ -1,0 +1,36 @@
+#cloud-config
+# FX Regime Radar on an Oracle Cloud "Always Free" VM (Ubuntu 24.04, Ampere A1 or AMD micro).
+# Paste this into  Create instance -> Advanced options -> Management -> Cloud-init script.
+# Edit the two lines marked <-- before pasting. First boot takes ~5-10 min (Docker + image build).
+package_update: true
+package_upgrade: false
+packages: [git, ca-certificates, curl, iptables-persistent]
+
+write_files:
+  - path: /opt/fxradar.env
+    permissions: "0600"
+    content: |
+      SITE_ADDRESS=:80                # <-- your domain (e.g. fxradar.duckdns.org) for automatic HTTPS, or :80
+      ANTHROPIC_API_KEY=              # <-- optional; empty = deterministic template answers
+      FXRADAR_API_URL=
+
+runcmd:
+  # 1) Docker (official convenience script; adds the compose plugin)
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker ubuntu
+  # 2) Oracle's Ubuntu images ship an iptables REJECT rule; open 80/443 in front of it and persist
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+  - netfilter-persistent save
+  # 3) the repo (artifacts included) owned by the ubuntu user (uid 1000 = the app user in the image)
+  - git clone https://github.com/daniil-777/fx-regime-radar.git /opt/fx-regime-radar
+  - mv /opt/fxradar.env /opt/fx-regime-radar/deploy/.env
+  - chown -R ubuntu:ubuntu /opt/fx-regime-radar
+  # 4) build + start (always-on: restart policies + Docker starts at boot)
+  - cd /opt/fx-regime-radar/deploy && docker compose up -d --build
+  # 5) nightly refresh after the 06:00 UTC pipeline commit (weekdays), plus a Sunday image prune
+  - echo '40 6 * * 1-5 ubuntu /opt/fx-regime-radar/deploy/refresh.sh >> /opt/fx-regime-radar/deploy/refresh.log 2>&1' > /etc/cron.d/fxradar
+  - echo '0 4 * * 0 root docker system prune -f >/dev/null 2>&1' >> /etc/cron.d/fxradar
+  - chmod 0644 /etc/cron.d/fxradar
+
+final_message: "fx-regime-radar is starting; open http://<public-ip> in a few minutes"

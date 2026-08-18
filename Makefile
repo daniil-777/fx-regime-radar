@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -19,6 +19,12 @@ viz3d:            ## fit + persist the landscape embeddings (train rows only) fo
 gif:              ## render assets/tetrahedron.gif (README header) — needs dev deps: pip install -r requirements-dev.txt
 	$(PYTHON) -m pip install -q -r requirements-dev.txt
 	$(PYTHON) scripts/make_gif.py
+
+docker:           ## production stack locally: app image + Caddy on http://localhost (needs Docker)
+	cd deploy && ( test -f .env || cp .env.example .env ) && docker compose up -d --build
+
+docker-down:      ## stop the production stack
+	cd deploy && docker compose down
 
 test:             ## run the test suite quietly
 	$(PYTHON) -m pytest -q
