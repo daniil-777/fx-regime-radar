@@ -5,13 +5,20 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install -r requirements.txt
 	$(PYTHON) -m pip install -e .
+
+viz3d:            ## fit + persist the landscape embeddings (train rows only) for UNIVERSE — display layer
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.viz3d --fit
+
+gif:              ## render assets/tetrahedron.gif (README header) — needs dev deps: pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install -q -r requirements-dev.txt
+	$(PYTHON) scripts/make_gif.py
 
 test:             ## run the test suite quietly
 	$(PYTHON) -m pytest -q

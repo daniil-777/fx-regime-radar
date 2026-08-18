@@ -27,6 +27,7 @@ pages = {
         st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
         st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
         st.Page(str(VIEWS / "regime_space.py"), title="Regime space"),
+        st.Page(str(VIEWS / "probability_space.py"), title="Probability space"),
     ],
     "Research": [
         st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab"),

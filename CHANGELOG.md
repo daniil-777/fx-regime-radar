@@ -2,6 +2,27 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.10.0 — phase 19 (plan “24”): signature 3-D visuals, display layer only (2026-08-18)
+
+- `src/fxradar/viz3d.py`: `simplex_coords` (exact `probs @ V`, order asserted, rows validated,
+  uniform → origin), `filtered_probability_table`/`probability_frame` (replay of the frozen bundle's
+  causal forward filter — never the smoother; the replay reproduces regimes.parquet exactly),
+  `tetrahedron_figure` (6 edges, 4 labelled vertices in the regime palette, path coloured by time or
+  siren, ringed today, hover with the four probabilities, all axes/planes hidden, `aspectmode="data"`),
+  `fit_landscape_embedding` (scaler + PCA(3, random_state=42) FIT ON TRAIN ROWS ONLY, `train_end` and
+  `n_fit_rows` stored; umap only if importable), `save/load_embedding` (joblib dict next to the models),
+  `landscape_figure` (days by regime, 60-day brightening trail, ringed today), offline CLI `--fit`.
+  Adaptation: the HMM consumes only 3 features (PCA(3) would be a rotation), so the landscape embeds
+  the 8 causal base features with a train-only scaler.
+- App: new page Radar → *Probability space* (`app/views/probability_space.py`): pair + colour-by
+  segmented controls, explainer copy per figure, (A) above (B), universe-aware; every other panel
+  unchanged and 2-D. Embeddings fit and committed for both universes (`models/landscape_*_pca.joblib`).
+- `scripts/make_gif.py` + `make gif`: 72 frames × 5°, fixed elevation, 600 px, kaleido → imageio →
+  `assets/tetrahedron.gif` (1.5 MB), embedded at the top of the README with the one-line caption;
+  `make viz3d` fits the embeddings; `requirements-dev.txt` (kaleido, imageio — dev only).
+- Tests `tests/test_viz3d.py` (13): exactness, validation, order guard, leakage (train-only fit,
+  future-perturbation invariance), determinism + round trip, replay-vs-regime-table agreement.
+
 ## v2.9.1 — regime space: the feature space in 3-D (2026-08-18)
 
 - New page `app/views/regime_space.py` (Radar → Regime space): the HMM's feature space rendered in WebGL,
