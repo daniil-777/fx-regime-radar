@@ -39,3 +39,4 @@ refit:            ## refit HMM on an expanded window, bump model version, re-val
 	$(PYTHON) -m fxradar.hmm_model --refit --train-end $(TRAIN_END) --version $(HMM_VERSION) --stability
 	$(PYTHON) -m fxradar.validate
 	$(PYTHON) pipelines/run_daily.py
+	$(PYTHON) -m fxradar.export   # last act of a refit: pack the bundle that crosses the wall

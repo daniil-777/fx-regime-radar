@@ -2,6 +2,26 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v1.4.0 — phase-11: model bundle export (2026-08-18)
+
+- `src/fxradar/export.py` + `python -m fxradar.export` → `models/bundle_v1.4.0/`, the ONLY
+  artifact that crosses the wall (json/onnx/yaml/parquet — no pickle): `hmm_{pair}.json`
+  (means, covariances, precomputed Cholesky-derived precisions + log-dets, transmat, startprob,
+  scaler, frozen state names), `forecaster.onnx` (+ sidecar with feature order, Platt a/b,
+  threshold), `siren.onnx` (float64, output reshaped to (n, 9); sidecar with scaler + sorted
+  calm-train scores), `feature_spec.yaml`, `goldens.parquet` (302 rows across pairs × years ×
+  regimes incl. USDCHF 2015-01-15/16; raw 600-day price windows for all three pairs + Python's
+  exact features/probs/outputs), `manifest.json` (semver, git commit, model versions, parity,
+  tolerances, SHA-256 of every file).
+- ONNX parity recorded in the manifest: forecaster max |Δp| 2.7e-7 (16 660 rows), siren 7.1e-15.
+- `export.replay_goldens`: the executable contract — from raw windows + bundle files only,
+  reproduce every golden (features ≤ 1e-13, probs ≤ 2e-13, change_risk 3.8e-7, anomaly_score
+  9e-13; anomaly_pct within one rank step, a documented rank-statistic tolerance).
+- `docs/bundle_format.md`; export added as the last step of `make refit` and `refit.yml`.
+- Tests (`tests/test_export.py`, 5): manifest hashes verify, tampering detected, HMM json
+  matches the saved model (precision × cov = I, log-det), ONNX parity on fresh rows, golden
+  round trip. Dependencies: onnx, onnxmltools, skl2onnx, onnxruntime, pyyaml.
+
 ## v1.3.1 — phase-10: polish (2026-08-18)
 
 - README rewritten: hero screenshot, pitch, live-link placeholder, mermaid architecture, "How it

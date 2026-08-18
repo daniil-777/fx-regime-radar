@@ -1,0 +1,90 @@
+version: 1.4.0
+pairs:
+- EURUSD
+- USDCHF
+- GBPUSD
+usd_base_pairs:
+- USDCHF
+annualize: sqrt(252)
+std_ddof: 1
+warmup_rows: 60
+golden_window_rows: 600
+base_features:
+- name: ret_1d
+  formula: log(close_t / close_{t-1})
+- name: vol_20
+  window: 20
+  formula: std(ret_1d over last 20 rows, ddof=1) * sqrt(252)
+- name: vol_60
+  window: 60
+  formula: std(ret_1d over last 60 rows, ddof=1) * sqrt(252)
+- name: vol_ratio
+  window: 5
+  formula: (std(ret_1d over last 5 rows, ddof=1) * sqrt(252)) / vol_60
+- name: mom_20
+  window: 20
+  formula: close_t / close_{t-20} - 1
+- name: rng_hl
+  window: 10
+  formula: mean over last 10 rows of (high - low) / close
+- name: corr_20
+  window: 20
+  formula: mean over the two other pairs of corr(ret_a, ret_b) on the last 20 dates
+    BOTH pairs traded (USD-base pairs sign-flipped first), as-of aligned backward
+    to the pair's own dates; NaN if undefined
+- name: ret_5d_abs
+  window: 5
+  formula: abs(close_t / close_{t-5} - 1)
+hmm:
+  features:
+  - ret_1d
+  - vol_20
+  - mom_20
+  n_states: 4
+  regimes:
+  - calm
+  - trend
+  - chop
+  - crisis
+  outputs:
+  - regime
+  - regime_prob
+  - hmm_entropy (nats)
+  - days_in_regime (run length incl. today)
+  - vol_trend = sign(vol_20_t - vol_20_{t-10}) (0 if undefined)
+  filter: forward algorithm from window start with startprob, logsumexp-normalised
+    each step
+forecaster:
+  features:
+  - vol_20
+  - vol_60
+  - vol_ratio
+  - mom_20
+  - rng_hl
+  - corr_20
+  - ret_5d_abs
+  - days_in_regime
+  - hmm_entropy
+  - vol_trend
+  - regime_trend
+  - regime_chop
+  - regime_crisis
+  - pair_GBPUSD
+  - pair_USDCHF
+  one_hot_base:
+    regime: calm
+    pair: EURUSD
+  output: change_risk_5d = platt(onnx_probability) with sidecar a, b
+siren:
+  features:
+  - vol_20
+  - vol_60
+  - vol_ratio
+  - mom_20
+  - rng_hl
+  - corr_20
+  - ret_5d_abs
+  - hmm_entropy
+  - ret_1d
+  output: anomaly_score = mean((onnx(x_scaled) - x_scaled)^2); anomaly_pct = searchsorted(train_scores_sorted,
+    score, side=right) / n * 100

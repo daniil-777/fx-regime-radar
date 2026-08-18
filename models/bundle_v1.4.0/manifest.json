@@ -1,0 +1,40 @@
+{
+  "bundle_version": "1.4.0",
+  "created_at": "2026-08-18T10:03:55Z",
+  "git_commit": "cd3ce7c",
+  "fxradar_version": "1.4.0",
+  "model_versions": {
+    "hmm": "0.4.0",
+    "forecaster": "1.1.0",
+    "siren": "1.2.0"
+  },
+  "parity": {
+    "forecaster_onnx_max_abs_diff": 2.682209014892578e-07,
+    "n_checked": 16660,
+    "siren_onnx_max_abs_diff": 7.105427357601002e-15
+  },
+  "tolerances": {
+    "features": 1e-08,
+    "model_outputs": 1e-06,
+    "anomaly_pct": "one rank step = 100 / len(train_scores_sorted) (rank statistic)"
+  },
+  "goldens": {
+    "rows": 302,
+    "window_rows": 600,
+    "includes": [
+      "USDCHF 2015-01-15",
+      "USDCHF 2015-01-16"
+    ]
+  },
+  "files": {
+    "feature_spec.yaml": "bee5c2b1729aaea76d8cc3fa8da8f0f2d4f92962a555e610a8e5fb2abe636845",
+    "forecaster.json": "48369edd7f71a7bc80368a61a906f103eee80113d90cb96afacdc0fd65104972",
+    "forecaster.onnx": "1cb88c9baf0946fd9cb9e0643798dc257598f3c3bd133f472cc5d8adc2b0861c",
+    "goldens.parquet": "3e0a3d192fcc2abc5d18ddac415e0f7ecc112191de61514a67bb9024823ac98e",
+    "hmm_EURUSD.json": "af3e504673a0782c2921952da32d51367ae1bab697f09f4b665d7a4521d856f4",
+    "hmm_GBPUSD.json": "6d9ffc6bd6346a8bc876bdb2cc456d23288b6e49a6d676cb0cd3d67f4ea36401",
+    "hmm_USDCHF.json": "74621da196a378e7c136e78b21940412038134f690a3c66de5d81d37bffea6c5",
+    "siren.json": "8a8a90bdf3c4f99fc2a5185c1e400f39de0bd8dba72fa5448898cba71309dbdc",
+    "siren.onnx": "9398030e9e5c72aadfcc22f4aa71964a80a5d5b4639bc982fa18de01720da061"
+  }
+}

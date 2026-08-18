@@ -11,5 +11,9 @@
   "siren": {
     "version": "1.2.0",
     "trained_utc": "2026-08-18T11:39Z"
+  },
+  "bundle": {
+    "version": "1.4.0",
+    "path": "models/bundle_v1.4.0"
   }
 }

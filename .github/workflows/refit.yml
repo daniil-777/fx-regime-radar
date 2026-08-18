@@ -36,10 +36,11 @@ jobs:
           python -m fxradar.hmm_model --refit --train-end "${{ github.event.inputs.train_end }}" --version "${{ github.event.inputs.version }}" --stability
           python -m fxradar.validate
           python pipelines/run_daily.py
+          python -m fxradar.export
       - name: Commit models, manifest, artifacts and the new validation report
         run: |
           git config user.name "fx-regime-radar-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add models/ data/ reports/
+          git add models/ data/ reports/   # includes the new models/bundle_v*/
           git commit -m "models: hmm refit v${{ github.event.inputs.version }} (train <= ${{ github.event.inputs.train_end }})"
           git push
