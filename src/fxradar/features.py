@@ -36,7 +36,7 @@ import pandas as pd
 
 from fxradar import config
 
-ANNUALIZE = np.sqrt(252.0)
+ANNUALIZE = np.sqrt(float(config.TRADING_DAYS))  # sqrt(252) for FX, sqrt(365) for 7-day markets
 WARMUP_ROWS = 60
 
 BASE_FEATURES: list[str] = [
@@ -75,7 +75,8 @@ def _cross_pair_corr(ret_wide: pd.DataFrame, window: int = 20) -> pd.DataFrame:
     vs USD". Each pairwise correlation is computed on the dates BOTH pairs traded (so a
     "20-day window" is 20 common trading days) and then aligned as-of (backward, causal) onto
     the pair's own dates; a hole in pair C therefore only freezes the A-C component while the
-    A-B component keeps updating. The mean of the two is NaN if either component is NaN.
+    A-B component keeps updating. The mean is over the components defined on that date (a pair
+    that starts later contributes nothing until it exists); NaN only when none is defined.
     """
     ret_wide = ret_wide.copy()
     for pair in config.USD_BASE_PAIRS:
@@ -92,7 +93,9 @@ def _cross_pair_corr(ret_wide: pd.DataFrame, window: int = 20) -> pd.DataFrame:
             both = ret_wide[[a, b]].dropna(how="any")
             comp = both[a].rolling(window).corr(both[b])
             comps.append(comp.reindex(own_dates, method="ffill"))  # as-of backward: past only
-        out[a] = pd.concat(comps, axis=1).mean(axis=1, skipna=False).reindex(ret_wide.index)
+        # mean over the components that exist on that date (a pair with a shorter history simply
+        # contributes nothing until it starts); NaN only when no component is defined
+        out[a] = pd.concat(comps, axis=1).mean(axis=1, skipna=True).reindex(ret_wide.index)
     return out
 
 

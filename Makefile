@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit
+.PHONY: setup test lint fmt run pipeline refit train-universe
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -27,8 +27,21 @@ fmt:              ## auto-format and auto-fix imports
 run:              ## start the Streamlit app (reads artifacts only)
 	$(BIN)/streamlit run app/app.py
 
-pipeline:         ## run the daily pipeline (the only place heavy compute happens)
-	$(PYTHON) pipelines/run_daily.py
+# UNIVERSE=fx (default) or crypto — selects instruments, splits, thresholds and artifact folders
+UNIVERSE ?= fx
+pipeline:         ## run the daily pipeline for a universe (the only place heavy compute happens)
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) pipelines/run_daily.py
+
+train-universe:   ## build a new universe from scratch: data → features → HMM → validate → forecaster → siren → strategies → stress
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.data
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.features
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.hmm_model --refit
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.validate
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.forecaster --train
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.siren --train
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) pipelines/run_daily.py
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.strategies
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.stress
 
 # Deliberate model refit (monthly cadence). Example:
 #   make refit TRAIN_END=2024-12-31 HMM_VERSION=0.4.1

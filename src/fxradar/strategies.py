@@ -322,7 +322,7 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
     )
     fig, ax = plt.subplots(figsize=(12, 5))
     # regime underlay: EURUSD's regime as the reference band (pooled strategies have no single regime)
-    g = regimes[regimes["pair"] == "EURUSD"].sort_values("date").reset_index(drop=True)
+    g = regimes[regimes["pair"] == config.PAIRS[0]].sort_values("date").reset_index(drop=True)
     new_run = g["regime"].ne(g["regime"].shift(1)).cumsum()
     for _, run in g.groupby(new_run):
         ax.axvspan(
@@ -366,7 +366,8 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
         fontsize=8,
     )
     ax.set_title(
-        "Net equity, all pairs equal weight — regime underlay = EURUSD filtered regime", loc="left"
+        f"Net equity, all pairs equal weight — regime underlay = {config.PAIRS[0]} filtered regime",
+        loc="left",
     )
     ax.grid(alpha=0.25)
     ax.legend(frameon=False, loc="upper left")

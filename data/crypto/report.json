@@ -1,0 +1,65 @@
+{
+  "BTC-USD": {
+    "text": "BTC/USD is in a calm regime (calm) with 100% confidence, now on day 53 of this regime. The model puts the chance of a regime change within five trading days at 25%, which is moderate, driven mainly by how unsure the regime model is, recent volatility and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 61).",
+    "generated_at": "2026-08-18T11:21:49Z",
+    "source": "template",
+    "stats": {
+      "pair": "BTC-USD",
+      "date": "2026-08-17",
+      "regime": "calm",
+      "regime_prob": 1.0,
+      "days_in_regime": 53,
+      "change_risk_5d": 0.251,
+      "top_drivers": [
+        "hmm_entropy",
+        "vol_20",
+        "rng_hl"
+      ],
+      "anomaly_pct": 60.9,
+      "nearest_neighbor_date": "2019-03-27",
+      "ret_5d_pct": 1.74
+    }
+  },
+  "ETH-USD": {
+    "text": "ETH/USD is in a calm regime (calm) with 100% confidence, now on day 71 of this regime. The model puts the chance of a regime change within five trading days at 27%, which is moderate, driven mainly by recent volatility, the size of daily trading ranges and how unsure the regime model is. Nothing looks unusual today compared with calm history (anomaly percentile 41).",
+    "generated_at": "2026-08-18T11:21:49Z",
+    "source": "template",
+    "stats": {
+      "pair": "ETH-USD",
+      "date": "2026-08-17",
+      "regime": "calm",
+      "regime_prob": 0.997,
+      "days_in_regime": 71,
+      "change_risk_5d": 0.274,
+      "top_drivers": [
+        "vol_20",
+        "rng_hl",
+        "hmm_entropy"
+      ],
+      "anomaly_pct": 40.6,
+      "nearest_neighbor_date": "2019-12-15",
+      "ret_5d_pct": 1.81
+    }
+  },
+  "LTC-USD": {
+    "text": "LTC/USD is in a calm regime (calm) with 100% confidence, now on day 54 of this regime. The model puts the chance of a regime change within five trading days at 16%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 38).",
+    "generated_at": "2026-08-18T11:21:49Z",
+    "source": "template",
+    "stats": {
+      "pair": "LTC-USD",
+      "date": "2026-08-17",
+      "regime": "calm",
+      "regime_prob": 1.0,
+      "days_in_regime": 54,
+      "change_risk_5d": 0.156,
+      "top_drivers": [
+        "hmm_entropy",
+        "vol_60",
+        "rng_hl"
+      ],
+      "anomaly_pct": 37.9,
+      "nearest_neighbor_date": "2016-09-14",
+      "ret_5d_pct": -0.73
+    }
+  }
+}

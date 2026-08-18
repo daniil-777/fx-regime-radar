@@ -14,6 +14,7 @@ from fxradar.config import DISCLAIMER  # noqa: E402
 st.set_page_config(page_title="Methodology — FX Regime Radar", page_icon="📡", layout="wide")
 ui.inject_css()
 ui.sidebar(DISCLAIMER)
+ui.universe_selector()
 
 st.markdown(
     '<div class="fx-header"><div><span class="fx-wordmark">Methodology</span><span class="fx-sub">how the weather station works</span></div></div>',

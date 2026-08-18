@@ -175,6 +175,22 @@ Run it: `cargo run --release --bin fxradar-serve -- --bundle models/bundle_v1.4.
 from it). `POST /api/score` takes `{"pair": "USDCHF", "windows": [{pair, dates, close, high, low} × 3]}`
 with ≥ 600 rows per pair (see `docs/bundle_format.md`).
 
+## Universes and the scenario explorer
+
+The pipeline is universe-agnostic. `src/fxradar/universes.py` holds one record per instrument set —
+**FX majors** (the defaults) and **Crypto majors** (BTC/ETH/LTC, 7-day markets with 65–120 % annualised
+vol; splits train ≤ 2020, val 2021–22, test 2023+; crypto-sized corrupted-print thresholds; no ECB
+check; `sqrt(365)`; exchange-fee cost model). Select with `FXRADAR_UNIVERSE=crypto` (artifacts under
+`data/crypto/`, `models/crypto/`, `reports/crypto/`); build one from scratch with
+`make train-universe UNIVERSE=crypto`. Crypto results: forecaster PR-AUC 0.548 vs logistic 0.488
+(base 0.228); every named crash (COVID Black Thursday, May 2021, Terra, FTX) lights the siren; the
+regime-gate strategy is the one series with a positive net test Sharpe (0.07, breakeven cost 1.15×).
+
+In the app the sidebar switches universe, and the **scenario explorer** replays any past date — jump to
+a named episode or pick an "as of" date — showing the weather station exactly as it was computable that
+day (filtered regimes, causal risk and siren; nothing after the date is drawn). Deep links work:
+`?universe=crypto&pair=BTC-USD&asof=2022-11-09`. Screenshot: `docs/screenshots/scenario_crypto_ftx.png`.
+
 ## The regime orb
 
 The dashboard hero carries an ambient three.js particle orb for the selected pair: regime → colour and motion,

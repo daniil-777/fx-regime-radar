@@ -24,9 +24,27 @@ def test_dashboard_renders_with_disclaimer_in_sidebar_and_footer() -> None:
     assert not at.exception, at.exception
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     assert any(config.DISCLAIMER in m.value for m in at.markdown)  # footer
-    assert [s.value for s in at.sidebar.selectbox] == ["EURUSD"]
+    values = [s.value for s in at.sidebar.selectbox]
+    assert values[:2] == ["fx", "EURUSD"] and values[2] == "today (latest data)"
     assert len(at.get("plotly_chart")) == 1
     assert elapsed < 8.0  # cold import + first paint in CI; ~1s locally
+
+
+def test_scenario_explorer_time_machine_and_universe_switch() -> None:
+    """Switching universe swaps pairs; jumping to an episode shows the as-of banner and hides the future."""
+    at = _run("app/app.py")
+    if "crypto" in at.sidebar.selectbox[0].options:
+        at.sidebar.selectbox[0].set_value("crypto").run()
+        assert not at.exception, at.exception
+        assert at.sidebar.selectbox[1].options[0] == "BTC-USD"
+    episodes = at.sidebar.selectbox[2].options
+    assert len(episodes) >= 2 and episodes[0] == "today (latest data)"
+    at.sidebar.selectbox[2].set_value(episodes[1]).run()
+    assert not at.exception, at.exception
+    txt = " ".join(m.value for m in at.markdown)
+    assert (
+        "Time machine — viewing as of" in txt and "(replay)" in txt
+    )  # narration replayed by template
 
 
 def test_methodology_page_renders_with_disclaimer() -> None:

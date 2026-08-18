@@ -1,0 +1,24 @@
+{
+  "last_run_utc": "2026-08-18T11:21:50Z",
+  "data_through": "2026-08-17",
+  "rows": {
+    "prices": 11910,
+    "features": 11730,
+    "regimes": 11730
+  },
+  "model_versions": {
+    "hmm": "0.4.0",
+    "forecaster": "1.1.0",
+    "siren": "1.2.0"
+  },
+  "ecb_check": {},
+  "stage_seconds": {
+    "data": 1.26,
+    "features": 0.05,
+    "hmm": 1.31,
+    "forecaster": 1.21,
+    "siren": 0.26,
+    "narrator": 1.11,
+    "arcade": 0.0
+  }
+}

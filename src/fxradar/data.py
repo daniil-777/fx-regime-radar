@@ -249,7 +249,7 @@ def validate_against_ecb(
     """
     end = pd.Timestamp(prices["date"].max()).date()
     start = end - timedelta(days=365 * years)
-    checks = {"EURUSD": ("EUR", "USD"), "USDCHF": ("USD", "CHF")}
+    checks = config.ECB_CHECKS  # empty for universes without an official reference rate
     results: dict[str, dict[str, float]] = {}
     for pair, (base, quote) in checks.items():
         ours = prices.loc[prices["pair"] == pair].set_index("date")["close"]

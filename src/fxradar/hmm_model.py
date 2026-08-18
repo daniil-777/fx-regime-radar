@@ -341,8 +341,9 @@ def main() -> None:
     print(pd.crosstab(regimes["pair"], regimes["regime"])[REGIMES].to_string())
     print("\n== mean regime_prob per pair ==")
     print(regimes.groupby("pair")["regime_prob"].mean().round(3).to_string())
-    print("\n== EURUSD transition matrix (rows: from, cols: to) ==")
-    print(transition_table(bundles["EURUSD"]).round(3).to_string())
+    first = config.PAIRS[0]
+    print(f"\n== {first} transition matrix (rows: from, cols: to) ==")
+    print(transition_table(bundles[first]).round(3).to_string())
     print("\n== state -> regime mapping ==")
     for p, b in bundles.items():
         print(p, b.mapping)

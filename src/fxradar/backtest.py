@@ -21,7 +21,7 @@ import pandas as pd
 
 from fxradar import config
 
-ANN = 252.0
+ANN = float(config.TRADING_DAYS)  # 252 (FX) or 365 (crypto)
 BACKTESTS_PATH = config.DATA_DIR / "backtests.parquet"
 
 
@@ -35,8 +35,10 @@ class CostConfig:
     a strategy that only works at zero cost is a finding, not a result.
     """
 
-    base_bps: float = 1.0
-    vol_mult: float = 80.0
+    base_bps: float = config.UNIVERSE.cost_base_bps  # FX 1 bp; crypto 8 bp (exchange fees + book)
+    vol_mult: float = (
+        config.UNIVERSE.cost_vol_mult
+    )  # FX 80; crypto 20 (vol is already 5-10x higher)
 
     def cost_bps(self, vol_20: pd.Series) -> pd.Series:
         return self.base_bps + self.vol_mult * vol_20.fillna(vol_20.median())

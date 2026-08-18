@@ -193,7 +193,7 @@ def feature_spec() -> dict:
             {
                 "name": "corr_20",
                 "window": 20,
-                "formula": "mean over the two other pairs of corr(ret_a, ret_b) on the last 20 dates BOTH pairs traded (USD-base pairs sign-flipped first), as-of aligned backward to the pair's own dates; NaN if undefined",
+                "formula": "mean over the other pairs of corr(ret_a, ret_b) on the last 20 dates BOTH pairs traded (USD-base pairs sign-flipped first), each as-of aligned backward to the pair own dates; components that are undefined on a date are skipped; NaN only if none is defined",
             },
             {"name": "ret_5d_abs", "window": 5, "formula": "abs(close_t / close_{t-5} - 1)"},
         ],
@@ -212,7 +212,7 @@ def feature_spec() -> dict:
         },
         "forecaster": {
             "features": forecaster.FEATURES,
-            "one_hot_base": {"regime": "calm", "pair": "EURUSD"},
+            "one_hot_base": {"regime": "calm", "pair": config.PAIRS[0]},
             "output": "change_risk_5d = platt(onnx_probability) with sidecar a, b",
         },
         "siren": {
@@ -246,11 +246,20 @@ def _sample_goldens(regimes: pd.DataFrame, n: int, seed: int = 0) -> pd.DataFram
                 break
         picks.extend(sorted(set(chosen)))
     keep = r.loc[picks, ["date", "pair"]]
-    snb = r[
-        (r["pair"] == "USDCHF") & (r["date"].isin(pd.to_datetime(["2015-01-15", "2015-01-16"])))
-    ][["date", "pair"]]
+    # always include the universe's named events (+ the following day: shocks show one day late in
+    # start-of-day closes) — for FX that is USDCHF 2015-01-15/16 (SNB)
+    musts = []
+    for pair, events in config.UNIVERSE.known_events.items():
+        for d, _ in events:
+            t = pd.Timestamp(d)
+            musts.append(
+                r[(r["pair"] == pair) & (r["date"].isin([t, t + pd.tseries.offsets.BDay(1)]))][
+                    ["date", "pair"]
+                ]
+            )
+    forced = pd.concat(musts) if musts else r.iloc[0:0][["date", "pair"]]
     return (
-        pd.concat([keep, snb])
+        pd.concat([keep, forced])
         .drop_duplicates()
         .sort_values(["pair", "date"])
         .reset_index(drop=True)
@@ -377,7 +386,9 @@ def build_bundle(version: str = BUNDLE_VERSION, models_dir: Path = config.MODELS
         "goldens": {
             "rows": int(len(goldens)),
             "window_rows": WINDOW,
-            "includes": ["USDCHF 2015-01-15", "USDCHF 2015-01-16"],
+            "includes": [
+                f"{p} {d}" for p, evs in config.UNIVERSE.known_events.items() for d, _ in evs
+            ],
         },
         "files": {name: sha256(out / name) for name in files},
     }
@@ -493,8 +504,9 @@ def replay_goldens(bundle: Path) -> pd.DataFrame:
         )
         for r_ in ["trend", "chop", "crisis"]:
             fx[f"regime_{r_}"] = float(regime.iloc[last] == r_)
-        for p_ in ["GBPUSD", "USDCHF"]:
-            fx[f"pair_{p_}"] = float(rec["pair"] == p_)
+        for dummy in fc["features"]:
+            if dummy.startswith("pair_"):
+                fx[dummy] = float(rec["pair"] == dummy.removeprefix("pair_"))
         xf = np.array([[fx[c] for c in fc["features"]]], dtype=np.float32)
         outs = fc_sess.run(None, {fc["onnx_input"]: xf})
         p_raw = float(outs[1][0][1]) if isinstance(outs[1], list) else float(outs[1][0, 1])

@@ -1,0 +1,106 @@
+{
+  "version": "1.1.0",
+  "features": [
+    "vol_20",
+    "vol_60",
+    "vol_ratio",
+    "mom_20",
+    "rng_hl",
+    "corr_20",
+    "ret_5d_abs",
+    "days_in_regime",
+    "hmm_entropy",
+    "vol_trend",
+    "regime_trend",
+    "regime_chop",
+    "regime_crisis",
+    "pair_ETH-USD",
+    "pair_LTC-USD"
+  ],
+  "horizon": 5,
+  "threshold": 0.33,
+  "calibration": {
+    "a": 0.913545548915863,
+    "b": -0.9293559193611145,
+    "method": "Platt scaling fit on validation"
+  },
+  "trained_utc": "2026-08-18T13:09Z",
+  "params": {
+    "n_estimators": 1000,
+    "early_stopping_rounds": 50,
+    "max_depth": 3,
+    "learning_rate": 0.04,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 8,
+    "eval_metric": "aucpr",
+    "random_state": 42,
+    "n_jobs": 4
+  },
+  "n_train": 5550,
+  "n_val": 2160,
+  "train_pos_rate": 0.2336936936936937,
+  "scale_pos_weight": 3.279105628373169,
+  "best_iteration": 208,
+  "best_val_aucpr": 0.6143236972450528,
+  "val_metrics": {
+    "pr_auc": 0.6146995970093412,
+    "precision": 0.52046783625731,
+    "recall": 0.6033898305084746,
+    "brier": 0.15566879510879517,
+    "n": 2160,
+    "pos_rate": 0.27314814814814814
+  },
+  "test_scoreboard": [
+    {
+      "model": "XGBoost (ours, calibrated)",
+      "threshold": 0.33,
+      "pr_auc": 0.5477499602640477,
+      "precision": 0.4184247538677918,
+      "recall": 0.6611111111111111,
+      "brier": 0.14858058094978333,
+      "n": 3945,
+      "pos_rate": 0.22813688212927757
+    },
+    {
+      "model": "base_rate",
+      "threshold": 0.23,
+      "pr_auc": 0.22813688212927757,
+      "precision": 0.22813688212927757,
+      "recall": 1.0,
+      "brier": 0.17612132329637215,
+      "n": 3945,
+      "pos_rate": 0.22813688212927757
+    },
+    {
+      "model": "logistic",
+      "threshold": 0.22,
+      "pr_auc": 0.4883175809019751,
+      "precision": 0.4010989010989011,
+      "recall": 0.6488888888888888,
+      "brier": 0.15103428059699722,
+      "n": 3945,
+      "pos_rate": 0.22813688212927757
+    },
+    {
+      "model": "one_feature",
+      "threshold": 0.5,
+      "pr_auc": 0.22406159974810885,
+      "precision": 0.22028301886792453,
+      "recall": 0.5188888888888888,
+      "brier": 0.5287705956907478,
+      "n": 3945,
+      "pos_rate": 0.22813688212927757
+    },
+    {
+      "model": "XGBoost (raw, uncalibrated)",
+      "threshold": 0.56,
+      "pr_auc": 0.5477499602640477,
+      "precision": 0.4178370786516854,
+      "recall": 0.6611111111111111,
+      "brier": 0.21613456308841705,
+      "n": 3945,
+      "pos_rate": 0.22813688212927757
+    }
+  ]
+}

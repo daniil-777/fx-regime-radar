@@ -168,7 +168,10 @@ def narration(entry: dict | None) -> str:
     ai = entry.get("source") == "llm"
     badge_color = REGIME_COLORS["trend"] if ai else MUTED
     badge = f'<span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{badge_color};background:{badge_color}22;border:1px solid {badge_color}55">{"AI" if ai else "auto"}</span>'
-    when = html.escape(str(entry.get("generated_at", ""))[:16].replace("T", " "))
+    stamp = str(entry.get("generated_at", ""))
+    when = html.escape(
+        stamp[:16].replace("T", " ") if "T" in stamp else stamp
+    )  # ISO timestamps trimmed to minutes
     return (
         f'<div style="margin-top:12px;padding:10px 12px;border-left:3px solid {BORDER};color:{TEXT};font-size:0.86rem;line-height:1.45">'
         f"{html.escape(entry['text'])}"
@@ -232,3 +235,41 @@ def footer(disclaimer: str, extra: str = "") -> None:
     st.markdown(
         f'<div class="fx-footer">{html.escape(disclaimer)} {extra}</div>', unsafe_allow_html=True
     )
+
+
+def available_universes() -> list[str]:
+    """Universes whose artifacts exist on disk (fx first)."""
+    from fxradar import config, universes
+
+    out = [
+        n
+        for n in universes.UNIVERSES
+        if (config.universe_dirs(n)["data"] / "regimes.parquet").exists()
+    ]
+    return out or ["fx"]
+
+
+def universe_selector() -> tuple[str, object, dict]:
+    """Sidebar universe switch shared by every page: returns (name, Universe, dirs). Persisted in
+    session state so pages agree; the FX universe keeps the repository default paths."""
+    from fxradar import config, universes
+
+    names = available_universes()
+    # deep-link support: ?universe=crypto seeds the selection once (shareable scenario links)
+    qp = st.query_params.get("universe") if hasattr(st, "query_params") else None
+    if qp in names and not st.session_state.get("_universe_from_url"):
+        st.session_state["universe_select"] = qp
+        st.session_state["_universe_from_url"] = True
+    current = st.session_state.get("universe", names[0])
+    if current not in names:
+        current = names[0]
+    with st.sidebar:
+        label = st.selectbox(
+            "Universe",
+            names,
+            index=names.index(current),
+            format_func=lambda n: universes.get(n).label,
+            key="universe_select",
+        )
+    st.session_state["universe"] = label
+    return label, universes.get(label), config.universe_dirs(label)

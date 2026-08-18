@@ -2,6 +2,32 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.7.0 — universes + scenario explorer (2026-08-18)
+
+- `src/fxradar/universes.py`: one record per instrument set (pairs, tickers, bounds, splits,
+  day-count, corrupted-print thresholds, cost model, official cross-check, forecaster pair
+  one-hots, siren events, narrator words, artifact sub-directory). `fx` = the shipped defaults
+  (bundle/goldens still replay bit-for-bit; Rust selftest PASS); `crypto` = BTC/ETH/LTC, train
+  ≤ 2020, val 2021–22, test 2023+, `sqrt(365)`, 30 %/15 %/5 %/60 % print thresholds, 8 bp + 20×vol
+  costs. `FXRADAR_UNIVERSE=<name>` selects it; `config.py` derives everything from it;
+  `make train-universe UNIVERSE=crypto`; daily workflow refreshes both universes.
+- De-hardwired FX-isms: pair dummies, siren events, narrator wording, ECB check, annualisation,
+  cost defaults, export "must-include" goldens, chart underlay pair. `corr_20` now averages the
+  components that exist on a date (a later-listed pair contributes nothing until it starts) —
+  changed identically in Python and Rust; FX outputs unchanged.
+- Crypto universe trained and shipped (`data/crypto`, `models/crypto`, `reports/crypto`):
+  HMM (BTC calm 31 % vol → crisis 107 %; COVID/May-2021/Terra/FTX all `crisis`), forecaster
+  PR-AUC 0.548 (logistic 0.488, base 0.228), siren lights every named crash, strategies +
+  stress (S3 regime gate net Sharpe +0.07 test, breakeven 1.15×; the rest negative).
+- App: sidebar **universe switch** on every page (pair labels via `Universe.display`),
+  **scenario explorer** — named-episode jump list + free "as of" date; the whole page is
+  rendered from data ≤ that date (cards, replayed template narration marked "(replay)", chart
+  cut at the date with an "as of" marker, siren, loudest days), with a time-machine banner;
+  deep links `?universe=&pair=&asof=`; log price axis for crypto. Strategy lab / Arcade /
+  Methodology follow the selected universe.
+- Tests: universe registry (FX defaults, crypto consistency), scenario explorer + universe
+  switch flow, deep-link seeding; total 112.
+
 ## v2.6.0 — phase-18: regime orb (2026-08-18)
 
 - `app/orb.py`: self-contained three.js (r128 from cdnjs) particle orb rendered via `st.iframe`

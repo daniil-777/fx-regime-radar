@@ -31,8 +31,10 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Run the daily pipeline (loads saved models, never trains)
-        run: python pipelines/run_daily.py
+      - name: Run the daily pipeline for every universe (loads saved models, never trains)
+        run: |
+          python pipelines/run_daily.py
+          FXRADAR_UNIVERSE=crypto python pipelines/run_daily.py
         env:
           # Optional. When the repository secret is absent this is empty and the
           # narrator uses its deterministic template — the run still succeeds.

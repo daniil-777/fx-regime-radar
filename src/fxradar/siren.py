@@ -42,11 +42,7 @@ SIREN_FEATURES: list[str] = [
 HIDDEN = (8, 3, 8)
 CALM_PROB = 0.7
 NN_EXCLUDE_DAYS = 10
-KNOWN_EVENTS = {
-    "USDCHF": [("2015-01-15", "SNB floor removal")],
-    "GBPUSD": [("2016-06-24", "Brexit vote"), ("2016-10-07", "sterling flash crash")],
-    "EURUSD": [("2020-03-16", "March 2020 (COVID)")],
-}
+KNOWN_EVENTS = {k: list(v) for k, v in config.UNIVERSE.known_events.items()}  # per universe
 
 
 # --------------------------------------------------------------------------------------

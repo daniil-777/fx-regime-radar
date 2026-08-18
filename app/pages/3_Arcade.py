@@ -13,11 +13,14 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import ui  # noqa: E402
 from fxradar import arcade  # noqa: E402
-from fxradar.config import DISCLAIMER, PAIRS, REGIMES_PATH  # noqa: E402
+from fxradar.config import DISCLAIMER  # noqa: E402
 
 st.set_page_config(page_title="Arcade — FX Regime Radar", page_icon="📡", layout="wide")
 ui.inject_css()
 ui.sidebar(DISCLAIMER)
+UNI_NAME, UNI, DIRS = ui.universe_selector()
+PAIRS = list(UNI.pairs)
+REGIMES_PATH = DIRS["data"] / "regimes.parquet"
 
 
 @st.cache_data(show_spinner=False)
@@ -103,7 +106,7 @@ for col, p in zip(cols, PAIRS, strict=True):
                 (nick, p),
             ).fetchone()
             locked_id = row[0] if row else None
-        head = f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">{p[:3]}/{p[3:]}</span>{ui.regime_pill(pre.regime)}</div><div class="fx-muted" style="font-size:0.8rem;margin:6px 0">as of {pre.call_date} · day {pre.days_in_regime} of this regime · week {pre.week_key}</div>'
+        head = f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">{UNI.display(p)}</span>{ui.regime_pill(pre.regime)}</div><div class="fx-muted" style="font-size:0.8rem;margin:6px 0">as of {pre.call_date} · day {pre.days_in_regime} of this regime · week {pre.week_key}</div>'
         if locked_id is None:
             st.markdown(
                 f'<div class="fx-card" style="margin-bottom:6px">{head}<div class="fx-muted" style="font-size:0.82rem">How likely is it that this label is different at some point in the next 5 trading days?</div></div>',
@@ -143,7 +146,7 @@ for i, storm in enumerate(arcade.load_storms()):
     with gcols[i % 3]:
         is_open = storm["id"] in opened
         with st.expander(
-            f'{"✓ " if is_open else ""}{storm["title"]} — {storm["pair"][:3]}/{storm["pair"][3:]} {storm["date"]}',
+            f'{"✓ " if is_open else ""}{storm["title"]} — {UNI.display(storm["pair"])} {storm["date"]}',
             expanded=False,
         ):
             if not is_open:

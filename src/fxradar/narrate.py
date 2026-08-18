@@ -47,9 +47,8 @@ DRIVER_WORDS = {
     "regime_trend": "being in a trend regime",
     "regime_chop": "being in a chop regime",
     "regime_crisis": "being in a crisis regime",
-    "pair_GBPUSD": "this being sterling",
-    "pair_USDCHF": "this being the Swiss franc",
 }
+DRIVER_WORDS.update({f"pair_{p}": w for p, w in config.UNIVERSE.pair_words.items()})
 REGIME_WORDS = {"calm": "calm", "trend": "trending", "chop": "choppy", "crisis": "crisis"}
 REPORT_PATH = config.REPORT_PATH
 
@@ -101,7 +100,7 @@ def _pct(x: float) -> str:
 
 def template_narrate(stats: dict) -> str:
     """The same three sentences, written by an f-string. Always available, never wrong about facts."""
-    pair = f"{stats['pair'][:3]}/{stats['pair'][3:]}"
+    pair = config.UNIVERSE.display(stats["pair"])  # EUR/USD, BTC/USD
     regime = stats["regime"]
     days = stats["days_in_regime"]
     s1 = (

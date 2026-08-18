@@ -242,11 +242,12 @@ pub fn build_features(
         let corr = if components.is_empty() {
             f64::NAN
         } else {
-            let vals: Vec<f64> = components.iter().map(|c| c[i]).collect();
-            if vals.iter().all(|v| v.is_finite()) {
-                vals.iter().sum::<f64>() / vals.len() as f64
-            } else {
+            // mean over the components defined on this date; NaN only when none is defined
+            let vals: Vec<f64> = components.iter().map(|c| c[i]).filter(|v| v.is_finite()).collect();
+            if vals.is_empty() {
                 f64::NAN
+            } else {
+                vals.iter().sum::<f64>() / vals.len() as f64
             }
         };
         rows.push(FeatureRow {

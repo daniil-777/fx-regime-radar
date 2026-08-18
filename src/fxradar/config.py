@@ -1,53 +1,60 @@
-"""Central configuration: pairs, tickers, date splits, and artifact paths.
+"""Central configuration: the ACTIVE universe (pairs, tickers, splits) and artifact paths.
 
-Everything that is "a decision" rather than "a computation" lives here so that an
-interviewer (or you, in six months) can find it in one place.
+Everything that is "a decision" rather than "a computation" lives here or in `universes.py`.
+The active universe is chosen with the FXRADAR_UNIVERSE environment variable (default "fx");
+its artifacts live under data/<subdir>, models/<subdir>, reports/<subdir> — the FX universe uses
+the repository defaults so nothing that shipped moves.
 """
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
+
+from fxradar import universes
 
 # ---- user-facing text ----------------------------------------------------------------
 # CLAUDE.md rule 7: every user-facing surface carries this exact line.
 DISCLAIMER = "Educational tool. Not investment advice."
 
-# ---- universe --------------------------------------------------------------------------
-PAIRS: list[str] = ["EURUSD", "USDCHF", "GBPUSD"]
+# ---- active universe --------------------------------------------------------------------
+UNIVERSE_NAME = os.environ.get("FXRADAR_UNIVERSE", "fx")
+UNIVERSE = universes.get(UNIVERSE_NAME)
 
-# Yahoo Finance tickers. Note that USD/CHF is quoted as "CHF=X" on Yahoo (USD base).
-YF_TICKERS: dict[str, str] = {
-    "EURUSD": "EURUSD=X",
-    "USDCHF": "CHF=X",
-    "GBPUSD": "GBPUSD=X",
-}
-
-# Pairs quoted with USD as the BASE currency (price = foreign units per 1 USD). Their returns
-# have the opposite sign to EURUSD/GBPUSD for the same "dollar move"; corr_20 flips them.
-USD_BASE_PAIRS: frozenset[str] = frozenset({"USDCHF"})
-
-# Plausible price ranges used as sanity bounds (a broken feed fails loudly, not silently).
-PRICE_BOUNDS: dict[str, tuple[float, float]] = {
-    "EURUSD": (0.7, 2.0),
-    "USDCHF": (0.5, 2.0),
-    "GBPUSD": (0.9, 2.5),
-}
-
-START_DATE = "2005-01-01"
+PAIRS: list[str] = list(UNIVERSE.pairs)
+YF_TICKERS: dict[str, str] = dict(UNIVERSE.tickers)
+USD_BASE_PAIRS: frozenset[str] = UNIVERSE.usd_base_pairs  # returns sign-flipped in corr_20
+PRICE_BOUNDS: dict[str, tuple[float, float]] = dict(UNIVERSE.price_bounds)
+START_DATE = UNIVERSE.start_date
+TRADING_DAYS = UNIVERSE.trading_days  # 252 (FX) or 365 (crypto): annualisation day-count
 
 # ---- time-ordered splits (CLAUDE.md rule 2) --------------------------------------------
-TRAIN_END = "2016-12-31"  # train: dates <= TRAIN_END
-VAL_START = "2017-01-01"  # validation: 2017-2018
-VAL_END = "2018-12-31"
-TEST_START = "2019-01-01"  # test: 2019+
+TRAIN_END = UNIVERSE.train_end  # train: dates <= TRAIN_END
+VAL_START = UNIVERSE.val_start
+VAL_END = UNIVERSE.val_end
+TEST_START = UNIVERSE.test_start  # test: scored once, frozen
 EMBARGO_DAYS = 5  # trading days dropped after every split boundary
 
 # ---- paths -----------------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = ROOT / "data"
-MODELS_DIR = ROOT / "models"
-REPORTS_DIR = ROOT / "reports"
 DOCS_DIR = ROOT / "docs"
+
+
+def universe_dirs(name: str) -> dict[str, Path]:
+    """data/models/reports directories for a universe (fx = repository defaults)."""
+    u = universes.get(name)
+    sub = Path(u.subdir) if u.subdir else Path()
+    return {
+        "data": ROOT / "data" / sub,
+        "models": ROOT / "models" / sub,
+        "reports": ROOT / "reports" / sub,
+    }
+
+
+_dirs = universe_dirs(UNIVERSE_NAME)
+DATA_DIR = _dirs["data"]
+MODELS_DIR = _dirs["models"]
+REPORTS_DIR = _dirs["reports"]
 
 PRICES_PATH = DATA_DIR / "prices.parquet"
 FEATURES_PATH = DATA_DIR / "features.parquet"
@@ -57,15 +64,19 @@ REPORT_PATH = DATA_DIR / "report.json"
 # ---- data contract: prices.parquet -----------------------------------------------------
 PRICE_COLUMNS: list[str] = ["date", "pair", "open", "high", "low", "close"]
 
-# ---- ECB cross-validation (phase 01) ---------------------------------------------------
-# frankfurter.app redirects here; we call the canonical host directly.
+# ---- official cross-validation (phase 01) — FX only; frankfurter.app redirects here ------
 FRANKFURTER_URL = "https://api.frankfurter.dev/v1"
+ECB_CHECKS: dict[str, tuple[str, str]] = dict(UNIVERSE.ecb_checks)
 ECB_LOOKBACK_YEARS = 3
 ECB_WARN_MEAN_PCT = 0.5  # log a WARNING above this mean absolute % deviation
 ECB_FAIL_MEAN_PCT = 2.0  # raise above this
 
-# ---- corrupted-print filters (phase 01) ------------------------------------------------
-BAD_TICK_JUMP = 0.04  # reverting close jumps > 4% in AND > 4% back out (close outside neighbours)
-BAD_TICK_JUMP_BAR = 0.02  # ... or > 2% each way when the WHOLE bar is disjoint from its neighbours
-BAD_TICK_REVERT = 0.02  # ... while the two-day through-move stays < 2%
-BAD_EXTREME_TOL = 0.20  # a high/low > 20% beyond anything printed around it is not a price
+# ---- corrupted-print filters (phase 01), sized per universe ------------------------------
+BAD_TICK_JUMP = (
+    UNIVERSE.bad_tick_jump
+)  # reverting close jumps > x in AND back out (close outside neighbours)
+BAD_TICK_JUMP_BAR = UNIVERSE.bad_tick_jump_bar  # ... or > y each way when the WHOLE bar is disjoint
+BAD_TICK_REVERT = UNIVERSE.bad_tick_revert  # ... while the two-day through-move stays < z
+BAD_EXTREME_TOL = (
+    UNIVERSE.bad_extreme_tol
+)  # a high/low this far beyond anything around it is not a price

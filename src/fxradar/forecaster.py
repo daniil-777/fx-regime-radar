@@ -44,7 +44,7 @@ NUMERIC_FEATURES: list[str] = [
     "vol_trend",
 ]
 REGIME_DUMMIES: list[str] = ["regime_trend", "regime_chop", "regime_crisis"]  # calm = base
-PAIR_DUMMIES: list[str] = ["pair_GBPUSD", "pair_USDCHF"]  # EURUSD = base
+PAIR_DUMMIES: list[str] = list(config.UNIVERSE.pair_dummies)  # base pair dropped; per universe
 FEATURES: list[str] = [*NUMERIC_FEATURES, *REGIME_DUMMIES, *PAIR_DUMMIES]
 
 # Restraint is deliberate: no grid search. These are sane defaults for ~9k rows x 15 features;
@@ -73,8 +73,8 @@ def build_matrix(features: pd.DataFrame, regimes: pd.DataFrame) -> pd.DataFrame:
     df = df.sort_values(["pair", "date"]).reset_index(drop=True)
     for r in ["trend", "chop", "crisis"]:
         df[f"regime_{r}"] = (df["regime"] == r).astype(float)
-    for p in ["GBPUSD", "USDCHF"]:
-        df[f"pair_{p}"] = (df["pair"] == p).astype(float)
+    for dummy in PAIR_DUMMIES:
+        df[dummy] = (df["pair"] == dummy.removeprefix("pair_")).astype(float)
     return df[["date", "pair", "regime", *FEATURES]]
 
 

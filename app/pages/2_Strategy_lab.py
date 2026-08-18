@@ -13,11 +13,14 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import ui  # noqa: E402
-from fxradar.config import DATA_DIR, DISCLAIMER, TEST_START, VAL_START  # noqa: E402
+from fxradar.config import DISCLAIMER  # noqa: E402
 
 st.set_page_config(page_title="Strategy lab — FX Regime Radar", page_icon="📡", layout="wide")
 ui.inject_css()
 ui.sidebar(DISCLAIMER)
+UNI_NAME, UNI, DIRS = ui.universe_selector()
+DATA_DIR = DIRS["data"]
+VAL_START, TEST_START = UNI.val_start, UNI.test_start
 
 BACKTESTS = DATA_DIR / "backtests.parquet"
 METRICS = DATA_DIR / "strategy_metrics.json"
@@ -55,7 +58,7 @@ def load_attrib(mtime: float) -> dict:
 
 st.markdown(
     '<div class="fx-header"><div><span class="fx-wordmark">Strategy lab</span>'
-    '<span class="fx-sub">do the signals survive costs?</span></div></div>',
+    f'<span class="fx-sub">{UNI.label} · do the signals survive costs?</span></div></div>',
     unsafe_allow_html=True,
 )
 st.markdown(
@@ -67,7 +70,9 @@ st.markdown(
 )
 
 if not (BACKTESTS.exists() and METRICS.exists() and ATTRIB.exists()):
-    st.warning("Strategy artifacts not built yet — run `python -m fxradar.strategies`.")
+    st.warning(
+        f"Strategy artifacts not built for {UNI.label} — run `FXRADAR_UNIVERSE={UNI_NAME} python -m fxradar.strategies`."
+    )
     st.stop()
 
 curves = load_curves(_mtime(BACKTESTS))
@@ -260,7 +265,7 @@ if STRESS.exists():
         )
         for c in ["median", "5th pct pain", "95th pct"]:
             boot[c] = boot[c] * 100
-        png = Path(__file__).resolve().parents[2] / "reports" / "stress_bootstrap_dd.png"
+        png = DIRS["reports"] / "stress_bootstrap_dd.png"
         ui.card(
             '<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">One-year max drawdown, 1 000 block-bootstrapped paths (20-day blocks), %.</div>'
             + ui.html_table(
