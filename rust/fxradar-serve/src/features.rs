@@ -243,7 +243,11 @@ pub fn build_features(
             f64::NAN
         } else {
             // mean over the components defined on this date; NaN only when none is defined
-            let vals: Vec<f64> = components.iter().map(|c| c[i]).filter(|v| v.is_finite()).collect();
+            let vals: Vec<f64> = components
+                .iter()
+                .map(|c| c[i])
+                .filter(|v| v.is_finite())
+                .collect();
             if vals.is_empty() {
                 f64::NAN
             } else {
