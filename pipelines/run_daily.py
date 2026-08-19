@@ -56,6 +56,20 @@ def register(name: str, fn: Stage) -> None:
     STAGES.append((name, fn))
 
 
+def fx_only(fn: Stage) -> Stage:
+    """Wrap a stage that only makes sense for the FX universe (calendar, challenger, treasury in
+    francs): other universes log one line and skip, so `FXRADAR_UNIVERSE=crypto` keeps running."""
+
+    def wrapped(ctx: dict) -> None:
+        if config.UNIVERSE_NAME != "fx":
+            log.info("skipped for universe %r (FX-only stage)", config.UNIVERSE_NAME)
+            return
+        fn(ctx)
+
+    wrapped.__name__ = getattr(fn, "__name__", "stage")
+    return wrapped
+
+
 # --------------------------------------------------------------------------------------
 # stages (each takes the shared context dict and mutates it)
 # --------------------------------------------------------------------------------------
@@ -233,16 +247,13 @@ def stage_write(ctx: dict) -> None:
 register("data", stage_data)
 register("features", stage_features)
 register("hmm", stage_hmm)
-register(
-    "cb_features", cb_features.stage
-)  # phase 29: lexicon tone features (date-level; challenger only)
-register(
-    "features_ext", features_ext.stage
-)  # phase 23: calendar / context / COT / Yang-Zhang → features_ext.parquet
+# phase 29: lexicon tone features (date-level; challenger only) — FX universe only
+register("cb_features", fx_only(cb_features.stage))
+# phase 23: calendar / context / COT / Yang-Zhang → features_ext.parquet — FX universe only
+register("features_ext", fx_only(features_ext.stage))
 register("forecaster", stage_forecaster)
-register(
-    "challenger", challenger.stage
-)  # phase 23: challenger forecaster on features + features_ext (ledger-raced)
+# phase 23: challenger forecaster on features + features_ext (ledger-raced) — FX universe only
+register("challenger", fx_only(challenger.stage))
 register("siren", stage_siren)
 register("bocpd", bocpd.stage)  # phase 21: run-length posterior + three-voter consensus
 register("conformal", conformal.stage)  # phase 22: Mondrian band on change risk + coverage receipt
@@ -257,7 +268,7 @@ register(
 register(
     "advisor", stage_advisor
 )  # stability / durability / risk budgets from the finished numbers
-register("treasury", treasury.stage)  # phase 25: regime-conditional VaR/ES + traffic light
+register("treasury", fx_only(treasury.stage))  # phase 25: regime-conditional VaR/ES + traffic light
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

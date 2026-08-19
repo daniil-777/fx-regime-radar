@@ -63,7 +63,7 @@ cb_live = load_json(
 
 st.markdown(
     '<div class="fx-header"><div><span class="fx-wordmark">Proof</span>'
-    '<span class="fx-sub">don’t trust us — verify</span></div></div>',
+    '<span class="fx-sub">don’t trust us — verify · the live record of the FX majors universe</span></div></div>',
     unsafe_allow_html=True,
 )
 

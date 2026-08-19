@@ -2,6 +2,27 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.22.0 — ten FX pairs (G10 universe) + five crypto majors (2026-08-19)
+
+- New universe **`g10`** — EUR/USD, USD/JPY, GBP/USD, USD/CAD, AUD/USD, USD/CHF, NZD/USD, EUR/GBP,
+  EUR/JPY, USD/SEK: the ten most important free-floating pairs by BIS April-2025 turnover; managed
+  floats / pegs (CNY, HKD, SGD, INR) excluded by design; EUR/CHF tried and rejected by the data (the
+  2011–15 floor makes a training state singular) — it remains a context series. Trained from scratch
+  through the existing `train-universe` path (same splits, cleaning and cost model as `fx`); frozen
+  test PR-AUC 0.551 / Brier 0.110 on n = 19,746; validation, siren audit, strategies, stress and the
+  3-D landscapes built; daily Action refreshes it; own ledger under `data/g10/`. The `fx` universe
+  (bundle, goldens, Rust, ledger) is byte-identical.
+- **Crypto majors** redefined: BTC, ETH, XRP, BNB, ADA (top non-stablecoins with ≥ 3 years of
+  pre-split history; SOL deferred, LTC retired); history from 2017-11-09 so every pair's cross-pair
+  correlation is defined; refit under `hmm 0.4.1` → the crypto ledger keeps the old three-coin rows
+  as a closed segment and starts a new one. Frozen test PR-AUC 0.574 / Brier 0.110 on n = 6,579.
+- Pipeline: FX-only stages (calendar, challenger, treasury) wrapped in `fx_only` so non-FX universes
+  skip them with one log line — this also FIXES a regression where the crypto daily run failed on the
+  phase-23 stage. `siren` audit plot draws one panel per pair (was hard-wired to three).
+- App: `ui.grid` rows for card layouts, a dense `ui.market_table` for universes with more than four
+  markets (Overview), a select instead of a wrapping tab row for > 5 markets, calendar and treasury
+  fallbacks for FX universes; universe tests for G10/crypto; daily.yml runs all three universes.
+
 ## v2.21.2 — design pass: calm surface, deep underneath (2026-08-19)
 
 - Charts: `ui.regime_bands` now draws a faint 10 % tint + a saturated baseline ribbon (Pairs and

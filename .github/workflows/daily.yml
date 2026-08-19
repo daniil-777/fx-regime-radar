@@ -37,6 +37,7 @@ jobs:
       - name: Run the daily pipeline for every universe (loads saved models, never trains)
         run: |
           python pipelines/run_daily.py
+          FXRADAR_UNIVERSE=g10 python pipelines/run_daily.py
           FXRADAR_UNIVERSE=crypto python pipelines/run_daily.py
         env:
           # Optional. When the repository secret is absent this is empty and the

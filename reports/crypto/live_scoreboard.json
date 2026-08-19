@@ -1,0 +1,28 @@
+[
+ {
+  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
+  "family": "champion",
+  "since": "2026-08-17",
+  "through": "2026-08-18",
+  "n_forecasts": 6,
+  "n_resolved": 0,
+  "brier": null,
+  "pr_auc": null,
+  "precision": null,
+  "recall": null,
+  "base_rate_brier": null
+ },
+ {
+  "model_version": "hmm=0.4.1|fc=1.1.0|siren=1.2.0",
+  "family": "champion",
+  "since": "2026-08-18",
+  "through": "2026-08-18",
+  "n_forecasts": 3,
+  "n_resolved": 0,
+  "brier": null,
+  "pr_auc": null,
+  "precision": null,
+  "recall": null,
+  "base_rate_brier": null
+ }
+]

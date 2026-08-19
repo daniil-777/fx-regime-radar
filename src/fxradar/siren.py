@@ -220,7 +220,9 @@ def _sparkline_png(scored: pd.DataFrame, path: Path) -> None:
             "font.size": 9,
         }
     )
-    fig, axes = plt.subplots(3, 1, figsize=(12, 7), sharex=True)
+    n = len(config.PAIRS)  # one panel per pair, whatever the universe size
+    fig, axes = plt.subplots(n, 1, figsize=(12, max(7, 2.3 * n)), sharex=True, squeeze=False)
+    axes = axes[:, 0]
     for ax, pair in zip(axes, config.PAIRS, strict=True):
         g = scored[scored["pair"] == pair]
         ax.plot(g["date"], g["anomaly_pct"], color=tk.REGIME_COLORS["crisis"], lw=0.6)

@@ -22,7 +22,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # app/ on the path: `import ui`
 import ui  # noqa: E402
-from fxradar import narrate  # noqa: E402
+from fxradar import config, narrate  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
 REGIME_ORDER = ["calm", "trend", "chop", "crisis"]
@@ -106,11 +106,19 @@ status = load_json(str(STATUS_PATH), _mtime(STATUS_PATH))
 drift_status = load_json(str(DATA_DIR / "status.json"), _mtime(DATA_DIR / "status.json"))
 report = load_json(str(REPORT_PATH), _mtime(REPORT_PATH))
 live = load_json(str(DATA_DIR / "live_record.json"), _mtime(DATA_DIR / "live_record.json"))
-treasury = load_json(str(DATA_DIR / "treasury_risk.json"), _mtime(DATA_DIR / "treasury_risk.json"))
+# the treasury table is an FX artifact (francs); other FX universes fall back to it for the pairs it covers
+_tre_path = DATA_DIR / "treasury_risk.json"
+if not _tre_path.exists() and UNI.trading_days == 252:
+    _tre_path = config.ROOT / "data" / "treasury_risk.json"
+treasury = load_json(str(_tre_path), _mtime(_tre_path))
 coverage = load_json(
     str(DATA_DIR / "conformal_coverage.json"), _mtime(DATA_DIR / "conformal_coverage.json")
 )
-events = load_events(str(DATA_DIR / "events.csv"), _mtime(DATA_DIR / "events.csv"))
+# the scheduled-decision calendar is macro, not per universe: fall back to the FX copy
+_ev_path = DATA_DIR / "events.csv"
+if not _ev_path.exists():
+    _ev_path = config.ROOT / "data" / "events.csv"
+events = load_events(str(_ev_path), _mtime(_ev_path))
 
 # ---- scenario explorer (shared with the other pages) ------------------------------------------
 pair, as_of, time_machine, episode = ui.scenario_controls(UNI, PAIRS, regimes_all)
@@ -324,65 +332,99 @@ if _alerts:
 # one compact weather card per market (the banner shows the selected one in full)
 # --------------------------------------------------------------------------------------
 st.markdown('<div class="fx-section">All markets</div>', unsafe_allow_html=True)
-cols = st.columns(len(PAIRS))
-for col, p in zip(cols, PAIRS, strict=True):
-    gp = regimes[regimes["pair"] == p].sort_values("date")
-    if gp.empty:
-        with col:
-            ui.card(
-                f'<span style="font-weight:500">{UNI.display(p)}</span><div class="fx-muted">no data as of this date</div>'
-            )
-        continue
-    latest = gp.iloc[-1]
-    if p in api_latest:
-        latest = pd.Series(
-            {**latest.to_dict(), **{k: v for k, v in api_latest[p].items() if k in latest.index}}
+if len(PAIRS) > 4:
+    # large universe: one dense table (numbers in a well-set table beat ten cramped cards)
+    table_rows = []
+    for p in PAIRS:
+        gp = regimes[regimes["pair"] == p].sort_values("date")
+        if gp.empty:
+            continue
+        latest = gp.iloc[-1]
+        closes = prices[prices["pair"] == p].sort_values("date")["close"].tail(20)
+        px_fmt = "{:.4f}" if closes.iloc[-1] < 100 else "{:,.2f}"
+        table_rows.append(
+            {
+                "label": UNI.display(p),
+                "regime": str(latest["regime"]),
+                "regime_prob": float(latest["regime_prob"]),
+                "days_in_regime": int(latest["days_in_regime"]),
+                "change_risk": float(latest.get("change_risk_5d", 0.0) or 0.0),
+                "risk_lo": latest.get("risk_lo") if pd.notna(latest.get("risk_lo")) else None,
+                "risk_hi": latest.get("risk_hi") if pd.notna(latest.get("risk_hi")) else None,
+                "agreement": (
+                    int(latest["agreement"]) if pd.notna(latest.get("agreement")) else None
+                ),
+                "anomaly_pct": latest.get("anomaly_pct"),
+                "close": px_fmt.format(closes.iloc[-1]),
+                "closes": closes,
+            }
         )
-    color = ui.REGIME_COLORS[latest["regime"]]
-    closes = prices[prices["pair"] == p].sort_values("date")["close"].tail(20)
-    px_fmt = "{:.4f}" if closes.iloc[-1] < 100 else "{:,.0f}"
-    if time_machine:
-        stats = narrate.build_stats(p, regimes, None, prices)
-        narration = {
-            "text": narrate.template_narrate(stats),
-            "generated_at": f"{as_of:%Y-%m-%d} (replay)",
-            "source": "template",
-        }
-    else:
-        narration = report.get(p)
-    body = (
-        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-        f'<span style="font-weight:500;font-size:1rem">{UNI.display(p)}</span>{ui.regime_pill(latest["regime"], large=True)}</div>'
-        f'<div class="fx-muted" style="font-size:0.8rem;margin-bottom:4px">{ui.REGIME_BLURB[latest["regime"]]}</div>'
-        f"{ui.confidence_bar(latest['regime_prob'], color)}"
-        f'<div class="fx-kv" style="margin-top:4px"><span>day <span class="fx-num">{int(latest["days_in_regime"])}</span> of this regime</span>'
-        f'<span>close <span class="fx-num">{px_fmt.format(closes.iloc[-1])}</span></span></div>'
-        f"{ui.sparkline_svg(closes, color)}"
-        + (
-            ui.risk_gauge(
-                latest["change_risk_5d"],
-                None,
-                lo=latest.get("risk_lo"),
-                hi=latest.get("risk_hi"),
-                regime=str(latest["regime"]),
-            )
-            if "change_risk_5d" in latest and pd.notna(latest["change_risk_5d"])
-            else ""
-        )
-        + ui.consensus_meter(
-            latest.get("agreement"),
-            {k: latest.get(k) for k in ("vote_hmm", "vote_bocpd", "vote_vol")},
-            None,
-        )
-        + (
-            f'<div class="fx-kv" style="margin-top:6px"><span>siren</span><span class="fx-num" style="color:{ui.siren_color(float(latest["anomaly_pct"]))}">{float(latest["anomaly_pct"]):.0f}/100</span></div>'
-            if pd.notna(latest.get("anomaly_pct"))
-            else ""
-        )
-        + ui.narration(narration, compact=True)
+    ui.card(
+        ui.market_table(table_rows)
+        + '<div class="fx-dim" style="font-size:0.74rem;margin-top:8px">Pick a market in the header or sidebar to read it in full (banner above, detail on the Pairs page). Regimes describe conditions, never direction.</div>'
     )
-    with col:
-        ui.card(body)
+else:
+    for col, p in ui.grid(PAIRS, per_row=3):
+        gp = regimes[regimes["pair"] == p].sort_values("date")
+        if gp.empty:
+            with col:
+                ui.card(
+                    f'<span style="font-weight:500">{UNI.display(p)}</span><div class="fx-muted">no data as of this date</div>'
+                )
+            continue
+        latest = gp.iloc[-1]
+        if p in api_latest:
+            latest = pd.Series(
+                {
+                    **latest.to_dict(),
+                    **{k: v for k, v in api_latest[p].items() if k in latest.index},
+                }
+            )
+        color = ui.REGIME_COLORS[latest["regime"]]
+        closes = prices[prices["pair"] == p].sort_values("date")["close"].tail(20)
+        px_fmt = "{:.4f}" if closes.iloc[-1] < 100 else "{:,.0f}"
+        if time_machine:
+            stats = narrate.build_stats(p, regimes, None, prices)
+            narration = {
+                "text": narrate.template_narrate(stats),
+                "generated_at": f"{as_of:%Y-%m-%d} (replay)",
+                "source": "template",
+            }
+        else:
+            narration = report.get(p)
+        body = (
+            f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+            f'<span style="font-weight:500;font-size:1rem">{UNI.display(p)}</span>{ui.regime_pill(latest["regime"], large=True)}</div>'
+            f'<div class="fx-muted" style="font-size:0.8rem;margin-bottom:4px">{ui.REGIME_BLURB[latest["regime"]]}</div>'
+            f"{ui.confidence_bar(latest['regime_prob'], color)}"
+            f'<div class="fx-kv" style="margin-top:4px"><span>day <span class="fx-num">{int(latest["days_in_regime"])}</span> of this regime</span>'
+            f'<span>close <span class="fx-num">{px_fmt.format(closes.iloc[-1])}</span></span></div>'
+            f"{ui.sparkline_svg(closes, color)}"
+            + (
+                ui.risk_gauge(
+                    latest["change_risk_5d"],
+                    None,
+                    lo=latest.get("risk_lo"),
+                    hi=latest.get("risk_hi"),
+                    regime=str(latest["regime"]),
+                )
+                if "change_risk_5d" in latest and pd.notna(latest["change_risk_5d"])
+                else ""
+            )
+            + ui.consensus_meter(
+                latest.get("agreement"),
+                {k: latest.get(k) for k in ("vote_hmm", "vote_bocpd", "vote_vol")},
+                None,
+            )
+            + (
+                f'<div class="fx-kv" style="margin-top:6px"><span>siren</span><span class="fx-num" style="color:{ui.siren_color(float(latest["anomaly_pct"]))}">{float(latest["anomaly_pct"]):.0f}/100</span></div>'
+                if pd.notna(latest.get("anomaly_pct"))
+                else ""
+            )
+            + ui.narration(narration, compact=True)
+        )
+        with col:
+            ui.card(body)
 
 ui.footer(
     DISCLAIMER,

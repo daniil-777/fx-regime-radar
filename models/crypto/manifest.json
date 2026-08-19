@@ -1,15 +1,15 @@
 {
   "hmm": {
-    "version": "0.4.0",
+    "version": "0.4.1",
     "train_end": "2020-12-31",
-    "refit_utc": "2026-08-18T11:09Z"
+    "refit_utc": "2026-08-19T15:39Z"
   },
   "forecaster": {
     "version": "1.1.0",
-    "trained_utc": "2026-08-18T13:09Z"
+    "trained_utc": "2026-08-19T17:39Z"
   },
   "siren": {
     "version": "1.2.0",
-    "trained_utc": "2026-08-18T13:10Z"
+    "trained_utc": "2026-08-19T17:39Z"
   }
 }

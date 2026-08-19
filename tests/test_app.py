@@ -50,9 +50,20 @@ def test_scenario_explorer_time_machine_and_universe_switch() -> None:
     at.sidebar.selectbox[2].set_value(episodes[1]).run()
     assert not at.exception, at.exception
     txt = " ".join(m.value for m in at.markdown)
-    assert (
-        "Time machine — viewing as of" in txt and "(replay)" in txt
-    )  # narration replayed by template
+    assert "Time machine — viewing as of" in txt
+    # small universes show cards with template narration "(replay)"; large ones the market table
+    assert "(replay)" in txt or "Pick a market in the header" in txt
+
+
+def test_g10_universe_renders_ten_markets_as_a_table() -> None:
+    if not (config.ROOT / "data" / "g10" / "regimes.parquet").exists():
+        pytest.skip("g10 artifacts not built")
+    at = _run("app/views/overview.py")
+    at.sidebar.selectbox[0].set_value("g10").run()
+    assert not at.exception, at.exception
+    assert len(at.sidebar.selectbox[1].options) == 10
+    txt = " ".join(m.value for m in at.markdown)
+    assert "USD/JPY" in txt and "Pick a market in the header" in txt  # the dense table view
 
 
 def test_methodology_page_renders_with_disclaimer() -> None:

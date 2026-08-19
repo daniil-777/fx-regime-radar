@@ -575,14 +575,24 @@ def mobile_bar(uni=None, pairs: list[str] | None = None) -> None:
             side_key, m_key = f"pair_{uni.name}", f"m_pair_{uni.name}"
             st.session_state.setdefault(m_key, st.session_state.get(side_key, pairs[0]))
             with cols[1] if cols[1] is not None else cols[0]:
-                st.segmented_control(
-                    "Market",
-                    pairs,
-                    format_func=uni.display,
-                    key=m_key,
-                    on_change=_sync_state(m_key, side_key),
-                    label_visibility="collapsed",
-                )
+                if len(pairs) <= 5:
+                    st.segmented_control(
+                        "Market",
+                        pairs,
+                        format_func=uni.display,
+                        key=m_key,
+                        on_change=_sync_state(m_key, side_key),
+                        label_visibility="collapsed",
+                    )
+                else:  # ten markets: a select reads better than a wrapping tab row
+                    st.selectbox(
+                        "Market",
+                        pairs,
+                        format_func=uni.display,
+                        key=m_key,
+                        on_change=_sync_state(m_key, side_key),
+                        label_visibility="collapsed",
+                    )
         hint = (
             "Episode replay, the as-of date and the other pages live in the side panel (» top left)."
             if pairs
@@ -639,6 +649,67 @@ def scenario_controls(uni, pairs: list[str], regimes_all: pd.DataFrame):
     as_of = min(pd.Timestamp(as_of_date), latest_date)
     st.session_state["scenario"] = {"pair": pair, "as_of": str(as_of.date()), "episode": episode}
     return pair, as_of, as_of < latest_date, episode
+
+
+def grid(items: list, per_row: int = 3):
+    """Yield (column, item) pairs laid out in rows of `per_row` — so a universe with ten markets
+    gets ten readable cards in rows instead of ten slivers in one row."""
+    items = list(items)
+    for start in range(0, len(items), per_row):
+        chunk = items[start : start + per_row]
+        cols = st.columns(per_row)
+        yield from zip(cols, chunk, strict=False)
+
+
+def market_table(rows: list[dict]) -> str:
+    """Dense market overview for large universes: one line per market — regime pill, confidence,
+    age, change risk with band, consensus, siren, last close and a 20-day sparkline. Numbers in a
+    well-set table read faster than ten cards (and never colour-only: word + dot)."""
+    head = (
+        "<tr><th>market</th><th style='text-align:left'>regime</th><th>conf.</th><th>day</th>"
+        "<th>5-day change risk</th><th>90 % band</th><th>consensus</th><th>siren</th>"
+        "<th>close</th><th style='text-align:left'>20 days</th></tr>"
+    )
+    body = []
+    for r in rows:
+        color = REGIME_COLORS.get(r["regime"], MUTED)
+        band = (
+            f'{r["risk_lo"] * 100:.0f}–{r["risk_hi"] * 100:.0f}%'
+            if r.get("risk_lo") is not None and r.get("risk_hi") is not None
+            else "—"
+        )
+        votes = ""
+        if r.get("agreement") is not None:
+            lvl = int(r["agreement"])
+            vcol = (
+                REGIME_COLORS["crisis"]
+                if lvl == 3
+                else REGIME_COLORS["chop"] if lvl == 2 else MUTED
+            )
+            votes = f'<span class="fx-num" style="color:{vcol}">{lvl}/3</span>'
+        siren = r.get("anomaly_pct")
+        siren_html = (
+            f'<span style="color:{siren_color(float(siren))}">{float(siren):.0f}</span>'
+            if siren is not None and siren == siren
+            else "—"
+        )
+        body.append(
+            "<tr>"
+            f'<td class="fx-num" style="text-align:left;font-family:{FONT_UI};font-weight:500">{html.escape(r["label"])}</td>'
+            f'<td style="text-align:left">{regime_pill(r["regime"])}</td>'
+            f'<td>{r["regime_prob"] * 100:.0f}%</td>'
+            f'<td>{int(r["days_in_regime"])}</td>'
+            f'<td style="color:{risk_color(r["change_risk"])}">{r["change_risk"] * 100:.0f}%</td>'
+            f"<td>{band}</td><td>{votes}</td><td>{siren_html}</td>"
+            f'<td>{r["close"]}</td>'
+            f'<td style="text-align:left">{sparkline_svg(r["closes"], color, width=120, height=26)}</td>'
+            "</tr>"
+        )
+    return (
+        f'<div class="fx-table-wrap"><table class="fx-table"><thead>{head}</thead><tbody>'
+        + "".join(body)
+        + "</tbody></table></div>"
+    )
 
 
 def kpi(label: str, value: str, sub: str = "", color: str = TEXT) -> str:

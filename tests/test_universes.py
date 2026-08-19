@@ -36,3 +36,39 @@ def test_crypto_universe_is_consistent() -> None:
     assert c.display("BTC-USD") == "BTC/USD" and universes.get("fx").display("EURUSD") == "EUR/USD"
     for pair in c.known_events:
         assert pair in c.pairs
+
+
+def test_g10_universe_is_consistent_and_free_floating() -> None:
+    g = universes.get("g10")
+    assert len(g.pairs) == 10 and set(g.tickers) == set(g.pairs) == set(g.price_bounds)
+    assert len(g.pair_dummies) == 9 and all(
+        d.removeprefix("pair_") in g.pairs for d in g.pair_dummies
+    )
+    # same splits / day-count / cleaning / costs as the frozen fx universe (fx itself untouched)
+    fx = universes.get("fx")
+    for attr in (
+        "train_end",
+        "val_start",
+        "val_end",
+        "test_start",
+        "trading_days",
+        "bad_tick_jump",
+        "cost_base_bps",
+        "cost_vol_mult",
+    ):
+        assert getattr(g, attr) == getattr(fx, attr)
+    assert set(fx.pairs) <= set(g.pairs)  # the three frozen pairs are inside the ten
+    # no managed / pegged currencies: a vol-regime model is blind to them by construction
+    for banned in ("CNY", "CNH", "HKD", "SGD", "INR", "EURCHF"):
+        assert not any(banned in p for p in g.pairs)
+    assert g.usd_base_pairs == frozenset({"USDJPY", "USDCAD", "USDCHF", "USDSEK"})
+    for pair in g.known_events:
+        assert pair in g.pairs
+    assert g.display("USDSEK") == "USD/SEK"
+
+
+def test_crypto_universe_five_majors_with_enough_training_history() -> None:
+    c = universes.get("crypto")
+    assert c.pairs == ["BTC-USD", "ETH-USD", "XRP-USD", "BNB-USD", "ADA-USD"]
+    assert c.start_date == "2017-11-09" and c.train_end == "2020-12-31"
+    assert "SOL-USD" not in c.pairs  # listed 2020-04: too little pre-split history (documented)
