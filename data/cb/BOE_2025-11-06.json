@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/november-2025",
+ "published_at": "2025-11-06T12:00:00+00:00",
+ "fetched_at": "2026-08-19T13:57:16+00:00",
+ "text": "At its meeting ending on 5 November 2025, the Monetary Policy Committee voted by a majority of 5–4 to maintain Bank Rate at 4%. Four members voted to reduce Bank Rate by 0.25 percentage points, to 3.75%.\n\nCPI inflation is judged to have peaked. Progress on underlying disinflation continues, supported by the still restrictive stance of monetary policy. This is reflected in an easing of pay growth and services price inflation. Underlying disinflation is being underpinned by subdued economic growth and building slack in the labour market.\n\nMonetary policy is being set to balance the risks around meeting the 2% inflation target sustainably. The risk from greater inflation persistence has become less pronounced recently, and the risk to medium-term inflation from weaker demand more apparent, such that overall the risks are now more balanced. But more evidence is needed on both.\n\nThe restrictiveness of monetary policy has fallen as Bank Rate has been reduced. The extent of further reductions will therefore depend on the evolution of the outlook for inflation. If progress on disinflation continues, Bank Rate is likely to continue on a gradual downward path.",
+ "sha256": "cb939be238859eff6471f6caf8c37ccf1e9944864b409686273397554deb6cd4"
+}

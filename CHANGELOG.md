@@ -2,6 +2,53 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.20.0 — phases 29 + 30: central-bank communication index (Stage 1) + the gated Stage 2 (2026-08-19)
+
+- phase-29a `cb_text`: official FOMC / ECB / SNB / BoE statement fetcher (stdlib HTML parser, polite,
+  dedup by bank+date, idempotent, fixed publication times: ECB 14:15 CET · SNB 09:30 CET · BoE 12:00
+  London · FOMC 14:00 ET) — 184 statements 2020→2026-07 in `data/cb/` (PDF-only months: SNB via
+  optional pypdf; three BoE MPR months missing, noted).
+- phase-29b `cb_lexicon` + `cb_features`: frozen, sha256-pinned lexicon (`data/lexicon/`: official
+  Loughran-McDonald uncertainty list + a cited hawkish/dovish list, LICENSE_NOTE) → per-document hawk /
+  dove / tone / uncertainty; daily point-in-time features `cb_<bank>_tone / _uncert / _tone_surprise
+  (vs the bank's last 4) / _days_since` known from the publication timestamp (17:00 New York day
+  boundary) → `data/cb_features.parquet`, merged into features_ext for the CHALLENGER only;
+  truncation invariance bit-for-bit.
+- phase-29c `cb_finbert`: pinned `ProsusAI/finbert@4556d130…`, lazy import, `LiveOnlyError` raised
+  BEFORE any import for any document dated before the 2026-08-17 deploy; `requirements-nlp.txt`
+  (torch/transformers) never in requirements.txt or CI.
+- phase-29d `scripts/cb_event_study.py`: |tone surprise| vs 5-day vol and 10-day regime flips with
+  placebo + permutation bands → `reports/cb_index.md`: a calendar effect exists (days after any
+  statement are more volatile), no credible surprise effect yet; live tracking table on the Proof
+  page; README parametric-look-ahead paragraph.
+- phase-30 (GATED — CLOSED): live counts 0/16 FOMC, 0/16 ECB, 0/8 SNB, 0/16 BoE →
+  `docs/stage2-decision.md` (the documented no). Inert `cb_llm` shipped: versioned
+  `prompts/cb_hawkishness_v1.txt`, receipts (prompt sha256 + version, model, date, raw reply),
+  cost cap 60/yr, ops-log skip, the same pre-deploy guard (tested), no bypass flag; **no API call was
+  made**. `docs/why-we-refuse-the-backtest.md` — the one-page refusal note, linked from the README top.
+  28 tests.
+
+## v2.19.0 — phase 23: calendar + cross-asset + mood + Yang-Zhang, challenger-only (2026-08-19)
+
+- `data/events.csv` (1 227 scheduled decisions 2005→2026-12 from the official FOMC / ECB / SNB / BoE /
+  BLS calendars; unscheduled actions excluded — 2015-01-15 is deliberately unknown); `calendar_ext`
+  (`days_to_*` / `days_since_*`, calendar days), `context_data` (FRED: broad-dollar index as DXY
+  proxy, VIX, US 2y, daily EPU; EURCHF via yfinance as context; CFTC TFF leveraged-money EUR with the
+  explicit Friday release lag — tested), `features_ext` (lags per series, z-scores with train-only
+  params in `models/features_ext_scaler.json`, `yang_zhang()` → `vol_20_yz`; cache-first, offline
+  fallback) → `data/features_ext.parquet` (49 cols incl. the phase-29 tone features); truncation
+  invariance for EVERY column.
+- `challenger`: same recipe as the champion on the extended matrix, `models/forecaster_challenger_v1.0.0`;
+  frozen test (scored once): PR-AUC 0.544 / Brier 0.103 vs champion 0.548 / 0.102 — no lift; both now
+  write to the ledger under distinct segments; promotion = live PR-AUC ahead over ≥ 60 matured days
+  with Brier not worse, by a deliberate refit-path act (`reports/challenger_eval.md`).
+- `scripts/event_study.py`: −10..+10 windows per type with ≥ 1 000 placebo draws → `reports/event_study*.png`;
+  SNB day-0 regime-flip frequency 6.7 % vs placebo 3.5 %; change-risk curves mostly inside the band.
+  Event markers on the Pairs timeline (`data/event_markers.json`). `reports/yz_ablation.md`: refitting
+  the HMM on vol_20_yz relabels 33–69 % of days → adopting YZ is a full bundle rebuild (follow-up).
+- The wall: `data/features.parquet` columns, `feature_spec`, bundle, goldens and Rust byte-identical;
+  selftest PASS.
+
 ## v2.18.0 — phase 28: first revenue rails (2026-08-19)
 
 - Tiers written down: Free (weekly report + public widget) · Pro CHF 79/month (alerts on chosen

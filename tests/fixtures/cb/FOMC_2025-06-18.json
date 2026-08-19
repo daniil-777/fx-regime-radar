@@ -1,0 +1,9 @@
+{
+ "bank": "FOMC",
+ "type": "fomc_statement",
+ "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250618a.htm",
+ "published_at": "2025-06-18T14:00:00-04:00",
+ "fetched_at": "2026-08-19T09:00:00+00:00",
+ "text": "Recent indicators suggest that economic activity has continued to expand at a solid pace. The unemployment rate remains low, and labor market conditions remain solid. Inflation remains elevated and inflation pressures have persisted.\n\nThe Committee judges that the upside risks to inflation have increased. In support of its goals, the Committee decided to raise the target range for the federal funds rate by 1/4 percentage point. The Committee anticipates that additional firming may be appropriate, and it will continue reducing its holdings of Treasury securities.\n\nThe Committee remains vigilant and strongly committed to returning inflation to its 2 percent objective. Wage pressures and strong demand warrant a restrictive stance of monetary policy for some time.",
+ "sha256": "637fc5880da388a8dcb9575f429fa372167d43185917e656fed276d2e77540ab"
+}

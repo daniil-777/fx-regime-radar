@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/march-2026",
+ "published_at": "2026-03-19T12:00:00+00:00",
+ "fetched_at": "2026-08-19T13:57:20+00:00",
+ "text": "At its meeting ending on 18 March 2026, the Monetary Policy Committee (MPC) voted unanimously to maintain Bank Rate at 3.75%.\n\nConflict in the Middle East has caused a significant increase in global energy and other commodity prices, which will affect households’ fuel and utility prices and have indirect effects via businesses’ costs. Prior to this, there had been continued disinflation in domestic prices and wages. CPI inflation will be higher in the near term as a result of the new shock to the economy.\n\nMonetary policy cannot influence global energy prices but aims to ensure that the economic adjustment to them occurs in a way that achieves the 2% target sustainably. The MPC is alert to the increased risk of domestic inflationary pressures through second-round effects in wage and price-setting, the risk of which will be greater the longer higher energy prices persist. The MPC is also assessing the implications for inflation of the weakening in economic activity that is likely to result from higher energy costs.\n\nThe Committee will continue to monitor closely the situation in the Middle East and its impact on global energy supply and energy prices. It stands ready to act as necessary to ensure that CPI inflation remains on track to meet the 2% target in the medium term.",
+ "sha256": "40fa7f1e8cbe22f785396dcbb8bf278cdbb8f64ce71076c24c3ef3937dfdc677"
+}

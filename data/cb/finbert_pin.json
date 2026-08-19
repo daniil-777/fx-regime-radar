@@ -1,0 +1,12 @@
+{
+ "model_id": "ProsusAI/finbert",
+ "revision": "4556d13015211d73dccd3fdd39d39232506f3e43",
+ "source": "https://huggingface.co/api/models/ProsusAI/finbert (field 'sha')",
+ "pinned_at": "2026-08-19",
+ "labels": [
+  "positive",
+  "negative",
+  "neutral"
+ ],
+ "tone_definition": "p_positive - p_negative, averaged over <=300-word chunks"
+}

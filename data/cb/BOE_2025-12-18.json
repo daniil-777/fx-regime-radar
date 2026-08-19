@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/december-2025",
+ "published_at": "2025-12-18T12:00:00+00:00",
+ "fetched_at": "2026-08-19T13:57:17+00:00",
+ "text": "At its meeting ending on 17 December 2025, the Monetary Policy Committee voted by a majority of 5–4 to reduce Bank Rate by 0.25 percentage points, to 3.75%. Four members voted to maintain Bank Rate at 4%.\n\nCPI inflation has fallen since the previous meeting, to 3.2%. Although above the 2% target, it is now expected to fall back towards target more quickly in the near term. Reflecting restrictive monetary policy, and consistent with evidence of subdued economic growth and building slack in the labour market, pay growth and services price inflation have continued to ease.\n\nMonetary policy is being set to ensure CPI inflation settles sustainably at 2% in the medium term, which involves balancing the risks around achieving this. The risk from greater inflation persistence has become somewhat less pronounced since the previous meeting, while the risk to medium-term inflation from weaker demand remains.\n\nThe extent of further easing in monetary policy will depend on the evolution of the outlook for inflation. The restrictiveness of policy has fallen as Bank Rate has been reduced by 150 basis points since August 2024. On the basis of the current evidence, Bank Rate is likely to continue on a gradual downward path. But judgements around further policy easing will become a closer call.",
+ "sha256": "c442a1a3c39f8974ba7373701242e67f4f330e423f251bd8bdd3fc22b6057067"
+}

@@ -1,0 +1,123 @@
+# hawkish.txt — FROZEN lexicon (phase 29). Lowercase, one term per line, hyphens written as spaces.
+# Bigrams/trigrams are matched greedily before unigrams. Sources: see LICENSE_NOTE.md.
+rate hike
+rate hikes
+hike
+hikes
+hiking
+raise rates
+raise interest rates
+raising rates
+raised rates
+rate increase
+rate increases
+increase in the policy rate
+increase in interest rates
+further increases
+additional firming
+additional increases
+further tightening
+tighten
+tightening
+tightened
+tighter
+restrictive
+restrictiveness
+sufficiently restrictive
+higher for longer
+inflation pressures
+inflationary pressures
+inflationary pressure
+inflation pressure
+price pressures
+underlying price pressures
+cost pressures
+wage pressures
+pipeline pressures
+upside risks
+upside risk
+upward pressure
+upward pressures
+upward revision
+upward revisions
+overheating
+overheated
+above target
+above the target
+above its target
+above 2
+elevated inflation
+inflation remains elevated
+high inflation
+higher inflation
+rising inflation
+inflation has risen
+inflation rose
+inflation increased
+persistent inflation
+inflation persistence
+persistently high
+persistently above
+sticky
+stubborn
+stubbornly
+second round effects
+strong wage growth
+wage growth remains strong
+robust wage growth
+tight labour market
+tight labor market
+labour market remains tight
+labor market remains tight
+labour market tightness
+labor market tightness
+robust
+robust growth
+strong growth
+strong demand
+strong activity
+solid pace
+solid growth
+expanding at a solid pace
+resilient
+resilience
+vigilant
+vigilance
+firm
+firmer
+firming
+remove accommodation
+removal of policy accommodation
+removal of accommodation
+less accommodative
+reduce the balance sheet
+balance sheet reduction
+reduction of the balance sheet
+quantitative tightening
+normalisation
+normalization
+normalise
+normalize
+unanchored
+de anchoring
+risks to price stability
+accelerate
+accelerated
+accelerating
+acceleration
+strengthen
+strengthened
+strengthening
+pick up
+picked up
+picking up
+gather pace
+gathering pace
+capacity constraints
+capacity pressures
+bottlenecks
+supply constraints
+excess demand
+boom
+buoyant
+hawkish

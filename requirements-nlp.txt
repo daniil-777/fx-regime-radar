@@ -1,0 +1,8 @@
+# Neural leg of the central-bank communication index (phase 29C) — installed ONLY on the VM /
+# laptop that scores post-deploy statements. Never in requirements.txt, never in CI
+# (CI runs the frozen-lexicon leg only; tests skip the model when transformers is missing).
+#   pip install -r requirements-nlp.txt
+#   python -m fxradar.cb_finbert
+transformers>=4.44,<5
+torch>=2.3,<3
+pypdf>=4,<6            # optional: text of the SNB's PDF-only assessments (before mid-2025)

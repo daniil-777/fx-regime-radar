@@ -1,0 +1,1302 @@
+{
+ "generated_at_utc": "2026-08-19T14:09:00Z",
+ "n_docs": 184,
+ "per_bank": {
+  "FOMC": 55,
+  "ECB": 53,
+  "SNB": 26,
+  "BOE": 50
+ },
+ "first": "2020-01-23T14:15:00+01:00",
+ "last": "2026-07-30T12:00:00+01:00",
+ "docs": [
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200123~ae33d37f6e.en.html",
+   "published_at": "2020-01-23T14:15:00+01:00",
+   "sha256": "0eeba1343a08a654cd40dc206a920351cfdfba422dae37c0b464dec5b1c7f124"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200129a.htm",
+   "published_at": "2020-01-29T14:00:00-05:00",
+   "sha256": "bc541c6370f75467b5ed24fb3124b253ab537def32c157002c3563e9b808d6f3"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/january-2020",
+   "published_at": "2020-01-30T12:00:00+00:00",
+   "sha256": "289e9474802d1e0f6bdb2025616a32063d2e4358a12186322689373d0346e1ca"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200303a.htm",
+   "published_at": "2020-03-03T14:00:00-05:00",
+   "sha256": "b5adb87b67e4e96f609b4afb98bc0a3d91ea4a80dc3db538851872d9aacabcce"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200312~8d3aec3ff2.en.html",
+   "published_at": "2020-03-12T14:15:00+01:00",
+   "sha256": "59664adff48bcb6a3a17a282628c9763dcd69c046e9718db055b4e9d2dd68d78"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200315a.htm",
+   "published_at": "2020-03-15T14:00:00-04:00",
+   "sha256": "79b8bb5c2a4fefb639f6126381a41ccd2a7cb68038bafba0a8d288500c756303"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2020/pre_20200319_2",
+   "published_at": "2020-03-19T09:30:00+01:00",
+   "sha256": "85142c5132b615444a183bc2c2574e18c774111ceb0b54f86778894e695773b1"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200323a.htm",
+   "published_at": "2020-03-23T14:00:00-04:00",
+   "sha256": "3614c8589640286496577f8198faaa5953da39a2eeee5fc0aa32d41b4c83daca"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/march-2020",
+   "published_at": "2020-03-26T12:00:00+00:00",
+   "sha256": "69776948f5a9f99f03c0ab36196fafc8f8348bd956575b8af5b60fef52baf739"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200429a.htm",
+   "published_at": "2020-04-29T14:00:00-04:00",
+   "sha256": "ec8426b6d8a74c131565d05ce517f44fa58096028e333cc1aa896d25605f02ec"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200430~1eaa128265.en.html",
+   "published_at": "2020-04-30T14:15:00+02:00",
+   "sha256": "df0e00c382a29f627b956be8e840023bef47354e2b2a97b5bca6b2626ee5fa33"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200604~a307d3429c.en.html",
+   "published_at": "2020-06-04T14:15:00+02:00",
+   "sha256": "cbfde3d0cbbd162158b213b4c7d200f1ac751bfd3be7cfabd51d55ef9d804515"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200610a.htm",
+   "published_at": "2020-06-10T14:00:00-04:00",
+   "sha256": "3d498afff0f10efe032d733a7cb2d3a21f5d8431e63c1ced4595bc6d85ba8fda"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2020/pre_20200618",
+   "published_at": "2020-06-18T09:30:00+02:00",
+   "sha256": "9938bc6e919bb0cd0557ab5990abb2639edea2065e5f6e3febaa57e5bcf0fe74"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/june-2020",
+   "published_at": "2020-06-18T12:00:00+01:00",
+   "sha256": "7f6cbfb389a4779bbb04eef195c8c529c12299d689aeb68c2b5cb121b9321d37"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200716~fc5fbe06d9.en.html",
+   "published_at": "2020-07-16T14:15:00+02:00",
+   "sha256": "de108f77608750194710a9287bfd6d911db09b20b6875525bde9f778e3820f74"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200729a.htm",
+   "published_at": "2020-07-29T14:00:00-04:00",
+   "sha256": "e350022fdc9c0367a88e182491d28a0765eb9a5024c3ac9779abdea61cb6e534"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/august-2020",
+   "published_at": "2020-08-06T12:00:00+01:00",
+   "sha256": "2cfca4b043f3db4923b44538dc45ec30578fb7d7f1649eef285c1535502cabe6"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp200910~f4a8da495e.en.html",
+   "published_at": "2020-09-10T14:15:00+02:00",
+   "sha256": "1c7b45a8abbb8b5d25cceb2c674bd83d45f0e64c5037f4280739ac25123ab845"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20200916a.htm",
+   "published_at": "2020-09-16T14:00:00-04:00",
+   "sha256": "a454807c59a719b9785dd3d94e5676d3846604e3ed68a95e49f801eed7c7d455"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/september-2020",
+   "published_at": "2020-09-17T12:00:00+01:00",
+   "sha256": "51378e829796ffb96074c6c5f1d6c312e2e7df29a2434e3cd0787b3b4f6898e0"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2020/pre_20200924_1",
+   "published_at": "2020-09-24T09:30:00+02:00",
+   "sha256": "449de6903ed5b48efbaf207e5647a315f3149566f8e10a7be4ec9853c3db10c3"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp201029~4392a355f4.en.html",
+   "published_at": "2020-10-29T14:15:00+01:00",
+   "sha256": "5e4d18a838bad1578098d4fc063f9de2317733a7196e01affed489af22ce0a7b"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20201105a.htm",
+   "published_at": "2020-11-05T14:00:00-05:00",
+   "sha256": "c43f8d8543e76c2048d1bed9dadebf091acb39f15e794321060b8889d99b5964"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2020/html/ecb.mp201210~8c2778b843.en.html",
+   "published_at": "2020-12-10T14:15:00+01:00",
+   "sha256": "0ef8ec394788061cfa376879fc9766ffca8b308717a5d9f4179766639a8cd549"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20201216a.htm",
+   "published_at": "2020-12-16T14:00:00-05:00",
+   "sha256": "2dc419c7225c8cc131c1c90be5fbbca4872c1025a9210a1455fdf1cc998a2b47"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2020/pre_20201217",
+   "published_at": "2020-12-17T09:30:00+01:00",
+   "sha256": "89ac2d9d24bb4bb1512cd04b449ee882bd3dcab821240fecf6c39f0b18b5b176"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/december-2020",
+   "published_at": "2020-12-17T12:00:00+00:00",
+   "sha256": "f048c1916a61c8eb40a00ee43e8aaf5058292c3f4382dc627549a751f5940e45"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210121~eb9154682e.en.html",
+   "published_at": "2021-01-21T14:15:00+01:00",
+   "sha256": "6490aeb624065a5c77239729952c1f0fae49ff4b50681a680376962de0ded65a"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210127a.htm",
+   "published_at": "2021-01-27T14:00:00-05:00",
+   "sha256": "6ab84255a5bd77b3fa6433e76229c0bd1b76fe2bb3391af81572486a28a30638"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/february-2021",
+   "published_at": "2021-02-04T12:00:00+00:00",
+   "sha256": "fc52a419000a8626b6eaabfc856d4bc97e8881ac0c0ca26752d506ebbef22b16"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210311~35ba71f535.en.html",
+   "published_at": "2021-03-11T14:15:00+01:00",
+   "sha256": "8fd199efca781548af0fc966b2479b4ddcbffac973c2c254cfaa6b87163fde9c"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210317a.htm",
+   "published_at": "2021-03-17T14:00:00-04:00",
+   "sha256": "4e9cf6ffd0401956968edf375cb98df51dc8c71a3f9cec60bb8d5fe1cb477066"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/march-2021",
+   "published_at": "2021-03-18T12:00:00+00:00",
+   "sha256": "b6411219e008bd6c1991a6cf81e520846d43ebe34ebe774ba798b9b083b4b9b0"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2021/pre_20210325",
+   "published_at": "2021-03-25T09:30:00+01:00",
+   "sha256": "c83b35af5d9017310dcb996df3f90d0de01f8329af261cd2319aac2532e62ece"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210422~f075ebe1f0.en.html",
+   "published_at": "2021-04-22T14:15:00+02:00",
+   "sha256": "b1ecb7f951ca4acda3b3c091e2291a4a85bb7d75dd44a5afaf9babc20b9fdc36"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210428a.htm",
+   "published_at": "2021-04-28T14:00:00-04:00",
+   "sha256": "819998d4e019833f481f231eccfadf5746598e966658fbe59aede3d5c3d4d711"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210610~b4d5381df0.en.html",
+   "published_at": "2021-06-10T14:15:00+02:00",
+   "sha256": "bd0b2ca43bae00ff1e0af78ca43bd0fd4c940140fbe84860dd26e021483eccc0"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210616a.htm",
+   "published_at": "2021-06-16T14:00:00-04:00",
+   "sha256": "66d1468c689133e57aee1a73c49fd15fb03eb28d6d2703e820074bc6f63c3f64"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2021/pre_20210617_2",
+   "published_at": "2021-06-17T09:30:00+02:00",
+   "sha256": "1ac8d05ba32a7f8e6ac90edea90f558597d67b82459cfa1f5c1cdca282fb214e"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/june-2021",
+   "published_at": "2021-06-24T12:00:00+01:00",
+   "sha256": "8a7355876748c42e16b61f9c1a1e8d4813f2a0e5fe2c9459d949439d1b653138"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210722~48dc3b436b.en.html",
+   "published_at": "2021-07-22T14:15:00+02:00",
+   "sha256": "f9a5dfcf6f319d1079127a31a08b0bcfc1315737b70412a5a2d2f8c14dc0f348"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210728a.htm",
+   "published_at": "2021-07-28T14:00:00-04:00",
+   "sha256": "b9b48791561705bb6b13766a7f4388b579f4a65865d0bbd7ede490a62ed6b8ed"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/august-2021",
+   "published_at": "2021-08-05T12:00:00+01:00",
+   "sha256": "59e3d3018caa677828b509c2e2b5760e96067ac430c806321493736cb64c3084"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp210909~2c94b35639.en.html",
+   "published_at": "2021-09-09T14:15:00+02:00",
+   "sha256": "604912bbc8f5f8568c1faca92c99b38d8015ef4f7ce3ed35ab8cee46928c3b32"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20210922a.htm",
+   "published_at": "2021-09-22T14:00:00-04:00",
+   "sha256": "b35fe17877667e20d00dcf884d89ab765e023c19815ea32315a65ef4f90cdb94"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2021/pre_20210923",
+   "published_at": "2021-09-23T09:30:00+02:00",
+   "sha256": "85268327319dfdf96b3ddeb2331cc8c44e36a6dad1d040d1dc3e22b52ff8261a"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/september-2021",
+   "published_at": "2021-09-23T12:00:00+01:00",
+   "sha256": "17c73c384bed91f98cb3e546cb07affdf0718f4c07d8d46d494034bba8f62ab4"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp211028~85474438a4.en.html",
+   "published_at": "2021-10-28T14:15:00+02:00",
+   "sha256": "c1e81c7b56d8088f88a95457f8ce6c655aa1a82fc4c28967c32c45d45c815624"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20211103a.htm",
+   "published_at": "2021-11-03T14:00:00-04:00",
+   "sha256": "45ddb971bf630503d734b76bff2a13c808e059efe773e7581f694c535d6817a2"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/november-2021",
+   "published_at": "2021-11-04T12:00:00+00:00",
+   "sha256": "0c3a22ad99e839647eee94fe521818f28fd31357f59d289800f3951acad57c7b"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20211215a.htm",
+   "published_at": "2021-12-15T14:00:00-05:00",
+   "sha256": "68eb32eece26c2fed754e2a03d14bdec82f1b790aa2e089d5baded1a087e564c"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2021/pre_20211216",
+   "published_at": "2021-12-16T09:30:00+01:00",
+   "sha256": "d8140a44308b0db384fd56799cc9521dcd8367cd8f5db6113ca98e4701c09d41"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2021/december-2021",
+   "published_at": "2021-12-16T12:00:00+00:00",
+   "sha256": "1143b4814e71f5cd350527c58a660d8975df48ec126a7eb7df6a331e8848ea09"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2021/html/ecb.mp211216~1b6d3a1fd8.en.html",
+   "published_at": "2021-12-16T14:15:00+01:00",
+   "sha256": "288a7d83e8191a874ebe27e72f6b2af553c4646b8301656a59e48e5d8b63ef0d"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220126a.htm",
+   "published_at": "2022-01-26T14:00:00-05:00",
+   "sha256": "19796da63c960262e03003e8451675b94c697f7ab5e0c0c90407b06379981694"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/february-2022",
+   "published_at": "2022-02-03T12:00:00+00:00",
+   "sha256": "e70abb93e218664d9467431e71e6dc302cf0f999a699ceaa5d2a1a4dfcef6054"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220203~90fbe94662.en.html",
+   "published_at": "2022-02-03T14:15:00+01:00",
+   "sha256": "e4b785706b9c996cebe53e349fbc84952e3263f6becc3d1a51ac9da3d79ea2d7"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220310~2d19f8ba60.en.html",
+   "published_at": "2022-03-10T14:15:00+01:00",
+   "sha256": "e24e012892e9228dd295fcadaf35b1eb1348ce26b588dd3d2908b385b7aef6df"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220316a.htm",
+   "published_at": "2022-03-16T14:00:00-04:00",
+   "sha256": "846ada4dcab9a8be7a00e57ce1b7984490f0d2fbcc463bb8afbe1d48e6118333"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/march-2022",
+   "published_at": "2022-03-17T12:00:00+00:00",
+   "sha256": "aa0fcd829c6692f46b9729834340fed4c7f22cd771b21f698e94f96dee359806"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2022/pre_20220324",
+   "published_at": "2022-03-24T09:30:00+01:00",
+   "sha256": "32e5abc0893c2319f875c2164692571ad790d515e4b17e4f416925302fb7a7ad"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220414~d1b76520c6.en.html",
+   "published_at": "2022-04-14T14:15:00+02:00",
+   "sha256": "ea644b20a3c5c9cecba04e0d8e8ea436d2733c332ad74e5dbc1273fbb16f3cd0"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220504a.htm",
+   "published_at": "2022-05-04T14:00:00-04:00",
+   "sha256": "5a6678c96caefe585baaa663b1dfa59fe6fb66082d72417c7e6a778b80087b32"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/may-2022",
+   "published_at": "2022-05-05T12:00:00+01:00",
+   "sha256": "c4477dcd1439411e3ad11352ed964a581879598ade916349be9d2407b9564d37"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220609~122666c272.en.html",
+   "published_at": "2022-06-09T14:15:00+02:00",
+   "sha256": "9cd23ee1b353618e1d377947e1bac7596d6a3e982928cc5c05b031689eb5a60d"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220615a.htm",
+   "published_at": "2022-06-15T14:00:00-04:00",
+   "sha256": "b724ff226fa248f9acf3cc2abf224dcd404b14f2590bf2757be18ff3084f09aa"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2022/pre_20220616_2",
+   "published_at": "2022-06-16T09:30:00+02:00",
+   "sha256": "db9e25c3af9dc245a17c7331d8ddefb984bf43db38fcb28b17a6f65ec2376c2c"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/june-2022",
+   "published_at": "2022-06-16T12:00:00+01:00",
+   "sha256": "c1cf7984ee675ef98311b08ab9679a65bf5cb74c2932d810c63c96fabe676598"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220721~53e5bdd317.en.html",
+   "published_at": "2022-07-21T14:15:00+02:00",
+   "sha256": "c4eec3f25305397177c7f86623f0803ce350f70aa3be1e3e4a2d814c7d084fdc"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220727a.htm",
+   "published_at": "2022-07-27T14:00:00-04:00",
+   "sha256": "965fda9f22ea0801d8133697c585a65c4b08a2d71f1e17036a31faed79ab555d"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/august-2022",
+   "published_at": "2022-08-04T12:00:00+01:00",
+   "sha256": "6a90895d868e3fcfc4f9c41d3def18007ddcb4390cf5c7556d9432dce99d3ff7"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220908~c1b6839378.en.html",
+   "published_at": "2022-09-08T14:15:00+02:00",
+   "sha256": "4437430490d1075198f9155634c33db8e8df36aa379be5ac8ce9420f8094859e"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20220921a.htm",
+   "published_at": "2022-09-21T14:00:00-04:00",
+   "sha256": "06e5a8354e382c96f313e3d1895fb31db907128420e94f88fa4865a2df92b2b2"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2022/pre_20220922",
+   "published_at": "2022-09-22T09:30:00+02:00",
+   "sha256": "cebb38422beed88ce3cdb6eb0bc98a695491e30a292f49a36b8b8554b88e04b3"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/september-2022",
+   "published_at": "2022-09-22T12:00:00+01:00",
+   "sha256": "bd355c8c9110e50e7ae5b750041f71d3f25c6e4427f31c1c3038f030c918c934"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp221027~df1d778b84.en.html",
+   "published_at": "2022-10-27T14:15:00+02:00",
+   "sha256": "d1f01d1a4c166f35531ad6cd7769df26992934fc6cadec53c19c69c681897105"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20221102a.htm",
+   "published_at": "2022-11-02T14:00:00-04:00",
+   "sha256": "7bbc0604d0692f0d716bc21f9681d4eb114b0df724a6eccd17f2a62ffe347542"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/november-2022",
+   "published_at": "2022-11-03T12:00:00+00:00",
+   "sha256": "a96f75fce42f6d7a9b58051a5a2f56ca676329d902896fd6886064f3f6055df6"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20221214a.htm",
+   "published_at": "2022-12-14T14:00:00-05:00",
+   "sha256": "bb0535ab50fac691ac64ebb32f0aadb5c870df31eefb7cbcfc6700da1d545a5f"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2022/pre_20221215",
+   "published_at": "2022-12-15T09:30:00+01:00",
+   "sha256": "3d5d7362a50a5532266f48c4c40fe883243f78f78073eb849a9db8c4c5a8ec1a"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2022/december-2022",
+   "published_at": "2022-12-15T12:00:00+00:00",
+   "sha256": "26af35e19e398019eeb5ae8613a4d9269e253a75a08406d1a3ddc66bf7aebf9d"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp221215~f3461d7b6e.en.html",
+   "published_at": "2022-12-15T14:15:00+01:00",
+   "sha256": "6cb1894c424a067b259e65386133f94c83550ea427bec741a1dbf396f5149eed"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230201a.htm",
+   "published_at": "2023-02-01T14:00:00-05:00",
+   "sha256": "f4c5a957d946808ec6f4adeefbc8222149e672afde7ce905edb811e2e5a644e1"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/february-2023",
+   "published_at": "2023-02-02T12:00:00+00:00",
+   "sha256": "ef71d759965bd3f1c1b2eeffe1b21449eb07c0a40ef48537492c98df250c4ced"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230202~08a972ac76.en.html",
+   "published_at": "2023-02-02T14:15:00+01:00",
+   "sha256": "a225c7ea90c2587ea022ec842af0738cfef0728e6b21dec7251a5e70f741ec5d"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230316~aad5249f30.en.html",
+   "published_at": "2023-03-16T14:15:00+01:00",
+   "sha256": "6d7cb749ce4420e97bb89c7c33e47ea97c9044a2462748603c8ceb33fb929c44"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230322a.htm",
+   "published_at": "2023-03-22T14:00:00-04:00",
+   "sha256": "aa8ca574dd1163588d78f077413d92bcc782625c69cb805d7e1aec2035fa3aa9"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2023/pre_20230323",
+   "published_at": "2023-03-23T09:30:00+01:00",
+   "sha256": "b06bd796c22215a7915a049ffd3a03940850fa135685c27d1722845afb64bc9f"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/march-2023",
+   "published_at": "2023-03-23T12:00:00+00:00",
+   "sha256": "cc75d50f5c820cf918fd7a0968fe48059bc202cd690142e0b6cec5a83488a5f0"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230503a.htm",
+   "published_at": "2023-05-03T14:00:00-04:00",
+   "sha256": "4c08bc5baf707099674e5c0e56dd28bd067ef38f243437f8fb7daeb11942a511"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230504~cdfd11a697.en.html",
+   "published_at": "2023-05-04T14:15:00+02:00",
+   "sha256": "82f3fe607314dd8e1f36c0a4e4b1b952ca1b4c3386c8a2b65ec90c79f3c31c42"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/may-2023",
+   "published_at": "2023-05-11T12:00:00+01:00",
+   "sha256": "16093ecc240b232e86523a206a6e9b54e8e6b1ba6fb2c5a7d05c9a0ea39f0186"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230614a.htm",
+   "published_at": "2023-06-14T14:00:00-04:00",
+   "sha256": "a97291a37deaf6a768fe992e3ffc2c43f70a351e4ce9902964d91560724d02c6"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230615~d34cddb4c6.en.html",
+   "published_at": "2023-06-15T14:15:00+02:00",
+   "sha256": "35d7bc68c57f8787c050a69408cc2fc3d05fd5be5898a6d2c3cebf5d82d70603"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2023/pre_20230622",
+   "published_at": "2023-06-22T09:30:00+02:00",
+   "sha256": "3c89183b79c53e91ea57120691c23f041f68bb8519fcdf4e049adf262b3bf96d"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/june-2023",
+   "published_at": "2023-06-22T12:00:00+01:00",
+   "sha256": "3625d3cf1404a5f47256dac8abfb3a22d319b35d1bd6b638cbaea3c31d25fac7"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230726a.htm",
+   "published_at": "2023-07-26T14:00:00-04:00",
+   "sha256": "e49c67b920c102de7dbfeb2891161a2ea4f877ea7b66e3a4680962f6abe85310"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230727~da80cfcf24.en.html",
+   "published_at": "2023-07-27T14:15:00+02:00",
+   "sha256": "871693ecb82172e846ea05021f9b910306b60c6ab22da1d274edb53fd087c0de"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/august-2023",
+   "published_at": "2023-08-03T12:00:00+01:00",
+   "sha256": "11d283c2895a1d12be3d686df3fce0544587dcb5f3d324b8d8ea527ff050b076"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230914~aab39f8c21.en.html",
+   "published_at": "2023-09-14T14:15:00+02:00",
+   "sha256": "9c266baf3fbbbd353306c25e6ad749c94602b3d588effbc08d1c5a9c95220b73"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20230920a.htm",
+   "published_at": "2023-09-20T14:00:00-04:00",
+   "sha256": "6d7e201b36c4bc5649198d4393edde9d6c300fb27da4d5a4e6758ec7a4cced44"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases/2023/pre_20230921",
+   "published_at": "2023-09-21T09:30:00+02:00",
+   "sha256": "56800812abdf14336796052bbc5d36afbca662517ba7a3980cd5dd7c4ea395ef"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/september-2023",
+   "published_at": "2023-09-21T12:00:00+01:00",
+   "sha256": "b88ef54545f59a24c842743e4ba474a7e15833154b45502b99a39ace110637de"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp231026~6028cea576.en.html",
+   "published_at": "2023-10-26T14:15:00+02:00",
+   "sha256": "ee3eba5f53f3a938bbab4477a957d6905189403fd1428a89fb4821d1ade52b88"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20231101a.htm",
+   "published_at": "2023-11-01T14:00:00-04:00",
+   "sha256": "e047b1f9c5a67dbfac1a1479b5b715951015a62740b66c873568ecdad5fa55dc"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/november-2023",
+   "published_at": "2023-11-02T12:00:00+00:00",
+   "sha256": "fe778e0031906afa0838f51c03a9c2962d49a9322803117bd4b0e4eaf2989ae3"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20231213a.htm",
+   "published_at": "2023-12-13T14:00:00-05:00",
+   "sha256": "cb3c2936c31a2865e4e7158ec2c5a111c635452560af8816ac18c2076baff268"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20231214",
+   "published_at": "2023-12-14T09:30:00+01:00",
+   "sha256": "65ba8a52edf5cb67f5ddbc19c5ddecf13fdda0b8733f6aed39e6516ee2bee06e"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2023/december-2023",
+   "published_at": "2023-12-14T12:00:00+00:00",
+   "sha256": "fe774538574a48e3a37bee03d25e15c57a3ba566afb26d5ca96563fe08ca4c14"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp231214~9846e62f62.en.html",
+   "published_at": "2023-12-14T14:15:00+01:00",
+   "sha256": "5a772b8b640283cfa6e9cdceff1bc5ad00ea8ba657cad8e5cf350036b1925038"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240125~f738889bde.en.html",
+   "published_at": "2024-01-25T14:15:00+01:00",
+   "sha256": "6c61c92c6513dbe08baf3cf21211c301a61bbb2718a68bb4a92225e13a785b65"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240131a.htm",
+   "published_at": "2024-01-31T14:00:00-05:00",
+   "sha256": "f86e390835f45014f4c63a4d6b087ce86b501c81bb31d4ff03d36547c8d3db2d"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/february-2024",
+   "published_at": "2024-02-01T12:00:00+00:00",
+   "sha256": "6f625edab481633d25dc791c233cd3c3263d02a844021812f9afb58e99ef94b0"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240307~a5fa52b82b.en.html",
+   "published_at": "2024-03-07T14:15:00+01:00",
+   "sha256": "87cd7e1edd4260e6c8e1f955ff0a843b057d4dc4f9a5e78d09ec5d0b517f2115"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240320a.htm",
+   "published_at": "2024-03-20T14:00:00-04:00",
+   "sha256": "c1877288abf406154111fb6abaef3848f0e9113574be0694fad03309abf490af"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20240321",
+   "published_at": "2024-03-21T09:30:00+01:00",
+   "sha256": "12f470e1fe9d24e859ff71c6a4fcb6f4f1a0d9819714f7fb43b176b1d6c90b53"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/march-2024",
+   "published_at": "2024-03-21T12:00:00+00:00",
+   "sha256": "a6e7d5095743ad278cf6cd296facdf2e78f3ec0851fae27ed063d122365e0c23"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240411~1345644915.en.html",
+   "published_at": "2024-04-11T14:15:00+02:00",
+   "sha256": "c366a6840cf97908fbf0982f2fc321f4fc9d5bde0c7669f4c711687e046df67e"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240501a.htm",
+   "published_at": "2024-05-01T14:00:00-04:00",
+   "sha256": "370a9090c90b3c5a1e39cd1a63bc72802a032a8852bf547020068ea83204e649"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/may-2024",
+   "published_at": "2024-05-09T12:00:00+01:00",
+   "sha256": "56e81228c5f59eda17931fd28b337950620b8db9390a6eed08912524647a36ca"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240606~2148ecdb3c.en.html",
+   "published_at": "2024-06-06T14:15:00+02:00",
+   "sha256": "6d69a71e93b927865c755265a1f6e49e21f9c42f9bfbaed5798d13833d8bda3e"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240612a.htm",
+   "published_at": "2024-06-12T14:00:00-04:00",
+   "sha256": "b19bff9003eb888dce43926598ed54a1d3492c13dcc8a8517735957473bde166"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20240620",
+   "published_at": "2024-06-20T09:30:00+02:00",
+   "sha256": "26e0b193cf34c8704f8283eda7fdc4b22439f308ade60aed7bbe184eeae6c8be"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/june-2024",
+   "published_at": "2024-06-20T12:00:00+01:00",
+   "sha256": "91cebba76c3f231d953b6acf2c4946bfa558f3c67ba6f75a4d6a59ee7c76160e"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240718~b9e0ddd9d5.en.html",
+   "published_at": "2024-07-18T14:15:00+02:00",
+   "sha256": "53cfe0abf5cd68b48b8fef96c4c8bd734be4fc6cc1ff41862d9e41545651be3a"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240731a.htm",
+   "published_at": "2024-07-31T14:00:00-04:00",
+   "sha256": "68d3ea69c406f76de3891ac7fee8b7f7ac5faf949cea40f90483564d703b3527"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/august-2024",
+   "published_at": "2024-08-01T12:00:00+01:00",
+   "sha256": "0e45bbb1cc66999f1a9cb3641042ee1908b09d708896bfd089513e00fe87e8f9"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240912~67cb23badb.en.html",
+   "published_at": "2024-09-12T14:15:00+02:00",
+   "sha256": "079b9b021fc3dbf38872b642620ba5f4933b8e93d4e515cb6cff7017237f0ab7"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240918a.htm",
+   "published_at": "2024-09-18T14:00:00-04:00",
+   "sha256": "30c9ae609422ea59acdf298a196f202720594b01f68c936d748b2d9e84016b54"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/september-2024",
+   "published_at": "2024-09-19T12:00:00+01:00",
+   "sha256": "d852336b614072ef91f0cb354bc7b525646df4a175aa3e85c4b2215ec72495d9"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20240926",
+   "published_at": "2024-09-26T09:30:00+02:00",
+   "sha256": "1164e7fc9ad8879292218f437cf187b8aa92382a434947439ee8ff4ec5879c7f"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp241017~aa366eaf20.en.html",
+   "published_at": "2024-10-17T14:15:00+02:00",
+   "sha256": "864f8fdce2e1d15ea6430e90add8ea775f1903d553567af58a43c47315ffa332"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/november-2024",
+   "published_at": "2024-11-07T12:00:00+00:00",
+   "sha256": "27dd255124d5f38519cce97326f5a669e847e7960aa0281b3918b376e46f3a92"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20241107a.htm",
+   "published_at": "2024-11-07T14:00:00-05:00",
+   "sha256": "e801bed399af067bdc41ecccc32db48d3091710c4cf6d29f581bd92fe8d5973d"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20241212",
+   "published_at": "2024-12-12T09:30:00+01:00",
+   "sha256": "3d02602036e582e2acc1c22437fd589767f0498c71ef3126105cfc3dc85130d1"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp241212~2acab6e51e.en.html",
+   "published_at": "2024-12-12T14:15:00+01:00",
+   "sha256": "672cf2ab1dbaae446f7a382b82876193c8ccc198e76376e1c1dc70cb36a2643c"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20241218a.htm",
+   "published_at": "2024-12-18T14:00:00-05:00",
+   "sha256": "f6d7e0f0534cb888392d9fe5bfb261ce6bf4dc8dbc5c7144eb9d848c55029d45"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2024/december-2024",
+   "published_at": "2024-12-19T12:00:00+00:00",
+   "sha256": "424822007384443b582f6f9774bd18261dfcc3a809a7bfaf42fcbcc832106496"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250129a.htm",
+   "published_at": "2025-01-29T14:00:00-05:00",
+   "sha256": "7303e66b27a0ebfd8dae27d050b07f2a5247d99e42afc95d05cf5b35b46e1e3e"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250130~530b29e622.en.html",
+   "published_at": "2025-01-30T14:15:00+01:00",
+   "sha256": "b70b316249c2c1faa1b2e874cc3c941d851e12f52177f282e89f7d7d8a2055b0"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/february-2025",
+   "published_at": "2025-02-06T12:00:00+00:00",
+   "sha256": "374ac7989f58838960de25c3a7a3f8fe86310c50768ae388f295829c2aaf8cc9"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250306~d4340800b3.en.html",
+   "published_at": "2025-03-06T14:15:00+01:00",
+   "sha256": "3d2671cc9b20d98aa5304e2212f03e0bff154a2738739e580ea9b5ba72036a48"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250319a.htm",
+   "published_at": "2025-03-19T14:00:00-04:00",
+   "sha256": "c1ab1027284281cc907bfa154154e6446980b06b4c87439cbc37b298ebbedea3"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20250320",
+   "published_at": "2025-03-20T09:30:00+01:00",
+   "sha256": "27bbe63076984b8e55d986bdb86a44e06661a7f5dfc357d26173574458648ad4"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/march-2025",
+   "published_at": "2025-03-20T12:00:00+00:00",
+   "sha256": "f07882c9e87705a6ef79be30c50e0b342891a73656e629a9b4bb23e5bc8e5380"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250417~42727d0735.en.html",
+   "published_at": "2025-04-17T14:15:00+02:00",
+   "sha256": "ff40beffce988f709e570aee9334a47742d3edc4e25de35dedb6a0f094c7776a"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250507a.htm",
+   "published_at": "2025-05-07T14:00:00-04:00",
+   "sha256": "a8b688e44db8985c52bac65d0bb83b164a90813c0d0d024e0c1431bea3d69bf3"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/may-2025",
+   "published_at": "2025-05-08T12:00:00+01:00",
+   "sha256": "9f3118821c3bf946b7145cc922e7694c0d9477403129ba7960830ad99f7fb591"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250605~3b5f67d007.en.html",
+   "published_at": "2025-06-05T14:15:00+02:00",
+   "sha256": "6feee80816f4eac36223af7ad6721a0ac5e041c2bd0c7f06199fb78c083de971"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250618a.htm",
+   "published_at": "2025-06-18T14:00:00-04:00",
+   "sha256": "d0a46006984ba41d1544d577c9bb4642a5c04d8de2c50dc9366317a469798161"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20250619_2",
+   "published_at": "2025-06-19T09:30:00+02:00",
+   "sha256": "0bc63189f81af8507e540e5bb818f3bc98d8136dfc05de5f16dc5536d222806f"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/june-2025",
+   "published_at": "2025-06-19T12:00:00+01:00",
+   "sha256": "f5d13be49f33bb3035f6a95b5259314e1416a69ab370598f48d4bb99729057e4"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250724~50bc70e13f.en.html",
+   "published_at": "2025-07-24T14:15:00+02:00",
+   "sha256": "a542ec83e1db0ed4e89586119eda8c15dd63d54721aeafc88ade6bf6d41409c4"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250730a.htm",
+   "published_at": "2025-07-30T14:00:00-04:00",
+   "sha256": "d942a147ec09eb6c225df1c4f7bb11f94e0ec076c68d1f8bd3773f6762a60b7a"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/august-2025",
+   "published_at": "2025-08-07T12:00:00+01:00",
+   "sha256": "1717be9a632bcbe6981d061b9d06f53f8f421d2e064a7fba5a1c437a4c4f10e6"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250911~6afb7a9490.en.html",
+   "published_at": "2025-09-11T14:15:00+02:00",
+   "sha256": "3819b9de6c8dc3a1a641d884633a44bcb610eb357306b2a9ba7c8c2f5f9a1c74"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250917a.htm",
+   "published_at": "2025-09-17T14:00:00-04:00",
+   "sha256": "f026adc32243d0528f08650c5f1e25dba97577d5280f426261d1cc6a5cabf220"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/september-2025",
+   "published_at": "2025-09-18T12:00:00+01:00",
+   "sha256": "70cc14faf0a4f6ac9b6c4661b7422fb63d2aa3521728cc79b027fb3e83a1163b"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20250925",
+   "published_at": "2025-09-25T09:30:00+02:00",
+   "sha256": "5a29f6f20be447a9f7f75cdad4b027909c99f43eb93a5af401612c42a84d5bd3"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251029a.htm",
+   "published_at": "2025-10-29T14:00:00-04:00",
+   "sha256": "d9af1ebb577a4ab3714062fac8b4f2135218de69c984c2355658f03c625632c5"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp251030~cf0540b5c0.en.html",
+   "published_at": "2025-10-30T14:15:00+01:00",
+   "sha256": "9a1c506e3ae26b89d0c8a98c7c8a782ba66f29a108c3a8172f48ae9a3ee7829a"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/november-2025",
+   "published_at": "2025-11-06T12:00:00+00:00",
+   "sha256": "cb939be238859eff6471f6caf8c37ccf1e9944864b409686273397554deb6cd4"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a.htm",
+   "published_at": "2025-12-10T14:00:00-05:00",
+   "sha256": "167d2324c58e88d23ceefc9bf44c4d76b76cf659740a86cc5eddbaeb33e932bf"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20251211",
+   "published_at": "2025-12-11T09:30:00+01:00",
+   "sha256": "a51ba9d28517de866daa8c9f74f30d83af5718201eddf5dc9c10e304f214c970"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/december-2025",
+   "published_at": "2025-12-18T12:00:00+00:00",
+   "sha256": "c442a1a3c39f8974ba7373701242e67f4f330e423f251bd8bdd3fc22b6057067"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp251218~58b0e415a6.en.html",
+   "published_at": "2025-12-18T14:15:00+01:00",
+   "sha256": "d54bc34734a03ebbcd4d57e43c5941a5242ba54b9d84ce8e3269ba31a261a644"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128a.htm",
+   "published_at": "2026-01-28T14:00:00-05:00",
+   "sha256": "ffc1599729f358f904fd3187dcf6fcc08fe26dad6549e2507047569943ff4531"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/february-2026",
+   "published_at": "2026-02-05T12:00:00+00:00",
+   "sha256": "10835837fe034837109411c584824cf29532cf9a22f18b921f74fb72a3b7c7be"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260205~001d26959b.en.html",
+   "published_at": "2026-02-05T14:15:00+01:00",
+   "sha256": "36a4dd7ccfb66933fea4bd740af0f9ccf663e6d10250a6576b1a7732e5488691"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260318a.htm",
+   "published_at": "2026-03-18T14:00:00-04:00",
+   "sha256": "51b5a70b9bd2e8de0f5419b9e49e6a1efea59cd028ea17b07363378582f82701"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20260319",
+   "published_at": "2026-03-19T09:30:00+01:00",
+   "sha256": "4686ac68eeb49daa8b2f7bcd1fc84ab37f3dcd5fdc681a6a0ab3a417c1deaa93"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/march-2026",
+   "published_at": "2026-03-19T12:00:00+00:00",
+   "sha256": "40fa7f1e8cbe22f785396dcbb8bf278cdbb8f64ce71076c24c3ef3937dfdc677"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260319~3057739775.en.html",
+   "published_at": "2026-03-19T14:15:00+01:00",
+   "sha256": "511b35d01bdf704203f683d78db2846c77b86cc7ed813b18cb8942bb4f9cd8b7"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260429a.htm",
+   "published_at": "2026-04-29T14:00:00-04:00",
+   "sha256": "c4238d2dc061777ccbb412e4e9415d8594a30c64ab2e63763ecbb9e79a26501e"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/april-2026",
+   "published_at": "2026-04-30T12:00:00+01:00",
+   "sha256": "9e5bb234b887cfaaf8ad8e7d79676ddce213d60bae7f24c45642186f7f2668b2"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260430~81b7179e6f.en.html",
+   "published_at": "2026-04-30T14:15:00+02:00",
+   "sha256": "ac2160cfc6c7c65f002d321c1054b7306842507b01025bf68519045c1d57a34f"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260611~4d41bd5e83.en.html",
+   "published_at": "2026-06-11T14:15:00+02:00",
+   "sha256": "87390427d28a9e07bc017c9691402c32695223918918f9c7e5ade70862c00a38"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+   "published_at": "2026-06-17T14:00:00-04:00",
+   "sha256": "9b6a0c34da0a624264bc43e90e449028eef3c466041cb203d9175fbf41090781"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20260618",
+   "published_at": "2026-06-18T09:30:00+02:00",
+   "sha256": "39ed8b140fc58221e2dbcd8ccf384a515022e199c284b70df817d29f998a966f"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/june-2026",
+   "published_at": "2026-06-18T12:00:00+01:00",
+   "sha256": "eabc541ce2375e62bcd21f890f2de1831dc56f2f3ed269a605d1838969977c30"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260723~29f24d99bc.en.html",
+   "published_at": "2026-07-23T14:15:00+02:00",
+   "sha256": "7ec46f019fca42357dcefd8665a68b9fe87128e8e9e27522dbba3f1a2e46b87f"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
+   "published_at": "2026-07-29T14:00:00-04:00",
+   "sha256": "9c83532679a711fbcdcf06781eb0d79522e6a33302433b209fa5cb83f7f1608a"
+  },
+  {
+   "bank": "BOE",
+   "type": "monetary_policy_summary",
+   "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/july-2026",
+   "published_at": "2026-07-30T12:00:00+01:00",
+   "sha256": "16b8c1f339f9cb27031cd53a99ab1c18f4b21073708bf43b699b211eba892469"
+  }
+ ]
+}

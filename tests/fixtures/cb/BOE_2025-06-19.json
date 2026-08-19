@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2025/june-2025",
+ "published_at": "2025-06-19T12:00:00+01:00",
+ "fetched_at": "2026-08-19T09:00:00+00:00",
+ "text": "The Monetary Policy Committee sets monetary policy to meet the 2% inflation target. At its meeting ending on 18 June 2025, the MPC voted by a majority to maintain Bank Rate.\n\nThere has been substantial disinflation over the past two years. Underlying growth appears to have remained weak, and the labour market has continued to loosen. Twelve-month CPI inflation increased to 3.4% in May. There remain two-sided risks to inflation. A gradual and careful approach to the further withdrawal of monetary policy restraint remains appropriate.",
+ "sha256": "539317bfae6ebe3d44d08edcc916b5e216cefa1dde671006f4043738c8453d4a"
+}

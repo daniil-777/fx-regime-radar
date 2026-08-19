@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/february-2026",
+ "published_at": "2026-02-05T12:00:00+00:00",
+ "fetched_at": "2026-08-19T13:57:18+00:00",
+ "text": "At its meeting ending on 4 February 2026, the Monetary Policy Committee voted by a majority of 5–4 to maintain Bank Rate at 3.75%. Four members voted to reduce Bank Rate by 0.25 percentage points, to 3.5%.\n\nAlthough above the 2% target currently, CPI inflation is expected to fall back to around the target from April, owing to developments in energy prices including from Budget 2025. Reflecting the impact of monetary policy, and consistent with evidence of subdued economic growth and building slack in the labour market, pay growth and services price inflation have generally continued to ease. The risk from greater inflation persistence has continued to become less pronounced, while some risks to inflation from weaker demand and a loosening labour market remain.\n\nMonetary policy is being set to ensure that CPI inflation not only reaches 2% but remains sustainably at that level in the medium term, which involves balancing the risks around achieving this. The restrictiveness of policy has fallen as Bank Rate has been reduced by 150 basis points since August 2024. On the basis of the current evidence, Bank Rate is likely to be reduced further. Judgements around further policy easing will become a closer call. The extent and timing of further easing in monetary policy will depend on the evolution of the outlook for inflation.",
+ "sha256": "10835837fe034837109411c584824cf29532cf9a22f18b921f74fb72a3b7c7be"
+}

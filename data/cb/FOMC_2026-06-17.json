@@ -1,0 +1,9 @@
+{
+ "bank": "FOMC",
+ "type": "fomc_statement",
+ "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+ "published_at": "2026-06-17T14:00:00-04:00",
+ "fetched_at": "2026-08-19T14:02:00+00:00",
+ "text": "The Federal Open Market Committee approved the following statement for release by a 12 – 0 vote:\n\nThe Committee decided to maintain the target range for the federal funds rate at 3-1/2 to 3-3/4 percent, in support of the Federal Reserve's dual mandate. The Committee reaffirmed its policy of maintaining ample reserves in the banking system.\n\nEconomic activity is expanding at a solid pace despite elevated uncertainty that owes, in part, to the conflict in the Middle East. Productivity growth and capital investment are strong. Job gains have kept pace with the workforce, and the unemployment rate has changed little.\n\nInflation remains elevated relative to the Committee's 2 percent goal, in part reflecting supply shocks that have driven price increases in certain sectors, including energy. The Committee will deliver price stability.",
+ "sha256": "9b6a0c34da0a624264bc43e90e449028eef3c466041cb203d9175fbf41090781"
+}

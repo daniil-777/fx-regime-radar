@@ -19,6 +19,8 @@ here predicts price direction — by design.
 
 **Live app:** https://fx-regime-radar.streamlit.app · **Code:** https://github.com/daniil-777/fx-regime-radar
 
+> **Why we refuse to backtest the language models** → [docs/why-we-refuse-the-backtest.md](docs/why-we-refuse-the-backtest.md)
+
 ## Track record — frozen test vs live forward record
 
 One table, two columns, same metric code. The left column is the out-of-sample number frozen in
@@ -269,6 +271,38 @@ siren stop above 98) — an inverse-vol **allocation** across markets, a beginne
 plain-language questions strictly from a JSON snapshot of these numbers (no web, no opinions, cites the
 fields it used; template answers without a key). Everything works in the scenario explorer, so you can
 ask "how much risk on 2022-11-09?" and get the honest answer: FTX day, BTC 35 % of normal size, ETH/LTC 0.
+
+## Calendar & context — the challenger (the wall stays shut)
+
+A second forecaster conditions on what the frozen champion cannot see: countdowns to scheduled
+FOMC / ECB / SNB / BoE / NFP / CPI dates (leakage-safe because schedules are published a year ahead;
+unscheduled shocks like 2015-01-15 are deliberately unknown to it), a lagged cross-asset context
+(Fed broad dollar index as DXY proxy, VIX, US 2y, daily EPU, EURCHF) standardised on train only,
+CFTC leveraged-money EUR positioning used only from its Friday release date, Yang-Zhang range
+volatility, and the central-bank tone features below. Frozen test: challenger PR-AUC 0.544 / Brier
+0.103 vs champion 0.548 / 0.102 — no lift; both write to the live ledger and the challenger is
+promoted only if its live PR-AUC beats the champion over ≥ 60 matured days with Brier not worse, by
+a deliberate refit-path act. YZ ablation: refitting the HMM on vol_20_yz changes labels on 33–69 %
+of days — adopting YZ is a full bundle rebuild, scheduled as a follow-up. `features.parquet`, the
+bundle, the goldens and the Rust service are byte-identical. See
+[reports/challenger_eval.md](reports/challenger_eval.md), [event_study.md](reports/event_study.md),
+[yz_ablation.md](reports/yz_ablation.md).
+
+## Central-bank communication index
+
+About forty official statements a year (FOMC, ECB, SNB, BoE) are scored two ways with a hard wall
+between them: a frozen, sha256-pinned word list (Loughran-McDonald uncertainty + a cited
+hawkish/dovish lexicon) scores history; a pinned FinBERT and — once the gate in
+[docs/stage2-decision.md](docs/stage2-decision.md) opens — an LLM score only statements published
+after the 2026-08-17 deploy date, into the hash-chained ledger. Daily point-in-time features
+(`cb_<bank>_tone / _uncert / _tone_surprise / _days_since`) feed the challenger only.
+
+**Parametric look-ahead.** Language models were trained on text written after our history —
+including commentary on how markets reacted to each statement. That knowledge lives in the weights,
+so scoring a 2015 statement with them tests memory of the ending, not reading skill; any such
+backtest would look great and mean nothing. Hence history is word-lists only, and models with memory
+are evaluated live, forward, with receipts (prompt hash, model string, date, raw reply). Details:
+[docs/CB_INDEX.md](docs/CB_INDEX.md), [reports/cb_index.md](reports/cb_index.md).
 
 ## Treasury mode — hedge / wait / ladder, in francs
 

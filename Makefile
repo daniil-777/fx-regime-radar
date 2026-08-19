@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down rust-keys treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -43,6 +43,25 @@ storms:           ## replay the three flagship storms through the real scoring p
 
 rust-keys:        ## issue an API key for the Rust service: make rust-keys ARGS="--label acme --tier pro"
 	cd rust/fxradar-serve && cargo run --release --bin keys -- --db ../../data/keys.db issue $(ARGS)
+
+features-ext:     ## refresh context caches + rebuild data/features_ext.parquet (calendar, cross-asset, EPU, COT, Yang-Zhang)
+	$(PYTHON) -m fxradar.features_ext --refresh
+
+challenger:       ## (re)train the challenger forecaster on features + features_ext; frozen scoreboard in reports/challenger_eval.md
+	$(PYTHON) -m fxradar.challenger --train
+
+event-study:      ## placebo-tested event study figures -> reports/event_study_*.png
+	$(PYTHON) scripts/event_study.py
+
+cb-fetch:         ## fetch official central-bank statements into data/cb/ (idempotent, polite)
+	$(PYTHON) -m fxradar.cb_text --backfill --since 2020
+
+cb-features:      ## lexicon-score data/cb/ -> data/cb_features.parquet + event study report
+	$(PYTHON) -m fxradar.cb_features
+	$(PYTHON) scripts/cb_event_study.py
+
+cb-gate:          ## print the Stage-2 gate with the real live counts (never scores when closed)
+	$(PYTHON) -m fxradar.cb_llm
 
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py

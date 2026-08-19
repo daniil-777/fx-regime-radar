@@ -1,0 +1,9 @@
+{
+ "bank": "ECB",
+ "type": "monetary_policy_decisions",
+ "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250605~synthetic.en.html",
+ "published_at": "2025-06-05T14:15:00+02:00",
+ "fetched_at": "2026-08-19T09:00:00+00:00",
+ "text": "The Governing Council today decided to lower the three key ECB interest rates by 25 basis points. Inflation has eased and is expected to remain below target over the medium term, reflecting weak demand and subdued underlying price dynamics.\n\nThe outlook is surrounded by downside risks. Growth has slowed, the labour market has loosened, and economic slack persists. The Governing Council will follow a data-dependent, patient and gradual approach, and stands ready to adjust all of its instruments to provide accommodation as needed.\n\nThe asset purchase programme portfolio is declining at a measured and predictable pace.",
+ "sha256": "cc190c70ec9792eab25d8710c894779e0348f76ebe5457bd12cf8b1e82f0ac6c"
+}

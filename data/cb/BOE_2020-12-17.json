@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2020/december-2020",
+ "published_at": "2020-12-17T12:00:00+00:00",
+ "fetched_at": "2026-08-19T14:04:13+00:00",
+ "text": "The Bank of England’s Monetary Policy Committee (MPC) sets monetary policy to meet the 2% inflation target, and in a way that helps to sustain growth and employment. At its meeting ending on 16 December 2020, the Committee judged that the existing stance of monetary policy remains appropriate. The MPC voted unanimously to maintain Bank Rate at 0.1%. The Committee voted unanimously for the Bank of England to maintain the stock of sterling non-financial investment-grade corporate bond purchases, financed by the issuance of central bank reserves, at £20 billion. The Committee voted unanimously for the Bank of England to continue with the programme of £100 billion of UK government bond purchases, financed by the issuance of central bank reserves, and also to commence the previously announced programme of £150 billion of UK government bond purchases, financed by the issuance of central bank reserves, maintaining the target for the stock of these government bond purchases at £875 billion and so the total target stock of asset purchases at £895 billion.",
+ "sha256": "f048c1916a61c8eb40a00ee43e8aaf5058292c3f4382dc627549a751f5940e45"
+}

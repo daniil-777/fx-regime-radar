@@ -1,0 +1,9 @@
+{
+ "bank": "BOE",
+ "type": "monetary_policy_summary",
+ "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/april-2026",
+ "published_at": "2026-04-30T12:00:00+01:00",
+ "fetched_at": "2026-08-19T13:57:21+00:00",
+ "text": "At its meeting ending on 29 April 2026, the Monetary Policy Committee (MPC) voted by a majority of 8–1 to maintain Bank Rate at 3.75%. One member voted to increase Bank Rate by 0.25 percentage points, to 4%.\n\nThe conflict in the Middle East means that prospects for global energy prices are highly uncertain. Monetary policy cannot influence energy prices but will be set to ensure that the economic adjustment to them occurs in a way that achieves the 2% inflation target sustainably. The policy stance required to achieve this will depend on the scale and duration of the shock, and how it propagates through the economy.\n\nThe April Monetary Policy Report sets out three scenarios that help to illustrate a range of possible outcomes for the UK economy.\n\nCPI inflation has increased to 3.3%, and is likely to be higher later this year as the effects of higher energy prices pass through. There is a risk of material second-round effects in price and wage-setting, which policy would need to lean against. But the labour market continues to loosen, and a weakening economy could contain inflationary pressures. Financial conditions have tightened since the conflict began, which will help to reduce inflation over time.\n\nTaking all the risks to the economic outlook into account, the Committee judges that it is appropriate to maintain Bank Rate at this meeting.\n\nThe Committee will continue to monitor closely the situation in the Middle East and how its impact propagates through the economy. The Committee stands ready to act as necessary to ensure that CPI inflation remains on track to meet the 2% target in the medium term.",
+ "sha256": "9e5bb234b887cfaaf8ad8e7d79676ddce213d60bae7f24c45642186f7f2668b2"
+}

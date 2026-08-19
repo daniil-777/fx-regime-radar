@@ -1,0 +1,9 @@
+{
+ "bank": "SNB",
+ "type": "monetary_policy_assessment",
+ "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20250619_synthetic",
+ "published_at": "2025-06-19T09:30:00+02:00",
+ "fetched_at": "2026-08-19T09:00:00+00:00",
+ "text": "The Swiss National Bank is leaving the SNB policy rate unchanged. Inflationary pressure has decreased slightly compared with the previous quarter. The Swiss franc remains highly valued and the SNB remains willing to be active in the foreign exchange market as necessary.\n\nThe global economic outlook is subject to considerable uncertainty. It is possible that the situation could deteriorate; it is also possible that conditions could prove more resilient than assumed. Growth in Switzerland is likely to be moderate.",
+ "sha256": "2ed69b23b684d48aabc3605a74ffe29f1b13afe010a7484b764adefdb62b6f67"
+}

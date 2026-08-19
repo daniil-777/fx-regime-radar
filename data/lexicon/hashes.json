@@ -1,0 +1,9 @@
+{
+ "algorithm": "sha256",
+ "lexicon_version": "v1",
+ "files": {
+  "lm_uncertainty.txt": "da8f75c84b84666af36085158f7ba498e0c550fd0310da23ab5ce4102f428824",
+  "hawkish.txt": "5d743120bdae74d059a2195646a6953d5b30dfe9fd2ec3722c3facf3927f825d",
+  "dovish.txt": "77bdfe19e61e64a8f606900982a5405270827e314f12c668eda8c5cc45a05740"
+ }
+}

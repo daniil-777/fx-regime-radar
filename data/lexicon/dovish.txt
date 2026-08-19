@@ -1,0 +1,131 @@
+# dovish.txt — FROZEN lexicon (phase 29). Lowercase, one term per line, hyphens written as spaces.
+# Bigrams/trigrams are matched greedily before unigrams. Sources: see LICENSE_NOTE.md.
+rate cut
+rate cuts
+cut rates
+cut interest rates
+cutting rates
+cut in interest rates
+lower rates
+lower interest rates
+reduce rates
+reduce interest rates
+reduction in the policy rate
+reduction in interest rates
+rate reduction
+rate reductions
+further reductions
+lowering
+ease
+easing
+eased
+easier
+loosen
+loosening
+accommodative
+accommodation
+accommodative stance
+highly accommodative
+ample degree of monetary accommodation
+stimulus
+stimulate
+supportive
+downside risks
+downside risk
+downward pressure
+downward pressures
+downward revision
+downward revisions
+below target
+below the target
+below its target
+below 2
+subdued
+subdued inflation
+low inflation
+lower inflation
+falling inflation
+inflation fell
+inflation has fallen
+inflation declined
+inflation decreased
+inflation eased
+disinflation
+disinflationary
+deflation
+deflationary
+weak
+weaker
+weakness
+weakening
+weakened
+weak growth
+weak demand
+weak activity
+soften
+softened
+softening
+slowdown
+slowing
+slowed
+slower growth
+growth slowed
+sluggish
+slack
+economic slack
+spare capacity
+output gap
+underutilisation
+underutilization
+rising unemployment
+unemployment rose
+unemployment increased
+high unemployment
+unemployment remains elevated
+labour market loosened
+labor market loosened
+loosening labour market
+loosening labor market
+labour market slack
+labor market slack
+recession
+recessionary
+contraction
+contracted
+contracting
+downturn
+deteriorate
+deteriorated
+deterioration
+patient
+patience
+gradual
+gradually
+cautious
+caution
+dampen
+dampened
+dampening
+headwinds
+fragile
+asset purchases
+purchase programme
+purchase program
+quantitative easing
+balance sheet expansion
+lower for longer
+negative interest rate
+negative interest rates
+negative rates
+zero lower bound
+effective lower bound
+willing to intervene
+intervene in the foreign exchange market
+foreign exchange market interventions
+highly valued
+overvalued
+well anchored
+moderated
+moderating
+moderation
+dovish

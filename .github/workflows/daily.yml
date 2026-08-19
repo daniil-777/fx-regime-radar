@@ -31,6 +31,9 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
+      - name: Fetch new central-bank statements (official sites only; soft-fails offline)
+        run: python -m fxradar.cb_text --backfill --since 2020 || echo "cb fetch skipped"
+
       - name: Run the daily pipeline for every universe (loads saved models, never trains)
         run: |
           python pipelines/run_daily.py
