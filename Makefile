@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down rust-keys treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -40,6 +40,9 @@ metrics:          ## refresh data/metrics.json (ledger days, subscribers, keys, 
 
 storms:           ## replay the three flagship storms through the real scoring path (≈8 min) → data/storm_replays.json + reports/storms/
 	$(PYTHON) -m fxradar.replay
+
+rust-keys:        ## issue an API key for the Rust service: make rust-keys ARGS="--label acme --tier pro"
+	cd rust/fxradar-serve && cargo run --release --bin keys -- --db ../../data/keys.db issue $(ARGS)
 
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py

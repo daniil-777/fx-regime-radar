@@ -32,3 +32,8 @@ data/arcade.db
 # production deploy (server-side only)
 deploy/.env
 deploy/refresh.log
+
+# API key store (sha256 hashes + webhook secrets) — a secret file, never committed
+data/keys.db
+data/keys.db-wal
+data/keys.db-shm

@@ -29,3 +29,26 @@ request, ~55 KB JSON each; laptop, localhost):
 
 Start-up gate on bundle v1.4.0: hash verification + 302-golden self-test ≈ 0.5 s before the port
 is bound. p99 is what matters: a trading system lives on its worst common case, not its average.
+
+## Phase 24 — productised service (keys, alerts, docs, metrics, widget)
+
+`tools/load_test.py http://127.0.0.1:8099 <pro-key> --n 4000 --c 8` — 8 keep-alive Python
+clients, laptop (Apple M3 Pro, arm64), localhost, release build, service started with
+`--rate-limit-per-min 1000000` (the 60/min default is a product quota, not a throughput limit).
+Client-observed round trip, Python `http.client` overhead included:
+
+| route | concurrency | throughput | p50 | p95 | p99 | max |
+|---|---|---|---|---|---|---|
+| `GET /api/regimes/EURUSD` (public, mtime-cached newest rows) | 8 | **≈ 9 600 req/s** | 0.38 ms | 1.18 ms | 1.74 ms | 178 ms (first hit = parquet scan → cache fill) |
+| `GET /api/health` | 8 | ≈ 15 900 req/s | 0.39 ms | 1.23 ms | 1.83 ms | 6.5 ms |
+| `POST /api/score` (X-API-Key, pro tier; real 600-day windows, ~55 KB JSON) | 8 | **≈ 2 180 req/s** | 3.55 ms | 4.14 ms | 4.41 ms | 7.3 ms |
+| `POST /api/score` | 1 | ≈ 1 220 req/s | 0.77 ms | 1.06 ms | 1.37 ms | 11 ms |
+
+Honest reading: the engine is single-threaded behind a mutex (one ONNX session pair), so with
+8 clients `/api/score` latency is mostly queueing (≈ 8 × 0.45 ms); throughput is the engine's
+≈ 2 200 rows/s from the criterion bench, now with key lookup (sqlite, in-process), rate-limit
+bookkeeping and the Prometheus middleware in the path — they cost nothing measurable. Before this
+phase `/api/regimes/{pair}` re-scanned the whole `regimes.parquet` per request (≈ 180 ms p50 at
+c=8, 43 req/s); the newest-row map is now cached on (mtime, size) and re-read only when the
+pipeline rewrites the file. `oha`/`k6` were not installed on this machine, hence the Python client;
+numbers are upper bounds on latency (client overhead is inside them), not lower bounds.

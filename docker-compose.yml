@@ -11,6 +11,10 @@ services:
     volumes:
       - ./models/bundle_v1.4.0:/bundle:ro
       - ./data:/data:ro
+      - fxradar-keys:/var/lib/fxradar        # API-key store (sha256 hashes + webhook secrets) — a secret file
+    environment:
+      FXRADAR_KEYS_DB: /var/lib/fxradar/keys.db
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}   # test mode; env only, never in git
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/api/health || exit 1"]
       interval: 30s
@@ -28,3 +32,5 @@ services:
     depends_on:
       serve:
         condition: service_healthy
+volumes:
+  fxradar-keys:

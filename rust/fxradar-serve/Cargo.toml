@@ -1,6 +1,6 @@
 [package]
 name = "fxradar-serve"
-version = "2.1.0"
+version = "2.11.0"
 edition = "2021"
 description = "FX Regime Radar — production scoring engine (reads only the model bundle; no Python)"
 license = "MIT"
@@ -18,6 +18,10 @@ path = "src/bin/selftest.rs"
 name = "fxradar-serve"
 path = "src/bin/serve.rs"
 
+[[bin]]
+name = "keys"
+path = "src/bin/keys.rs"
+
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -29,11 +33,20 @@ hex = "0.4"
 ort = { version = "2.0.0-rc.13", default-features = false, features = ["std", "ndarray", "download-binaries", "tls-native", "copy-dylibs", "api-27"] }
 parquet = { version = "59", default-features = false, features = ["snap"] }
 axum = "0.8"
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "time", "sync"] }
 tower-http = { version = "0.6", features = ["trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4", features = ["derive", "env"] }
+# phase 24: keys, alerts, docs, metrics
+rusqlite = { version = "0.37", features = ["bundled"] }
+hmac = "0.12"
+rand = "0.8"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+utoipa = { version = "5", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "9", features = ["axum", "vendored"] }
+metrics = "0.24"
+metrics-exporter-prometheus = { version = "0.17", default-features = false }
 
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false }

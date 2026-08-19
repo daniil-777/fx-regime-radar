@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FX Regime Radar · widget demo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 40px 24px; background: #0E1420; color: #E8ECF4; font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+  p { color: #9AA6B8; max-width: 640px; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; margin: 24px 0; }
+  pre { background: #151D2E; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E8ECF4; }
+  footer { color: #5C6980; font-size: 12px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<h1>FX Regime Radar · embeddable badge</h1>
+<p>Each badge below is one <code>&lt;script&gt;</code> tag. It reads the newest computed regime state from
+<code>/api/regimes/{pair}</code> on this origin and shows the regime word, the anomaly siren percentile and the change risk.
+No tracking; an optional <code>?partner=</code> tag on the script URL is logged for attribution only.</p>
+<div class="row">
+  <script src="/widget.js?partner=demo" data-pair="EURUSD"></script>
+  <script src="/widget.js?partner=demo" data-pair="USDCHF"></script>
+  <script src="/widget.js?partner=demo" data-pair="GBPUSD"></script>
+</div>
+<pre>&lt;script src="https://YOUR-HOST/widget.js?partner=yourname" data-pair="EURUSD" async&gt;&lt;/script&gt;</pre>
+<p>API docs: <a href="/docs" style="color:#7FD1C9">/docs</a> · metrics: <a href="/metrics" style="color:#7FD1C9">/metrics</a></p>
+<footer>Educational tool. Not investment advice.</footer>
+</body>
+</html>

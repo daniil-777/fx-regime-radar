@@ -2,16 +2,25 @@
 //!
 //! This crate scores raw price windows into regime / change-risk / anomaly outputs using ONLY the
 //! versioned model bundle exported by Python (json + onnx + parquet). It imports nothing from
-//! Python at runtime, does no network I/O and writes no files. At start-up the [`selftest`]
-//! replays every golden vector and the caller must refuse to serve on any mismatch.
+//! Python at runtime. At start-up the [`selftest`] replays every golden vector and the caller
+//! must refuse to serve on any mismatch. The engine itself does no network I/O and writes no
+//! files; phase 24 adds the service layer around it ([`app`], [`store`], [`alerts`], [`metrics`]),
+//! which owns its own sqlite file and outbound webhook deliveries — never touching the bundle.
 
+pub mod alerts;
+pub mod app;
 pub mod bundle;
 pub mod error;
 pub mod features;
 pub mod hmm;
 pub mod infer;
+pub mod metrics;
+pub mod ratelimit;
 pub mod selftest;
 pub mod state_store;
+pub mod store;
+pub mod stripe;
+pub mod treasury;
 
 pub use bundle::Bundle;
 pub use error::EngineError;

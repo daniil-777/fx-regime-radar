@@ -18,7 +18,7 @@ pub const BASE_FEATURES: [&str; 8] = [
 ];
 
 /// Raw daily bars for one pair, oldest first. `dates` are days since the Unix epoch.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct PairWindow {
     pub pair: String,
     pub dates: Vec<i64>,

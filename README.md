@@ -246,6 +246,17 @@ Run it: `cargo run --release --bin fxradar-serve -- --bundle models/bundle_v1.4.
 from it). `POST /api/score` takes `{"pair": "USDCHF", "windows": [{pair, dates, close, high, low} × 3]}`
 with ≥ 600 rows per pair (see `docs/bundle_format.md`).
 
+## API — keys, alerts, docs, metrics, widget
+
+The Rust service ships as a product: `X-API-Key` auth with free / pro / partner tiers (sha256-only
+sqlite store, `make rust-keys ARGS="--label acme --tier pro"`), signed webhook alerts (regime flips,
+siren > 98, consensus 3/3; HMAC-SHA256, at-least-once with idempotent last-alerted state) to generic /
+Slack / Telegram receivers, Swagger docs at `/docs`, Prometheus `/metrics`, an embeddable
+`/widget.js` badge, `GET /api/treasury`, and a Stripe test-mode webhook that moves a key between
+tiers. The startup gate and golden self-test are untouched — the service still refuses to serve on
+any mismatch. See [docs/API.md](docs/API.md) and [docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md) §7.
+Educational tool. Not investment advice.
+
 ## The Advisor — how stable, how durable, how much (never which way)
 
 The one page most tools get wrong. It never says buy or sell (rules 4/5); it says what the models can

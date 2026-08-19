@@ -2,6 +2,33 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.17.0 — phase 24: productised API (rust/fxradar-serve v2.11.0) (2026-08-19)
+
+- `X-API-Key` auth: sha256-only sqlite store (`--keys-db` / `FXRADAR_KEYS_DB`, default
+  `data/keys.db`, gitignored), `keys` admin CLI (issue — plaintext printed once — list / revoke /
+  set-tier / webhooks), tower middleware 401 unknown · 403 tier · 429 + Retry-After per-key token
+  bucket (60/min default). Tiers free | pro | partner: public routes stay open (health, regimes,
+  /docs, /metrics, /widget.js, /widget, stripe webhook); POST /api/score, GET /api/treasury and
+  /api/webhooks need pro or partner.
+- Alert engine: tokio poll loop over the newest artifact rows (300 s default, once at startup);
+  triggers regime flip · anomaly_pct > 98 · consensus 3/3; persisted `last_alerted` state per
+  (key, pair, trigger) → one flip = one alert; mpsc delivery queue, ≤ 5 tries with exponential
+  backoff, never inside handlers; payload signed HMAC-SHA256 over `ts.body`
+  (`X-FXRadar-Signature`, `X-FXRadar-Timestamp`); generic / Slack / Telegram adapters; template text =
+  regime, change risk ± band, consensus line, next scheduled event; direction-word lint test.
+- OpenAPI via utoipa + Swagger UI at `/docs`; Prometheus `/metrics` (requests, latency histogram,
+  alerts fired, delivery outcomes); `/widget.js` badge (regime dot + word + siren, tokens palette,
+  `?partner=` attribution) + `/widget` demo; `/api/regimes` now mtime-cached (9.6k req/s vs 43).
+  `docs/API.md`, `tools/verify_webhook_sig.py`, `tools/load_test.py`, BENCH.md phase-24 numbers
+  (/api/score ≈ 2 180 req/s at c = 8, p50 3.6 ms, p99 4.4 ms), `docs/DEPLOY_ORACLE.md` §7 (systemd +
+  env-file, ports, health check, first key). Startup gate + golden selftest byte-identical.
+- phase-25 (rust): `GET /api/treasury` reads `data/treasury_risk.json`; optional
+  `?pair&amount&weeks&level` → ES notional = amount × es × √weeks (arithmetic only, 404 if absent,
+  disclaimer in JSON).
+- phase-28 (rust): `POST /api/stripe/webhook` verifies `Stripe-Signature` (HMAC over `t.payload`,
+  5-minute tolerance, `STRIPE_WEBHOOK_SECRET` from env) and maps checkout / subscription events to key
+  tiers (cancel → free); TEST MODE, no SDK. docker-compose: keys volume + env.
+
 ## v2.16.0 — phase 26: storm replays + auto post-mortems (2026-08-19)
 
 - `fxradar.replay`: replay engine on the REAL scoring path — prices truncated at each day t, the
