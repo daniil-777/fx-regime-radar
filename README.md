@@ -26,14 +26,14 @@ phase 07 (test set 2019+, scored once). The right column is the one no backtest 
 deployed pipeline actually said, written down before the outcome existed.
 
 <!-- live-record:start -->
-| 5-day regime-change forecaster | frozen test · 2019+ · scored once (n = 5,922) | **live forward record** · since 2026-08-17 · 0 resolved of 3 |
+| 5-day regime-change forecaster | frozen test · 2019+ · scored once (n = 5,922) | **live forward record** · since 2026-08-17 · 0 resolved of 6 |
 |---|---|---|
 | PR-AUC ↑ | 0.548 (base rate 0.162) | — |
 | Brier ↓ | 0.102 (base rate 0.136) | — |
 | precision · recall @ 0.22 | 0.45 · 0.59 | — · — |
 | positive rate | 16% | — |
 
-**Warming up:** 3 forecasts recorded, 0 resolved — numbers appear at 20 resolved (≈ 7 trading days after the first entry + 5-day horizon). Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-08-18.
+**Warming up:** 6 forecasts recorded, 0 resolved — numbers appear at 20 resolved (≈ 7 trading days after the first entry + 5-day horizon). Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-08-19.
 <!-- live-record:end -->
 
 Model refits start a new ledger segment (a refit can never rewrite the old record); the ledger's hash
