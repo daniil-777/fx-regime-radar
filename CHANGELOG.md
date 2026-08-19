@@ -4,6 +4,13 @@ All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.
 
 ## v2.24.0 — phase 32: a choice of models (2026-08-19)
 
+- App page **Model lab** (Analysis): segmented control over the three regime lenses + market
+  select — price with bands under the chosen lens, a three-lens heatmap strip (weekly-majority tint
+  for flickery lenses, true counts in the table), per-model anatomy with champion agreement, and the
+  forecaster-engine scoreboard. Reads `data/model_lab.parquet` + `model_lab.json` written by
+  `make model-lab` (rule 8: the page computes nothing); ships with the honesty framing — the record
+  always runs on the champion.
+
 - `fxradar.regime_models` — one contract, three regime models: the champion **HMM** (delegated
   byte-identically), the **statistical jump model** (Bemporad 2018; Nystrup et al. 2020/21;
   Aydınhan–Kolm–Mulvey–Shu 2024) fitted by coordinate descent (DP over the train sequence ↔ centre

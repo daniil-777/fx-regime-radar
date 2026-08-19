@@ -35,6 +35,7 @@ pages = {
         st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
         st.Page(str(VIEWS / "regime_space.py"), title="Regime space"),
         st.Page(str(VIEWS / "probability_space.py"), title="Probability space"),
+        st.Page(str(VIEWS / "model_lab.py"), title="Model lab"),
         st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab"),
         st.Page(str(VIEWS / "arcade.py"), title="Arcade"),
     ],

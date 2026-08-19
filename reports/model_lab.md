@@ -1,6 +1,6 @@
 # Model lab — a choice of models, raced under one protocol
 
-_Universe `fx` · generated 2026-08-19 18:10 UTC. Research copies only: the shipped champions, the bundle/goldens and the live ledger are untouched. Regime alternatives: the statistical jump model (Bemporad 2018; Nystrup et al. 2020/21; Aydınhan–Kolm–Mulvey–Shu 2024) with GREEDY ONLINE (causal) inference and λ matched per pair to the champion's TRAIN-era switching rate; a temporally-uncoupled GMM as the persistence ablation. Forecaster engines: the XGBoost champion, sklearn's HistGradientBoosting (LightGBM-style, zero new dependencies), and the logistic reference — identical splits, embargo, Platt calibration on validation, recall-targeted threshold; each engine's frozen test scored once, here._
+_Universe `fx` · generated 2026-08-19 18:19 UTC. Research copies only: the shipped champions, the bundle/goldens and the live ledger are untouched. Regime alternatives: the statistical jump model (Bemporad 2018; Nystrup et al. 2020/21; Aydınhan–Kolm–Mulvey–Shu 2024) with GREEDY ONLINE (causal) inference and λ matched per pair to the champion's TRAIN-era switching rate; a temporally-uncoupled GMM as the persistence ablation. Forecaster engines: the XGBoost champion, sklearn's HistGradientBoosting (LightGBM-style, zero new dependencies), and the logistic reference — identical splits, embargo, Platt calibration on validation, recall-targeted threshold; each engine's frozen test scored once, here._
 
 ## Regime models — out-of-sample anatomy (≥ 2017-01-01; λ per pair: EURUSD=2, GBPUSD=1, USDCHF=1)
 

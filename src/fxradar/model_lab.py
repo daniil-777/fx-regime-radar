@@ -14,6 +14,7 @@ Promotion of any winner is a deliberate refit-path / challenger-ledger act — n
 
 from __future__ import annotations
 
+import json
 import logging
 
 import matplotlib
@@ -34,6 +35,8 @@ log = logging.getLogger(__name__)
 
 REPORT_PATH = config.REPORTS_DIR / "model_lab.md"
 PNG_PATH = config.REPORTS_DIR / "model_lab_timelines.png"
+LAB_PARQUET = config.DATA_DIR / "model_lab.parquet"  # per-model scored regimes — the app reads this
+LAB_JSON = config.DATA_DIR / "model_lab.json"  # stats + agreement + forecaster scoreboard
 OOS_START = config.VAL_START
 
 
@@ -233,6 +236,38 @@ def run() -> str:
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text("\n".join(lines) + "\n")
     timelines_png(scored, config.PAIRS[0])
+
+    # ---- artifacts for the app's Model lab page (rule 8: the page reads, never computes) -----
+    frames = []
+    for name, sc in scored.items():
+        key = "hmm" if name.startswith("hmm") else name
+        frames.append(sc[["date", "pair", "regime", "regime_prob"]].assign(model=key))
+    pd.concat(frames, ignore_index=True).to_parquet(LAB_PARQUET, index=False)
+    LAB_JSON.write_text(
+        json.dumps(
+            {
+                "generated_at_utc": f"{pd.Timestamp.now(tz='UTC'):%Y-%m-%dT%H:%M:%SZ}",
+                "universe": config.UNIVERSE_NAME,
+                "oos_start": str(OOS_START),
+                "lambda": lam_used,
+                "stats": {
+                    ("hmm" if n.startswith("hmm") else n): st.to_dict("records")
+                    for n, st in stats.items()
+                },
+                "agreement": {("hmm" if n.startswith("hmm") else n): v for n, v in agree.items()},
+                "forecasters": [
+                    {k: v for k, v in e.items() if k not in ("model",)} for e in engines
+                ],
+                "model_notes": {
+                    "hmm": "champion — filtered forward algorithm; the shipped record and the live ledger run on this",
+                    "jump": "statistical jump model (research) — greedy online inference, penalty per switch matched to the champion's train persistence",
+                    "gmm": "mixture ablation (research) — no temporal coupling; shows what the persistence machinery buys",
+                },
+            },
+            indent=1,
+            default=float,
+        )
+    )
     return str(REPORT_PATH)
 
 

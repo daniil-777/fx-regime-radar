@@ -277,8 +277,11 @@ ask "how much risk on 2022-11-09?" and get the honest answer: FTX day, BTC 35 % 
 ## Model choice — champions, and the bench behind them
 
 No model in this system is an article of faith. Each seat has a **registry of alternatives raced
-under one protocol** (`make model-lab` → [reports/model_lab.md](reports/model_lab.md)), and a
-documented promotion path — never a silent swap.
+under one protocol** (`make model-lab` → [reports/model_lab.md](reports/model_lab.md)), an
+interactive bench in the app — **Analysis → Model lab**: click between the HMM, jump-model and
+GMM lenses and watch the same history re-labelled, with the three-lens comparison strip and the
+engine scoreboard beside it (the page reads lab artifacts only; the record always runs on the
+champion) — and a documented promotion path — never a silent swap.
 
 **Regime models** (`fxradar.regime_models`, selected per universe with `FXRADAR_REGIME_MODEL`;
 the `fx` universe is hard-locked to the champion — its bundle, golden vectors and live ledger

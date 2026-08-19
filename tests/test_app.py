@@ -196,3 +196,17 @@ def test_pairs_bar_replay_is_user_initiated_and_renders() -> None:
     at.toggle[0].set_value(True).run()
     assert not at.exception, at.exception
     assert len(at.get("plotly_chart")) == 1
+
+
+def test_model_lab_page_switches_lenses_from_artifacts_only() -> None:
+    """The Model lab page reads data/model_lab.parquet; clicking a lens swaps the bands."""
+    if not (config.ROOT / "data" / "model_lab.parquet").exists():
+        pytest.skip("model-lab artifacts not built")
+    at = _run("app/views/model_lab.py")
+    assert not at.exception, at.exception
+    assert len(at.get("plotly_chart")) == 2  # price-with-bands + the three-lens heatmap
+    at.session_state["lab_model"] = "jump"
+    at.run()
+    assert not at.exception, at.exception
+    text = " ".join(m.value for m in at.markdown)
+    assert "research bench" in text and "champion" in text  # the honesty framing is on the page

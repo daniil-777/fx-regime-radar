@@ -1,0 +1,210 @@
+{
+ "generated_at_utc": "2026-08-19T18:19:44Z",
+ "universe": "fx",
+ "oos_start": "2017-01-01",
+ "lambda": {
+  "EURUSD": 2.0,
+  "GBPUSD": 1.0,
+  "USDCHF": 1.0
+ },
+ "stats": {
+  "hmm": [
+   {
+    "pair": "EURUSD",
+    "share_calm": 0.5798722044728435,
+    "share_crisis": 0.035942492012779555,
+    "mean_run_d": 24.310679611650485,
+    "switches_yr": 10.26517571884984,
+    "vol_ordering_ok": true,
+    "vol_calm": 5.7659943027137555,
+    "vol_crisis": 12.646677610839962
+   },
+   {
+    "pair": "GBPUSD",
+    "share_calm": 0.21206070287539935,
+    "share_crisis": 0.04552715654952077,
+    "mean_run_d": 18.277372262773724,
+    "switches_yr": 13.686900958466452,
+    "vol_ordering_ok": true,
+    "vol_calm": 5.943335798722807,
+    "vol_crisis": 17.948906677223885
+   },
+   {
+    "pair": "USDCHF",
+    "share_calm": 0.8781948881789138,
+    "share_crisis": 0.0,
+    "mean_run_d": 75.87878787878788,
+    "switches_yr": 3.220447284345048,
+    "vol_ordering_ok": true,
+    "vol_calm": 6.625581156048184,
+    "vol_crisis": NaN
+   }
+  ],
+  "jump": [
+   {
+    "pair": "EURUSD",
+    "share_calm": 0.7855431309904153,
+    "share_crisis": 0.0059904153354632585,
+    "mean_run_d": 139.11111111111111,
+    "switches_yr": 1.7108626198083066,
+    "vol_ordering_ok": true,
+    "vol_calm": 6.546155120183407,
+    "vol_crisis": NaN
+   },
+   {
+    "pair": "GBPUSD",
+    "share_calm": 0.5259584664536742,
+    "share_crisis": 0.01437699680511182,
+    "mean_run_d": 28.454545454545453,
+    "switches_yr": 8.755591054313099,
+    "vol_ordering_ok": true,
+    "vol_calm": 7.401239519682172,
+    "vol_crisis": 23.11185233624648
+   },
+   {
+    "pair": "USDCHF",
+    "share_calm": 0.9289137380191693,
+    "share_crisis": 0.0,
+    "mean_run_d": 131.78947368421052,
+    "switches_yr": 1.8115015974440893,
+    "vol_ordering_ok": true,
+    "vol_calm": 6.912341586910486,
+    "vol_crisis": NaN
+   }
+  ],
+  "gmm": [
+   {
+    "pair": "EURUSD",
+    "share_calm": 0.7180511182108626,
+    "share_crisis": 0.00039936102236421724,
+    "mean_run_d": 7.236994219653179,
+    "switches_yr": 34.72044728434505,
+    "vol_ordering_ok": true,
+    "vol_calm": 5.215028783940465,
+    "vol_crisis": NaN
+   },
+   {
+    "pair": "GBPUSD",
+    "share_calm": 0.5619009584664537,
+    "share_crisis": 0.039936102236421724,
+    "mean_run_d": 2.858447488584475,
+    "switches_yr": 88.0591054313099,
+    "vol_ordering_ok": true,
+    "vol_calm": 4.5758751730692095,
+    "vol_crisis": 20.185072269443307
+   },
+   {
+    "pair": "USDCHF",
+    "share_calm": 0.9452875399361023,
+    "share_crisis": 0.0,
+    "mean_run_d": 29.458823529411763,
+    "switches_yr": 8.45367412140575,
+    "vol_ordering_ok": true,
+    "vol_calm": 6.497016682535671,
+    "vol_crisis": NaN
+   }
+  ]
+ },
+ "agreement": {
+  "jump": 0.5911874334398296,
+  "gmm": 0.6493610223642172
+ },
+ "forecasters": [
+  {
+   "estimator": "xgb",
+   "info": {
+    "n_train": 9136,
+    "n_val": 1527,
+    "train_pos_rate": 0.17009632224168125,
+    "scale_pos_weight": 4.879021879021879,
+    "best_iteration": 283,
+    "best_val_aucpr": 0.4791091085077264
+   },
+   "calibration": {
+    "a": 0.9516,
+    "b": -1.3003
+   },
+   "threshold": 0.22,
+   "val": {
+    "pr_auc": 0.481116480117786,
+    "precision": 0.38990825688073394,
+    "recall": 0.6181818181818182,
+    "brier": 0.11882082685678653,
+    "n": 1527,
+    "pos_rate": 0.18009168303863785
+   },
+   "test": {
+    "pr_auc": 0.547990738640666,
+    "precision": 0.4523809523809524,
+    "recall": 0.5931321540062435,
+    "brier": 0.1023663328052428,
+    "n": 5925,
+    "pos_rate": 0.16219409282700423
+   }
+  },
+  {
+   "estimator": "histgb",
+   "info": {
+    "max_iter_grid_val_pr_auc": {
+     "100": 0.4806,
+     "200": 0.4859,
+     "400": 0.4706
+    },
+    "chosen_max_iter": 200
+   },
+   "calibration": {
+    "a": 0.8288,
+    "b": -1.16
+   },
+   "threshold": 0.24,
+   "val": {
+    "pr_auc": 0.48587410213759785,
+    "precision": 0.4195121951219512,
+    "recall": 0.6254545454545455,
+    "brier": 0.11761066085537447,
+    "n": 1527,
+    "pos_rate": 0.18009168303863785
+   },
+   "test": {
+    "pr_auc": 0.5464771329010544,
+    "precision": 0.4392288348700754,
+    "recall": 0.5452653485952134,
+    "brier": 0.10340095574305612,
+    "n": 5925,
+    "pos_rate": 0.16219409282700423
+   }
+  },
+  {
+   "estimator": "logistic",
+   "info": {
+    "val_pr_auc": 0.4086
+   },
+   "calibration": {
+    "a": 0.8123,
+    "b": -1.4795
+   },
+   "threshold": 0.17,
+   "val": {
+    "pr_auc": 0.4086442046245027,
+    "precision": 0.35698924731182796,
+    "recall": 0.6036363636363636,
+    "brier": 0.12891843771868977,
+    "n": 1527,
+    "pos_rate": 0.18009168303863785
+   },
+   "test": {
+    "pr_auc": 0.43253317011445536,
+    "precision": 0.3956492182188987,
+    "recall": 0.6056191467221644,
+    "brier": 0.11521540228114177,
+    "n": 5925,
+    "pos_rate": 0.16219409282700423
+   }
+  }
+ ],
+ "model_notes": {
+  "hmm": "champion \u2014 filtered forward algorithm; the shipped record and the live ledger run on this",
+  "jump": "statistical jump model (research) \u2014 greedy online inference, penalty per switch matched to the champion's train persistence",
+  "gmm": "mixture ablation (research) \u2014 no temporal coupling; shows what the persistence machinery buys"
+ }
+}
