@@ -29,6 +29,7 @@ from fxradar import (
     arcade,
     bocpd,
     config,
+    conformal,
     data,
     drift,
     features,
@@ -228,6 +229,7 @@ register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
 register("bocpd", bocpd.stage)  # phase 21: run-length posterior + three-voter consensus
+register("conformal", conformal.stage)  # phase 22: Mondrian band on change risk + coverage receipt
 register("drift", drift.stage)  # phase 20: PSI / KS / HMM staleness → status.json
 register(
     "ledger", stage_ledger

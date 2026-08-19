@@ -1,0 +1,22 @@
+{
+ "alpha": 0.1,
+ "q": {
+  "calm": 0.4928477320368774,
+  "trend": 0.8163805471222294,
+  "chop": 0.7822912172278562,
+  "crisis": 0.6910860284302759
+ },
+ "n_cal": {
+  "calm": 780,
+  "trend": 175,
+  "chop": 551,
+  "crisis": 21
+ },
+ "q_pooled": 0.6910860284302759,
+ "calibration": {
+  "start": "2017-01-09",
+  "end": "2018-12-24",
+  "n": 1527,
+  "note": "2017\u20132018 validation years; also used for the forecaster's early stopping and threshold (documented dual use). The 2019+ test is untouched."
+ }
+}
