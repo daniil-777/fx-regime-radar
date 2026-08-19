@@ -199,6 +199,77 @@ G10 = Universe(
     subdir="g10",
 )
 
+# EM: the free-floating emerging-market majors with clean daily data — USD/MXN (the most traded EM
+# pair, BIS 2025), USD/BRL, USD/ZAR, USD/PLN — plus USD/RUB, added on request and FLAGGED: the
+# ruble was a managed corridor until November 2014 (inside the training years), a free float
+# 2015–2021, and a sanctioned, capital-controlled, onshore-only market since 2022; Yahoo's RUB=X is
+# an offshore indicative series (2022: thirty-two |moves| > 5 %; 2024: 17 % stale zero-return days
+# after USD trading on MOEX was halted in June 2024; a 5.0 print in 2023 is dropped by the bounds).
+# Its regimes are therefore INDICATIVE, and the ECB stopped publishing a RUB reference rate in
+# March 2022, so it has no official cross-check. USD/TRY (managed depreciation + controls since
+# 2021) and the managed Asian floats are excluded by the same rule that excluded them from G10.
+# Same splits / day-count / cleaning thresholds as fx; EM spreads are wider, so the cost model is
+# 3 bp + 120 × vol_20. All five are USD/XXX, so every return is flipped to the "dollar weakens"
+# sign for corr_20 (the same convention as USD/CHF in fx).
+EM = Universe(
+    name="em",
+    label="EM majors",
+    pairs=["USDMXN", "USDBRL", "USDZAR", "USDPLN", "USDRUB"],
+    tickers={
+        "USDMXN": "MXN=X",
+        "USDBRL": "BRL=X",
+        "USDZAR": "ZAR=X",
+        "USDPLN": "PLN=X",
+        "USDRUB": "RUB=X",
+    },
+    price_bounds={
+        "USDMXN": (8.0, 30.0),
+        "USDBRL": (1.4, 8.0),
+        "USDZAR": (5.0, 25.0),
+        "USDPLN": (1.8, 5.5),
+        "USDRUB": (15.0, 200.0),
+    },
+    usd_base_pairs=frozenset({"USDMXN", "USDBRL", "USDZAR", "USDPLN", "USDRUB"}),
+    start_date="2005-01-01",
+    train_end="2016-12-31",
+    val_start="2017-01-01",
+    val_end="2018-12-31",
+    test_start="2019-01-01",
+    trading_days=252,
+    bad_tick_jump=0.06,  # EM days of 4–5 % are real; only reverting jumps beyond 6 % are "bad"
+    bad_tick_jump_bar=0.03,
+    bad_tick_revert=0.02,
+    bad_extreme_tol=0.25,
+    cost_base_bps=3.0,
+    cost_vol_mult=120.0,
+    ecb_checks={  # frankfurter (ECB reference rates) — no RUB since March 2022
+        "USDMXN": ("USD", "MXN"),
+        "USDBRL": ("USD", "BRL"),
+        "USDZAR": ("USD", "ZAR"),
+        "USDPLN": ("USD", "PLN"),
+    },
+    pair_dummies=["pair_USDBRL", "pair_USDZAR", "pair_USDPLN", "pair_USDRUB"],
+    known_events={
+        "USDMXN": [("2016-11-09", "US election"), ("2020-03-19", "March 2020 (COVID)")],
+        "USDBRL": [("2020-03-19", "March 2020 (COVID)"), ("2015-09-24", "downgrade to junk")],
+        "USDZAR": [("2015-12-10", "finance-minister firing"), ("2020-03-19", "March 2020 (COVID)")],
+        "USDPLN": [("2022-02-24", "invasion of Ukraine"), ("2020-03-19", "March 2020 (COVID)")],
+        "USDRUB": [
+            ("2014-12-16", "ruble crisis, CBR emergency hike"),
+            ("2022-02-24", "invasion of Ukraine — sanctions"),
+            ("2022-03-07", "offshore ruble at its weakest"),
+        ],
+    },
+    pair_words={
+        "USDMXN": "this being the Mexican peso",
+        "USDBRL": "this being the Brazilian real",
+        "USDZAR": "this being the South African rand",
+        "USDPLN": "this being the Polish zloty",
+        "USDRUB": "this being the ruble (indicative offshore data)",
+    },
+    subdir="em",
+)
+
 # Crypto: 7-day markets with 65–120 % annualised vol. Instruments = the five largest
 # non-stablecoin assets by market capitalisation (2026: BTC, ETH, XRP, BNB, SOL, then ADA …) that
 # have at least three years of history BEFORE the frozen split: SOL (listed 2020-04) would leave
@@ -260,7 +331,7 @@ CRYPTO = Universe(
     subdir="crypto",
 )
 
-UNIVERSES: dict[str, Universe] = {"fx": FX, "g10": G10, "crypto": CRYPTO}
+UNIVERSES: dict[str, Universe] = {"fx": FX, "g10": G10, "em": EM, "crypto": CRYPTO}
 
 
 def get(name: str) -> Universe:

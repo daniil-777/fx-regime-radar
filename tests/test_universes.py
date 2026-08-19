@@ -72,3 +72,24 @@ def test_crypto_universe_five_majors_with_enough_training_history() -> None:
     assert c.pairs == ["BTC-USD", "ETH-USD", "XRP-USD", "BNB-USD", "ADA-USD"]
     assert c.start_date == "2017-11-09" and c.train_end == "2020-12-31"
     assert "SOL-USD" not in c.pairs  # listed 2020-04: too little pre-split history (documented)
+
+
+def test_em_universe_is_consistent_and_rub_is_flagged() -> None:
+    e = universes.get("em")
+    assert e.pairs == ["USDMXN", "USDBRL", "USDZAR", "USDPLN", "USDRUB"]
+    assert set(e.tickers) == set(e.pairs) == set(e.price_bounds)
+    assert len(e.pair_dummies) == 4 and all(
+        d.removeprefix("pair_") in e.pairs for d in e.pair_dummies
+    )
+    fx = universes.get("fx")
+    for attr in ("train_end", "val_start", "val_end", "test_start", "trading_days"):
+        assert getattr(e, attr) == getattr(fx, attr)
+    assert e.usd_base_pairs == frozenset(
+        e.pairs
+    )  # all USD/XXX: every return sign-flipped for corr_20
+    assert e.cost_base_bps > fx.cost_base_bps and e.cost_vol_mult > fx.cost_vol_mult  # EM spreads
+    assert "USDRUB" not in e.ecb_checks  # the ECB stopped publishing a RUB reference in March 2022
+    assert "indicative" in e.pair_words["USDRUB"]  # the honesty flag reaches the narrator
+    for pair in e.known_events:
+        assert pair in e.pairs
+    assert e.display("USDRUB") == "USD/RUB"

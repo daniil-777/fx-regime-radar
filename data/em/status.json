@@ -1,0 +1,121 @@
+{
+ "generated_at_utc": "2026-08-19T15:52:10Z",
+ "data_through": "2026-08-18",
+ "window_days": 60,
+ "train_end": "2016-12-31",
+ "thresholds": {
+  "psi_watch": 0.1,
+  "psi_drifted": 0.25,
+  "hmm_stale_pct": 5
+ },
+ "features": {
+  "ret_1d": {
+   "psi": 0.1077,
+   "status": "stable",
+   "textbook": "watch",
+   "train_p75": 0.7018,
+   "train_p95": 1.8019,
+   "ks": 0.0936
+  },
+  "vol_20": {
+   "psi": 0.3606,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 5.5947,
+   "train_p95": 7.3109,
+   "ks": 0.2083
+  },
+  "vol_60": {
+   "psi": 0.9606,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 7.0452,
+   "train_p95": 8.2828,
+   "ks": 0.2067
+  },
+  "vol_ratio": {
+   "psi": 0.1075,
+   "status": "stable",
+   "textbook": "watch",
+   "train_p75": 1.0099,
+   "train_p95": 1.865,
+   "ks": 0.1184
+  },
+  "mom_20": {
+   "psi": 0.293,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 2.4755,
+   "train_p95": 4.347,
+   "ks": 0.1633
+  },
+  "rng_hl": {
+   "psi": 1.152,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 5.6934,
+   "train_p95": 8.2828,
+   "ks": 0.2646
+  },
+  "corr_20": {
+   "psi": 1.0718,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 3.9732,
+   "train_p95": 5.9669,
+   "ks": 0.4575
+  },
+  "ret_5d_abs": {
+   "psi": 0.1071,
+   "status": "stable",
+   "textbook": "watch",
+   "train_p75": 0.9748,
+   "train_p95": 2.5778,
+   "ks": 0.1155
+  },
+  "hmm_entropy": {
+   "psi": 0.2567,
+   "status": "stable",
+   "textbook": "drifted",
+   "train_p75": 2.1516,
+   "train_p95": 4.5496,
+   "ks": 0.1466
+  }
+ },
+ "hmm": {
+  "USDMXN": {
+   "recent_mean_loglik": -0.7534,
+   "train_p5": -5.1646,
+   "train_median": -1.9688,
+   "stale": false
+  },
+  "USDBRL": {
+   "recent_mean_loglik": -1.6207,
+   "train_p5": -4.3794,
+   "train_median": -2.6066,
+   "stale": false
+  },
+  "USDZAR": {
+   "recent_mean_loglik": -1.5222,
+   "train_p5": -5.0644,
+   "train_median": -2.3278,
+   "stale": false
+  },
+  "USDPLN": {
+   "recent_mean_loglik": -1.0965,
+   "train_p5": -5.3472,
+   "train_median": -2.3065,
+   "stale": false
+  },
+  "USDRUB": {
+   "recent_mean_loglik": -3.8529,
+   "train_p5": -5.3058,
+   "train_median": -1.5714,
+   "stale": false
+  }
+ },
+ "drifted_features": [],
+ "stale_pairs": [],
+ "model_stale": false,
+ "worst_psi": 1.152
+}

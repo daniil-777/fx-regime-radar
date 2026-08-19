@@ -2,6 +2,23 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.23.0 — EM majors universe, with the ruble flagged honestly (2026-08-19)
+
+- New universe **`em`** — USD/MXN, USD/BRL, USD/ZAR, USD/PLN, USD/RUB: the free-floating EM majors
+  with clean Yahoo daily data, plus the requested ruble, added with its caveats in the record rather
+  than hidden: corridor-managed until Nov 2014 (inside train), free float 2015–21, sanctioned
+  onshore-only market since 2022; RUB=X is an offshore indicative series (17 % stale days in 2024
+  after MOEX halted USD trading; a 5.0 bad print in 2023 caught by the cleaning rules); no ECB
+  cross-check exists since March 2022; the narrator says "indicative offshore data". Known artefact,
+  documented: RUB's calm training days come from the corridor era, so the siren saturates (> 98 most
+  post-2014 days) — regime + change risk are the useful signals for this pair.
+- Trained from scratch through `train-universe` (same splits as fx; EM cost model 3 bp + 120 × vol;
+  bad-tick thresholds sized for 4–5 % EM days). Frozen test PR-AUC 0.548 vs 0.471 logistic vs 0.216
+  base, Brier 0.135 vs 0.172, n = 9,867. Honesty checks: the Dec-2014 ruble crisis and the 2022
+  invasion pin the siren at 100 (ranks 35 and 391 of ~5,500 days); 2022 is 80 % crisis-labelled;
+  strategies stay negative net of EM costs (breakeven 0.00–0.15×). Own ledger under `data/em/`;
+  daily Action runs all four universes; every app page renders under `em` (tested).
+
 ## v2.22.0 — ten FX pairs (G10 universe) + five crypto majors (2026-08-19)
 
 - New universe **`g10`** — EUR/USD, USD/JPY, GBP/USD, USD/CAD, AUD/USD, USD/CHF, NZD/USD, EUR/GBP,
