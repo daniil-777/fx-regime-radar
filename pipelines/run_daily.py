@@ -27,6 +27,7 @@ import pandas as pd
 from fxradar import (
     advisor,
     arcade,
+    bocpd,
     config,
     data,
     drift,
@@ -226,6 +227,7 @@ register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
+register("bocpd", bocpd.stage)  # phase 21: run-length posterior + three-voter consensus
 register("drift", drift.stage)  # phase 20: PSI / KS / HMM staleness → status.json
 register(
     "ledger", stage_ledger
