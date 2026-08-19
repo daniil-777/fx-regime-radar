@@ -328,7 +328,7 @@ if len(ledger):
     show["row_hash"] = show["row_hash"].str[:12] + "…"
     ui.card(
         ui.html_table(
-            show.fillna("—"),
+            show.astype(object).where(show.notna(), None),
             {
                 "change_risk_5d": "{:.3f}",
                 "risk_lo": "{:.2f}",
