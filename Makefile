@@ -38,6 +38,9 @@ weekly:           ## write this Monday's FX weather report (md + e-mail HTML + R
 metrics:          ## refresh data/metrics.json (ledger days, subscribers, keys, partners, MRR — honest zeros)
 	$(PYTHON) -m fxradar.metrics_page
 
+storms:           ## replay the three flagship storms through the real scoring path (≈8 min) → data/storm_replays.json + reports/storms/
+	$(PYTHON) -m fxradar.replay
+
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py
 

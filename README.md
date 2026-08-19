@@ -273,6 +273,17 @@ the rate will move. The light combines regime, change risk, the conformal band w
 next scheduled central-bank event. Method, limits, compliance posture:
 [docs/TREASURY.md](docs/TREASURY.md). Educational tool. Not investment advice.
 
+## Storm replays — three crises, replayed as the radar would have seen them
+
+COVID 2020, Credit Suisse March 2023 and the SNB floor removal of 15 January 2015, replayed day by
+day through the real scoring path with prices truncated at each day (`make storms`, page **Storms**,
+[reports/storms/](reports/storms/)). The windows were fixed in advance; no window was chosen after
+seeing the results, and every replayed row equals the full-history artifact and the live ledger
+(tested). The honest part: on 15 January 2015 the radar did **not** warn — change risk sat at
+14–23 % in the days before, a marginal alarm at best; the siren's 100 that day is detection of an
+unprecedented move, not a prediction, and a vol-based radar is blind to a pegged cross. Causal
+reconstruction, not the live record — the live record is the ledger on the Proof page.
+
 ## Weekly report & metrics
 
 Every Monday 06:30 UTC the repo publishes a free FX weather report — regime, change risk ± band,

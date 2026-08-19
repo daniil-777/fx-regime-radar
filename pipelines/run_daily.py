@@ -36,6 +36,7 @@ from fxradar import (
     forecaster,
     ledger,
     narrate,
+    replay,
     siren,
     treasury,
 )
@@ -236,6 +237,7 @@ register(
     "ledger", stage_ledger
 )  # forward record of what was just published (before outcomes exist)
 register("narrator", stage_narrator)  # narrates the finished numbers
+register("postmortem", replay.stage)  # phase 26: DRAFT day-by-day report on a live entry into crisis
 register(
     "advisor", stage_advisor
 )  # stability / durability / risk budgets from the finished numbers

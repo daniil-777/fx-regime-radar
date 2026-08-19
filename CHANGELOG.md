@@ -2,6 +2,21 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.16.0 — phase 26: storm replays + auto post-mortems (2026-08-19)
+
+- `fxradar.replay`: replay engine on the REAL scoring path — prices truncated at each day t, the
+  same loaded HMM/forecaster/siren bundles run_daily uses, BOCPD + consensus + conformal band when
+  present; bit-identical to `regimes.parquet` and to the live ledger rows (tested, diff 0.0). Three
+  windows fixed in advance: COVID 2020 (EURUSD), Credit Suisse 2023 (USDCHF), SNB floor removal 2015
+  (USDCHF) → `data/storm_replays.json`, `reports/storms/*.md` + png. Honest numbers: COVID first alarm
+  2020-02-28, crisis label 2020-03-20; Credit Suisse — first alarm 2023-03-13, no crisis label in the
+  window; SNB — change risk 14–23 % in the five days before, siren 100 on 2015-01-15 while the label
+  still read calm, crisis on the 16th: the radar did **not** warn, and the sidebar says why a vol-based
+  radar is blind to a pegged cross. Every page/report carries "causal reconstruction — not the live
+  record" + the selection rule. `replay.stage`: on a live entry into crisis, drafts
+  `reports/postmortems/<date>_<pair>.md` flagged for human review. Storms page; `docs/STORMS.md`;
+  12 tests (replay == artifact, replay == ledger, truncation, windows fixed, "no warning" reported).
+
 ## v2.15.0 — phase 27: weekly FX weather report + public metrics page (2026-08-19)
 
 - `fxradar.weekly`: deterministic Monday report per pair (regime, change risk ± band, anomaly
