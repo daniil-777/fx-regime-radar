@@ -241,7 +241,7 @@ with c2:
                 if chf
                 else ""
             )
-            + f'<div class="fx-dim" style="font-size:0.74rem;margin-top:4px">{html.escape(str(tp.get("light_reason", "")))[:140]}</div>',
+            + f'<div class="fx-dim fx-clamp2" style="font-size:0.74rem;margin-top:4px" title="{html.escape(str(tp.get("light_reason", "")))}">{html.escape(str(tp.get("light_reason", "")))}</div>',
             title=f"treasury light · {html.escape(UNI.display(pair))}",
         )
     else:
@@ -379,7 +379,7 @@ for col, p in zip(cols, PAIRS, strict=True):
             if pd.notna(latest.get("anomaly_pct"))
             else ""
         )
-        + ui.narration(narration)
+        + ui.narration(narration, compact=True)
     )
     with col:
         ui.card(body)

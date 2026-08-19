@@ -2,6 +2,20 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.21.2 — design pass: calm surface, deep underneath (2026-08-19)
+
+- Charts: `ui.regime_bands` now draws a faint 10 % tint + a saturated baseline ribbon (Pairs and
+  Storms share it via `ui.runs_from_labels`); Plotly axes muted mono 11 px; Pairs x-range ends at
+  the as-of date (no dead gap); scheduled-decision markers sit on the ribbon.
+- Banner trace: alarm-line hairline at 0.22, end dot, "90 days ago · today" anchors.
+- Progressive disclosure: market-card narration clamped to three lines (full text on Pairs);
+  treasury reason clamped to two; market tabs (universe + pair, synced with the sidebar) shown in the
+  header on every width; nav group labels mono-uppercase; inputs defined (nimbus field + hairline,
+  accent focus); table row hover; active tab accent.
+- Fix: the live scoreboard is written to `reports/` only for the real ledger — the test suite had
+  been overwriting it with fixture numbers (the committed phase-20 copy was polluted; regenerated).
+- `tools/screenshot.py` uses a clean Chrome profile (no remembered sidebar state).
+
 ## v2.21.1 — technical report (2026-08-19)
 
 - `docs/paper/`: the 53-page technical report (HTML source in four parts + generated PDF, figures regenerated

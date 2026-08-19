@@ -104,3 +104,24 @@ def test_fonts_and_weights() -> None:
 def test_make_lint_ui_passes() -> None:
     proc = subprocess.run(["make", "-s", "lint-ui"], cwd=ROOT, capture_output=True, text=True)
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_regime_bands_draw_faint_tint_plus_ribbon() -> None:
+    import pandas as pd
+
+    sys.path.insert(0, str(ROOT / "app"))
+    import ui  # noqa: PLC0415
+
+    runs = ui.runs_from_labels(
+        pd.Series(pd.bdate_range("2024-01-01", periods=6)),
+        pd.Series(["calm", "calm", "chop", "chop", "crisis", "crisis"]),
+    )
+    assert list(runs["regime"]) == ["calm", "chop", "crisis"]
+    shapes = ui.regime_bands(runs)
+    assert len(shapes) == 6  # tint + ribbon per run
+    tints = [s for s in shapes if s["y1"] == 1]
+    ribbons = [s for s in shapes if s["y1"] < 0.05]
+    assert all(s["opacity"] <= 0.15 for s in tints) and all(s["opacity"] >= 0.9 for s in ribbons)
+    assert {s["fillcolor"] for s in tints} == {
+        tk.REGIME_COLORS[r] for r in ("calm", "chop", "crisis")
+    }

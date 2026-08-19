@@ -131,8 +131,13 @@ app/, src/, scripts/ or pipelines/ — every future phase obeys without being to
 - Motion budget: the orb is the ONE ambient element; the only other motion is the live dot's slow
   pulse; both honour prefers-reduced-motion. No third animation, ever. No gradients, glassmorphism,
   glow or shadow soup. No emoji as UI. Cards: 12 px radius, 1 px hairline, generous padding.
-- Plotly: one template (`ui.PLOTLY_TEMPLATE`), transparent background, 6 %-white gridlines, regime
-  band shading via `ui.regime_bands`, semantic colours only.
+- Plotly: one template (`ui.PLOTLY_TEMPLATE`), transparent background, 6 %-white gridlines, muted
+  mono axes; regime context via `ui.regime_bands` ONLY — a faint 10 % full-height tint plus a thin
+  saturated baseline ribbon (the price line stays the loudest element; the ribbon carries the state).
+  Semantic colours only; never green/red for price direction (we have no direction).
+- Density: numbers in well-set tables beat decoration; paragraphs inside cards are clamped
+  (`fx-clamp`) with the full text one click away (progressive disclosure); the market tabs sit in
+  the header on every width (synced with the sidebar); inputs are defined fields (nimbus + hairline).
 - IA: Radar = Overview · Pairs · Treasury · Storms · Proof; Analysis = Advisor · Regime space ·
   Probability space · Strategy lab · Arcade; About = Methodology · Weekly report · Metrics. Every
   widget answers "what does the user decide with this?" Empty/loading/error states use `ui.state`:

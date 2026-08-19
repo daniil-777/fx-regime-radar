@@ -200,24 +200,7 @@ fig.add_trace(
     row=3,
     col=1,
 )
-shapes = []
-ends = list(told["date"].iloc[1:]) + [told["date"].iloc[-1] + pd.Timedelta(days=1)]
-for (_, r), end in zip(told.iterrows(), ends, strict=True):
-    shapes.append(
-        dict(
-            type="rect",
-            xref="x",
-            yref="paper",
-            x0=r["date"],
-            x1=end,
-            y0=0,
-            y1=1,
-            fillcolor=ui.REGIME_COLORS.get(str(r["regime"]), ui.MUTED),
-            opacity=0.22,
-            line_width=0,
-            layer="below",
-        )
-    )
+shapes = ui.regime_bands(ui.runs_from_labels(told["date"], told["regime"]))
 if entry.get("event_date"):
     shapes.append(
         dict(
@@ -263,13 +246,16 @@ with left:
         tail = body[1] if len(body) > 1 else ""
         extra = re.split(r"^## (?=The other pairs|Sidebar)", tail, maxsplit=1, flags=re.M)
         extra_md = ("## " + extra[1]) if len(extra) > 1 else ""
-        ui.card(
-            "<div class='fx-muted' style='font-size:0.8rem'>templated from the replayed numbers — no hindsight, no direction words</div>",
-            title="What the radar showed, day by day",
+        st.markdown(
+            '<div class="fx-section" style="margin-top:4px">What the radar showed, day by day '
+            '<span class="fx-dim" style="font-weight:400;font-size:0.78rem">· templated from the replayed numbers — no hindsight, no direction words</span></div>',
+            unsafe_allow_html=True,
         )
+        # the report's markdown prose: ## headings become quiet section labels, not page titles
+        prose = re.sub(r"^## (.+)$", r"**\1**", prose, flags=re.M)
         st.markdown(prose)
         if extra_md:
-            st.markdown(extra_md)
+            st.markdown(re.sub(r"^## (.+)$", r"**\1**", extra_md, flags=re.M))
     else:
         ui.card(
             f"<p>No report at <code>{html.escape(str(report_path.relative_to(config.ROOT)))}</code> — "

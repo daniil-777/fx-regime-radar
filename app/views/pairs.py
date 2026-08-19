@@ -298,7 +298,7 @@ for etype, symbol in (
         fig.add_trace(
             go.Scatter(
                 x=dates,
-                y=[0.0] * len(dates),
+                y=[0.05] * len(dates),
                 yaxis="y2",
                 mode="markers",
                 name=etype,
@@ -317,7 +317,7 @@ fig.add_trace(
         hovertemplate="%{x|%Y-%m-%d}<br>%{y}<extra></extra>",
     )
 )
-shapes = ui.regime_bands(runs)
+shapes = ui.regime_bands(runs)  # faint tint + baseline ribbon (one helper for every chart)
 if len(g) and g["date"].min() < OOS_START <= as_of:
     shapes.append(
         dict(
@@ -398,6 +398,7 @@ fig.update_layout(
         tickformat=",.5~g",
     ),
     yaxis2=dict(overlaying="y", range=[0, 1], visible=False, fixedrange=True),
+    xaxis_range=[g["date"].min(), as_of] if len(g) else None,
     showlegend=False,
 )
 if markers:

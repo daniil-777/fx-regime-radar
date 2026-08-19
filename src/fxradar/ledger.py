@@ -648,7 +648,8 @@ def write_outputs(
     head_path = Path(ledger_path).with_name("ledger_head.txt")
     head_path.write_text(head_line(ledger))
     Path(ledger_path).with_suffix(".jsonl").write_text(to_jsonl(ledger))
-    if "scoreboard" in summary:
+    # the scoreboard goes to the real reports/ dir only for the real ledger (tests redirect both)
+    if "scoreboard" in summary and (reports_dir is not None or Path(ledger_path) == LEDGER_PATH):
         rdir = Path(reports_dir) if reports_dir is not None else SCOREBOARD_MD.parent
         rdir.mkdir(parents=True, exist_ok=True)
         (rdir / SCOREBOARD_MD.name).write_text(

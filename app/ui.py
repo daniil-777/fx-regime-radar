@@ -106,7 +106,6 @@ button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1p
 .fx-table-wrap {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
 .fx-mobile-bar {{ display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: -4px 0 10px 0; }}
 .fx-mobile-hint {{ color: {MUTED}; font-size: 0.74rem; }}
-.st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}
 /* ---- signature 1: the condition banner ----------------------------------------------- */
 .fx-banner {{ padding: 22px 0 14px 0; }}
 .fx-eyebrow {{ font-family: {FONT_MONO}; font-size: 0.76rem; color: {DIM}; letter-spacing: 0.08em; text-transform: uppercase; }}
@@ -119,6 +118,19 @@ button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1p
 .fx-votes span {{ display: inline-flex; align-items: center; gap: 5px; color: {MUTED}; font-size: 0.78rem; }}
 .fx-pip {{ width: 8px; height: 8px; border-radius: 50%; display: inline-block; border: 1.5px solid {DIM}; }}
 .fx-trace {{ margin-top: 12px; display: block; }}
+.fx-trace-axis {{ display: flex; justify-content: space-between; font-family: {FONT_MONO}; font-size: 0.68rem; color: {DIM}; margin-top: 2px; letter-spacing: 0.02em; }}
+.fx-clamp {{ display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }}
+.fx-clamp2 {{ display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }}
+/* ---- inputs: defined fields, not blended blobs --------------------------------------- */
+[data-baseweb="select"] > div, [data-testid="stNumberInput"] div[data-baseweb="input"], [data-testid="stDateInput"] div[data-baseweb="input"], [data-testid="stTextInput"] div[data-baseweb="input"] {{ background: {BG} !important; border: 1px solid {LINE} !important; border-radius: 8px !important; }}
+[data-baseweb="select"] > div:focus-within, div[data-baseweb="input"]:focus-within {{ border-color: {ACCENT} !important; }}
+[data-testid="stNumberInput"] button {{ background: {SURFACE}; border-left: 1px solid {LINE}; }}
+[data-testid="stSidebarNavSectionHeader"], [data-testid="stSidebarNav"] header {{ font-family: {FONT_MONO} !important; font-size: 0.68rem !important; letter-spacing: 0.1em; text-transform: uppercase; color: {DIM} !important; font-weight: 400 !important; }}
+[data-testid="stSidebarNav"] a span {{ font-size: 0.9rem; }}
+[data-testid="stSidebarNav"] a:hover {{ background: {BG}; }}
+.fx-table tbody tr:hover td {{ background: {BG}; }}
+[data-testid="stSegmentedControl"] button {{ border-radius: 999px !important; font-family: {FONT_UI}; font-size: 0.82rem; }}
+[data-testid="stSegmentedControl"] button[aria-checked="true"], [data-testid="stSegmentedControl"] button[data-active="true"] {{ border-color: {ACCENT} !important; color: {TEXT} !important; }}
 /* ---- signature 2: the trust strip ---------------------------------------------------- */
 .fx-trust {{ border-top: 1px solid {LINE}; border-bottom: 1px solid {LINE}; padding: 9px 0; margin: 6px 0 14px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: {FONT_MONO}; font-size: 0.76rem; color: {MUTED}; font-feature-settings: 'tnum'; }}
 .fx-trust .fx-dim {{ color: {DIM}; }}
@@ -126,7 +138,7 @@ button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1p
 .fx-state {{ border: 1px dashed {LINE}; border-radius: 12px; padding: 16px 18px; color: {MUTED}; font-size: 0.88rem; }}
 .fx-state b {{ color: {TEXT}; }}
 /* ---- responsive: one layout that adapts (no device sniffing) --------------------------- */
-@media (min-width: 769px) {{ .st-key-fx_mobile_bar {{ display: none; }} }}
+@media (min-width: 769px) {{ .fx-mobile-hint {{ display: none; }} .fx-mobile-bar {{ margin: 2px 0 4px 0; }} }}
 @media (max-width: 768px) {{
   .block-container {{ padding: 3.4rem 0.85rem 2rem 0.85rem !important; }}  /* room for the » sidebar button */
   .fx-header {{ flex-direction: column; align-items: flex-start; gap: 2px; margin-bottom: 10px; }}
@@ -148,6 +160,7 @@ button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1p
   .fx-trust {{ font-size: 0.7rem; gap: 6px; }}
   [data-testid="stSidebar"] {{ width: min(86vw, 330px) !important; }}
   .stButton > button, [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}  /* touch targets */
+  .st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}
 }}
 @media (max-width: 1024px) {{
   [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {{ min-width: calc(50% - 8px); }}
@@ -200,24 +213,67 @@ _register_template()
 PLOTLY_TEMPLATE = "fxradar_dark"
 
 
-def regime_bands(runs: pd.DataFrame, opacity: float = 0.22) -> list[dict]:
-    """Plotly shapes shading regime runs (columns regime, start, end) — the one way bands are drawn."""
-    return [
-        dict(
-            type="rect",
-            xref="x",
-            yref="paper",
-            x0=r.start,
-            x1=r.end,
-            y0=0,
-            y1=1,
-            fillcolor=REGIME_COLORS[r.regime],
-            opacity=opacity,
-            line_width=0,
-            layer="below",
+def runs_from_labels(dates: pd.Series, labels: pd.Series) -> pd.DataFrame:
+    """Consecutive same-label days merged into runs: regime, start, end (end = next run's start)."""
+    g = pd.DataFrame({"date": pd.to_datetime(dates).to_numpy(), "regime": labels.to_numpy()})
+    g = g.sort_values("date").reset_index(drop=True)
+    if g.empty:
+        return pd.DataFrame(columns=["regime", "start", "end"])
+    new_run = g["regime"].ne(g["regime"].shift(1)).cumsum()
+    runs = g.groupby(new_run).agg(
+        regime=("regime", "first"), start=("date", "first"), end=("date", "last")
+    )
+    runs["end"] = runs["start"].shift(-1).fillna(runs["end"])
+    return runs.reset_index(drop=True)
+
+
+def regime_bands(
+    runs: pd.DataFrame,
+    opacity: float = 0.10,
+    ribbon: bool = True,
+    ribbon_height: float = 0.022,
+) -> list[dict]:
+    """Plotly shapes for regime runs (columns regime, start, end) — the ONE way bands are drawn.
+
+    Two layers, the way macro terminals shade context: a faint full-height tint (10 %, so the
+    price line stays the loudest thing on the chart) and a thin, fully saturated ribbon along the
+    baseline that carries the categorical state on its own. Regime is never colour-only on the
+    page (the legend pills name them), and the ribbon is readable even when the tint is not."""
+    shapes = []
+    for r in runs.itertuples(index=False):
+        color = REGIME_COLORS.get(str(r.regime), MUTED)
+        shapes.append(
+            dict(
+                type="rect",
+                xref="x",
+                yref="paper",
+                x0=r.start,
+                x1=r.end,
+                y0=0,
+                y1=1,
+                fillcolor=color,
+                opacity=opacity,
+                line_width=0,
+                layer="below",
+            )
         )
-        for r in runs.itertuples(index=False)
-    ]
+        if ribbon:
+            shapes.append(
+                dict(
+                    type="rect",
+                    xref="x",
+                    yref="paper",
+                    x0=r.start,
+                    x1=r.end,
+                    y0=0,
+                    y1=ribbon_height,
+                    fillcolor=color,
+                    opacity=0.95,
+                    line_width=0,
+                    layer="above",
+                )
+            )
+    return shapes
 
 
 # ---- HTML helpers ----------------------------------------------------------------------
@@ -342,8 +398,10 @@ def siren_dial(pct: float, label: str) -> str:
     )
 
 
-def narration(entry: dict | None) -> str:
-    """Quote-style narration paragraph with a tiny source badge (AI / auto) and its timestamp."""
+def narration(entry: dict | None, compact: bool = False) -> str:
+    """Quote-style narration paragraph with a tiny source badge (AI / auto) and its timestamp.
+    `compact` clamps the text to three lines (full text in the tooltip) — progressive disclosure
+    for the market cards; the Pairs page shows it in full."""
     if not entry or not entry.get("text"):
         return ""
     ai = entry.get("source") == "llm"
@@ -353,10 +411,13 @@ def narration(entry: dict | None) -> str:
     when = html.escape(
         stamp[:16].replace("T", " ") if "T" in stamp else stamp
     )  # ISO timestamps trimmed to minutes
+    clamp = ' class="fx-clamp"' if compact else ""
     return (
         f'<div style="margin-top:12px;padding:10px 12px;border-left:3px solid {BORDER};color:{TEXT};font-size:0.86rem;line-height:1.45">'
-        f"{html.escape(entry['text'])}"
-        f'<div class="fx-muted" style="font-size:0.72rem;margin-top:6px">{badge} &nbsp;{when} UTC</div></div>'
+        f'<div{clamp} title="{html.escape(entry["text"])}">{html.escape(entry["text"])}</div>'
+        f'<div class="fx-muted" style="font-size:0.72rem;margin-top:6px">{badge} &nbsp;{when} UTC'
+        + (' · <span class="fx-dim">full text on the Pairs page</span>' if compact else "")
+        + "</div></div>"
     )
 
 
@@ -668,10 +729,15 @@ def risk_trace_svg(
             f"{x:.1f},{y(v):.1f}" for x, v in zip(reversed(xs), reversed(list(lo_s)), strict=True)
         )
         poly = f'<polygon points="{top} {bottom}" fill="{color}" fill-opacity="0.07"/>'
+    y_thr = y(0.22)  # the frozen alarm threshold, as a hairline reference
+    x_end, y_end = xs[-1], y(float(r.iloc[-1]))
     return (
         f'<svg class="fx-trace" viewBox="0 0 {width} {height}" width="100%" height="{height}" role="img" '
         f'aria-label="Ninety-day change-risk trace with its uncertainty band" preserveAspectRatio="none">'
-        f'{poly}<polyline points="{line}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
+        f'<line x1="0" y1="{y_thr:.1f}" x2="{width}" y2="{y_thr:.1f}" stroke="{DIM}" stroke-width="0.8" stroke-dasharray="3 4" opacity="0.7"/>'
+        f'{poly}<polyline points="{line}" fill="none" stroke="{color}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'
+        f'<circle cx="{x_end:.1f}" cy="{y_end:.1f}" r="3" fill="{color}"/></svg>'
+        f'<div class="fx-trace-axis"><span>90 days ago</span><span>alarm line 0.22</span><span>today</span></div>'
     )
 
 

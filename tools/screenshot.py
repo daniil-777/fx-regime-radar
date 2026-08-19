@@ -15,6 +15,7 @@ import asyncio
 import base64
 import json
 import subprocess
+import tempfile
 import time
 import urllib.request
 
@@ -41,6 +42,7 @@ async def shoot(
             "--enable-unsafe-swiftshader",
             f"--remote-debugging-port={PORT}",
             f"--window-size={width},{height}",
+            f"--user-data-dir={tempfile.mkdtemp(prefix='fxradar-shot-')}",  # clean profile: no remembered sidebar state
             "about:blank",
         ],
         stdout=subprocess.DEVNULL,
@@ -77,6 +79,19 @@ async def shoot(
                 await call("Emulation.setTouchEmulationEnabled", enabled=True)
             await call("Page.navigate", url=url)
             await asyncio.sleep(wait_s)  # let the Streamlit websocket render everything
+            if width >= 769 and not mobile:
+                # Full-page capture does not paint the sidebar's transitioned layer in headless
+                # Chrome even when it is open (aria-expanded=true): pin it so shots match a browser.
+                await call(
+                    "Runtime.evaluate",
+                    expression=(
+                        "(()=>{const s=document.querySelector('[data-testid=stSidebar]');"
+                        "if(s&&s.getAttribute('aria-expanded')!=='false'){s.style.transition='none';"
+                        "s.style.transform='none';s.style.display='block';}return !!s})()"
+                    ),
+                    returnByValue=True,
+                )
+                await asyncio.sleep(0.5)
             if js:
                 res = await call(
                     "Runtime.evaluate", expression=js, returnByValue=True, awaitPromise=True
