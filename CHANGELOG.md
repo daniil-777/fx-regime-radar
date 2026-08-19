@@ -2,6 +2,30 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.24.0 — phase 32: a choice of models (2026-08-19)
+
+- `fxradar.regime_models` — one contract, three regime models: the champion **HMM** (delegated
+  byte-identically), the **statistical jump model** (Bemporad 2018; Nystrup et al. 2020/21;
+  Aydınhan–Kolm–Mulvey–Shu 2024) fitted by coordinate descent (DP over the train sequence ↔ centre
+  updates) with **greedy online** causal inference and λ chosen on train by matching the champion's
+  switching rate, and a **GMM** persistence ablation. Same REGIME_COLUMNS output, same frozen naming
+  rule, train-only scalers, bit-for-bit truncation invariance (tested). Selected per universe via
+  `FXRADAR_REGIME_MODEL`; **fx hard-locked to the champion** (wall + public ledger — enforced and
+  tested); an alternative runs under its own model_version → new ledger segment, never laundering.
+- `fxradar.forecaster_models` — engines xgb (champion path, verbatim) / histgb (sklearn
+  HistGradientBoosting, val-selected tree count over an explicit grid — no random
+  validation_fraction) / logistic, all under the champion's exact protocol (Platt on val,
+  recall-targeted threshold, frozen test once). No production env switch by design: promotion goes
+  through the challenger-ledger protocol.
+- `fxradar.model_lab` (`make model-lab`) — races everything, writes `reports/model_lab.md` +
+  timelines png. fx results: jump at matched train persistence → OOS 1.7–8.8 switches/yr and mean
+  runs up to 139 d vs HMM's 10–14 / 18–76 d, vol anatomy intact, but its crisis state nearly empty
+  OOS (honest trade-off; HMM stays champion, jump is the named candidate for the next refit); GMM
+  flickers 35–88 switches/yr; forecasters xgb 0.548 ≈ histgb 0.546 ≫ logistic 0.433 test PR-AUC.
+- run_daily `stage_hmm` goes through the registry (default = champion, byte-identical delegation;
+  regression-tested); `stage_advisor` falls back to empirical self-transition rates when the regime
+  model has no transition matrix. 7 new tests.
+
 ## v2.23.1 — honest motion: the "now" pulse and bar replay (2026-08-19)
 
 - Decision, recorded in CLAUDE.md: the main curve never vibrates — a daily-data product may not

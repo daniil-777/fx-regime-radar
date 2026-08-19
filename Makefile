@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate model-lab treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -62,6 +62,9 @@ cb-features:      ## lexicon-score data/cb/ -> data/cb_features.parquet + event 
 
 cb-gate:          ## print the Stage-2 gate with the real live counts (never scores when closed)
 	$(PYTHON) -m fxradar.cb_llm
+
+model-lab:        ## race every regime model (hmm/jump/gmm) + forecaster engine (xgb/histgb/logistic) -> reports/model_lab.md
+	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.model_lab
 
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py

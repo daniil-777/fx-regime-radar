@@ -39,6 +39,7 @@ from fxradar import (
     forecaster,
     ledger,
     narrate,
+    regime_models,
     replay,
     siren,
     treasury,
@@ -95,13 +96,18 @@ def stage_features(ctx: dict) -> None:
 
 
 def stage_hmm(ctx: dict) -> None:
-    bundles = hm.load_bundles()  # LOAD saved models — never refit in the daily path
-    scored = hm.score_all(ctx["features"], bundles)
+    # LOAD saved models — never refit in the daily path. The regime model is selected per universe
+    # via FXRADAR_REGIME_MODEL (default: the champion HMM; fx is hard-locked to it — see
+    # regime_models.selected_model). "hmm" delegates to the exact champion code path.
+    name = regime_models.selected_model()
+    bundles = regime_models.load_bundles(name)
+    scored = regime_models.score_all(ctx["features"], bundles)
     ctx["regimes"] = scored[hm.REGIME_COLUMNS]  # contract columns; later phases add theirs
     ctx["features"] = ctx["features"].merge(
         scored[["date", "pair", *hm.POST_HMM_FEATURES]], on=["date", "pair"], how="left"
     )
-    ctx["model_versions"] = {"hmm": next(iter(bundles.values())).version}
+    first = next(iter(bundles.values()))
+    ctx["model_versions"] = {"regime_model": name, "hmm": first.version}
     latest = ctx["regimes"].sort_values("date").groupby("pair").tail(1)
     log.info(
         "hmm: %s",
@@ -182,10 +188,18 @@ def stage_narrator(ctx: dict) -> None:
 
 def stage_advisor(ctx: dict) -> None:
     """Stability index, durability, risk budgets and allocation from the finished numbers."""
-    diag = {
-        p: {b.mapping[i]: float(b.model.transmat_[i, i]) for i in range(hm.N_STATES)}
-        for p, b in hm.load_bundles().items()
-    }
+    if config.REGIME_MODEL == "hmm":
+        diag = {
+            p: {b.mapping[i]: float(b.model.transmat_[i, i]) for i in range(hm.N_STATES)}
+            for p, b in hm.load_bundles().items()
+        }
+    else:  # alternative regime models have no transition matrix: use the empirical self-transition
+        diag = {}
+        for p, g in ctx["regimes"].sort_values("date").groupby("pair"):
+            same = g["regime"].eq(g["regime"].shift(1))
+            diag[p] = {
+                r: float(same[g["regime"] == r].mean()) for r in g["regime"].unique() if pd.notna(r)
+            }
     ctx["advisor"] = advisor.snapshot(
         ctx["regimes"], ctx["features"], ctx["prices"], transmat_diag=diag
     )

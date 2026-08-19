@@ -28,6 +28,13 @@ PRICE_BOUNDS: dict[str, tuple[float, float]] = dict(UNIVERSE.price_bounds)
 START_DATE = UNIVERSE.start_date
 TRADING_DAYS = UNIVERSE.trading_days  # 252 (FX) or 365 (crypto): annualisation day-count
 
+# ---- model choice (phase 32) -----------------------------------------------------------
+# Regime model per universe: "hmm" (champion) | "jump" | "gmm" — see fxradar.regime_models.
+# The fx universe is HARD-LOCKED to "hmm" there (wall + public ledger); the forecaster has no env
+# switch at all: a new estimator reaches the daily path only through the challenger-ledger
+# protocol (train in fxradar.model_lab, race on the ledger, promote deliberately).
+REGIME_MODEL = os.environ.get("FXRADAR_REGIME_MODEL", "hmm")
+
 # ---- time-ordered splits (CLAUDE.md rule 2) --------------------------------------------
 TRAIN_END = UNIVERSE.train_end  # train: dates <= TRAIN_END
 VAL_START = UNIVERSE.val_start

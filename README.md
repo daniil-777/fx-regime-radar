@@ -274,6 +274,40 @@ plain-language questions strictly from a JSON snapshot of these numbers (no web,
 fields it used; template answers without a key). Everything works in the scenario explorer, so you can
 ask "how much risk on 2022-11-09?" and get the honest answer: FTX day, BTC 35 % of normal size, ETH/LTC 0.
 
+## Model choice — champions, and the bench behind them
+
+No model in this system is an article of faith. Each seat has a **registry of alternatives raced
+under one protocol** (`make model-lab` → [reports/model_lab.md](reports/model_lab.md)), and a
+documented promotion path — never a silent swap.
+
+**Regime models** (`fxradar.regime_models`, selected per universe with `FXRADAR_REGIME_MODEL`;
+the `fx` universe is hard-locked to the champion — its bundle, golden vectors and live ledger
+define the public record): the champion **HMM** (filtered forward algorithm); the **statistical
+jump model** — the modern industry alternative (Bemporad et al. 2018; Nystrup, Lindström & Madsen
+2020/21; Aydınhan, Kolm, Mulvey & Shu 2024, *Annals of OR*): k-means-style state centres plus an
+explicit penalty λ per switch, fitted by coordinate descent on train and inferred with the
+**greedy online rule** (causal, truncation-tested bit-for-bit), λ matched per pair to the
+champion's train-era switching rate; and a **GMM** with no temporal coupling as the persistence
+ablation. On the fx universe the lab reproduces the literature's claim on our own data: at matched
+training persistence the jump model is far steadier out of sample (EUR/USD: 1.7 switches/yr, mean
+run 139 days vs the HMM's 10.3 and 24) with the calm-lowest-vol anatomy intact, while the GMM
+flickers at 35–88 switches/yr — what the persistence machinery is buying. Trade-off, stated: the
+jump model barely uses its crisis state out of sample (0–1.4 %), so the HMM stays champion for
+now; the jump model is the first candidate for the next deliberate refit.
+
+**Forecaster engines** (`fxradar.forecaster_models`): the **XGBoost** champion; scikit-learn's
+**HistGradientBoosting** (the LightGBM-style histogram GBDT already inside our pinned sklearn —
+zero new dependencies), tree count chosen on validation over an explicit grid; and the **logistic**
+reference. Same splits, embargo, Platt calibration and recall-targeted threshold for all; each
+frozen test scored once: xgb **0.548** / histgb **0.546** / logistic 0.433 PR-AUC. Two different
+GBDT implementations within noise of each other is the robustness result — the signal lives in the
+features and protocol, not a library. Research context: GBDTs remain state of the art at this
+data scale (Grinsztajn et al. 2022; McElfresh et al. 2023); TabPFN-class foundation models are
+interesting below ~10k rows but require torch, which our CI bans by design. There is deliberately
+**no env switch for the production forecaster**: a new engine reaches the daily path only through
+the challenger-ledger protocol (race live under its own `model_version`, promote after ≥ 60
+matured days by a deliberate refit-path act).
+
 ## Calendar & context — the challenger (the wall stays shut)
 
 A second forecaster conditions on what the frozen champion cannot see: countdowns to scheduled
