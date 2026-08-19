@@ -182,7 +182,9 @@ def test_yang_zhang_truncation_invariant(prices_sample) -> None:
 # --------------------------------------------------------------------------------------
 def test_build_has_contract_columns_and_scaled_train(built) -> None:
     ext, scaler = built
-    assert list(ext.columns) == features_ext.EXT_COLUMNS
+    # the contract columns come first; phase 29 appends the central-bank tone columns (cb_*)
+    assert list(ext.columns)[: len(features_ext.EXT_COLUMNS)] == features_ext.EXT_COLUMNS
+    assert all(c.startswith("cb_") for c in ext.columns[len(features_ext.EXT_COLUMNS) :])
     assert scaler["train_end"] == "2015-06-30"
     tr = ext[ext["date"] <= "2015-06-30"]
     for col in ["dxy_chg_1d", "vix_z20", "us2y_chg_5d", "epu_chg_1d", "eurchf_chg_1d"]:
@@ -245,7 +247,9 @@ _have = features_ext.FEATURES_EXT_PATH.exists() and config.FEATURES_PATH.exists(
 def test_committed_features_ext_matches_features_rows() -> None:
     ext = pd.read_parquet(features_ext.FEATURES_EXT_PATH)
     feats = pd.read_parquet(config.FEATURES_PATH)
-    assert list(ext.columns) == features_ext.EXT_COLUMNS
+    # the contract columns come first; phase 29 appends the central-bank tone columns (cb_*)
+    assert list(ext.columns)[: len(features_ext.EXT_COLUMNS)] == features_ext.EXT_COLUMNS
+    assert all(c.startswith("cb_") for c in ext.columns[len(features_ext.EXT_COLUMNS) :])
     assert len(ext) == len(feats)
     assert ext.merge(feats[["date", "pair"]], on=["date", "pair"]).shape[0] == len(feats)
     assert (ext[calendar_ext.CALENDAR_FEATURES].fillna(0) >= 0).all().all()

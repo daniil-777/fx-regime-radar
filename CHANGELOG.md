@@ -2,6 +2,34 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.21.0 — phase 31: trust-first UI (2026-08-19)
+
+- Tokens: `design/tokens.json` is the single source (nimbus #0E1420 / front #151D2E / hairline
+  rgba(255,255,255,.08); text #E8ECF4 / #9AA6B8 / dim #7B89A1 — the mockup's #5C6980 lifted for
+  4.5:1; regime calm #3ECF8E · trend #4DA3FF · chop #F5B942 · crisis #FF5C5C; beacon #7FD1C9; light
+  e-mail variant). `fxradar.tokens` loads it; `scripts/gen_tokens.py` (`make tokens`) regenerates
+  `.streamlit/config.toml`, `design/tokens.css` and the Rust static tokens; `app/ui.py`, the Plotly
+  template (transparent, 6 %-white grid, `ui.regime_bands`), every matplotlib report figure
+  (forecaster / siren / strategies / stress / validate / features_ext / event studies / replay), the
+  orb presets, viz3d, the weekly e-mail HTML and `widget.js` now read from it. `make lint-ui` (CI)
+  fails on any hex literal in app/, src/, scripts/, pipelines/; `tests/test_design_tokens.py` checks
+  no-hex, AA contrast on both surfaces, config/widget/orb agreement, fonts ≤ 500, motion budget.
+  CLAUDE.md design section rewritten to match.
+- Type: Space Grotesk (display: regime words, titles), IBM Plex Sans (UI), IBM Plex Mono with
+  'tnum' for every number/hash; tables right-align numbers; no weight above 500 anywhere.
+- Signature structures in `ui.py`: `condition_banner` (eyebrow pair + data-through, the regime
+  word huge in its colour, change risk ± band · siren, `risk_trace_svg` 90-day trace with shaded
+  band, three-dot consensus) and `trust_strip` (forward-test days, live Brier vs frozen, coverage vs
+  90, chain head ✓, "verify independently") + `live_dot` (the only motion besides the orb; off under
+  reduced motion) + `state()` for directive empty/error copy.
+- IA: Radar = Overview (banner, next scheduled storm, treasury light, interval coverage, alerts,
+  compact market cards) · **Pairs** (new page: the full card, close with regime bands + the orb,
+  scheduled-decision markers, anatomy, siren) · Treasury · Storms · Proof; Analysis = Advisor ·
+  Regime space · Probability space · Strategy lab · Arcade; About = Methodology · Weekly report ·
+  Metrics. Responsive to 360 px (banner clamps, single-column tiles); visible focus rings.
+- Public surfaces on the same tokens: Proof, weekly HTML, widget.js, README hero
+  (`docs/screenshots/overview_v3.png`), og-image, orb four-state strip with the new colours.
+
 ## v2.20.0 — phases 29 + 30: central-bank communication index (Stage 1) + the gated Stage 2 (2026-08-19)
 
 - phase-29a `cb_text`: official FOMC / ECB / SNB / BoE statement fetcher (stdlib HTML parser, polite,

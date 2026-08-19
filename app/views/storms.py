@@ -89,7 +89,7 @@ story = entry.get("storyline") or {}
 # ---- banner: causal reconstruction, not the live record -------------------------------------
 st.markdown(
     f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:12px 16px;margin-bottom:12px">'
-    f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:600">{html.escape(entry.get("causal_note", ""))}</span>'
+    f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:500">{html.escape(entry.get("causal_note", ""))}</span>'
     f'<div class="fx-muted" style="font-size:0.85rem;margin-top:4px">{html.escape(entry.get("selection_rule", ""))} '
     f"Every row below was computed from prices truncated at that day and the saved models "
     f"(model {html.escape(str(entry.get('model_version', '')))}); nothing was refit.</div></div>",
@@ -139,7 +139,7 @@ px = load_closes(str(PRICES_PATH), _mtime(PRICES_PATH), pair, entry["start"], en
 legend = " ".join(ui.regime_pill(r) for r in REGIME_ORDER)
 st.markdown(
     f'<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 -4px 2px">'
-    f'<span style="font-weight:600">{html.escape(pair)} — {html.escape(entry["title"])}: close with replayed regime bands, change risk, siren</span><span>{legend}</span></div>',
+    f'<span style="font-weight:500">{html.escape(pair)} — {html.escape(entry["title"])}: close with replayed regime bands, change risk, siren</span><span>{legend}</span></div>',
     unsafe_allow_html=True,
 )
 fig = make_subplots(

@@ -24,6 +24,7 @@ from sklearn.preprocessing import StandardScaler
 
 from fxradar import config
 from fxradar import hmm_model as hm
+from fxradar import tokens as tk
 
 log = logging.getLogger(__name__)
 
@@ -208,29 +209,29 @@ def _sparkline_png(scored: pd.DataFrame, path: Path) -> None:
 
     plt.rcParams.update(
         {
-            "figure.facecolor": "#0B0F17",
-            "axes.facecolor": "#131A26",
-            "axes.edgecolor": "#232D3F",
-            "text.color": "#E7ECF4",
-            "axes.labelcolor": "#E7ECF4",
-            "xtick.color": "#8A94A6",
-            "ytick.color": "#8A94A6",
-            "grid.color": "#232D3F",
+            "figure.facecolor": tk.BG,
+            "axes.facecolor": tk.SURFACE,
+            "axes.edgecolor": tk.BORDER,
+            "text.color": tk.TEXT,
+            "axes.labelcolor": tk.TEXT,
+            "xtick.color": tk.MUTED,
+            "ytick.color": tk.MUTED,
+            "grid.color": tk.BORDER,
             "font.size": 9,
         }
     )
     fig, axes = plt.subplots(3, 1, figsize=(12, 7), sharex=True)
     for ax, pair in zip(axes, config.PAIRS, strict=True):
         g = scored[scored["pair"] == pair]
-        ax.plot(g["date"], g["anomaly_pct"], color="#F87171", lw=0.6)
-        ax.axhline(98, color="#8A94A6", ls="--", lw=0.6)
-        ax.axvline(pd.Timestamp(config.VAL_START), color="#8A94A6", ls=":", lw=0.8)
+        ax.plot(g["date"], g["anomaly_pct"], color=tk.REGIME_COLORS["crisis"], lw=0.6)
+        ax.axhline(98, color=tk.MUTED, ls="--", lw=0.6)
+        ax.axvline(pd.Timestamp(config.VAL_START), color=tk.MUTED, ls=":", lw=0.8)
         for d, label in KNOWN_EVENTS.get(pair, []):
-            ax.axvline(pd.Timestamp(d), color="#FBBF24", lw=0.8)
+            ax.axvline(pd.Timestamp(d), color=tk.REGIME_COLORS["chop"], lw=0.8)
             ax.annotate(
                 label,
                 (pd.Timestamp(d), 5),
-                color="#FBBF24",
+                color=tk.REGIME_COLORS["chop"],
                 fontsize=8,
                 rotation=90,
                 va="bottom",

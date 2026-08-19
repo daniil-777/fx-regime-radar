@@ -70,6 +70,7 @@ def test_replay_equals_ledger(prices: pd.DataFrame) -> None:
     if not ledger_path.exists():
         pytest.skip("no ledger yet")
     led = pd.read_parquet(ledger_path)
+    led = led[~led["model_version"].astype(str).str.startswith("challenger")]  # champion rows
     led = led[led["date"].isin(prices["date"])]
     if led.empty:
         pytest.skip("ledger holds no date present in prices")

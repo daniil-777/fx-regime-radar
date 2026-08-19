@@ -33,6 +33,7 @@ import pandas as pd
 import requests
 
 from fxradar import config
+from fxradar import tokens as tk
 
 log = logging.getLogger(__name__)
 
@@ -324,7 +325,7 @@ def plot_overview(
     )
     for ax, pair in zip(axes[:, 0], pairs, strict=True):
         g = df[df["pair"] == pair]
-        ax.plot(g["date"], g["close"], lw=0.8, color="#60A5FA")
+        ax.plot(g["date"], g["close"], lw=0.8, color=tk.REGIME_COLORS["trend"])
         ax.set_title(pair, loc="left", fontsize=10)
         ax.grid(alpha=0.25)
     fig.suptitle("Daily closes (Yahoo Finance, cleaned)", fontsize=11)

@@ -195,7 +195,18 @@ def fit_thresholds(regimes_train: pd.DataFrame) -> dict:
             out["high_risk"] = float(cr.quantile(HIGH_RISK_PCTL))
             out["low_risk"] = float(cr.quantile(LOW_RISK_PCTL))
             out["risk_source"] = f"train-era percentiles (n={len(cr)})"
-    if "conformal_q" in regimes_train:
+    if {"risk_lo", "risk_hi"} <= set(
+        regimes_train.columns
+    ):  # the clipped band, as the page sees it
+        w = (
+            pd.to_numeric(regimes_train["risk_hi"], errors="coerce")
+            - pd.to_numeric(regimes_train["risk_lo"], errors="coerce")
+        ).dropna()
+        if len(w):
+            out["wide"] = float(w.quantile(HIGH_RISK_PCTL))
+            out["narrow"] = float(w.quantile(LOW_RISK_PCTL))
+            out["width_source"] = f"train-era clipped band widths (n={len(w)})"
+    elif "conformal_q" in regimes_train:
         w = 2.0 * pd.to_numeric(regimes_train["conformal_q"], errors="coerce").dropna()
         if len(w):
             out["wide"] = float(w.quantile(HIGH_RISK_PCTL))

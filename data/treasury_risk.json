@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-08-19T13:56:58Z",
+ "generated_at_utc": "2026-08-19T14:21:53Z",
  "as_of": "2026-08-18",
  "levels": [
   0.95,
@@ -12,10 +12,10 @@
  "thresholds": {
   "high_risk": 0.3052325284990942,
   "low_risk": 0.09028702194668232,
-  "wide": 1.6327610942444588,
-  "narrow": 1.3821720568605518,
+  "wide": 1.0,
+  "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
-  "width_source": "train-era conformal widths (n=9151)",
+  "width_source": "train-era clipped band widths (n=9151)",
   "high_risk_pctl": 0.8,
   "low_risk_pctl": 0.4,
   "event_window_days": 5

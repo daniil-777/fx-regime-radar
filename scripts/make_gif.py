@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from fxradar import config, viz3d  # noqa: E402
+from fxradar import tokens as tk  # noqa: E402
 
 MAX_BYTES = 5 * 1024 * 1024
 ELEVATION_Z = 0.9  # camera height (fixed elevation); radius chosen to frame the whole tetrahedron
@@ -45,7 +46,7 @@ def render_frames(fig, n_frames: int, width: int) -> list[np.ndarray]:
             height=width,
             margin=dict(l=0, r=0, t=0, b=0),
             title=None,
-            paper_bgcolor="#0B0F17",
+            paper_bgcolor=tk.BG,
         )
         png = fig.to_image(format="png", width=width, height=width, scale=1)
         frames.append(iio.imread(io.BytesIO(png)))
@@ -62,7 +63,7 @@ def main() -> None:
     features, regimes, bundles = viz3d.load_inputs()
     frame = viz3d.probability_frame(pair, features, regimes, bundles[pair])
     fig = viz3d.tetrahedron_figure(frame, pair, "time")
-    fig.update_layout(font=dict(color="#E7ECF4"))
+    fig.update_layout(font=dict(color=tk.TEXT))
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     n_frames, width = a.frames, a.width

@@ -68,7 +68,7 @@ streak = arcade.watch_streak(conn, nick)
 c1, c2, c3 = st.columns(3)
 with c1:
     ui.card(
-        f'<div class="fx-kv"><span>rank</span><span style="font-weight:600">{html.escape(rank)}</span></div><div class="fx-kv" style="margin-top:6px"><span>watch streak</span><span class="fx-num">{streak} day{"s" if streak != 1 else ""}</span></div><div class="fx-muted" style="font-size:0.78rem;margin-top:8px">ranks come only from resolved calls and calibration — never from bold numbers</div>',
+        f'<div class="fx-kv"><span>rank</span><span style="font-weight:500">{html.escape(rank)}</span></div><div class="fx-kv" style="margin-top:6px"><span>watch streak</span><span class="fx-num">{streak} day{"s" if streak != 1 else ""}</span></div><div class="fx-muted" style="font-size:0.78rem;margin-top:8px">ranks come only from resolved calls and calibration — never from bold numbers</div>',
         title="Observatory",
     )
 with c2:
@@ -91,7 +91,7 @@ with c3:
 
 # ---- the call cards ---------------------------------------------------------------------
 st.markdown(
-    '<div style="font-weight:600;margin:10px 0 6px 2px">This week\'s calls</div>',
+    '<div style="font-weight:500;margin:10px 0 6px 2px">This week\'s calls</div>',
     unsafe_allow_html=True,
 )
 cols = st.columns(len(PAIRS))
@@ -105,7 +105,7 @@ for col, p in zip(cols, PAIRS, strict=True):
                 (nick, p),
             ).fetchone()
             locked_id = row[0] if row else None
-        head = f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">{UNI.display(p)}</span>{ui.regime_pill(pre.regime)}</div><div class="fx-muted" style="font-size:0.8rem;margin:6px 0">as of {pre.call_date} · day {pre.days_in_regime} of this regime · week {pre.week_key}</div>'
+        head = f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">{UNI.display(p)}</span>{ui.regime_pill(pre.regime)}</div><div class="fx-muted" style="font-size:0.8rem;margin:6px 0">as of {pre.call_date} · day {pre.days_in_regime} of this regime · week {pre.week_key}</div>'
         if locked_id is None:
             st.markdown(
                 f'<div class="fx-card" style="margin-bottom:6px">{head}<div class="fx-muted" style="font-size:0.82rem">How likely is it that this label is different at some point in the next 5 trading days?</div></div>',
@@ -136,7 +136,7 @@ for col, p in zip(cols, PAIRS, strict=True):
 
 # ---- storm gallery ----------------------------------------------------------------------
 st.markdown(
-    '<div style="font-weight:600;margin:14px 0 6px 2px">Storm gallery — verified episodes, unlocked by reading</div>',
+    '<div style="font-weight:500;margin:14px 0 6px 2px">Storm gallery — verified episodes, unlocked by reading</div>',
     unsafe_allow_html=True,
 )
 opened = arcade.unlocked_storms(conn, nick)

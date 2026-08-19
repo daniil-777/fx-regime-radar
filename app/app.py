@@ -1,7 +1,8 @@
 """FX Regime Radar — app entrypoint (router). Reads small artifacts only (CLAUDE.md rule 8).
 
-Navigation: Overview · Advisor · Regime space · Strategy lab · Arcade · Methodology. Every page shares the design
-system (app/ui.py), the universe switch, and — where it makes sense — the scenario explorer.
+Navigation (phase 31 IA): Radar = Overview · Pairs · Treasury · Storms · Proof; Analysis = Advisor ·
+Regime space · Probability space · Strategy lab · Arcade; About = Methodology · Weekly report · Metrics.
+Every page shares the design system (app/ui.py), the universe switch, and the scenario explorer.
 """
 
 from __future__ import annotations
@@ -25,21 +26,23 @@ VIEWS = Path(__file__).resolve().parent / "views"
 pages = {
     "Radar": [
         st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
-        st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
+        st.Page(str(VIEWS / "pairs.py"), title="Pairs"),
         st.Page(str(VIEWS / "treasury.py"), title="Treasury"),
+        st.Page(str(VIEWS / "storms.py"), title="Storms"),
+        st.Page(str(VIEWS / "proof.py"), title="Proof"),
+    ],
+    "Analysis": [
+        st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
         st.Page(str(VIEWS / "regime_space.py"), title="Regime space"),
         st.Page(str(VIEWS / "probability_space.py"), title="Probability space"),
-    ],
-    "Research": [
         st.Page(str(VIEWS / "strategy_lab.py"), title="Strategy lab"),
         st.Page(str(VIEWS / "arcade.py"), title="Arcade"),
     ],
-    "Trust": [st.Page(str(VIEWS / "proof.py"), title="Proof")],
     "About": [
         st.Page(str(VIEWS / "methodology.py"), title="Methodology"),
         st.Page(str(VIEWS / "weekly.py"), title="Weekly report"),
         st.Page(str(VIEWS / "metrics.py"), title="Metrics"),
     ],
 }
-nav = st.navigation(pages, position="sidebar")
+nav = st.navigation(pages, position="sidebar", expanded=True)
 nav.run()

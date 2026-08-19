@@ -62,7 +62,7 @@ st.markdown(
 ui.mobile_bar()
 st.markdown(
     f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:12px 16px">'
-    f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:600">Research demonstration on daily data — not a live trading system.</span> '
+    f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:500">Research demonstration on daily data — not a live trading system.</span> '
     '<span class="fx-muted">Positions come from pre-declared mechanical rules and the regime gate; the overlay only decides how much risk to take. '
     "Every number is net of volatility-scaled costs with the lag law applied inside the engine. Test period 2019+ was scored once and frozen.</span></div>",
     unsafe_allow_html=True,
@@ -112,7 +112,7 @@ fig.update_layout(
     yaxis_title="net equity (all pairs equal weight)",
 )
 st.markdown(
-    '<div style="font-weight:600;margin:6px 0 -4px 2px">Net equity — S1 trend · S2 mean reversion · S3 regime gate · blend</div>',
+    '<div style="font-weight:500;margin:6px 0 -4px 2px">Net equity — S1 trend · S2 mean reversion · S3 regime gate · blend</div>',
     unsafe_allow_html=True,
 )
 st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
@@ -139,7 +139,7 @@ fig2.update_layout(
     yaxis=dict(tickformat=".0%", title="drawdown"),
 )
 st.markdown(
-    '<div style="font-weight:600;margin:6px 0 -4px 2px">Drawdowns</div>', unsafe_allow_html=True
+    '<div style="font-weight:500;margin:6px 0 -4px 2px">Drawdowns</div>', unsafe_allow_html=True
 )
 st.plotly_chart(fig2, width="stretch", config={"displayModeBar": False})
 
@@ -220,7 +220,7 @@ STRESS = DATA_DIR / "stress_tests.json"
 if STRESS.exists():
     stress = json.loads(STRESS.read_text())
     st.markdown(
-        '<div style="font-weight:600;margin:10px 0 6px 2px">Stress lab — replays, breakeven cost, bootstrapped drawdowns</div>',
+        '<div style="font-weight:500;margin:10px 0 6px 2px">Stress lab — replays, breakeven cost, bootstrapped drawdowns</div>',
         unsafe_allow_html=True,
     )
     s1, s2 = st.columns([3, 2])

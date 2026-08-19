@@ -91,7 +91,7 @@ with left:
     ui.card(
         f'<div style="display:flex;align-items:center;gap:14px">'
         f'<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:{color};box-shadow:0 0 14px {color}88"></span>'
-        f'<span style="font-size:2.2rem;font-weight:700;letter-spacing:0.04em;color:{color}">{LIGHT_WORD[light]}</span></div>'
+        f'<span style="font-size:2.2rem;font-weight:500;letter-spacing:0.04em;color:{color}">{LIGHT_WORD[light]}</span></div>'
         f'<div style="margin-top:8px;font-size:0.9rem;line-height:1.5">{html.escape(d["light_reason"])}</div>'
         f'<div class="fx-kv" style="margin-top:10px"><span>regime on {html.escape(pair)}</span><span>{ui.regime_pill(regime)} '
         f'<span class="fx-num">{d["regime_prob"]:.0%}</span> · day {d["days_in_regime"]}</span></div>',
@@ -125,7 +125,7 @@ with right:
         else ""
     )
     ui.card(
-        f'<div style="font-size:1.0rem;font-weight:600;line-height:1.5">{html.escape(cost_line)}</div>'
+        f'<div style="font-size:1.0rem;font-weight:500;line-height:1.5">{html.escape(cost_line)}</div>'
         f'<div class="fx-muted" style="font-size:0.8rem;margin-top:8px">1-week numbers come from {cell["n"]} train-era windows labelled '
         f"<b>{html.escape(regime)}</b> at the window start{note}. Horizons beyond 1 week use square-root-of-time scaling, an approximation. "
         f"VaR/ES are quantiles of the ABSOLUTE 5-day move: a receivable and a payable are both hurt by an adverse move, and we take no view on the sign. "

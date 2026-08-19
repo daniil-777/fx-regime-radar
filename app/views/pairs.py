@@ -441,7 +441,7 @@ ui.card(
 # --------------------------------------------------------------------------------------
 if "anomaly_pct" in regimes.columns:
     st.markdown(
-        '<div style="font-weight:600;margin:6px 0 8px 2px">Anomaly siren — how unlike a calm day is today?</div>',
+        '<div style="font-weight:500;margin:6px 0 8px 2px">Anomaly siren — how unlike a calm day is today?</div>',
         unsafe_allow_html=True,
     )
     scols = st.columns(len(PAIRS))

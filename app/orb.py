@@ -18,7 +18,9 @@ import json
 
 import streamlit as st
 
-REGIME_COLORS = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
+from fxradar import tokens as tk
+
+REGIME_COLORS = tk.REGIME_COLORS  # design/tokens.json — the JS presets below receive these via CFG
 
 # Four state presets — the Python mirror of the JS PRESETS object (keep in sync).
 PRESETS = {
@@ -57,7 +59,7 @@ def orb_html(
     <div style="width:34%;height:34%;border-radius:50%;background:{color}33;border:2px solid {color};box-shadow:0 0 24px {color}55;"></div>
   </div>
   <canvas id="orb" style="position:absolute;inset:0;display:none;" title="{html.escape(caption)}"></canvas>
-  <div id="orb-cap" style="position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-size:10px;color:#8A94A6;opacity:0;transition:opacity .2s;pointer-events:none;">what am I looking at? {html.escape(caption)} — colour and motion follow the regime, jitter follows change risk, a pulse follows the siren</div>
+  <div id="orb-cap" style="position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-size:10px;color:{tk.MUTED};opacity:0;transition:opacity .2s;pointer-events:none;">what am I looking at? {html.escape(caption)} — colour and motion follow the regime, jitter follows change risk, a pulse follows the siren</div>
 </div>
 <script src="{THREE_CDN}"></script>
 <script>

@@ -35,10 +35,7 @@ about a second.</p>
 ui.card(
     """
 <p><b>A hidden Markov model</b> assumes the market is always in one of a few unobserved <i>moods</i> — here four:
-<span class="fx-pill" style="color:#34D399;background:#34D39922">calm</span>
-<span class="fx-pill" style="color:#60A5FA;background:#60A5FA22">trend</span>
-<span class="fx-pill" style="color:#FBBF24;background:#FBBF2422">chop</span>
-<span class="fx-pill" style="color:#F87171;background:#F8717122">crisis</span> —
+{ui.regime_pill("calm")} {ui.regime_pill("trend")} {ui.regime_pill("chop")} {ui.regime_pill("crisis")} —
 and that each mood produces returns, volatility and momentum with its own typical pattern. Moods are sticky:
 today's mood is most likely yesterday's. That stickiness (the transition matrix) is exactly what a plain
 clustering method lacks: k-means would happily flip labels every day, an HMM only changes its mind when the

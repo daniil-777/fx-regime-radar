@@ -31,6 +31,7 @@ from sklearn.preprocessing import StandardScaler
 
 from fxradar import config
 from fxradar import hmm_model as hm
+from fxradar import tokens as tk
 from fxradar.features import BASE_FEATURES
 
 # --------------------------------------------------------------------------------------
@@ -41,8 +42,8 @@ VERTICES = np.array(
     [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]], dtype=float
 )  # rows = REGIME_ORDER
 EDGES = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-REGIME_COLORS = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
-TEXT, MUTED, BORDER = "#E7ECF4", "#8A94A6", "#232D3F"
+REGIME_COLORS = tk.REGIME_COLORS
+TEXT, MUTED, BORDER = tk.TEXT, tk.MUTED, tk.BORDER
 PROB_COLUMNS = [f"p_{r}" for r in REGIME_ORDER]
 TRAIL_DAYS = 60
 LANDSCAPE_FEATURES: list[str] = list(
@@ -191,13 +192,13 @@ def tetrahedron_figure(
         marker = dict(
             size=2.5,
             color=np.arange(len(fr)),
-            colorscale=[[0, "#3B4A63"], [1, TEXT]],
+            colorscale=[[0, tk.DIM], [1, TEXT]],
             showscale=False,
         )
-        line = dict(color=np.arange(len(fr)), colorscale=[[0, "#3B4A63"], [1, TEXT]], width=2)
+        line = dict(color=np.arange(len(fr)), colorscale=[[0, tk.DIM], [1, TEXT]], width=2)
     else:
         siren = fr["anomaly_pct"].fillna(0.0).to_numpy()
-        scale = [[0, "#3B4A63"], [0.9, REGIME_COLORS["chop"]], [1, REGIME_COLORS["crisis"]]]
+        scale = [[0, tk.DIM], [0.9, REGIME_COLORS["chop"]], [1, REGIME_COLORS["crisis"]]]
         marker = dict(
             size=2.5,
             color=siren,

@@ -26,6 +26,7 @@ from xgboost import XGBClassifier
 
 from fxradar import config
 from fxradar import hmm_model as hm
+from fxradar import tokens as tk
 
 log = logging.getLogger(__name__)
 
@@ -296,20 +297,22 @@ def _plots(
 
     plt.rcParams.update(
         {
-            "figure.facecolor": "#0B0F17",
-            "axes.facecolor": "#131A26",
-            "axes.edgecolor": "#232D3F",
-            "text.color": "#E7ECF4",
-            "axes.labelcolor": "#E7ECF4",
-            "xtick.color": "#8A94A6",
-            "ytick.color": "#8A94A6",
-            "grid.color": "#232D3F",
+            "figure.facecolor": tk.BG,
+            "axes.facecolor": tk.SURFACE,
+            "axes.edgecolor": tk.BORDER,
+            "text.color": tk.TEXT,
+            "axes.labelcolor": tk.TEXT,
+            "xtick.color": tk.MUTED,
+            "ytick.color": tk.MUTED,
+            "grid.color": tk.BORDER,
         }
     )
     frac_pos, mean_pred = calibration_curve(y_te, p_te, n_bins=10, strategy="quantile")
     fig, ax = plt.subplots(figsize=(5.2, 4.6))
-    ax.plot([0, 1], [0, 1], ls="--", color="#8A94A6", lw=1, label="perfect")
-    ax.plot(mean_pred, frac_pos, marker="o", color="#60A5FA", label="XGBoost (test)")
+    ax.plot([0, 1], [0, 1], ls="--", color=tk.MUTED, lw=1, label="perfect")
+    ax.plot(
+        mean_pred, frac_pos, marker="o", color=tk.REGIME_COLORS["trend"], label="XGBoost (test)"
+    )
     ax.set_xlabel("predicted 5-day change risk")
     ax.set_ylabel("observed change frequency")
     ax.set_title("Calibration — test set (2019+), 10 quantile bins", loc="left", fontsize=10)
@@ -327,7 +330,7 @@ def _plots(
     )
     plt.title("SHAP beeswarm — test-set sample", loc="left", fontsize=10)
     plt.tight_layout()
-    plt.savefig(reports_dir / "forecaster_shap.png", dpi=110, facecolor="#0B0F17")
+    plt.savefig(reports_dir / "forecaster_shap.png", dpi=110, facecolor=tk.BG)
     plt.close("all")
 
 

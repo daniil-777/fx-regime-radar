@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -75,9 +75,18 @@ set-repo:         ## replace the OWNER/REPO badge placeholder in README.md
 	@test -n "$(REPO)" || (echo "usage: make set-repo REPO=owner/name" && exit 1)
 	sed -i.bak "s#OWNER/REPO#$(REPO)#g" README.md && rm -f README.md.bak
 
-lint:             ## static checks: ruff (lint) + black (format check)
+lint:             ## static checks: ruff (lint) + black (format check) + design-token enforcement
 	$(BIN)/ruff check .
 	$(BIN)/black --check .
+	$(MAKE) lint-ui
+
+lint-ui:          ## phase 31: no hex colour literal outside design/tokens.json (app/, src/, scripts/, pipelines/)
+	@if grep -rnE "#[0-9A-Fa-f]{6}\b" app src scripts pipelines --include='*.py' ; then \
+	  echo "lint-ui: hex literal found — use fxradar.tokens / app.ui tokens (design/tokens.json is the only source)"; exit 1; \
+	else echo "lint-ui: ok — no hex literals outside design/tokens.json"; fi
+
+tokens:           ## regenerate .streamlit/config.toml, design/tokens.css and rust static tokens from design/tokens.json
+	$(PYTHON) scripts/gen_tokens.py
 
 fmt:              ## auto-format and auto-fix imports
 	$(BIN)/ruff check --fix .

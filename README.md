@@ -7,7 +7,7 @@
 <p align="center"><img src="assets/tetrahedron.gif" width="420" alt="EUR/USD's daily filtered regime probabilities as a path through the regime tetrahedron"></p>
 <p align="center"><sub>Every day's regime probabilities are one point in this tetrahedron — this is the full history moving through them.</sub></p>
 
-![FX Regime Radar dashboard](docs/screenshots/dashboard.png)
+![FX Regime Radar — the condition banner: regime word, change risk ± band, siren, consensus, trust strip](docs/screenshots/overview_v3.png)
 
 A **weather station for currency markets**. Every weekday a pipeline downloads daily prices for
 EUR/USD, USD/CHF and GBP/USD, computes strictly backward-looking features, and runs three small
@@ -424,6 +424,21 @@ replayed from the frozen bundle's forward filter — the same causal function th
 test checks the replay reproduces `regimes.parquet` exactly. Nothing else in the app went 3-D: the daily
 operational views stay flat on purpose. `make gif` renders `assets/tetrahedron.gif` (kaleido + imageio,
 dev-only, `requirements-dev.txt`).
+
+## Trust-first UI (phase 31)
+
+One design token file (`design/tokens.json`) drives the Streamlit CSS, the Plotly template, the
+matplotlib report figures, the orb presets, the e-mail report and `widget.js`; `make lint-ui` (in CI)
+fails on any hex literal elsewhere. Two signature structures on every surface: the **condition
+banner** — the regime word huge in its colour, change risk ± 90 % band, siren, the quiet 90-day risk
+trace, the three-dot consensus — and the **trust strip** — forward-test day count, live Brier vs
+frozen, coverage vs target, chain head ✓, "verify independently". Space Grotesk for the regime
+word, IBM Plex Sans for UI, IBM Plex Mono with tabular figures for every number. Regime colours are
+data and status only, never decoration; regime is never colour-only; every text/surface pair clears
+4.5:1 (tested); the orb is the one ambient element and the live dot's pulse the only other motion,
+both off under reduced motion. Target: `design/design-target-mockup.html`. Screenshots:
+`docs/screenshots/overview_v3.png`, `pairs_v3.png`, `treasury.png`, `storms.png`, `proof.png`,
+`mobile_overview_v3.png`, `orb/orb_states.png`.
 
 ## Runs on desktop, tablet and phone
 

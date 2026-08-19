@@ -20,6 +20,7 @@ import pandas as pd
 from fxradar import backtest as bt
 from fxradar import config
 from fxradar import strategies as st
+from fxradar import tokens as tk
 
 STRESS_PATH = config.DATA_DIR / "stress_tests.json"
 WINDOWS = {
@@ -254,28 +255,28 @@ def bootstrap_table(results: dict[str, bt.BacktestResult], reports_dir: Path) ->
 
     plt.rcParams.update(
         {
-            "figure.facecolor": "#0B0F17",
-            "axes.facecolor": "#131A26",
-            "axes.edgecolor": "#232D3F",
-            "text.color": "#E7ECF4",
-            "axes.labelcolor": "#E7ECF4",
-            "xtick.color": "#8A94A6",
-            "ytick.color": "#8A94A6",
-            "grid.color": "#232D3F",
+            "figure.facecolor": tk.BG,
+            "axes.facecolor": tk.SURFACE,
+            "axes.edgecolor": tk.BORDER,
+            "text.color": tk.TEXT,
+            "axes.labelcolor": tk.TEXT,
+            "xtick.color": tk.MUTED,
+            "ytick.color": tk.MUTED,
+            "grid.color": tk.BORDER,
             "font.size": 9,
         }
     )
     fig, ax = plt.subplots(figsize=(7, 3.6))
-    ax.hist(dists["BLEND"] * 100, bins=40, color="#E7ECF4", alpha=0.85)
+    ax.hist(dists["BLEND"] * 100, bins=40, color=tk.TEXT, alpha=0.85)
     ax.axvline(
         np.median(dists["BLEND"]) * 100,
-        color="#60A5FA",
+        color=tk.REGIME_COLORS["trend"],
         lw=1.2,
         label=f"median {np.median(dists['BLEND']):.1%}",
     )
     ax.axvline(
         np.percentile(dists["BLEND"], 5) * 100,
-        color="#F87171",
+        color=tk.REGIME_COLORS["crisis"],
         lw=1.2,
         label=f"5th pct pain {np.percentile(dists['BLEND'], 5):.1%}",
     )
@@ -321,12 +322,12 @@ def robustness(df: pd.DataFrame, reports_dir: Path) -> pd.DataFrame:
 
     plt.rcParams.update(
         {
-            "figure.facecolor": "#0B0F17",
-            "axes.facecolor": "#131A26",
-            "text.color": "#E7ECF4",
-            "axes.labelcolor": "#E7ECF4",
-            "xtick.color": "#8A94A6",
-            "ytick.color": "#8A94A6",
+            "figure.facecolor": tk.BG,
+            "axes.facecolor": tk.SURFACE,
+            "text.color": tk.TEXT,
+            "axes.labelcolor": tk.TEXT,
+            "xtick.color": tk.MUTED,
+            "ytick.color": tk.MUTED,
             "font.size": 9,
         }
     )
@@ -350,7 +351,7 @@ def robustness(df: pd.DataFrame, reports_dir: Path) -> pd.DataFrame:
                     ha="center",
                     va="center",
                     fontsize=7,
-                    color="#0B0F17",
+                    color=tk.BG,
                 )
     fig.colorbar(im, ax=axes, fraction=0.02)
     fig.savefig(reports_dir / "stress_robustness.png", dpi=110, bbox_inches="tight")

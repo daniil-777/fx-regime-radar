@@ -178,12 +178,8 @@ def _register_template() -> None:
         paper_bgcolor="rgba(0,0,0,0)",  # transparent: the card or page paints the ground
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family=FONT_UI, color=TEXT, size=12),
-        xaxis=dict(
-            gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)
-        ),
-        yaxis=dict(
-            gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)
-        ),
+        xaxis=dict(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)),
+        yaxis=dict(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)),
         margin=dict(l=40, r=20, t=40, b=40),
         legend=dict(bgcolor="rgba(0,0,0,0)", orientation="h", y=1.05, x=0),
         hoverlabel=dict(
@@ -342,7 +338,7 @@ def siren_dial(pct: float, label: str) -> str:
         f'<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="{r}" fill="none" stroke="{BORDER}" stroke-width="6"/>'
         f'<circle cx="32" cy="32" r="{r}" fill="none" stroke="{color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{dash:.1f} {c:.1f}" transform="rotate(-90 32 32)"/>'
         f'<text x="32" y="37" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="{TEXT}">{pct:.0f}</text></svg>'
-        f'<div><div style="font-weight:600">{html.escape(label)}</div><div class="fx-muted" style="font-size:0.8rem">anomaly percentile</div></div></div>'
+        f'<div><div style="font-weight:500">{html.escape(label)}</div><div class="fx-muted" style="font-size:0.8rem">anomaly percentile</div></div></div>'
     )
 
 
@@ -768,10 +764,10 @@ def trust_strip(data_dir: Path | str | None = None, proof_href: str = "proof") -
     live_cov = (cov.get("live") or {}).get("coverage")
     test_cov = (cov.get("frozen_test") or {}).get("overall")
     coverage = (
-        f"coverage {live_cov:.0%} <span class=\"fx-dim\">vs 90 target</span>"
+        f'coverage {live_cov:.0%} <span class="fx-dim">vs 90 target</span>'
         if live_cov is not None
         else (
-            f"coverage {test_cov:.1%} <span class=\"fx-dim\">frozen · target 90</span>"
+            f'coverage {test_cov:.1%} <span class="fx-dim">frozen · target 90</span>'
             if test_cov is not None
             else ""
         )

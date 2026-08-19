@@ -19,6 +19,7 @@ import pandas as pd
 
 from fxradar import backtest as bt
 from fxradar import config
+from fxradar import tokens as tk
 
 # ======================================================================================
 # PARAMETERS — chosen once on train (<= 2016) + validation (2017-18) by inspection.
@@ -306,17 +307,17 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    colors = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
+    colors = tk.REGIME_COLORS
     plt.rcParams.update(
         {
-            "figure.facecolor": "#0B0F17",
-            "axes.facecolor": "#131A26",
-            "axes.edgecolor": "#232D3F",
-            "text.color": "#E7ECF4",
-            "axes.labelcolor": "#E7ECF4",
-            "xtick.color": "#8A94A6",
-            "ytick.color": "#8A94A6",
-            "grid.color": "#232D3F",
+            "figure.facecolor": tk.BG,
+            "axes.facecolor": tk.SURFACE,
+            "axes.edgecolor": tk.BORDER,
+            "text.color": tk.TEXT,
+            "axes.labelcolor": tk.TEXT,
+            "xtick.color": tk.MUTED,
+            "ytick.color": tk.MUTED,
+            "grid.color": tk.BORDER,
             "font.size": 9,
         }
     )
@@ -333,10 +334,10 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
             lw=0,
         )
     line_colors = {
-        "S1_trend": "#60A5FA",
-        "S2_meanrev": "#FBBF24",
-        "S3_regime_gate": "#34D399",
-        "BLEND": "#E7ECF4",
+        "S1_trend": tk.REGIME_COLORS["trend"],
+        "S2_meanrev": tk.REGIME_COLORS["chop"],
+        "S3_regime_gate": tk.REGIME_COLORS["calm"],
+        "BLEND": tk.TEXT,
     }
     for name, res in results.items():
         pooled = res.daily.groupby("date")["ret_net"].mean()
@@ -347,14 +348,14 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
             color=line_colors[name],
             label=f"{name} (net)",
         )
-    ax.axvline(pd.Timestamp(config.VAL_START), color="#8A94A6", ls="--", lw=1)
-    ax.axvline(pd.Timestamp(config.TEST_START), color="#8A94A6", ls=":", lw=1)
+    ax.axvline(pd.Timestamp(config.VAL_START), color=tk.MUTED, ls="--", lw=1)
+    ax.axvline(pd.Timestamp(config.TEST_START), color=tk.MUTED, ls=":", lw=1)
     ax.annotate(
         "validation →",
         (pd.Timestamp(config.VAL_START), ax.get_ylim()[1]),
         xytext=(4, -12),
         textcoords="offset points",
-        color="#8A94A6",
+        color=tk.MUTED,
         fontsize=8,
     )
     ax.annotate(
@@ -362,7 +363,7 @@ def _equity_png(results: dict[str, bt.BacktestResult], regimes: pd.DataFrame, pa
         (pd.Timestamp(config.TEST_START), ax.get_ylim()[1]),
         xytext=(4, -12),
         textcoords="offset points",
-        color="#8A94A6",
+        color=tk.MUTED,
         fontsize=8,
     )
     ax.set_title(

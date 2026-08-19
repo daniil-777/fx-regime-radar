@@ -81,7 +81,7 @@ space = space_all[space_all["date"] <= as_of]
 # header + controls
 # --------------------------------------------------------------------------------------
 st.markdown(
-    '<div style="font-size:1.35rem;font-weight:700;margin:0 0 2px 2px">Regime space</div>'
+    '<div style="font-size:1.35rem;font-weight:500;margin:0 0 2px 2px">Regime space</div>'
     '<div class="fx-muted" style="margin:0 0 12px 2px">The model\'s feature space, seen from inside. '
     "Each point is one trading day placed by realised volatility, one-month momentum and a third axis; "
     "its colour is the regime the HMM assigned <em>on that day</em> (filtered, causal). "
@@ -372,7 +372,7 @@ fig.update_layout(
     ),
 )
 st.markdown(
-    f'<div style="font-weight:600;margin:6px 0 4px 2px">State-space portrait — {UNI.display(pair)}'
+    f'<div style="font-weight:500;margin:6px 0 4px 2px">State-space portrait — {UNI.display(pair)}'
     + (f" · as of {as_of:%Y-%m-%d}" if time_machine else "")
     + '</div><div class="fx-muted" style="font-size:0.8rem;margin:0 0 6px 2px">Drag to orbit · scroll to zoom · click a legend entry to hide a regime · ▶ replays the trail day by day. Points sit where the model saw them; the four clouds are the regimes.</div>',
     unsafe_allow_html=True,
@@ -576,7 +576,7 @@ land.update_layout(
 )
 legend = " ".join(ui.regime_pill(r) for r in REGIME_ORDER)
 st.markdown(
-    f'<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 4px 2px"><span style="font-weight:600">Regime landscape — {UNI.display(pair)}</span><span>{legend}</span></div>'
+    f'<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 4px 2px"><span style="font-weight:500">Regime landscape — {UNI.display(pair)}</span><span>{legend}</span></div>'
     '<div class="fx-muted" style="font-size:0.8rem;margin:0 0 6px 2px">Height = how many days of history sit at that (vol, momentum); colour = the regime the HMM most often called there. Calm is the big hill at low vol; crisis is the thin high-vol ridge. The trail shows the market walking over the terrain to today.</div>',
     unsafe_allow_html=True,
 )

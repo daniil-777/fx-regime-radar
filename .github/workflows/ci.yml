@@ -34,6 +34,7 @@ jobs:
         run: |
           ruff check .
           black --check .
+          make lint-ui
       - name: Tests (no network, no API key needed)
         run: python -m pytest -q
       - name: Ledger hash chain must verify on the committed data

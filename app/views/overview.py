@@ -1,8 +1,12 @@
-"""FX Regime Radar — dashboard. Reads small artifacts only (CLAUDE.md rule 8); no models here.
+"""Overview — the condition banner. Reads small artifacts only (CLAUDE.md rule 8); no models here.
 
-Universe switch (FX majors / Crypto majors) and a scenario explorer: an "as of" date that shows the
-weather station exactly as it would have looked on that day — every number is filtered/causal, so
-replaying history is legitimate and nothing after the chosen date is drawn.
+The full market state readable in three seconds from two metres: the regime word huge in its
+colour, one metrics line (change risk ± band, siren), the quiet 90-day risk trace, the three-dot
+consensus; then the three decisions a treasurer makes with it (next scheduled storm, treasury light,
+interval coverage), the trust strip, and one compact weather card per market. The detailed charts
+live on the Pairs page. Universe switch and the scenario explorer ("as of" date) sit in the sidebar;
+every number is filtered/causal, so replaying history is legitimate and nothing after the chosen
+date is drawn.
 """
 
 from __future__ import annotations
@@ -13,31 +17,30 @@ import os
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
 
-sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1])
-)  # app/ on the path: `import ui`, `import orb`
-import orb  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # app/ on the path: `import ui`
 import ui  # noqa: E402
 from fxradar import narrate  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
 REGIME_ORDER = ["calm", "trend", "chop", "crisis"]
+EVENT_LABEL = {
+    "SNB": "SNB rate decision",
+    "ECB": "ECB rate decision",
+    "FOMC": "FOMC rate decision",
+    "BOE": "BoE rate decision",
+    "NFP": "US payrolls",
+    "CPI": "US CPI print",
+}
 
-# --------------------------------------------------------------------------------------
-# sidebar: universe, pair, scenario — and the disclaimer
-# --------------------------------------------------------------------------------------
 ui.sidebar(DISCLAIMER)
 UNI_NAME, UNI, DIRS = ui.universe_selector()
 PAIRS = list(UNI.pairs)
 DATA_DIR = DIRS["data"]
 PRICES_PATH, REGIMES_PATH = DATA_DIR / "prices.parquet", DATA_DIR / "regimes.parquet"
 REPORT_PATH, STATUS_PATH = DATA_DIR / "report.json", DATA_DIR / "pipeline_status.json"
-OOS_START = pd.Timestamp(UNI.val_start)
 
 
 def _mtime(path: Path) -> float:
@@ -60,107 +63,40 @@ def load_json(path: str, mtime: float) -> dict:
     return json.loads(p.read_text()) if p.exists() else {}
 
 
-def _live_record_tile(rec: dict) -> tuple[str, str, str, str]:
-    """KPI tile for the live forward-test record (data/live_record.json, written by the pipeline):
-    Brier since deploy once 20 forecasts have resolved, otherwise how far the warm-up has got."""
-    if not rec:
-        return ("live record", "–", "no ledger yet", ui.MUTED)
-    m = rec.get("metrics")
-    if m and m.get("brier") is not None:
-        beats = m.get("base_rate_brier") is not None and m["brier"] < m["base_rate_brier"]
-        return (
-            "live record · Brier",
-            f"{m['brier']:.3f}",
-            f"{rec['n_resolved']} resolved since {rec['since']} · "
-            + ("beats base rate" if beats else "not beating base rate"),
-            ui.REGIME_COLORS["calm"] if beats else ui.REGIME_COLORS["chop"],
-        )
-    return (
-        "live record",
-        "warming up",
-        f"{rec.get('n_resolved', 0)}/{rec.get('min_resolved', 20)} resolved · since {rec.get('since') or '—'}",
-        ui.MUTED,
-    )
+@st.cache_data(show_spinner=False)
+def load_events(path: str, mtime: float) -> pd.DataFrame:
+    p = Path(path)
+    if not p.exists():
+        return pd.DataFrame(columns=["date", "type", "source"])
+    ev = pd.read_csv(p)
+    ev["date"] = pd.to_datetime(ev["date"])
+    return ev
 
 
 @st.cache_data(show_spinner=False)
-def regime_runs(path: str, mtime: float, pair: str) -> pd.DataFrame:
-    """Consecutive same-regime days merged into bands: regime, start, end (light pandas)."""
-    r = load_regimes(path, mtime)
-    g = r[r["pair"] == pair].sort_values("date").reset_index(drop=True)
-    new_run = g["regime"].ne(g["regime"].shift(1)).cumsum()
-    runs = g.groupby(new_run).agg(
-        regime=("regime", "first"), start=("date", "first"), end=("date", "last")
-    )
-    runs["end"] = runs["start"].shift(-1).fillna(runs["end"])
-    return runs.reset_index(drop=True)
-
-
-@st.cache_data(show_spinner=False)
-def anatomy(
-    path_r: str,
-    mtime_r: float,
-    path_p: str,
-    mtime_p: float,
-    pair: str,
-    oos_start: str,
-    ann_days: int,
-) -> pd.DataFrame:
-    """Out-of-sample regime anatomy for one pair (same definitions as the validation report)."""
-    r = load_regimes(path_r, mtime_r)
-    p = load_prices(path_p, mtime_p)
-    g = r[r["pair"] == pair].merge(p[p["pair"] == pair], on=["date", "pair"]).sort_values("date")
-    g["ret"] = np.log(g["close"] / g["close"].shift(1))
-    g = g[g["date"] >= pd.Timestamp(oos_start)]
-    new_run = g["regime"].ne(g["regime"].shift(1)).cumsum()
-    run_len = g.groupby(new_run).agg(regime=("regime", "first"), length=("regime", "size"))
-    rows = []
-    for regime in REGIME_ORDER:
-        rr = g.loc[g["regime"] == regime, "ret"].dropna()
-        eq = np.exp(rr.cumsum())
-        rows.append(
-            {
-                "regime": regime,
-                "days": int(len(rr)),
-                "share %": 100 * len(rr) / max(len(g), 1),
-                "mean run (d)": (
-                    float(run_len.loc[run_len["regime"] == regime, "length"].mean())
-                    if len(rr)
-                    else np.nan
-                ),
-                "ann. vol %": (
-                    float(rr.std(ddof=1) * np.sqrt(ann_days) * 100) if len(rr) > 1 else np.nan
-                ),
-                "mean ret (bp)": float(rr.mean() * 1e4) if len(rr) else np.nan,
-                "worst dd %": float((eq / eq.cummax() - 1).min() * 100) if len(rr) else np.nan,
-            }
-        )
-    return pd.DataFrame(rows)
-
-
-API_URL = os.environ.get("FXRADAR_API_URL", "").rstrip("/")
-
-
-@st.cache_data(show_spinner=False, ttl=60)
 def load_api_latest(api_url: str, pairs: tuple[str, ...]) -> dict:
-    """Latest scored state per pair from the Rust service (GET /api/regimes/{pair}); {} on any failure."""
+    """Newest row per pair from the Rust service, if one is configured and answering (1 s budget)."""
     if not api_url:
         return {}
     import urllib.request
 
-    out: dict = {}
+    out = {}
     for p in pairs:
         try:
-            with urllib.request.urlopen(f"{api_url}/api/regimes/{p}", timeout=2) as r:
+            with urllib.request.urlopen(f"{api_url.rstrip('/')}/api/regimes/{p}", timeout=1) as r:
                 out[p] = json.loads(r.read())
-        except Exception:
+        except Exception:  # noqa: BLE001 — any failure means "use the artifacts"
             return {}
     return out
 
 
+API_URL = os.environ.get("FXRADAR_API_URL", "")
+
 if not (REGIMES_PATH.exists() and PRICES_PATH.exists()):
-    st.warning(
-        f"No artifacts for the {UNI.label} universe yet — run `FXRADAR_UNIVERSE={UNI_NAME} make pipeline`."
+    ui.state(
+        f"No artifacts for the {UNI.label} universe yet.",
+        "The dashboard reads files the pipeline writes; none exist for this universe.",
+        f"Run `FXRADAR_UNIVERSE={UNI_NAME} make pipeline` once, then reload.",
     )
     st.stop()
 
@@ -169,60 +105,185 @@ prices_all = load_prices(str(PRICES_PATH), _mtime(PRICES_PATH))
 status = load_json(str(STATUS_PATH), _mtime(STATUS_PATH))
 drift_status = load_json(str(DATA_DIR / "status.json"), _mtime(DATA_DIR / "status.json"))
 report = load_json(str(REPORT_PATH), _mtime(REPORT_PATH))
-latest_date = regimes_all["date"].max()
+live = load_json(str(DATA_DIR / "live_record.json"), _mtime(DATA_DIR / "live_record.json"))
+treasury = load_json(str(DATA_DIR / "treasury_risk.json"), _mtime(DATA_DIR / "treasury_risk.json"))
+coverage = load_json(
+    str(DATA_DIR / "conformal_coverage.json"), _mtime(DATA_DIR / "conformal_coverage.json")
+)
+events = load_events(str(DATA_DIR / "events.csv"), _mtime(DATA_DIR / "events.csv"))
 
-# ---- scenario explorer (shared with the Advisor page) ----------------------------------------
+# ---- scenario explorer (shared with the other pages) ------------------------------------------
 pair, as_of, time_machine, episode = ui.scenario_controls(UNI, PAIRS, regimes_all)
-# everything below sees ONLY data up to `as_of` (all outputs are filtered/causal, so this is honest)
 regimes = regimes_all[regimes_all["date"] <= as_of]
 prices = prices_all[prices_all["date"] <= as_of]
 api_latest = load_api_latest(API_URL, tuple(PAIRS)) if not time_machine else {}
 data_through = regimes["date"].max()
 
 # --------------------------------------------------------------------------------------
-# header
+# header: wordmark · live dot · data through · drift badge
 # --------------------------------------------------------------------------------------
-updated = status.get("last_run_utc", "")
-right = f'Data through <span class="fx-num">{data_through:%Y-%m-%d}</span>'
-if updated and not time_machine:
-    right += (
-        f' · updated <span class="fx-num">{html.escape(updated[:16].replace("T", " "))} UTC</span>'
-    )
+days_live = int(live.get("days_recorded", 0) or 0)
+live_label = f"live · day {days_live}" if days_live else "live · first run pending"
+right = f'data through <span class="fx-num">{data_through:%Y-%m-%d}</span>'
 if drift_status and not time_machine:
     right += " " + ui.stale_badge(drift_status)
 if api_latest:
     served = str(next(iter(api_latest.values())).get("served_by", "rust"))
-    right += f' <span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{ui.REGIME_COLORS["trend"]};background:{ui.REGIME_COLORS["trend"]}22;border:1px solid {ui.REGIME_COLORS["trend"]}55">served by {html.escape(served)}</span>'
+    right += f' <span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{ui.REGIME_COLORS["trend"]};background:{ui.alpha(ui.REGIME_COLORS["trend"], 0.12)};border:1px solid {ui.alpha(ui.REGIME_COLORS["trend"], 0.35)}">served by {html.escape(served)}</span>'
 st.markdown(
-    f'<div class="fx-header"><div><span class="fx-wordmark">FX Regime Radar</span>'
-    f'<span class="fx-sub">{html.escape(UNI.label)} · market weather, updated daily</span></div>'
+    f'<div class="fx-header"><div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">'
+    f'<span class="fx-wordmark">FX regime radar</span>'
+    f'<span class="fx-sub">{html.escape(UNI.label)} · market weather, updated daily</span>'
+    f"{'' if time_machine else ui.live_dot(live_label)}</div>"
     f'<div class="fx-right">{right}</div></div>',
     unsafe_allow_html=True,
 )
-ui.mobile_bar(
-    UNI, PAIRS
-)  # phones: universe + market pills (hidden on desktop, sidebar rules there)
+ui.mobile_bar(UNI, PAIRS)  # phones: universe + market pills (hidden on desktop)
 if time_machine:
     st.markdown(
-        f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:10px 16px;margin-bottom:12px">'
-        f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:600">Time machine — viewing as of {as_of:%Y-%m-%d}.</span> '
+        f'<div class="fx-card" style="border-color:{ui.alpha(ui.REGIME_COLORS["chop"], 0.4)};padding:10px 16px;margin-bottom:12px">'
+        f'<span style="color:{ui.REGIME_COLORS["chop"]};font-weight:500">Time machine — viewing as of {as_of:%Y-%m-%d}.</span> '
         '<span class="fx-muted">Everything on this page was computable on that day: regimes are filtered (no hindsight), change risk and the siren use only rows up to it, and nothing after the date is drawn. '
-        "Narration is the deterministic template. Choose “today” in the sidebar to return.</span></div>",
+        "Choose “today” in the sidebar to return.</span></div>",
         unsafe_allow_html=True,
     )
 
 # --------------------------------------------------------------------------------------
-# KPI strip + alerts (from the same as-of rows)
+# signature 1: the condition banner (selected pair)
 # --------------------------------------------------------------------------------------
-from fxradar import advisor  # noqa: E402
+sel_g = regimes[regimes["pair"] == pair].sort_values("date")
+if sel_g.empty:
+    ui.state(
+        "No data for this pair as of this date.",
+        "The artifacts start later than the chosen day.",
+        "Move the as-of date forward in the sidebar.",
+    )
+    st.stop()
+sel = sel_g.iloc[-1]
+if pair in api_latest:
+    sel = pd.Series(
+        {**sel.to_dict(), **{k: v for k, v in api_latest[pair].items() if k in sel.index}}
+    )
+trail = sel_g.tail(90)
+trace = ui.risk_trace_svg(
+    trail["change_risk_5d"] if "change_risk_5d" in trail else pd.Series(dtype=float),
+    trail["risk_lo"] if "risk_lo" in trail else None,
+    trail["risk_hi"] if "risk_hi" in trail else None,
+    ui.REGIME_COLORS[sel["regime"]],
+)
+ui.condition_banner(
+    UNI.display(pair),
+    f"{data_through:%a %d %b %Y}",
+    str(sel["regime"]),
+    sel.get("change_risk_5d"),
+    sel.get("risk_lo"),
+    sel.get("risk_hi"),
+    sel.get("anomaly_pct"),
+    sel.get("agreement"),
+    {k: sel.get(k) for k in ("vote_hmm", "vote_bocpd", "vote_vol")},
+    trace,
+    eyebrow_extra=" · time machine" if time_machine else "",
+)
+if trace:
+    st.markdown(
+        '<div class="fx-dim" style="font-size:0.72rem;margin:-6px 0 6px 0">90-day change-risk trace · shaded = 90 % conformal band · regime word and dot carry the state, colour only repeats it</div>',
+        unsafe_allow_html=True,
+    )
 
+# --------------------------------------------------------------------------------------
+# signature 2: the trust strip (never below the fold)
+# --------------------------------------------------------------------------------------
+ui.trust_strip(DATA_DIR)
+
+# --------------------------------------------------------------------------------------
+# the three decisions: next scheduled storm · treasury light · interval coverage
+# --------------------------------------------------------------------------------------
+c1, c2, c3 = st.columns(3)
+with c1:
+    nxt = events[events["date"] > as_of].sort_values("date").head(1) if len(events) else events
+    if len(nxt):
+        e = nxt.iloc[0]
+        days = int((e["date"] - as_of).days)
+        tone = ui.REGIME_COLORS["chop"] if days <= 5 else ui.MUTED
+        ui.card(
+            f'<div style="font-size:1.05rem;font-weight:500">{html.escape(EVENT_LABEL.get(str(e["type"]), str(e["type"])))}</div>'
+            f'<div class="fx-num" style="font-size:0.82rem;color:{tone};margin-top:3px">in {days} day{"s" if days != 1 else ""} · {e["date"]:%a %d %b}</div>'
+            '<div class="fx-dim" style="font-size:0.74rem;margin-top:4px">scheduled dates only — surprises have no calendar</div>',
+            title="next scheduled storm",
+        )
+    else:
+        ui.card(
+            '<div class="fx-muted">No event calendar loaded.</div><div class="fx-dim" style="font-size:0.74rem;margin-top:4px">data/events.csv is written by the calendar step (phase 23).</div>',
+            title="next scheduled storm",
+        )
+with c2:
+    tp = (treasury.get("pairs") or {}).get(pair, {})
+    fx = treasury.get("fx") or {}
+    light = str(tp.get("light", "")) if not time_machine else ""
+    if light:
+        lc = {
+            "hedge": ui.REGIME_COLORS["crisis"],
+            "ladder": ui.REGIME_COLORS["chop"],
+            "wait": ui.REGIME_COLORS["calm"],
+        }.get(light, ui.MUTED)
+        reg = str(tp.get("current_regime", sel["regime"]))
+        cell = (tp.get("table") or {}).get(reg, {})
+        es99 = cell.get("es_99")
+        # €500k for 4 weeks: the mockup's example, √t scaling (documented approximation)
+        amount, weeks = 500_000, 4
+        rate = fx.get("EURCHF") or 1.0
+        chf = amount * float(es99) * (weeks**0.5) * float(rate) if es99 else None
+        ui.card(
+            f'<div style="display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:500;text-transform:capitalize">'
+            f'<span class="fx-pip" style="background:{lc};border-color:{lc}"></span>{html.escape(light)}</div>'
+            + (
+                f'<div class="fx-num fx-muted" style="font-size:0.82rem;margin-top:3px">waiting risk ≈ CHF {chf:,.0f} <span class="fx-dim">(99% ES · €500k · 4 weeks)</span></div>'
+                if chf
+                else ""
+            )
+            + f'<div class="fx-dim" style="font-size:0.74rem;margin-top:4px">{html.escape(str(tp.get("light_reason", "")))[:140]}</div>',
+            title=f"treasury light · {html.escape(UNI.display(pair))}",
+        )
+    else:
+        ui.card(
+            '<div class="fx-muted">Treasury light not available for this view.</div><div class="fx-dim" style="font-size:0.74rem;margin-top:4px">'
+            + (
+                "the light is computed for today only, not for the time machine"
+                if time_machine
+                else "run `make treasury` to write data/treasury_risk.json"
+            )
+            + "</div>",
+            title="treasury light",
+        )
+with c3:
+    cv_live = (coverage.get("live") or {}) if coverage else {}
+    cv_test = (coverage.get("frozen_test") or {}) if coverage else {}
+    if cv_live.get("coverage") is not None:
+        ui.card(
+            f'<div class="fx-num" style="font-size:1.35rem;font-weight:500">{cv_live["coverage"]:.1%}</div>'
+            f'<div class="fx-dim fx-num" style="font-size:0.78rem">target 90 · {cv_live.get("n", 0)} scored rows · live</div>',
+            title="interval coverage · live",
+        )
+    elif cv_test.get("overall") is not None:
+        ui.card(
+            f'<div class="fx-num" style="font-size:1.35rem;font-weight:500">{cv_test["overall"]:.1%}</div>'
+            f'<div class="fx-dim fx-num" style="font-size:0.78rem">target 90 · frozen test n = {cv_test.get("n", 0):,} · live band warming up</div>',
+            title="interval coverage · frozen test",
+        )
+    else:
+        ui.card(
+            '<div class="fx-muted">No coverage receipt yet.</div><div class="fx-dim" style="font-size:0.74rem;margin-top:4px">written by the conformal step of the pipeline.</div>',
+            title="interval coverage",
+        )
+
+# --------------------------------------------------------------------------------------
+# alerts (only when there is something to act on)
+# --------------------------------------------------------------------------------------
 _latest_rows = {
     p: regimes[regimes["pair"] == p].sort_values("date").iloc[-1]
     for p in PAIRS
     if not regimes[regimes["pair"] == p].empty
 }
-_stab = {p: advisor.stability_index(r)[0] for p, r in _latest_rows.items()}
-_overall = float(np.mean(list(_stab.values()))) if _stab else float("nan")
 _alerts = []
 for p, r in _latest_rows.items():
     if r["regime"] == "crisis":
@@ -246,59 +307,34 @@ for p, r in _latest_rows.items():
                 f"{UNI.display(p)}: 5-day regime-change risk {float(r['change_risk_5d']):.0%}",
             )
         )
-_counts = pd.Series([r["regime"] for r in _latest_rows.values()]).value_counts()
-ui.kpi_strip(
-    [
-        ui.kpi(
-            "market stability",
-            f"{_overall:.0f}" if _stab else "–",
-            advisor.stability_word(_overall) if _stab else "",
-            ui.stability_color(_overall) if _stab else ui.TEXT,
-        ),
-        ui.kpi(
-            "regimes now",
-            " · ".join(f"{k} {v}" for k, v in _counts.items()) or "–",
-            f"{len(_latest_rows)} markets",
-        ),
-        ui.kpi(
-            "alerts",
-            str(len(_alerts)),
-            "crisis · siren · high change risk",
-            ui.REGIME_COLORS["crisis"] if _alerts else ui.TEXT,
-        ),
-        ui.kpi(
-            "as of", f"{data_through:%Y-%m-%d}", "time machine" if time_machine else "latest data"
-        ),
-        ui.kpi(
-            *_live_record_tile(
-                load_json(str(DATA_DIR / "live_record.json"), _mtime(DATA_DIR / "live_record.json"))
-            )
-        ),
-    ]
-)
+    if int(r.get("agreement", 0) or 0) == 3:
+        _alerts.append(
+            (ui.REGIME_COLORS["crisis"], f"{UNI.display(p)}: 3/3 voters agree — storm conditions")
+        )
 if _alerts:
     st.markdown(
         "".join(
-            f'<div class="fx-alert" style="border-color:{c}55"><span style="width:8px;height:8px;border-radius:50%;background:{c};display:inline-block"></span><span>{html.escape(t)}</span></div>'
+            f'<div class="fx-alert" style="border-color:{ui.alpha(c, 0.35)}"><span style="width:8px;height:8px;border-radius:50%;background:{c};display:inline-block"></span><span>{html.escape(t)}</span></div>'
             for c, t in _alerts
         ),
         unsafe_allow_html=True,
     )
 
 # --------------------------------------------------------------------------------------
-# hero row: one weather card per pair
+# one compact weather card per market (the banner shows the selected one in full)
 # --------------------------------------------------------------------------------------
+st.markdown('<div class="fx-section">All markets</div>', unsafe_allow_html=True)
 cols = st.columns(len(PAIRS))
 for col, p in zip(cols, PAIRS, strict=True):
     gp = regimes[regimes["pair"] == p].sort_values("date")
     if gp.empty:
         with col:
             ui.card(
-                f'<span style="font-weight:600">{UNI.display(p)}</span><div class="fx-muted">no data as of this date</div>'
+                f'<span style="font-weight:500">{UNI.display(p)}</span><div class="fx-muted">no data as of this date</div>'
             )
         continue
     latest = gp.iloc[-1]
-    if p in api_latest:  # live state from the Rust service (same fields as the parquet row)
+    if p in api_latest:
         latest = pd.Series(
             {**latest.to_dict(), **{k: v for k, v in api_latest[p].items() if k in latest.index}}
         )
@@ -315,18 +351,17 @@ for col, p in zip(cols, PAIRS, strict=True):
     else:
         narration = report.get(p)
     body = (
-        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-        f'<span style="font-weight:600;font-size:1.05rem">{UNI.display(p)}</span>{ui.regime_pill(latest["regime"], large=True)}</div>'
-        f'<div class="fx-muted" style="font-size:0.82rem;margin-bottom:6px">{ui.REGIME_BLURB[latest["regime"]]}</div>'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+        f'<span style="font-weight:500;font-size:1rem">{UNI.display(p)}</span>{ui.regime_pill(latest["regime"], large=True)}</div>'
+        f'<div class="fx-muted" style="font-size:0.8rem;margin-bottom:4px">{ui.REGIME_BLURB[latest["regime"]]}</div>'
         f"{ui.confidence_bar(latest['regime_prob'], color)}"
-        f'<div class="fx-kv" style="margin-top:6px"><span>day <span class="fx-num">{int(latest["days_in_regime"])}</span> of this regime</span>'
-        f'<span>last close <span class="fx-num">{px_fmt.format(closes.iloc[-1])}</span></span></div>'
+        f'<div class="fx-kv" style="margin-top:4px"><span>day <span class="fx-num">{int(latest["days_in_regime"])}</span> of this regime</span>'
+        f'<span>close <span class="fx-num">{px_fmt.format(closes.iloc[-1])}</span></span></div>'
         f"{ui.sparkline_svg(closes, color)}"
-        f'<div class="fx-kv"><span>20-day close</span><span class="fx-num">{(closes.iloc[-1] / closes.iloc[0] - 1) * 100:+.2f}%</span></div>'
         + (
             ui.risk_gauge(
                 latest["change_risk_5d"],
-                list(latest["top_drivers"]),
+                None,
                 lo=latest.get("risk_lo"),
                 hi=latest.get("risk_hi"),
                 regime=str(latest["regime"]),
@@ -337,221 +372,19 @@ for col, p in zip(cols, PAIRS, strict=True):
         + ui.consensus_meter(
             latest.get("agreement"),
             {k: latest.get(k) for k in ("vote_hmm", "vote_bocpd", "vote_vol")},
-            latest.get("consensus_text"),
+            None,
+        )
+        + (
+            f'<div class="fx-kv" style="margin-top:6px"><span>siren</span><span class="fx-num" style="color:{ui.siren_color(float(latest["anomaly_pct"]))}">{float(latest["anomaly_pct"]):.0f}/100</span></div>'
+            if pd.notna(latest.get("anomaly_pct"))
+            else ""
         )
         + ui.narration(narration)
     )
     with col:
         ui.card(body)
 
-# --------------------------------------------------------------------------------------
-# main panel: close with regime bands (cut at as_of)
-# --------------------------------------------------------------------------------------
-g = prices[prices["pair"] == pair].sort_values("date")
-runs = regime_runs(str(REGIMES_PATH), _mtime(REGIMES_PATH), pair)
-runs = runs[runs["start"] <= as_of].copy()
-runs["end"] = runs["end"].clip(upper=as_of)
-legend = " ".join(ui.regime_pill(r) for r in REGIME_ORDER)
-sel_g = regimes[regimes["pair"] == pair].sort_values("date")
-sel = sel_g.iloc[-1] if len(sel_g) else None
-if sel is not None and pair in api_latest:
-    sel = pd.Series(
-        {**sel.to_dict(), **{k: v for k, v in api_latest[pair].items() if k in sel.index}}
-    )
-orb_col, title_col = st.columns([1, 5], vertical_alignment="center")
-# the regime orb: a display of the same numbers as the card (regime, change risk, siren);
-# the keyed container is a CSS hook (hidden on phones, where it would only push the chart down)
-with orb_col, st.container(key="fx_orb"):
-    if sel is not None:
-        orb.render(
-            str(sel["regime"]),
-            float(sel.get("change_risk_5d", 0.0) or 0.0),
-            float(sel.get("anomaly_pct", 0.0) or 0.0),
-            size=150,
-            pair=pair,
-        )
-with title_col:
-    st.markdown(
-        f'<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 -4px 2px">'
-        f'<span style="font-weight:600">{UNI.display(pair)} — close with filtered regime bands{" · as of " + as_of.strftime("%Y-%m-%d") if time_machine else ""}</span><span>{legend}</span></div>',
-        unsafe_allow_html=True,
-    )
-fig = go.Figure()
-fig.add_trace(
-    go.Scatter(
-        x=g["date"],
-        y=g["close"],
-        mode="lines",
-        name="close",
-        line=dict(color=ui.TEXT, width=1.1),
-        hovertemplate="%{x|%Y-%m-%d}<br>%{y}<extra></extra>",
-    )
+ui.footer(
+    DISCLAIMER,
+    "· Risk information, never direction forecasts. Details per market on the Pairs page; the record on Proof.",
 )
-shapes = [
-    dict(
-        type="rect",
-        xref="x",
-        yref="paper",
-        x0=r.start,
-        x1=r.end,
-        y0=0,
-        y1=1,
-        fillcolor=ui.REGIME_COLORS[r.regime],
-        opacity=0.28,
-        line_width=0,
-        layer="below",
-    )
-    for r in runs.itertuples(index=False)
-]
-if len(g) and g["date"].min() < OOS_START <= as_of:
-    shapes.append(
-        dict(
-            type="line",
-            xref="x",
-            yref="paper",
-            x0=OOS_START,
-            x1=OOS_START,
-            y0=0,
-            y1=1,
-            line=dict(color=ui.MUTED, width=1, dash="dash"),
-        )
-    )
-annotations = (
-    [
-        dict(
-            x=OOS_START,
-            y=1.02,
-            xref="x",
-            yref="paper",
-            text="out-of-sample →",
-            showarrow=False,
-            font=dict(color=ui.MUTED, size=11),
-            xanchor="left",
-        )
-    ]
-    if len(g) and g["date"].min() < OOS_START <= as_of
-    else []
-)
-if time_machine:
-    shapes.append(
-        dict(
-            type="line",
-            xref="x",
-            yref="paper",
-            x0=as_of,
-            x1=as_of,
-            y0=0,
-            y1=1,
-            line=dict(color=ui.REGIME_COLORS["chop"], width=1.5),
-        )
-    )
-    annotations.append(
-        dict(
-            x=as_of,
-            y=1.02,
-            xref="x",
-            yref="paper",
-            text="as of",
-            showarrow=False,
-            font=dict(color=ui.REGIME_COLORS["chop"], size=11),
-            xanchor="right",
-        )
-    )
-fig.update_layout(
-    template=ui.PLOTLY_TEMPLATE,
-    shapes=shapes,
-    height=430,
-    margin=dict(l=40, r=20, t=30, b=40),
-    annotations=annotations,
-    xaxis=dict(
-        rangeselector=dict(
-            buttons=[
-                dict(count=1, label="1y", step="year", stepmode="backward"),
-                dict(count=3, label="3y", step="year", stepmode="backward"),
-                dict(step="all", label="max"),
-            ],
-            bgcolor=ui.SURFACE,
-            activecolor=ui.BORDER,
-            bordercolor=ui.BORDER,
-            font=dict(color=ui.TEXT),
-        ),
-    ),
-    yaxis=dict(
-        fixedrange=False,
-        type="log" if UNI.name == "crypto" else "linear",
-        dtick="D2" if UNI.name == "crypto" else None,
-        tickformat=",.5~g",
-    ),
-    showlegend=False,
-)
-st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
-
-# --------------------------------------------------------------------------------------
-# regime anatomy (out of sample, full history — a property of the model, not of the as-of date)
-# --------------------------------------------------------------------------------------
-an = anatomy(
-    str(REGIMES_PATH),
-    _mtime(REGIMES_PATH),
-    str(PRICES_PATH),
-    _mtime(PRICES_PATH),
-    pair,
-    UNI.val_start,
-    UNI.trading_days,
-)
-an_html = ui.html_table(
-    an,
-    {
-        "share %": "{:.1f}",
-        "mean run (d)": "{:.0f}",
-        "ann. vol %": "{:.1f}",
-        "mean ret (bp)": "{:+.1f}",
-        "worst dd %": "{:.1f}",
-    },
-)
-for rname in REGIME_ORDER:
-    an_html = an_html.replace(f"<td>{rname}</td>", f"<td>{ui.regime_pill(rname)}</td>")
-ui.card(
-    f'<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">Out-of-sample since {html.escape(UNI.val_start)} (full history, not the as-of view) — how each label has behaved once the model could no longer see the data. Regimes describe conditions, not direction.</div>{an_html}',
-    title=f"Regime anatomy — {UNI.display(pair)}",
-)
-
-# --------------------------------------------------------------------------------------
-# anomaly siren
-# --------------------------------------------------------------------------------------
-if "anomaly_pct" in regimes.columns:
-    st.markdown(
-        '<div style="font-weight:600;margin:6px 0 8px 2px">Anomaly siren — how unlike a calm day is today?</div>',
-        unsafe_allow_html=True,
-    )
-    scols = st.columns(len(PAIRS))
-    for col, p in zip(scols, PAIRS, strict=True):
-        gs = regimes[regimes["pair"] == p].sort_values("date")
-        if gs.empty:
-            continue
-        latest = gs.iloc[-1]
-        two_years = gs[gs["date"] >= gs["date"].max() - pd.DateOffset(years=2)]
-        body = ui.siren_dial(latest["anomaly_pct"], UNI.display(p)) + ui.sparkline_svg(
-            two_years["anomaly_pct"], ui.siren_color(latest["anomaly_pct"]), width=300, height=40
-        )
-        body += (
-            '<div class="fx-kv"><span>2-year anomaly percentile</span><span class="fx-num">'
-            + f'{two_years["anomaly_pct"].iloc[-1]:.0f}'
-            + "</span></div>"
-        )
-        with col:
-            ui.card(body)
-    loud = (
-        regimes[regimes["pair"] == pair]
-        .nlargest(8, "anomaly_score")[["date", "regime", "anomaly_score", "anomaly_pct"]]
-        .copy()
-    )
-    loud["date"] = loud["date"].dt.strftime("%Y-%m-%d")
-    loud = loud.rename(columns={"anomaly_score": "score", "anomaly_pct": "percentile"})
-    ui.card(
-        '<div class="fx-muted" style="font-size:0.82rem;margin-bottom:8px">The days the autoencoder found hardest to reconstruct — history the model never learnt as "normal". Detection only: nothing here predicts.</div>'
-        + ui.html_table(loud, {"score": "{:.2f}", "percentile": "{:.1f}"}),
-        title=f"Loudest days in history — {UNI.display(pair)}"
-        + (f" (up to {as_of:%Y-%m-%d})" if time_machine else ""),
-    )
-
-ui.footer(DISCLAIMER, "· Regimes are filtered (causal) HMM states; see Methodology.")

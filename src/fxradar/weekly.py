@@ -28,6 +28,7 @@ from xml.sax.saxutils import escape as xml_escape
 import pandas as pd
 
 from fxradar import config, narrate
+from fxradar import tokens as tk
 
 log = logging.getLogger(__name__)
 
@@ -50,21 +51,18 @@ REGIME_ORDER = ["calm", "trend", "chop", "crisis"]
 LIGHT_ORDER = ["hedge", "wait", "ladder"]
 
 # The e-mail HTML palette (BRIEF rule 8, light variant). ONE dict, moved to tokens.json later.
-LIGHT_TOKENS = {
-    "bg": "#FFFFFF",
-    "card": "#F4F6FA",
-    "line": "#DCE2EC",
-    "text": "#0E1420",
-    "muted": "#3C4858",
-    "accent": "#7FD1C9",
-    "calm": "#3ECF8E",
-    "trend": "#4DA3FF",
-    "chop": "#F5B942",
-    "crisis": "#FF5C5C",
+LIGHT_TOKENS = {  # the light (e-mail) variant from design/tokens.json — no hex literals here
+    "bg": tk.LIGHT["bg"],
+    "card": tk.LIGHT["card"],
+    "line": tk.LIGHT["line"],
+    "text": tk.LIGHT["text"],
+    "muted": tk.LIGHT["text_secondary"],
+    "accent": tk.ACCENT,
+    **tk.REGIME_COLORS,
 }
-FONT_UI = "'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-FONT_DISPLAY = "'Space Grotesk', 'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, sans-serif"
-FONT_MONO = "'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace"
+FONT_UI = tk.FONT_UI
+FONT_DISPLAY = tk.FONT_DISPLAY
+FONT_MONO = tk.FONT_MONO
 
 # Every user-facing sentence lives here so the direction-language lint has one place to look
 # (the test also scans the whole module source, so nothing can hide outside this dict).

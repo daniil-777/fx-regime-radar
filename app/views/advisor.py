@@ -95,7 +95,7 @@ ui.mobile_bar(UNI, PAIRS)
 if time_machine:
     label = episode if not episode.startswith("today") else f"viewing as of {snap['as_of']}"
     st.markdown(
-        f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:10px 16px;margin-bottom:12px"><span style="color:{ui.REGIME_COLORS["chop"]};font-weight:600">Time machine — {html.escape(label)}.</span> <span class="fx-muted">All numbers below were computable on {html.escape(snap["as_of"])}.</span></div>',
+        f'<div class="fx-card" style="border-color:{ui.REGIME_COLORS["chop"]}66;padding:10px 16px;margin-bottom:12px"><span style="color:{ui.REGIME_COLORS["chop"]};font-weight:500">Time machine — {html.escape(label)}.</span> <span class="fx-muted">All numbers below were computable on {html.escape(snap["as_of"])}.</span></div>',
         unsafe_allow_html=True,
     )
 oc = ui.stability_color(snap["overall_stability"])
@@ -132,8 +132,8 @@ ui.kpi_strip(
 
 # ---- what this is / is not --------------------------------------------------------------------
 st.markdown(
-    '<div class="fx-card" style="padding:12px 16px"><span style="font-weight:600">What you get here.</span> '
-    '<span class="fx-muted">A stability score (0–100) per market, how long regimes like today\'s usually last, and a <b style="color:#E7ECF4">risk budget</b>: the share of your own normal position size the models justify right now — with the reasons. '
+    '<div class="fx-card" style="padding:12px 16px"><span style="font-weight:500">What you get here.</span> '
+    '<span class="fx-muted">A stability score (0–100) per market, how long regimes like today\'s usually last, and a <b>risk budget</b>: the share of your own normal position size the models justify right now — with the reasons. '
     "What you never get: a direction. No buy, no sell, no “this will go up”. The models describe conditions; sizing is where that is useful, and it is the only place we let them speak.</span></div>",
     unsafe_allow_html=True,
 )
@@ -150,14 +150,14 @@ for col, m in zip(cols, markets.values(), strict=False):
     d = m["durability"]
     reasons = "".join(f'<li style="margin:2px 0">{html.escape(r)}</li>' for r in rb["reasons"])
     body = (
-        f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600;font-size:1.05rem">{html.escape(m["label"])}</span>{ui.regime_pill(m["regime"])}</div>'
+        f'<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500;font-size:1.05rem">{html.escape(m["label"])}</span>{ui.regime_pill(m["regime"])}</div>'
         f'<div style="display:flex;align-items:center;gap:14px;margin-top:6px">{ui.gauge_svg(m["stability"], 110, m["stability_word"])}'
         f'<div style="font-size:0.82rem"><div class="fx-muted">stability</div><div class="fx-num" style="font-size:1.1rem;color:{ui.stability_color(m["stability"])}">{m["stability"]:.0f}/100</div>'
         f'<div class="fx-muted" style="margin-top:6px">confidence {m["regime_prob"]:.0%} · change risk {m["change_risk_5d"]:.0%} · siren {m["anomaly_pct"]:.0f}</div></div></div>'
         f'<div class="fx-kv" style="margin-top:8px"><span>durability</span><span class="fx-num">day {d["days_in_regime"]}'
         + (f' of ~{d["typical_days"]:.0f} typical' if d.get("typical_days") else "")
         + "</span></div>"
-        f'<div class="fx-kv" style="margin-top:10px"><span style="font-weight:600">risk budget</span><span class="fx-num" style="font-weight:600;color:{ui.risk_color(1 - rb["budget"]) if rb["budget"] < 1 else ui.REGIME_COLORS["calm"]}">{rb["budget"]:.0%} of normal size</span></div>'
+        f'<div class="fx-kv" style="margin-top:10px"><span style="font-weight:500">risk budget</span><span class="fx-num" style="font-weight:500;color:{ui.risk_color(1 - rb["budget"]) if rb["budget"] < 1 else ui.REGIME_COLORS["calm"]}">{rb["budget"]:.0%} of normal size</span></div>'
         f'<div class="fx-bar"><div style="width:{100 * rb["budget"]:.1f}%;background:{color}"></div></div>'
         f'<ul class="fx-muted" style="font-size:0.78rem;padding-left:16px;margin:6px 0 0 0">{reasons}</ul>'
         f'<div class="fx-kv" style="margin-top:8px"><span>allocation weight</span><span class="fx-num">{m.get("allocation_weight", 0):.0%}</span></div>'

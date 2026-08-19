@@ -26,8 +26,16 @@ def test_dashboard_renders_with_disclaimer_in_sidebar_and_footer() -> None:
     assert any(config.DISCLAIMER in m.value for m in at.markdown)  # footer
     values = [s.value for s in at.sidebar.selectbox]
     assert values[:2] == ["fx", "EURUSD"] and values[2] == "today (latest data)"
-    assert len(at.get("plotly_chart")) == 1
+    text = " ".join(m.value for m in at.markdown)
+    assert "current condition" in text and "verify independently" in text  # banner + trust strip
     assert elapsed < 8.0  # cold import + first paint in CI; ~1s locally
+
+
+def test_pairs_page_renders_chart_with_bands() -> None:
+    at = _run("app/views/pairs.py")
+    assert not at.exception, at.exception
+    assert len(at.get("plotly_chart")) == 1
+    assert any(config.DISCLAIMER in m.value for m in at.markdown)
 
 
 def test_scenario_explorer_time_machine_and_universe_switch() -> None:

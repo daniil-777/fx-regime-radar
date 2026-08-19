@@ -18,17 +18,18 @@ import pandas as pd
 
 from fxradar import config
 from fxradar import hmm_model as hm
+from fxradar import tokens as tk
 
 log = logging.getLogger(__name__)
 
 OOS_START = config.VAL_START  # 2017-01-01: nothing after this date touched the HMM fit
-REGIME_COLORS = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
+REGIME_COLORS = tk.REGIME_COLORS
 DARK = {
-    "bg": "#0B0F17",
-    "surface": "#131A26",
-    "border": "#232D3F",
-    "text": "#E7ECF4",
-    "muted": "#8A94A6",
+    "bg": tk.BG,
+    "surface": tk.SURFACE,
+    "border": tk.BORDER,
+    "text": tk.TEXT,
+    "muted": tk.MUTED,
 }
 ANN = float(config.TRADING_DAYS)
 

@@ -104,16 +104,40 @@ fx-regime-radar/
 - report.json: {pair: {text, generated_at, source: "llm"|"template"}}.
 - backtests.parquet: date, strategy, pair, pos, ret_gross, ret_net, cost_bps.
 
-## Design system (the app must not look like default Streamlit)
+## Design system (the app must not look like default Streamlit) — phase 31, trust-first
 
-- Dark theme. Background #0B0F17, surface #131A26, border #232D3F,
-  text #E7ECF4, muted #8A94A6.
-- Regime colors: calm #34D399, trend #60A5FA, chop #FBBF24, crisis #F87171.
-  Use these everywhere: pills, timeline bands, gauges.
-- Fonts: Inter for UI, JetBrains Mono for numbers (Google Fonts import in CSS).
-- Hide Streamlit chrome (menu, footer, deploy button) via CSS. Card-based layout:
-  rounded 12px, 1px border, generous padding. One accent per element, no rainbow.
-- Plotly: single custom dark template defined once in app/ui.py and reused.
+SINGLE SOURCE OF TRUTH: `design/tokens.json`. `fxradar.tokens` loads it; `app/ui.py`, the Plotly
+template, the matplotlib report figures, the orb presets, the e-mail report and `widget.js` derive
+from it; `scripts/gen_tokens.py` (`make tokens`) regenerates `.streamlit/config.toml`,
+`design/tokens.css` and the Rust static tokens. `make lint-ui` (in CI) FAILS on any hex literal in
+app/, src/, scripts/ or pipelines/ — every future phase obeys without being told. Target:
+`design/design-target-mockup.html` — match it, don't reinterpret it.
+
+- Surfaces: nimbus #0E1420 (app) · front #151D2E (cards, sidebar) · line rgba(255,255,255,.08)
+  (hex twin #1F2838 for SVG/Plotly strokes) · grid rgba(255,255,255,.06).
+- Text: #E8ECF4 primary · #9AA6B8 secondary · #7B89A1 dim (mockup's #5C6980 lifted for 4.5:1 —
+  tone adjusted, meaning unchanged). Contrast ≥ 4.5:1 for every text/surface pair (tested).
+- Regime colours are DATA AND STATUS ONLY, never decoration: calm #3ECF8E, trend #4DA3FF,
+  chop #F5B942, crisis #FF5C5C. Regime is never colour-only: word + dot. Link/action accent
+  beacon #7FD1C9. Light variant (e-mail report only) in tokens.json.
+- Type at the one Google Fonts import: Space Grotesk (display — regime words, page titles only),
+  IBM Plex Sans (UI/body), IBM Plex Mono for EVERY number, hash and ledger value with tabular
+  figures ('tnum'); numbers right-aligned in tables. No third family, no weight above 500.
+- Signature structures (in app/ui.py, used on every surface): the CONDITION BANNER (eyebrow with
+  pair + data-through, the regime word huge in its colour, one metrics line — change risk ± band,
+  siren — the quiet 90-day risk trace with shaded band, the three-dot consensus) and the TRUST STRIP
+  (forward-test day count, live Brier vs frozen, coverage vs target, chain head + check, "verify
+  independently"), never below the fold. If anything competes with the banner, quiet the element.
+- Motion budget: the orb is the ONE ambient element; the only other motion is the live dot's slow
+  pulse; both honour prefers-reduced-motion. No third animation, ever. No gradients, glassmorphism,
+  glow or shadow soup. No emoji as UI. Cards: 12 px radius, 1 px hairline, generous padding.
+- Plotly: one template (`ui.PLOTLY_TEMPLATE`), transparent background, 6 %-white gridlines, regime
+  band shading via `ui.regime_bands`, semantic colours only.
+- IA: Radar = Overview · Pairs · Treasury · Storms · Proof; Analysis = Advisor · Regime space ·
+  Probability space · Strategy lab · Arcade; About = Methodology · Weekly report · Metrics. Every
+  widget answers "what does the user decide with this?" Empty/loading/error states use `ui.state`:
+  say what happened and what to do, never apologise, never vague. Responsive to 360 px; visible
+  keyboard focus.
 
 ## Coding standards
 
