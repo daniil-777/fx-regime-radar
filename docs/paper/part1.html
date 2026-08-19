@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FX Regime Radar — A weather station for currency markets</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nimbus:#0E1420; --front:#151D2E; --line:rgba(255,255,255,0.08);
+  --ink:#0E1420; --ink2:#3C4858; --ink3:#6B7785; --paper:#FFFFFF; --card:#F4F6FA; --rule:#E1E6EE;
+  --calm:#3ECF8E; --trend:#4DA3FF; --chop:#F5B942; --crisis:#FF5C5C; --beacon:#7FD1C9; --teal:#1C7F76;
+  --sans:'IBM Plex Sans',system-ui,sans-serif; --serif:'IBM Plex Serif',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace; --disp:'Space Grotesk',var(--sans);
+}
+@page { size: A4; margin: 17mm 16mm 19mm 16mm; @bottom-right { content: counter(page); font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; color: #6B7785; } @bottom-left { content: "FX Regime Radar · a weather station for currency markets"; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; color: #6B7785; } }
+@page cover { margin: 0; @bottom-right { content: none; } @bottom-left { content: none; } }
+@page dark { margin: 0; @bottom-right { content: none; } @bottom-left { content: none; } }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:10.4pt;line-height:1.55}
+p{margin:0 0 8pt 0;text-align:justify;hyphens:auto}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:500;letter-spacing:-0.005em;color:var(--ink);page-break-after:avoid}
+h2{font-size:20pt;margin:0 0 10pt 0;line-height:1.15}
+h3{font-size:13pt;margin:16pt 0 6pt 0;color:var(--ink)}
+h4{font-size:10.8pt;margin:12pt 0 4pt 0;font-family:var(--sans);font-weight:500}
+em{font-style:italic}
+strong{font-weight:500}
+a{color:var(--teal);text-decoration:none}
+code,.mono{font-family:var(--mono);font-size:0.92em;font-feature-settings:'tnum'}
+code{background:var(--card);padding:0 3px;border-radius:3px}
+.num{font-family:var(--mono);font-feature-settings:'tnum'}
+.small{font-size:8.8pt;color:var(--ink2)}
+.muted{color:var(--ink2)}
+.dim{color:var(--ink3)}
+ul,ol{margin:0 0 8pt 16pt}
+li{margin-bottom:3pt}
+.page{page-break-before:always}
+.avoid{page-break-inside:avoid}
+/* cover */
+.cover{page:cover;width:210mm;height:297mm;overflow:hidden;background:var(--nimbus);color:#E8ECF4;padding:18mm 18mm 14mm 18mm;position:relative;page-break-after:always;display:flex;flex-direction:column;justify-content:space-between}
+.cover .eyebrow{font-family:var(--mono);font-size:9pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA6B8}
+.cover h1{font-family:var(--disp);font-size:40pt;line-height:1.02;color:#E8ECF4;margin:7mm 0 5mm 0;font-weight:500}
+.cover h1 span{color:var(--calm)}
+.cover .sub{font-size:11.5pt;color:#9AA6B8;max-width:150mm;line-height:1.45}
+.cover .meta{font-family:var(--mono);font-size:8.6pt;color:#9AA6B8;line-height:1.7}
+.cover .meta b{color:#E8ECF4;font-weight:500}
+.cover .strip{border-top:1px solid var(--line);padding-top:5mm;display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.2pt;color:#9AA6B8}
+.cover .strip .ok{color:var(--calm)}
+.cover .pills{display:flex;gap:8px;margin-top:5mm}
+.cover .pill{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:8.5pt;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;color:#E8ECF4}
+.cover .pill i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.cover img{width:100%;max-height:108mm;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);display:block}
+/* dark chapter opener */
+.opener{page:dark;width:210mm;min-height:297mm;background:var(--nimbus);color:#E8ECF4;padding:28mm 20mm;page-break-before:always;page-break-after:always;display:flex;flex-direction:column;justify-content:flex-end}
+.opener .part{font-family:var(--mono);font-size:9pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA6B8}
+.opener h1{font-family:var(--disp);font-size:40pt;line-height:1.05;margin:8mm 0 6mm 0;color:#E8ECF4;font-weight:500}
+.opener h1 span{display:block}
+.opener p{color:#9AA6B8;font-size:12pt;max-width:150mm;text-align:left;hyphens:none}
+.opener .chapters{margin-top:10mm;font-family:var(--mono);font-size:9pt;color:#9AA6B8;columns:2;column-gap:12mm}
+.opener .chapters div{margin-bottom:4px}
+.opener .chapters b{color:#E8ECF4;font-weight:500}
+/* running chapter head */
+.chap{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--rule);padding-bottom:6pt;margin-bottom:12pt}
+.chap .n{font-family:var(--mono);font-size:9pt;color:var(--teal);letter-spacing:0.08em}
+.lead{font-size:11.6pt;color:var(--ink2);font-family:var(--serif);line-height:1.5;margin-bottom:10pt;text-align:left;hyphens:none}
+/* figures */
+figure{margin:10pt 0 12pt 0;page-break-inside:avoid}
+figure.card{background:var(--nimbus);border-radius:10px;padding:8px}
+figure img{width:100%;display:block;border-radius:6px}
+figure.light{background:var(--card);}
+figcaption{font-size:8.6pt;color:var(--ink2);margin-top:6pt;line-height:1.45;text-align:left;hyphens:none}
+figcaption b{color:var(--ink);font-weight:500}
+figure.card figcaption{color:#9AA6B8;padding:2px 4px 0 4px}
+figure.card figcaption b{color:#E8ECF4}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:9pt;margin:6pt 0 10pt 0;page-break-inside:avoid}
+th{text-align:left;font-weight:500;color:var(--ink3);font-size:7.8pt;letter-spacing:0.04em;text-transform:uppercase;padding:5px 7px;border-bottom:1px solid var(--ink)}
+td{padding:5px 7px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-feature-settings:'tnum';text-align:right;vertical-align:top}
+td:first-child,th:first-child{text-align:left;font-family:var(--sans)}
+th:not(:first-child){text-align:right}
+td.t{font-family:var(--sans);text-align:left}
+tr.hl td{background:var(--card)}
+/* callouts */
+.box{border-left:3px solid var(--teal);background:var(--card);padding:8pt 11pt;margin:10pt 0;border-radius:0 8px 8px 0;page-break-inside:avoid;font-size:9.6pt}
+.box .t{font-family:var(--mono);font-size:7.8pt;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);margin-bottom:3pt}
+.box p{margin-bottom:4pt;text-align:left;hyphens:none}
+.box.honest{border-left-color:var(--crisis)} .box.honest .t{color:#C0392B}
+.box.interview{border-left-color:var(--trend)} .box.interview .t{color:#2B6CB0}
+.box.beginner{border-left-color:var(--chop)} .box.beginner .t{color:#9A6B00}
+.box.rule{border-left-color:var(--ink)} .box.rule .t{color:var(--ink)}
+.math{font-family:var(--serif);font-style:italic;background:var(--card);padding:7pt 11pt;border-radius:6px;margin:6pt 0 9pt 0;font-size:10.2pt;text-align:left;hyphens:none;page-break-inside:avoid}
+.math .n{font-style:normal;font-family:var(--mono);font-size:8.5pt;color:var(--ink3);float:right}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6pt 0 8pt 0}
+.kpi{background:var(--card);border-radius:8px;padding:6px 10px}
+.kpi .l{font-size:7.6pt;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--mono);font-size:15pt;font-weight:500;margin-top:2px}
+.kpi .s{font-size:8pt;color:var(--ink2);font-family:var(--mono)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:middle;margin-right:4px}
+.pipe{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;margin:8pt 0 10pt 0}
+.pipe .s{background:var(--nimbus);color:#E8ECF4;border-radius:8px;padding:7px 9px;font-size:8.2pt;flex:1 1 90px;min-width:90px;border-top:3px solid var(--calm)}
+.pipe .s b{display:block;font-family:var(--mono);font-size:8.4pt;font-weight:500;margin-bottom:2px}
+.pipe .s span{color:#9AA6B8;font-size:7.8pt;line-height:1.35;display:block}
+.pipe .s.t{border-top-color:var(--trend)} .pipe .s.c{border-top-color:var(--chop)} .pipe .s.r{border-top-color:var(--crisis)} .pipe .s.b{border-top-color:var(--beacon)}
+.chain{display:flex;gap:6px;align-items:center;margin:8pt 0;flex-wrap:wrap}
+.chain .blk{background:var(--nimbus);color:#E8ECF4;border-radius:8px;padding:7px 9px;font-family:var(--mono);font-size:7.8pt;line-height:1.45;min-width:150px}
+.chain .blk b{color:var(--calm);font-weight:500}
+.chain .arr{color:var(--ink3);font-size:14pt}
+.toc{columns:2;column-gap:12mm;font-size:8.2pt;line-height:1.3}
+.toc div{display:flex;justify-content:space-between;border-bottom:1px dotted var(--rule);padding:1.5px 0;break-inside:avoid}
+.toc .n{font-family:var(--mono);color:var(--teal);margin-right:8px;min-width:22px;display:inline-block}
+.toc .p{font-family:var(--mono);color:var(--ink3)}
+.toc .part{font-family:var(--mono);font-size:7.4pt;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin:5pt 0 1pt 0;border:none;display:block}
+.glossary dt{font-weight:500;margin-top:5pt} .glossary dd{margin-left:0;color:var(--ink2);font-size:9.4pt}
+.qa{margin:6pt 0} .qa .q{font-weight:500;margin-top:7pt} .qa .a{color:var(--ink2);margin-left:0;text-align:left;hyphens:none}
+.timeline{font-size:9pt;font-family:var(--mono)} .timeline div{display:flex;gap:10px;border-bottom:1px solid var(--rule);padding:3px 0} .timeline b{min-width:70px;color:var(--teal);font-weight:500} .timeline span{font-family:var(--sans)}
+.footnote{font-size:8.4pt;color:var(--ink3);border-top:1px solid var(--rule);padding-top:5pt;margin-top:10pt}
+</style>
+</head>
+<body>
+
+<!-- ===================================================== COVER -->
+<section class="cover">
+  <div>
+    <div class="eyebrow">Technical report · v2.21 · August 2026</div>
+    <h1>FX Regime Radar<br><span>A weather station</span><br>for currency markets.</h1>
+    <p class="sub">How a beginner built, from scratch and in the open, a production-style system that nowcasts the regime of EUR/USD, USD/CHF and GBP/USD, forecasts the risk that the regime changes, flags anomalous days, refuses to predict direction — and then proves itself in public, one sealed forecast a day.</p>
+    <div class="pills">
+      <span class="pill"><i style="background:var(--calm)"></i>calm</span>
+      <span class="pill"><i style="background:var(--trend)"></i>trend</span>
+      <span class="pill"><i style="background:var(--chop)"></i>chop</span>
+      <span class="pill"><i style="background:var(--crisis)"></i>crisis</span>
+    </div>
+  </div>
+  <div>
+    <img src="../screenshots/overview_v3.png" alt="The condition banner of the dashboard">
+  </div>
+  <div>
+    <div class="meta">
+      <b>Hidden Markov regimes · XGBoost change risk with SHAP · autoencoder siren · Bayesian online changepoints · Mondrian conformal bands · hash-chained live ledger · Rust serving wall · treasury traffic light · central-bank tone index</b><br>
+      32 build phases · 273 automated tests · Python research side, Rust serving side · 2005 → today, refreshed every weekday
+    </div>
+    <div class="strip" style="margin-top:6mm">
+      <span>frozen test PR-AUC 0.548 · Brier 0.102 · band coverage 91.6 % · chain <span class="ok">✓ verified</span></span>
+      <span>Educational tool. Not investment advice.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== ABSTRACT + TOC -->
+<section>
+  <div class="chap"><span class="n">ABSTRACT</span><h2>What this document is, and who it is for</h2></div>
+  <p class="lead" style="font-size:10.6pt;line-height:1.45">Most retail "AI trading" projects promise to predict prices. This one refuses to. FX Regime Radar describes <em>conditions</em> — is the market calm, trending, choppy or in crisis; how likely is that to change within a week; does today look like anything the models have seen — and it keeps an un-fakeable public record of what it said before the outcomes existed. It was built by a motivated beginner as a hiring-grade portfolio project for quantitative finance and machine-learning roles, and it is written up here the way a research note and a product brief would be: methods with their mathematics, results with their failures, the engineering that makes the numbers reproducible, and the design that makes them legible.</p>
+  <p>Three audiences are addressed at once. <strong>Interviewers</strong> in quant research, risk, data science and software engineering will find every design decision defended, every number traced to a committed artifact, and the honest places where the system does not work. <strong>Practitioners</strong> — treasurers, fiduciaries, FX desks — will find a tool that answers one recurring question (<em>how much adverse movement should I budget for this week, and is now a defensible moment to act?</em>) without ever pretending to know which way a rate will go. <strong>Beginners</strong> who want to build something similar will find the principles that kept a first project from becoming a leaky backtest — causality, time-ordered splits, net-of-cost evaluation, calibrated probabilities, and a refusal to score the past with models that have read the future.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Frozen test · PR-AUC</div><div class="v">0.548</div><div class="s">vs 0.431 logistic · 0.162 base rate</div></div>
+    <div class="kpi"><div class="l">Frozen test · Brier</div><div class="v">0.102</div><div class="s">vs 0.136 base rate · calibrated</div></div>
+    <div class="kpi"><div class="l">90 % band coverage</div><div class="v">91.6 %</div><div class="s">n = 5,922 test days · per regime 90–93 %</div></div>
+    <div class="kpi"><div class="l">Serving latency</div><div class="v">0.43 ms</div><div class="s">Rust, full path from raw prices</div></div>
+  </div>
+  <div class="box rule"><div class="t">The one sentence to remember</div><p>The models supply <em>how much risk</em>; they never supply <em>which way</em>. Everything else in this report — the filtered probabilities, the embargoed splits, the cost-aware backtests, the conformal bands, the hash-chained ledger — exists to make that one sentence checkable by a stranger.</p></div>
+
+  <h3>Contents</h3>
+  <div class="toc">
+    <span class="part">Part I — The idea</span>
+    <div><span><span class="n">01</span>Why a weather station, not a fortune teller</span></div>
+    <div><span><span class="n">02</span>Principles that were not negotiable</span></div>
+    <div><span><span class="n">03</span>Data and features, causally</span></div>
+    <span class="part">Part II — The models</span>
+    <div><span><span class="n">04</span>Nowcasting the regime: a hidden Markov model, filtered</span></div>
+    <div><span><span class="n">05</span>Forecasting change risk: XGBoost, SHAP, calibration</span></div>
+    <div><span><span class="n">06</span>The siren: an autoencoder that remembers calm</span></div>
+    <div><span><span class="n">07</span>A second opinion: Bayesian online changepoints and consensus</span></div>
+    <div><span><span class="n">08</span>Honest error bars: Mondrian conformal intervals</span></div>
+    <div><span><span class="n">09</span>Narration with guardrails</span></div>
+    <span class="part">Part III — Proof, not promises</span>
+    <div><span><span class="n">10</span>The strategy layer and the stress lab (the honest part)</span></div>
+    <div><span><span class="n">11</span>The live ledger, the drift monitor and the proof page</span></div>
+    <div><span><span class="n">12</span>Calendar, context and the challenger</span></div>
+    <div><span><span class="n">13</span>Reading the central banks — and the test we refused to run</span></div>
+    <div><span><span class="n">14</span>Treasury mode: hedge, wait, ladder</span></div>
+    <div><span><span class="n">15</span>Storm replays: three crises, as the radar would have seen them</span></div>
+    <span class="part">Part IV — Engineering, design, market</span>
+    <div><span><span class="n">16</span>The pipeline, the wall and the Rust service</span></div>
+    <div><span><span class="n">17</span>A trust-first interface</span></div>
+    <div><span><span class="n">18</span>Go-to-market: a free weekly report, three tiers, five partners</span></div>
+    <div><span><span class="n">19</span>Limitations and roadmap</span></div>
+    <div><span><span class="n">20</span>Interview companion: questions, answers, critiques</span></div>
+    <div><span><span class="n">A</span>Glossary · reproducibility · repository tour</span></div>
+  </div>
+</section>
+
+<!-- ===================================================== PART I OPENER -->
+<section class="opener">
+  <div class="part">Part I</div>
+  <h1><span>The idea.</span><span style="color:var(--calm)">Conditions,</span><span>not direction.</span></h1>
+  <p>A sailor does not ask the forecaster which way the next wave will break. She asks whether a storm is coming, how confident the station is, and whether the instruments have seen this sky before. That is the whole product.</p>
+  <div class="chapters">
+    <div><b>01</b> Why a weather station, not a fortune teller</div>
+    <div><b>02</b> Principles that were not negotiable</div>
+    <div><b>03</b> Data and features, causally</div>
+  </div>
+</section>
+
+<!-- ===================================================== CH 01 -->
+<section>
+  <div class="chap"><span class="n">CHAPTER 01</span><h2>Why a weather station, not a fortune teller</h2></div>
+  <p class="lead">Currency markets are the most liquid markets in the world and, at a daily horizon, among the least predictable in direction. What <em>is</em> predictable — or at least describable — is the texture of the market: whether volatility is low and drift quiet, whether a move is persisting, whether prices are flailing without direction, or whether the market is in outright crisis. Those textures cluster in time, they carry different risks for anyone holding foreign-currency exposure, and they can be estimated from data that was available yesterday.</p>
+
+  <h3>1.1 The product in one paragraph</h3>
+  <p>FX Regime Radar runs every weekday at 06:00 UTC. It downloads daily prices for EUR/USD, USD/CHF and GBP/USD, builds nine causal features, asks a four-state hidden Markov model which regime each pair is in <em>right now</em> (using only the forward filter, so no future day leaks into today's label), asks a gradient-boosted classifier how likely the regime is to change within five trading days, asks an autoencoder how unlike a calm day today looks, gets a second opinion from a Bayesian online changepoint detector, wraps the change risk in a per-regime conformal band, writes a hash-chained ledger row <em>before</em> the outcome exists, narrates the numbers in three plain sentences, and publishes a dashboard that a treasurer can read in three seconds from two metres away. A Rust service replays the same mathematics from raw prices in 0.43 milliseconds and refuses to start unless it reproduces 302 golden vectors.</p>
+
+  <h3>1.2 Who buys a weather station</h3>
+  <p>The first customer was imagined concretely: a Swiss SME treasurer with euro and dollar invoicing, a fiduciary firm advising such companies, or a treasury association. These people do not trade; they <em>hedge</em>, and the recurring decision is timing and sizing: lock a larger share of exposure now with a forward, wait and re-check, or ladder the hedge into tranches. A direction forecast is worse than useless to them — it is regulatory exposure. A regime-conditional estimate of how large the adverse weekly move could be, a traffic light that combines it with calendar and consensus, and a public record of how well those estimates have held up: that is a product. Chapter 14 builds it; chapter 18 prices it.</p>
+
+  <h3>1.3 What "from scratch" means here</h3>
+  <p>The author was a motivated beginner. The code base was built phase by phase — thirty-two phases, each with a verify block, a changelog entry, a commit and a version tag — using standard libraries (<code>hmmlearn</code>, <code>xgboost</code>, <code>scikit-learn</code>, <code>shap</code>, <code>plotly</code>, <code>streamlit</code>, <code>axum</code>, <code>onnxruntime</code>) but writing the parts that carry the intellectual weight by hand: the forward filter, the leakage tests, the cost-aware backtest engine with its lag law, the Adams–MacKay changepoint detector, the split-conformal calibration, the hash chain, the Rust feature engine that reproduces pandas bit-for-bit. The point of hand-writing them was not pride; it was that an interviewer can ask "show me the line" and there is a line to show.</p>
+
+  <div class="box beginner"><div class="t">Beginner's note</div><p>If you are starting a similar project: the hardest part is not any single model. It is resisting the urge to peek. Every choice below that looks like pedantry — the five-day embargo, the filtered-not-smoothed probabilities, the test set scored once, the costs charged on turnover with a one-day lag — is a fence against your own future self, who will want to tune one more knob after seeing one more number.</p></div>
+
+  <figure class="card">
+    <img src="fig/f01_regime_timeline.png" alt="Regime timeline for three pairs">
+    <figcaption><b>Figure 1.1 — Twenty-one years of weather.</b> Daily closes of the three pairs with the filtered (causal) regime shaded behind them. The dashed line marks the start of the frozen test set (2019); everything to its right was scored exactly once. Notice that the model does not need to know the names of events: 2008, the 2015 SNB shock (the red spike in USD/CHF), the 2016 referendum, March 2020 and 2022 all surface as regime changes in the data itself.</figcaption>
+  </figure>
+</section>
+
+<!-- ===================================================== CH 02 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 02</span><h2>Principles that were not negotiable</h2></div>
+  <p class="lead">The project has a constitution — a <code>CLAUDE.md</code> file of thirteen "golden rules" that override every other instruction. They were written on day one and never relaxed. They are reproduced here in plain language, because they are the answer to the interview question "how do you know your results are real?"</p>
+
+  <table>
+    <tr><th style="width:40px">#</th><th>Rule</th><th style="text-align:left">Why it exists — and how it is enforced</th></tr>
+    <tr><td class="t">1</td><td class="t"><b>No future data in features.</b> Every feature at day <i>t</i> uses only data ≤ <i>t</i>. HMM outputs are <em>filtered</em>, never smoothed.</td><td class="t">Smoothed posteriors use the whole sample; they look wonderful in backtests and cannot exist in production. Enforced by truncation-invariance tests in every feature module.</td></tr>
+    <tr><td class="t">2</td><td class="t"><b>Time-ordered splits only.</b> Train ≤ 2016, validation 2017–18, test 2019+, five-trading-day embargo at every boundary. The test set is scored once and frozen.</td><td class="t">Labels look five days ahead, so a row just before a boundary would leak the first rows after it. The embargo removes them. Enforced by <code>assign_splits</code> and by reports that print "scored ONCE".</td></tr>
+    <tr><td class="t">3</td><td class="t"><b>Never report accuracy</b> for the forecaster. PR-AUC, precision/recall on transitions, Brier with a calibration plot, always beside base rate, logistic regression and a one-feature rule.</td><td class="t">With a 16 % positive rate, "never changes" scores 84 % accuracy and means nothing.</td></tr>
+    <tr><td class="t">4</td><td class="t"><b>The LLM narrates computed numbers only.</b> JSON in, three sentences out, deterministic template if the API is unavailable.</td><td class="t">A language model that analyses markets from its own memory is both unverifiable and a compliance hazard. Chapter 9.</td></tr>
+    <tr><td class="t">5</td><td class="t"><b>No price-direction prediction anywhere.</b> Regimes, change risk and anomalies — not returns. The strategy layer sizes a fixed mechanical stance; it never chooses the sign.</td><td class="t">Enforced by a direction-word lint on every user-facing template (rise, fall, buy, sell, bullish … are banned words).</td></tr>
+    <tr><td class="t">6</td><td class="t"><b>Every financial calculation has a test</b>, including at least one truncation-invariance test per module.</td><td class="t">273 tests, ~70 s, no network, no API key.</td></tr>
+    <tr><td class="t">7</td><td class="t"><b>Every surface says</b> "Educational tool. Not investment advice."</td><td class="t">Footer, sidebar, README, API JSON, e-mail report, widget.</td></tr>
+    <tr><td class="t">8</td><td class="t"><b>Pipeline writes, app reads.</b> Heavy compute lives in one daily script that writes small artifacts; the dashboard only reads them.</td><td class="t">The app loads in about a second and can never train or download anything.</td></tr>
+    <tr><td class="t">9</td><td class="t"><b>No secrets in code or git.</b></td><td class="t">Everything runs without a key (template fallback); CI is key-free.</td></tr>
+    <tr><td class="t">10</td><td class="t"><b>Finish every phase</b> with the verify block, the changelog and a tagged commit.</td><td class="t">32 phases, tags v0.1.0 → v2.21.0.</td></tr>
+    <tr><td class="t">11</td><td class="t"><b>The wall.</b> Python is research only; the production path is Rust and imports nothing from Python at runtime. A versioned bundle (ONNX + JSON + feature spec + golden vectors + hashed manifest) is the only artifact that crosses. Pickle never crosses.</td><td class="t">The Rust service replays all goldens at startup and refuses to serve on any mismatch (features 1e-8, model outputs 1e-6). Chapter 16.</td></tr>
+    <tr><td class="t">12</td><td class="t"><b>The strategy layer</b> obeys the lag law — a signal formed at close <i>t</i> earns returns from <i>t</i>+1 — and costs scale with volatility and are charged on turnover. Gross never appears without net.</td><td class="t">Proven by the "foresight" test: a strategy given tomorrow's return must still earn nothing from it. Chapter 10.</td></tr>
+    <tr><td class="t">13</td><td class="t"><b>Gamification ethics.</b> Gamify learning and calibration only — never trading frequency, size or risk. The model's probability is revealed only after the user locks their own call.</td><td class="t">The calibration arcade (an earlier phase) follows this; it is mentioned, not featured, here.</td></tr>
+  </table>
+
+  <div class="box interview"><div class="t">Interview lens</div><p>Interviewers rarely ask "did you use XGBoost?". They ask "what did you do about leakage?", "how did you pick the threshold?", "what happens when the model drifts?", "what is the cost of being wrong?". Each rule above is a one-paragraph answer to one of those questions, and each is backed by a test you can run.</p></div>
+</section>
+
+<!-- ===================================================== CH 03 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 03</span><h2>Data and features, causally</h2></div>
+  <p class="lead">Daily OHLC bars from 2005 for three pairs; nine features that any desk would recognise; one cleaning rule that drops rather than fills; and a data contract whose column names are law.</p>
+
+  <h3>3.1 Prices and their quirks</h3>
+  <p>Prices are downloaded from Yahoo Finance (the free source a beginner can reproduce) and cross-validated against the European Central Bank's reference rates through the Frankfurter API for the last three years; a mean absolute deviation above 0.5 % logs a warning, above 2 % aborts the run. Yahoo's daily FX "close" is in effect a start-of-day snapshot of the previous session, which has two consequences worth stating plainly: the overnight term of range-based volatility estimators is nearly zero on this feed (chapter 12), and shock days like 15 January 2015 show up in the <em>range</em> first and in the close-to-close return a day later (chapter 15). Nine corrupted prints — reverting jumps and absurd highs or lows — are <em>dropped</em>, never filled: a filled bar is an invented observation. The in-progress day is excluded so that two runs on the same day produce identical files.</p>
+  <p>As of this report the history spans 2005-03-28 to 2026-08-18: 16,843 price rows, 16,663 feature rows, 9,136 training rows, 1,527 validation rows, 5,925 test rows.</p>
+
+  <h3>3.2 The nine base features</h3>
+  <table>
+    <tr><th>feature</th><th style="text-align:left">definition (annualised with √252 where relevant)</th><th style="text-align:left">what it measures</th></tr>
+    <tr><td class="t">ret_1d</td><td class="t">log(close<sub>t</sub>/close<sub>t−1</sub>)</td><td class="t">today's move</td></tr>
+    <tr><td class="t">vol_20</td><td class="t">20-day std of ret_1d</td><td class="t">current weather — realised vol</td></tr>
+    <tr><td class="t">vol_60</td><td class="t">60-day std of ret_1d</td><td class="t">the season — slower backdrop</td></tr>
+    <tr><td class="t">vol_ratio</td><td class="t">5-day std / vol_60</td><td class="t">a storm front — very recent vol vs the season</td></tr>
+    <tr><td class="t">mom_20</td><td class="t">20-day log return</td><td class="t">persistence of the move (magnitude only is used downstream)</td></tr>
+    <tr><td class="t">rng_hl</td><td class="t">10-day mean of (high − low)/close</td><td class="t">intraday range — the feature that screamed on 15 Jan 2015</td></tr>
+    <tr><td class="t">corr_20</td><td class="t">mean 20-day correlation of this pair's returns with the other two (USD/CHF sign-flipped so all three are "USD-quoted" consistently)</td><td class="t">is the dollar moving everything?</td></tr>
+    <tr><td class="t">ret_5d_abs</td><td class="t">|5-day log return|</td><td class="t">size of the recent move</td></tr>
+    <tr><td class="t">hmm_entropy · days_in_regime · vol_trend</td><td class="t">post-HMM: entropy of the filtered state distribution; run length of the current label; sign of vol_20 − vol_20 ten days ago</td><td class="t">how unsure the regime model is; how old the regime is</td></tr>
+  </table>
+
+  <h3>3.3 The leakage test every module must pass</h3>
+  <p>The single most important test in the repository is also the simplest. Compute the features on the full history; compute them again on the history truncated at some date <i>T</i>; the rows up to <i>T</i> must be <em>bit-for-bit identical</em>. Not "close" — identical. Any rolling window that is centred instead of trailing, any scaler fitted on the full sample, any smoother, any forward fill from the future fails this test immediately. It is applied to the base features, to the HMM outputs, to the BOCPD run lengths, to every one of the 49 extended features, to the central-bank tone features, to the backtest engine and to the replay engine.</p>
+  <div class="math"><span class="n">(3.1)</span>truncation invariance: &nbsp; <b>F</b>(x<sub>1:T</sub>)<sub>[1:T]</sub> = <b>F</b>(x<sub>1:N</sub>)<sub>[1:T]</sub> &nbsp; for every T ≤ N, exactly.</div>
+
+  <h3>3.4 Standardisation is a model, too</h3>
+  <p>A scaler fitted on the whole history knows the future's mean and variance. Every StandardScaler in the project — the HMM's, the logistic baseline's, the extended features' — is fitted on training rows (≤ 2016-12-31) only and frozen with the model. The same discipline applies to the train-only PCA behind the 3-D "landscape" view, to the conformal quantiles (validation only) and to the treasury thresholds (training era only). A reviewer can check this in thirty seconds: every fitted object stores its <code>train_end</code> and the number of rows it was fitted on.</p>
+
+  <div class="box honest"><div class="t">Honesty box</div><p>The free data source is the weakest link. Yahoo's daily FX bars are not exchange prints; they have occasional bad ticks (dropped, never filled) and a start-of-day close convention. For a thesis-grade study one would buy a clean tick-aggregated feed. The methodology does not depend on the source; the numbers do, a little — which is one reason the live ledger, not the backtest, is the headline.</p></div>
+</section>

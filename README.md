@@ -19,6 +19,8 @@ here predicts price direction — by design.
 
 **Live app:** https://fx-regime-radar.streamlit.app · **Code:** https://github.com/daniil-777/fx-regime-radar
 
+> **Technical report (53 pages, PDF):** [docs/paper/FX_Regime_Radar_Report.pdf](docs/paper/FX_Regime_Radar_Report.pdf) — methods, mathematics, results, failures, engineering, design and go-to-market in one document.
+>
 > **Why we refuse to backtest the language models** → [docs/why-we-refuse-the-backtest.md](docs/why-we-refuse-the-backtest.md)
 
 ## Track record — frozen test vs live forward record

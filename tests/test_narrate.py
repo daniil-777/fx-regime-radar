@@ -121,3 +121,14 @@ def test_build_stats_uses_numbers_only(prices_sample: pd.DataFrame) -> None:
         set(report["EURUSD"]) >= {"text", "generated_at", "source"}
         and report["EURUSD"]["source"] == "template"
     )
+
+
+def test_direction_words_in_llm_reply_are_rejected_and_template_used() -> None:
+    """Rule 5 guard: a reply that talks direction is discarded; the template never does."""
+    import pytest
+
+    with pytest.raises(RuntimeError):
+        narrate.check_narration("EUR/USD will rise sharply this week.")
+    assert narrate.check_narration("EUR/USD is in a calm regime.") == "EUR/USD is in a calm regime."
+    with pytest.raises(RuntimeError):
+        narrate.check_narration("   ")

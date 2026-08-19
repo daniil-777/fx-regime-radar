@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -33,6 +34,24 @@ SYSTEM_PROMPT = (
     "Never predict prices, never give advice, never add facts not present in the JSON, never use "
     "jargon without a plain-word gloss."
 )
+# Rule 5 guard: a narration that uses direction language is discarded and the template is used.
+DIRECTION_WORDS = re.compile(
+    r"\b(rise|rises|rising|fall|falls|falling|buy|sell|long|short|bullish|bearish|rally|rallies|"
+    r"target|upside|downside|appreciate|depreciate|strengthen|weaken|go up|go down)\b",
+    re.IGNORECASE,
+)
+
+
+def check_narration(text: str) -> str:
+    """Return `text` if it is non-empty and free of direction words; raise otherwise."""
+    if not text or not text.strip():
+        raise RuntimeError("empty narration")
+    hit = DIRECTION_WORDS.search(text)
+    if hit:
+        raise RuntimeError(f"direction word in narration: {hit.group(0)!r}")
+    return text.strip()
+
+
 DRIVER_WORDS = {
     "vol_20": "recent volatility",
     "vol_60": "the three-month volatility backdrop",
@@ -164,9 +183,7 @@ def narrate(stats: dict, api_key: str | None = None) -> str:
         messages=[{"role": "user", "content": json.dumps(stats, sort_keys=True)}],
     )
     text = " ".join(b.text for b in response.content if b.type == "text").strip()
-    if not text:
-        raise RuntimeError("empty narration")
-    return text
+    return check_narration(text)
 
 
 def narrate_with_fallback(stats: dict) -> tuple[str, str]:

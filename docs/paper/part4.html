@@ -1,0 +1,211 @@
+
+<!-- ===================================================== PART IV OPENER -->
+<section class="opener">
+  <div class="part">Part IV</div>
+  <h1><span>Engineering,</span><span style="color:var(--beacon)">design,</span><span>market.</span></h1>
+  <p>A model that cannot be reproduced is an anecdote. A dashboard that cannot be read in three seconds is a toy. A product nobody would pay for is a hobby. This part is about the wall between research and production, the interface that earns trust at a glance, and the smallest honest path to a first franc.</p>
+  <div class="chapters">
+    <div><b>16</b> The pipeline, the wall and the Rust service</div>
+    <div><b>17</b> A trust-first interface</div>
+    <div><b>18</b> Go-to-market</div>
+    <div><b>19</b> Limitations and roadmap</div>
+    <div><b>20</b> Interview companion</div>
+    <div><b>A</b> Glossary · reproducibility · repository tour</div>
+  </div>
+</section>
+
+<!-- ===================================================== CH 16 -->
+<section>
+  <div class="chap"><span class="n">CHAPTER 16</span><h2>The pipeline, the wall and the Rust service</h2></div>
+  <p class="lead">One script does all the heavy work once a day and writes small files; the app only reads them; a Rust service reproduces the mathematics from raw prices and refuses to start unless it can prove it. Everything between is tested, versioned and tagged.</p>
+  <h3>16.1 One daily pipeline, register-a-stage</h3>
+  <p><code>pipelines/run_daily.py</code> runs every weekday at 06:00 UTC in GitHub Actions. Models are <em>loaded</em>, never fitted; refits are a separate, deliberate <code>make refit</code> that bumps a version, rebuilds the validation report and re-exports the bundle. Every stage runs in memory and all artifacts are written in one final stage, so a failure anywhere leaves the data directory exactly as it was and the app keeps serving the last good state. A stage is one function and one registration line:</p>
+  <div class="pipe">
+    <div class="s"><b>data</b><span>Yahoo download · ECB cross-check · drop bad ticks · exclude the in-progress day</span></div>
+    <div class="s"><b>features</b><span>nine causal features per pair</span></div>
+    <div class="s"><b>hmm</b><span>forward filter with the saved bundles → regime, probs, entropy, run length</span></div>
+    <div class="s t"><b>cb_features · features_ext</b><span>lexicon tone · calendar, context, COT, YZ → challenger matrix</span></div>
+    <div class="s"><b>forecaster · challenger</b><span>XGBoost + SHAP drivers → change_risk_5d (+ _ch)</span></div>
+    <div class="s"><b>siren</b><span>autoencoder → anomaly score & percentile</span></div>
+    <div class="s t"><b>bocpd · conformal · drift</b><span>run length, votes, band, status.json</span></div>
+    <div class="s c"><b>ledger</b><span>append newest forecasts · resolve matured · scoreboard · head</span></div>
+    <div class="s b"><b>narrator</b><span>three sentences, LLM or template</span></div>
+    <div class="s r"><b>postmortem · advisor · treasury · arcade</b><span>crisis draft · stability · VaR/ES table · resolve calls</span></div>
+    <div class="s"><b>write</b><span>all artifacts at once + pipeline_status.json</span></div>
+  </div>
+  <p>A full run takes about 20 seconds on a laptop. The daily Action then commits the refreshed artifacts — including the ledger head — back to the repository; a second Action publishes the Monday report; CI runs the 273 tests, the lint, the design-token check and the public ledger verifier on every push; a Rust workflow runs <code>cargo test</code>, clippy and the golden self-test.</p>
+
+  <h3>16.2 The wall: the only thing that crosses is a bundle</h3>
+  <p>Python is the research side — training, validation, narration, export. The production serving path is Rust and imports nothing from Python at runtime. The versioned bundle <code>models/bundle_v1.4.0/</code> contains the forecaster and siren as ONNX graphs, the three HMMs as JSON (means, covariances, transition matrix, start probabilities, scaler, mapping), a <code>feature_spec.yaml</code> that pins every feature's definition and window, 302 golden vectors (raw 600-day windows per pair with their expected features and outputs) and a manifest of SHA-256 hashes. Pickle never crosses. The Rust crate rebuilds the features from raw prices — including three pairwise rolling correlations with pairwise calendars — and the 540-step forward filter, and at startup replays every golden: features must match to 10<sup>−8</sup>, model outputs to 10<sup>−6</sup>, or the service refuses to bind its port. That gate has stayed byte-identical through every later phase.</p>
+  <table>
+    <tr><th>benchmark (laptop, release build)</th><th style="text-align:left">result</th></tr>
+    <tr><td class="t">one pair, full path: raw 600-day windows → features → HMM filter (540 steps) → forecaster.onnx → siren.onnx</td><td class="t"><b>≈ 0.43 ms</b> per call (single thread)</td></tr>
+    <tr><td class="t">throughput, 10,000 full-path calls</td><td class="t">≈ 2,260 rows/s</td></tr>
+    <tr><td class="t">startup gate: hash verification + 302-golden self-test</td><td class="t">≈ 0.4–0.5 s</td></tr>
+    <tr><td class="t">POST /api/score, 8 concurrent clients, real windows (~55 KB JSON each)</td><td class="t">≈ 2,180 req/s · p50 3.6 ms · p99 4.4 ms</td></tr>
+    <tr><td class="t">GET /api/regimes/{pair} (mtime-cached newest rows)</td><td class="t">≈ 9,600 req/s · p50 0.38 ms</td></tr>
+  </table>
+  <p class="small">Honest reading, from the bench notes: the ONNX calls are microseconds; almost all of the 0.43 ms is recomputing 600 rows of features and the forward filter from scratch on every call — the price of a stateless path that reproduces Python bit-for-bit. A streaming server carrying yesterday's state would be one to two orders of magnitude faster, at the cost of state to keep correct. For a daily product with three pairs, 0.43 ms is irrelevant; the number that matters is the gate.</p>
+
+  <h3>16.3 From service to product</h3>
+  <p>Around the unchanged engine the service grew an identity layer and a push channel. <strong>Keys:</strong> <code>X-API-Key</code>, stored as SHA-256 hashes only in SQLite, with free / pro / partner tiers, a per-key token bucket (429 with Retry-After) and a small admin CLI that prints a key exactly once. <strong>Alerts:</strong> a background poller watches the newest artifact rows for three triggers — a regime flip, a siren above 98, a 3/3 consensus — and delivers HMAC-SHA256-signed JSON to registered webhooks (generic, Slack, Telegram) from a queue with exponential backoff and at most five tries; a persisted last-alerted state makes the same regime two days in a row exactly one alert. Delivery never happens inside a request handler. The template text is linted for direction words. <strong>Menu:</strong> OpenAPI via utoipa with Swagger UI at <code>/docs</code>; Prometheus <code>/metrics</code> (requests, latency histograms, alerts fired, delivery outcomes). <strong>Surfaces:</strong> an embeddable <code>/widget.js</code> badge (regime dot + word + siren), <code>GET /api/treasury</code> reading the treasury artifact with arithmetic only, and a Stripe test-mode webhook that verifies the signature and moves a key between tiers. Secrets live in environment files; the key database is gitignored; the deploy notes target a systemd unit on an Oracle always-free VM or Cloud Run, with <code>/api/health</code> as the check.</p>
+
+  <div class="box interview"><div class="t">Interview lens</div><p>"Why Rust for serving a Python model?" Not speed — discipline. A second implementation that must reproduce the first to 10<sup>−8</sup> from raw prices is the strongest test of the feature definitions that exists; the goldens catch any drift between research and production the day it happens. "Why hash the API keys?" A leaked database cannot be replayed. "What breaks if alerts fire inside the handler?" Request latency depends on a third party's webhook, and a timeout loses the alert — push needs a queue and idempotent state, not a function call.</p></div>
+</section>
+
+<!-- ===================================================== CH 17 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 17</span><h2>A trust-first interface</h2></div>
+  <p class="lead">For a risk product, credibility out-attracts flash. The interface was evolved to a single target mock-up: the full market state readable in three seconds from two metres, the evidence of the record never below the fold, one ambient element and nothing else that moves.</p>
+  <h3>17.1 One token file, enforced</h3>
+  <p><code>design/tokens.json</code> is the only source of colour, type and motion: surfaces (nimbus <span class="num">#0E1420</span>, front <span class="num">#151D2E</span>, a hairline at 8 % white), text (<span class="num">#E8ECF4</span> / <span class="num">#9AA6B8</span> / a dim tone lifted from the mock-up's value to clear 4.5:1), regime colours used for data and status only (calm <span class="num">#3ECF8E</span>, trend <span class="num">#4DA3FF</span>, chop <span class="num">#F5B942</span>, crisis <span class="num">#FF5C5C</span>), one accent for links and actions. A tiny loader exposes the tokens to Python; a generator writes the Streamlit theme file, a CSS file and the Rust static tokens; the Plotly template, every matplotlib report figure, the orb's presets, the e-mail report and the widget read from the same place. <code>make lint-ui</code> runs in CI and fails on any hex literal anywhere else; a test checks that every text/surface pair clears 4.5:1 on both surfaces, that no font weight above 500 is used, and that the motion budget is exactly two animations — the orb and the live dot's pulse — both disabled under <code>prefers-reduced-motion</code>. Type is Space Grotesk for the regime word and page titles, IBM Plex Sans for the interface, IBM Plex Mono with tabular figures for every number, hash and ledger value; numbers are right-aligned in tables.</p>
+  <h3>17.2 Two signature structures</h3>
+  <p>The <strong>condition banner</strong> replaces the old hero row: an eyebrow with the pair and the data-through date; the regime word huge in its colour; one metrics line — change risk with its 90 % band, siren out of 100; the quiet 90-day risk trace with the shaded band; and the three-dot consensus module. Regime is never colour-only — the word and a dot carry the state, colour only repeats it. The <strong>trust strip</strong> sits under it on every surface: forward-test day count, live Brier against frozen, coverage against the 90 % target, the chain head with its check, and "verify independently". If anything competes with the banner, the element is quieted — the orb moved to the Pairs page for that reason.</p>
+  <figure class="card">
+    <img src="../screenshots/overview_v3.png" alt="Overview">
+    <figcaption><b>Figure 17.1 — Overview.</b> Banner, trust strip, the three decisions (next scheduled storm, treasury light, interval coverage), and one compact weather card per market. The "drift watch" badge beside the date is the drift monitor of chapter 11.</figcaption>
+  </figure>
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../screenshots/pairs_v3.png" alt="Pairs page" style="border-radius:6px;width:100%"></div>
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px;display:flex;gap:8px"><img src="../screenshots/mobile_overview_v3.png" alt="Mobile" style="border-radius:6px;width:38%;object-fit:cover;object-position:top"><img src="../screenshots/storms.png" alt="Storms" style="border-radius:6px;width:60%;object-fit:cover;object-position:top"></div>
+  </figure>
+  <figcaption style="margin-top:-6pt"><b>Figure 17.2 — Pairs, phone, Storms.</b> Left: one market in depth — the full card, the close with regime bands and scheduled-decision markers, and the orb (the one ambient element). Right: the same overview at 375 px, and the Storms page.</figcaption>
+  <figure class="card">
+    <img src="../screenshots/orb/orb_states.png" alt="Orb states">
+    <figcaption><b>Figure 17.3 — The regime orb in its four states.</b> A three.js particle sphere that physically expresses the numbers: colour and motion follow the regime, jitter follows change risk, a pulse follows the siren. It computes nothing, pauses when the tab is hidden, collapses to a drift under reduced motion and to a flat dot without WebGL.</figcaption>
+  </figure>
+  <h3>17.3 Information architecture</h3>
+  <p>Radar: <em>Overview · Pairs · Treasury · Storms · Proof</em>. Analysis: <em>Advisor · Regime space · Probability space · Strategy lab · Arcade</em>. About: <em>Methodology · Weekly report · Metrics</em>. Every widget had to answer "what does the user decide with this?" or move to Analysis. Empty, loading and error states say what happened and what to do — never apologise, never vague. The app reads artifacts only and paints in about a second.</p>
+</section>
+
+<!-- ===================================================== CH 18 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 18</span><h2>Go-to-market: a free weekly report, three tiers, five partners</h2></div>
+  <p class="lead">A risk product for treasurers is not sold with ads. It is sold with a useful page every Monday, forwarded by one treasurer to another, and with a public record that does the talking. The plan is small on purpose.</p>
+  <h3>18.1 The weekly FX weather report</h3>
+  <p>Every Monday at 06:30 UTC a second Action generates a report from the committed artifacts — per pair: regime, change risk ± band, siren, a <em>generic</em> hedge / wait / ladder light (the same public fact for every reader; never personalised, because a personalised light is suitability advice), days to the next SNB / ECB / FOMC / BoE decision, the narrator's three template sentences, the live-record line and a link to the Proof page — as Markdown, as an e-mail-safe light-mode HTML twin (inline styles, 360-pixel checked) and as an RSS feed. An ops-log line records each publication so that a silent Monday is visible. Zero paid services; the e-mail provider is a documented hook for later.</p>
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--card);border-radius:10px;padding:8px"><img src="fig/weekly_email.png" alt="Weekly e-mail" style="border-radius:6px;width:100%"></div>
+    <div>
+      <figcaption style="margin-top:0"><b>Figure 18.1 — The Monday report, light variant.</b> Same tokens, inverted for e-mail. The table, the per-pair cards, the calendar and the live-record line; the disclaimer closes it, as it closes every surface.</figcaption>
+      <h4 style="margin-top:10pt">Tiers (test mode until the first partner converts)</h4>
+      <table>
+        <tr><th>tier</th><th style="text-align:left">what it includes</th><th>price</th></tr>
+        <tr><td class="t">Free</td><td class="t">weekly report · public widget</td><td>CHF 0</td></tr>
+        <tr><td class="t">Pro</td><td class="t">alerts on chosen pairs · Treasury mode · monthly PDF</td><td>CHF 79 / month</td></tr>
+        <tr><td class="t">Partner</td><td class="t">API · white-label widget</td><td>CHF 500+ / month</td></tr>
+      </table>
+      <p class="small">Monthly, cancel any time, no annual-only lock-in, no written discounts below the anchor. Terms and privacy are plain-language drafts pending Swiss FinSA review; nothing is charged live before that review and one verbal yes.</p>
+    </div>
+  </figure>
+  <h3>18.2 Five design partners before fifty sign-ups</h3>
+  <p>The outreach kit is in the repository: a design-partner e-mail in German and English (under 150 words — six months free for a monthly feedback call and a signed letter of intent at CHF 79 a month if the product proves useful), a one-page LOI template, the target criteria (Swiss SMEs with EUR/USD invoicing, fiduciary firms, treasury associations) and a tracking sheet with fifteen placeholder rows. Five partners beat fifty sign-ups because a partner makes the real decision monthly, gives feedback, and signs — evidence of willingness to pay that a free user can never provide. The roadmap rule after this phase is explicit: <em>no new code before ten treasurer conversations</em>.</p>
+  <h3>18.3 The five numbers, honest zeros</h3>
+  <table>
+    <tr><th>metric (Metrics page · README)</th><th>value on 19 Aug 2026</th><th style="text-align:left">source</th></tr>
+    <tr><td class="t">Ledger days live</td><td>2</td><td class="t">data/live_record.json</td></tr>
+    <tr><td class="t">Forecasts recorded / resolved</td><td>6 / 0</td><td class="t">data/ledger.parquet (champion)</td></tr>
+    <tr><td class="t">Report subscribers</td><td>0</td><td class="t">no subscriber data is stored</td></tr>
+    <tr><td class="t">Active API keys</td><td>0</td><td class="t">data/keys.db (absent)</td></tr>
+    <tr><td class="t">Design partners · MRR</td><td>0 · CHF 0</td><td class="t">docs/outreach/tracking.csv</td></tr>
+  </table>
+  <p class="small">"Zeros are real zeros — each number is read from an artifact, never estimated." The metric to fake last is MRR, because it is the only one that proves the product; everything else exists to make that one honest.</p>
+</section>
+
+<!-- ===================================================== CH 19 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 19</span><h2>Limitations and roadmap</h2></div>
+  <p class="lead">A report that hides its limits is marketing. These are the ones the author would raise first.</p>
+  <h4>Data</h4>
+  <ul>
+    <li>Free Yahoo daily bars: occasional bad ticks (dropped), a start-of-day close convention, no intraday detail, no tradable spreads. The methodology transfers to a clean feed; the numbers would move a little.</li>
+    <li>Three pairs. EUR/CHF — the Swiss treasurer's own cross — is a context series, not a scored pair, precisely because a pegged cross blinds a volatility-based radar for years at a time.</li>
+  </ul>
+  <h4>Models</h4>
+  <ul>
+    <li>The HMM's trend/chop split is seed-fragile (40–100 % agreement across seeds); the calm/crisis ends are stable. A seed ensemble or a duration-explicit variant is the obvious next step. USD/CHF's crisis state is a single event.</li>
+    <li>The forecaster's label is the HMM's own filtered decision, so it inherits that fragility; PR-AUC 0.548 is a clear margin over logistic but no one should read it as a market call. The challenger with calendar and context did not lift it.</li>
+    <li>Conformal bands on a binary outcome are wide by nature (q 0.5–0.8); they are honest, not decorative. Exchangeability is violated; only the empirical receipt is claimed.</li>
+    <li>The strategy layer loses net of costs on every stance and every window; it is shipped as a finding, not a result.</li>
+    <li>The central-bank index has no credible surprise effect yet on 184 statements, and the language-model leg has, correctly, scored nothing so far.</li>
+  </ul>
+  <h4>Engineering and product</h4>
+  <ul>
+    <li>The live record is two days old at the time of writing; every "live" number says "warming up" until twenty rows mature. That is the point — but it means the strongest claim in this document cannot be made yet.</li>
+    <li>Alert adapters were tested against local receivers and synthetic secrets; the FinBERT leg has never actually run; Stripe is in test mode; nothing is deployed publicly yet.</li>
+    <li>Legal texts are drafts; Swiss FinSA specifics need a professional before any charge.</li>
+  </ul>
+  <h4>Roadmap (in order)</h4>
+  <div class="timeline">
+    <div><b>now</b><span>push, deploy the app and the service, issue the first key, let the ledger age — and have ten treasurer conversations before writing new code.</span></div>
+    <div><b>+1 month</b><span>first live scoreboard numbers at 20 matured rows; first coverage receipt on live rows; first weekly reports forwarded.</span></div>
+    <div><b>+3 months</b><span>seed-ensemble HMM and a five-state test on a research copy; decide the Yang–Zhang bundle rebuild; challenger promotion decision at ≥ 60 matured days.</span></div>
+    <div><b>+6 months</b><span>re-check the Stage-2 gate (two policy cycles per bank); EUR/CHF context study; a clean data feed if a partner funds it.</span></div>
+  </div>
+</section>
+
+<!-- ===================================================== CH 20 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 20</span><h2>Interview companion: questions, answers, critiques</h2></div>
+  <p class="lead">The questions a quant, a risk manager, an ML engineer and a product lead actually ask — with the answer this project earns, and the honest weak spot in each.</p>
+  <div class="qa">
+    <p class="q">Q. How do you know your features do not leak?</p><p class="a">Every feature module has a truncation-invariance test: computing on data cut at T must reproduce rows ≤ T bit-for-bit. The HMM uses the forward filter, never the smoother; every scaler, PCA, quantile and threshold is fitted on training rows only and stores its <code>train_end</code>. <em>Weak spot:</em> a test proves what it tests; the discipline has to be applied to every new feature, which is why the rule is in the constitution and the CI.</p>
+    <p class="q">Q. Why is the test set scored only once?</p><p class="a">Because every look is a degree of freedom. Train ≤ 2016, validation 2017–18 chose early stopping, the threshold and the conformal quantiles; test 2019+ was scored once per model and frozen. New evidence goes to the live ledger, where it cannot be re-chosen. <em>Weak spot:</em> "once" relies on discipline; the published numbers and the git history are the audit trail.</p>
+    <p class="q">Q. Why PR-AUC and Brier, not accuracy or ROC?</p><p class="a">A 16 % positive rate makes accuracy meaningless and ROC flattering. PR-AUC scores the rare class we care about; Brier scores the calibration of the probabilities the product actually shows; both are reported next to a base rate, a logistic model and a one-feature rule. <em>Weak spot:</em> PR-AUC on five-day windows of an autocorrelated label over-counts effective sample size; the ledger's live Brier is the cleaner number.</p>
+    <p class="q">Q. A monthly refit lands — what happens to the record?</p><p class="a">The refit carries a new model version; the ledger starts a new segment; the scoreboard shows both; the headline scores the current segment only. Old rows keep their hashes; the chain is unbroken; the old record cannot be laundered by the new model. <em>Weak spot:</em> a refit also resets the warm-up clock for the headline.</p>
+    <p class="q">Q. What does a GitHub commit add that local hashing cannot?</p><p class="a">Time. A hash proves content; it does not prove when. The daily Action commits <code>ledger_head.txt</code>, and GitHub's commit timestamps — outside the author's control — fix the moment the chain head existed. <em>Weak spot:</em> GitHub is a trusted third party; a public timestamping service would be stronger.</p>
+    <p class="q">Q. "3-D charts are gimmicks." Defend the tetrahedron in a minute.</p><p class="a">Four probabilities that sum to one live on a 3-simplex; the tetrahedron is their <em>exact</em> geometry, not a projection — no fitting, no scaling, axes hidden because the coordinates have no units. It shows at a glance whether the filter is decisive (path near vertices) or unsure (path near the centroid), and it is display-only: no model output changed to make it. <em>Weak spot:</em> it is still a picture; the operational views are 2-D on purpose.</p>
+    <p class="q">Q. Why does every strategy lose money, and why ship it?</p><p class="a">Daily-bar FX timing with a mechanical stance does not survive a realistic, volatility-scaled cost model; the breakeven cost multiplier is zero. It is shipped because the models' purpose was never to trade, and because a documented negative with its cost model, turnover and stress table is the strongest possible answer to "what did you do to the data?". <em>Weak spot:</em> a reader who skims for a Sharpe will leave.</p>
+    <p class="q">Q. Where is the line between risk information and investment advice?</p><p class="a">Risk information is a property of the market conditioned on published numbers, the same for everyone: "given today's regime, the 99 % one-week expected shortfall is X". Advice is about what <em>you</em> should do given <em>your</em> position. The treasury light is a public rule table; the page stores no positions; every surface says it is educational. <em>Weak spot:</em> Swiss FinSA specifics need a professional before any charge.</p>
+    <p class="q">Q. FinBERT aces 2015 letters in a test — why is that worthless?</p><p class="a">Because its weights were trained on text written after 2015, including descriptions of what happened next. The leak is parametric, not in the pipeline; the score measures memory of the ending. The only honest test of a model with memory is forward, on post-cutoff text, with receipts. <em>Weak spot:</em> forward evidence accrues slowly — forty letters a year.</p>
+    <p class="q">Q. Why Rust for serving?</p><p class="a">A second implementation that must reproduce the first from raw prices to 10<sup>−8</sup> is the strongest test of the feature definitions, and a startup gate that refuses to serve on mismatch turns "research drifted from production" from a silent bug into a loud one. <em>Weak spot:</em> two implementations cost two maintenance budgets; the goldens are what make that affordable.</p>
+    <p class="q">Q. Someone proposes animating the siren dial. Accept or decline?</p><p class="a">Decline. The motion budget is the orb plus the live dot; a third animation competes with the condition banner, and a moving dial on a reading surface invites the eye to a number that is already in text. <em>Weak spot:</em> it would look exciting in a demo — which is the reason to decline it.</p>
+  </div>
+</section>
+
+<!-- ===================================================== APPENDIX -->
+<section class="page">
+  <div class="chap"><span class="n">APPENDIX A</span><h2>Glossary · reproducibility · repository tour</h2></div>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">Glossary</h3>
+      <dl class="glossary">
+        <dt>Regime</dt><dd>One of four latent market conditions — calm, trend, chop, crisis — inferred by the HMM from returns, volatility and momentum; describes conditions, never direction.</dd>
+        <dt>Filtered vs smoothed</dt><dd>Filtered: P(state at t | data ≤ t). Smoothed: P(state at t | all data). Only filtered is causal.</dd>
+        <dt>Change risk</dt><dd>Probability that the filtered regime differs on any of the next five trading days; Platt-calibrated XGBoost output.</dd>
+        <dt>Siren / anomaly percentile</dt><dd>Reconstruction error of a calm-trained autoencoder, ranked against calm training days; 98+ is the action line.</dd>
+        <dt>BOCPD · run length · hazard</dt><dd>Bayesian online changepoint detection; days since the last changepoint; the prior probability of a changepoint each day (1/60).</dd>
+        <dt>Consensus / agreement</dt><dd>Count (0–3) of HMM, BOCPD and vol-rule votes that see stress, each with a training-era threshold.</dd>
+        <dt>Conformal band · Mondrian</dt><dd>p̂ ± q with q the 90 % quantile of |y − p̂| on validation; Mondrian = one q per regime. Coverage is reported empirically.</dd>
+        <dt>Embargo</dt><dd>Five trading days dropped on both sides of every split boundary so forward-looking labels cannot straddle it.</dd>
+        <dt>Lag law</dt><dd>A signal formed at close t earns returns from t+1; enforced inside the backtest engine.</dd>
+        <dt>Breakeven cost</dt><dd>The multiple of the cost model at which a strategy's net Sharpe reaches zero.</dd>
+        <dt>Ledger · chain head</dt><dd>Append-only record of forecasts hashed before outcomes exist; the last hash, committed daily.</dd>
+        <dt>PSI · KS</dt><dd>Population stability index and Kolmogorov–Smirnov statistic, train era vs the last 60 days.</dd>
+        <dt>The wall · bundle · goldens</dt><dd>Research (Python) / production (Rust) separation; the versioned ONNX+JSON artifact; the 302 vectors the service must reproduce at startup.</dd>
+        <dt>Parametric look-ahead</dt><dd>Leakage through a model's weights rather than through data: it has read the ending.</dd>
+        <dt>VaR · ES</dt><dd>Quantile of the absolute weekly move; mean beyond it — regime-conditional, training era, historical simulation.</dd>
+      </dl>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Reproducibility</h3>
+      <p class="small">Python 3.11, pinned top-level dependencies, black + ruff, 273 pytest tests (~70 s, no network, no key). Rust stable, <code>cargo test</code> + clippy + fmt. Every phase is a tagged commit (v0.1.0 → v2.21.0) with a changelog entry and a verify block.</p>
+      <div class="box rule" style="margin-top:6pt"><div class="t">Ten commands</div><p class="small" style="font-family:var(--mono)">make setup<br>make test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 273 green<br>make lint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ruff · black · lint-ui<br>make pipeline&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# the daily run, ~20 s<br>make run&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# the app<br>make verify-ledger&nbsp;# VALID + head hash<br>make storms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# the three replays (~8 min)<br>make treasury · weekly · metrics<br>cd rust/fxradar-serve && cargo test --release<br>cargo run --release --bin selftest -- ../../models/bundle_v1.4.0</p></div>
+      <h3>Repository tour</h3>
+      <table style="font-size:8.4pt">
+        <tr><th>path</th><th style="text-align:left">what lives there</th></tr>
+        <tr><td class="t">src/fxradar/</td><td class="t">data · features · hmm_model · forecaster · siren · narrate · bocpd · conformal · drift · ledger · backtest · strategies · stress · replay · treasury · weekly · calendar_ext · context_data · features_ext · challenger · cb_* · tokens · viz3d · export</td></tr>
+        <tr><td class="t">pipelines/run_daily.py</td><td class="t">the register-a-stage daily orchestrator</td></tr>
+        <tr><td class="t">app/</td><td class="t">Streamlit router, ui.py (tokens, banner, trust strip, template), orb.py, views/*</td></tr>
+        <tr><td class="t">rust/fxradar-serve/</td><td class="t">features, HMM, inference, selftest gate, axum service, keys, alerts, metrics, stripe, widget</td></tr>
+        <tr><td class="t">models/ · models/bundle_v1.4.0/</td><td class="t">frozen models and the only artifact that crosses the wall</td></tr>
+        <tr><td class="t">data/</td><td class="t">committed artifacts: prices, features, regimes, ledger (+jsonl, head), status, coverage, treasury, events, context, cb/, storms</td></tr>
+        <tr><td class="t">reports/ · docs/ · design/</td><td class="t">validation reports and figures · guides, legal drafts, outreach kit, this paper · tokens.json and the target mock-up</td></tr>
+        <tr><td class="t">tests/</td><td class="t">273 tests incl. truncation invariance per module, foresight, tamper, coverage, contrast, lint</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="footnote">FX Regime Radar · technical report v2.21 · generated 19 August 2026 from the committed artifacts of the repository at tag v2.21.0. All numbers in this document are reproducible with the commands above; figures marked "from the training report" were produced when the corresponding model was frozen. The author was a beginner who built the system phase by phase; where a result is unflattering it is printed unchanged. <b>Educational tool. Not investment advice. No price-direction forecasts — ever.</b></div>
+</section>
+</body>
+</html>

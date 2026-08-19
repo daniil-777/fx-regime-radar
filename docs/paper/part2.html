@@ -1,0 +1,153 @@
+
+<!-- ===================================================== PART II OPENER -->
+<section class="opener">
+  <div class="part">Part II</div>
+  <h1><span>The models.</span><span style="color:var(--trend)">Six instruments,</span><span>one discipline.</span></h1>
+  <p>A hidden Markov model for the nowcast, a gradient-boosted classifier for change risk, an autoencoder for anomalies, a Bayesian changepoint detector for a second opinion, conformal bands for honest uncertainty, and a language model kept on a very short leash. None of them predicts direction. All of them are causal.</p>
+  <div class="chapters">
+    <div><b>04</b> Nowcasting the regime: a hidden Markov model, filtered</div>
+    <div><b>05</b> Forecasting change risk: XGBoost, SHAP, calibration</div>
+    <div><b>06</b> The siren: an autoencoder that remembers calm</div>
+    <div><b>07</b> A second opinion: BOCPD and consensus</div>
+    <div><b>08</b> Honest error bars: Mondrian conformal intervals</div>
+    <div><b>09</b> Narration with guardrails</div>
+  </div>
+</section>
+
+<!-- ===================================================== CH 04 -->
+<section>
+  <div class="chap"><span class="n">CHAPTER 04</span><h2>Nowcasting the regime: a hidden Markov model, filtered</h2></div>
+  <p class="lead">The HMM is the oldest idea in the system and the one most often done wrong. It assumes the market is always in one of a few unobserved "moods", that each mood produces returns, volatility and momentum with its own typical pattern, and that moods are sticky. The model is allowed to learn those patterns from the training years; it is <em>not</em> allowed to look at tomorrow when it names today.</p>
+
+  <h3>4.1 The model</h3>
+  <p>Per pair, a four-state Gaussian HMM with full covariance (<code>hmmlearn.GaussianHMM</code>, 1,000 EM iterations, seed 42) is fitted on three standardised features — <code>ret_1d</code>, <code>vol_20</code>, <code>mom_20</code> — from training rows only (≤ 2016-12-31; the scaler is fitted there too). Four states is a choice, not a discovery: it is the smallest number that separates "quiet" from "stressed" and still distinguishes a persistent move from a directionless one. The states come out anonymous; a frozen naming rule orders them by mean training <code>vol_20</code> (lowest = calm, highest = crisis) and, of the middle two, calls the one with the larger |mean <code>mom_20</code>| "trend" and the other "chop". The rule is applied once, at fit time, and saved with the model, so a refit cannot quietly rename states.</p>
+
+  <h3>4.2 Filtered, not smoothed — the forward algorithm by hand</h3>
+  <p><code>hmmlearn</code>'s <code>predict_proba</code> returns <em>smoothed</em> posteriors: the probability of each state at day <i>t</i> given the <em>entire</em> sample, future included. In a backtest that produces beautifully crisp regimes that flip exactly when, in hindsight, they should have. In production it is impossible — tomorrow's data does not exist. The project therefore implements the forward algorithm itself and uses only <i>α<sub>t</sub></i>, the filtered posterior:</p>
+  <div class="math"><span class="n">(4.1)</span>α<sub>1</sub>(k) ∝ π<sub>k</sub> · b<sub>k</sub>(x<sub>1</sub>), &nbsp;&nbsp; α<sub>t</sub>(k) ∝ b<sub>k</sub>(x<sub>t</sub>) · Σ<sub>j</sub> α<sub>t−1</sub>(j) A<sub>jk</sub>, &nbsp;&nbsp; normalised each day with a log-sum-exp; b<sub>k</sub> is the state-k Gaussian density, A the transition matrix.</div>
+  <p>Only rows ≤ <i>t</i> feed row <i>t</i>, which is what makes the truncation test of chapter 3 pass for the regime columns as well. The regime label is the argmax of <i>α<sub>t</sub></i>; its probability, the four filtered probabilities, the entropy of <i>α<sub>t</sub></i> and the run length of the current label are written to the artifact. A replay of the frozen bundle's filter reproduces the committed labels exactly — the 3-D "probability space" view is built from that replay, never from the smoother.</p>
+
+  <figure class="card">
+    <img src="fig/f02_filter_covid.png" alt="Filtered probabilities EUR/USD 2020">
+    <figcaption><b>Figure 4.1 — The forward filter at work, EUR/USD, January–June 2020.</b> Top: the four filtered probabilities stacked; the model moves from calm through a brief chop into crisis on 20 March and back out through trend. Bottom: the forecaster's 5-day change risk (amber) with its 90 % conformal band (chapter 8) and the frozen alarm threshold 0.22; the close is shown in grey. The first alarm came on 28 February — fifteen trading days before the label flipped (chapter 15).</figcaption>
+  </figure>
+
+  <h3>4.3 Is the regime real? The validation report, unflattering where the data is</h3>
+  <p>The validation phase asked four questions and published the answers even where they hurt. <strong>Anatomy.</strong> Out of sample (2017 onward) the volatility ordering calm &lt; trend/chop &lt; crisis survives for every pair — a label is not just an in-sample artefact. EUR/USD spends 58 % of out-of-sample days in calm (mean run 41 days, 5.8 % annualised vol) and 3.6 % in crisis (12.7 % vol). Mean returns inside labels are tiny relative to volatility: regimes describe <em>conditions</em>, not direction, which is exactly the claim. <strong>Seed stability.</strong> Refitting with five other seeds agrees with the reference model on 40–100 % of days; the calm/crisis ends are stable, the trend/chop split is fragile (EUR/USD mean agreement 71 %, below the 80 % warning line). EM finds local optima; the report says so. <strong>Baseline.</strong> Against a one-line rule — "stressed when vol_20 is above its trailing 250-day 80th percentile" — the HMM does <em>not</em> systematically lead: across matched stress episodes it led in 4 and lagged in 14. Its value is not earlier warnings but a four-way, sticky, probabilistic description with a confidence and an entropy, which is what the forecaster and the siren need as inputs. <strong>Economic meaning.</strong> A toy moving-average trend rule is <em>not</em> best inside the "trend" label out of sample. That claim was tested and failed, and the failure was printed.</p>
+
+  <div class="box honest"><div class="t">Honesty box — USD/CHF's crisis state</div><p>USD/CHF's "crisis" state was learnt almost entirely from the January 2015 SNB shock: 20 training days at ~65 % annualised volatility. It never fires out of sample. The 2008–2011 stress for that pair is carried by the "chop" and "trend" states instead. This is reported in the validation report and shapes the consensus thresholds in chapter 7 (the HMM voter for USD/CHF needs a crisis probability of only 0.2 to fire).</p></div>
+
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="fig/f11_tetrahedron.png" alt="Regime tetrahedron" style="border-radius:6px;width:100%"></div>
+    <div><figcaption style="margin-top:0"><b>Figure 4.2 — Probability space.</b> Four probabilities that sum to one live on a 3-simplex — a tetrahedron. Each vertex is a regime; the centroid is maximal uncertainty (entropy ln 4). The EUR/USD history is drawn as a path through it from the <em>filtered</em> probabilities, coloured by time, with today ringed. Display layer only: the coordinates are exactly <code>probs @ V</code> for the vertex matrix V, nothing is fitted, and the axes are hidden because simplex coordinates have no units. A path that hugs the vertices says the filter is usually decisive; time spent near the centroid would say the opposite.</figcaption>
+    <div class="box interview" style="margin-top:10pt"><div class="t">Interview lens</div><p>"Why filtered and not smoothed?" Because the smoother conditions on the future; the filter conditions on the past. "Why full covariance?" Because the features are correlated inside a state (vol and |momentum| move together in crisis) and a diagonal model would need extra states to fake that. "What would you change?" Test five states, add a duration-explicit (semi-Markov) variant, and fix the seed instability with a consensus of seeds — all listed in chapter 19.</p></div></div>
+  </figure>
+</section>
+
+<!-- ===================================================== CH 05 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 05</span><h2>Forecasting change risk: XGBoost, SHAP, calibration</h2></div>
+  <p class="lead">The only model in the system with a prediction target, and therefore the only one that is scored. The target is not a return. It is the probability that the filtered regime label will be different on any of the next five trading days — the risk that the weather changes.</p>
+
+  <h3>5.1 Label, splits, matrix</h3>
+  <div class="math"><span class="n">(5.1)</span>y<sub>t</sub> = 1 if regime<sub>t+k</sub> ≠ regime<sub>t</sub> for any k ∈ {1,…,5}, else 0; &nbsp; the last five rows per pair have no label.</div>
+  <p>Labels look forward; features do not. Train ≤ 2016-12-31 (9,136 rows, positive rate 17.0 %), validation 2017–2018 (1,527 rows), test 2019+ (5,922 rows at the time of freezing), with five rows dropped on both sides of every boundary per pair so that no training label can "see" a validation feature. Fifteen features: the nine base features (<code>ret_1d</code> is excluded as directionless noise), the three post-HMM features, one-hot regime indicators and one-hot pair indicators. Every HMM-derived input is the filtered value; the truncation test asserts it.</p>
+
+  <h3>5.2 The model, and the restraint</h3>
+  <p><code>XGBClassifier</code> with <em>fixed</em> hyper-parameters — depth 3, learning rate 0.04, subsample and column-sample 0.8, min_child_weight 8, up to 1,000 trees with early stopping on validation PR-AUC (it stopped at iteration 283, val PR-AUC 0.479) — and <code>scale_pos_weight</code> 4.88 computed from the training class balance. No grid search. This is deliberate: tuning on validation would buy little and cost credibility, because validation is also where the threshold and the conformal quantiles come from. Because class weighting distorts predicted probabilities, the raw scores are <strong>Platt-recalibrated on validation</strong> (a = 0.95, b = −1.30); the raw numbers are still printed in the scoreboard. The decision <strong>threshold, 0.22</strong>, was chosen on validation to reach recall ≥ 60 % on transitions — early-warning economics: a false alarm costs a look, a missed storm costs the reason the tool exists, so the system buys recall and pays in precision, and says so.</p>
+
+  <h3>5.3 The frozen scoreboard — never accuracy</h3>
+  <table>
+    <tr><th>model (test 2019+, scored once)</th><th>threshold</th><th>PR-AUC ↑</th><th>precision</th><th>recall</th><th>Brier ↓</th><th>n</th></tr>
+    <tr class="hl"><td class="t"><b>XGBoost, Platt-calibrated (ours)</b></td><td>0.22</td><td><b>0.548</b></td><td>0.452</td><td>0.594</td><td><b>0.102</b></td><td>5,922</td></tr>
+    <tr><td class="t">XGBoost, raw probabilities</td><td>0.52</td><td>0.548</td><td>0.455</td><td>0.579</td><td>0.128</td><td>5,922</td></tr>
+    <tr><td class="t">logistic regression, same features</td><td>0.15</td><td>0.431</td><td>0.381</td><td>0.626</td><td>0.116</td><td>5,922</td></tr>
+    <tr><td class="t">one-feature rule (days_in_regime &gt; train median)</td><td>0.50</td><td>0.143</td><td>0.113</td><td>0.380</td><td>0.584</td><td>5,922</td></tr>
+    <tr><td class="t">base rate (constant train positive rate)</td><td>0.17</td><td>0.162</td><td>0.162</td><td>1.000</td><td>0.136</td><td>5,922</td></tr>
+  </table>
+  <p>Read it honestly. A PR-AUC of 0.548 against 0.431 for a linear model on the same features is a clear margin, and against a base rate of 0.162 it is a large one. At the chosen threshold the model catches 59 % of transitions with 45 % precision. Brier 0.102 calibrated vs 0.128 raw vs 0.136 base rate: the recalibrated probabilities are at least as well calibrated as the linear model's. Regime transitions of a sticky HMM are intrinsically hard to time — the label flips on the HMM's own filtered decision — so no forecaster here should be read as a market call. It is a change-risk gauge.</p>
+
+  <figure class="card">
+    <img src="fig/f03_calibration_pr.png" alt="Calibration and PR curve">
+    <figcaption><b>Figure 5.1 — Calibration and precision–recall on the frozen test</b> (recomputed from the committed artifact with the same label code). Left: observed change frequency against predicted risk in ten quantile bins — the curve hugs the diagonal up to the 0.5 region, where the model is slightly over-confident. Right: the full precision–recall trade-off with the frozen operating point; accuracy is deliberately absent.</figcaption>
+  </figure>
+
+  <h3>5.4 Drivers — SHAP, and what they say in ordinary words</h3>
+  <p>TreeSHAP values are computed for every scored row and the three largest |SHAP| contributions are stored as <code>top_drivers</code>. Across history the dominant drivers are <code>hmm_entropy</code> (how unsure the regime model is — the single best predictor of its own imminent change), <code>days_in_regime</code> (regimes age), <code>vol_60</code> and <code>vol_trend</code> (the season and its direction), and <code>rng_hl</code> (intraday range). The narrator (chapter 9) translates these names into phrases such as "how unsure the regime model is" and "the size of daily trading ranges"; it never invents a driver that is not in the list.</p>
+  <figure class="card">
+    <img src="../../reports/forecaster_shap.png" alt="SHAP summary">
+    <figcaption><b>Figure 5.2 — SHAP summary from the training report.</b> Feature importance as mean |SHAP| on the test matrix. The interpretation is structural rather than predictive: uncertainty and age of the regime carry most of the signal; no feature is a directional one.</figcaption>
+  </figure>
+  <div class="box interview"><div class="t">Interview lens</div><p>"Why not accuracy?" 84 % of test days have no change; a constant "no" gets 84 %. "Why PR-AUC and not ROC-AUC?" Because the positive class is rare and is the class we care about; ROC is flattered by the many easy negatives. "Why Platt and not isotonic?" Two parameters fitted on 1,527 validation rows are hard to overfit; isotonic would not be. "Would you retune after seeing the test?" No — the test was scored once and the number is frozen; the live ledger (chapter 11) is where new evidence goes.</p></div>
+</section>
+
+<!-- ===================================================== CH 06 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 06</span><h2>The siren: an autoencoder that remembers calm</h2></div>
+  <p class="lead">Regimes answer "which of four known weathers is it?" The siren answers a different question: "does today look like <em>anything</em> the model has seen in quiet times?" It is a detector, not a forecaster, and it is deliberately trained on the boring days.</p>
+  <h3>6.1 Design</h3>
+  <p>A small MLP autoencoder (<code>sklearn.MLPRegressor</code>, hidden layers 8 → 3 → 8, early stopping, seed 42) is trained to reconstruct the standardised feature vector of days the HMM called calm with probability above 0.7 in the training era: 2,788 calm training days from April 2005 to December 2016, pooled across pairs with no pair identity. Having only ever seen calm, it reconstructs calm well and everything else badly. The anomaly score is the reconstruction error; the anomaly <em>percentile</em> is that error's rank against the calm-training distribution, so "98" means "worse than 98 % of calm days the model learnt from". Per-feature errors and the nearest calm neighbour (excluding the last ten days) are stored for the narrator.</p>
+  <h3>6.2 Does it scream at the right moments?</h3>
+  <p>Validation was a list of famous shocks and a question per shock: does the siren peak within [−1, +3] days? The SNB floor removal of 15 January 2015 is USD/CHF's loudest day in twenty-one years (reconstruction error 343, percentile 100, rank 1 of 5,560 days), with the following three weeks all above 99. March 2020 lights up for every pair (EUR/USD peak 99.9 on 16 March). The autumn of 2008 fills EUR/USD's top fifteen. The siren also fires on days no one would name, which is correct behaviour for a detector; the overlay in chapter 10 and the alert engine in chapter 16 use "above 98" as the actionable line.</p>
+  <figure class="card">
+    <img src="fig/f08_siren.png" alt="Siren around SNB and COVID">
+    <figcaption><b>Figure 6.1 — The siren around two shocks.</b> Left: USD/CHF, September 2014 to May 2015 — the anomaly percentile (red) pinned at 100 from 15 January with the regime shading flipping to crisis the next trading day. Right: EUR/USD in the first half of 2020. The dashed line is the "above 98" action threshold. Detection only: nothing here predicts.</figcaption>
+  </figure>
+  <div class="box beginner"><div class="t">Beginner's note — why train on calm only</div><p>An anomaly detector trained on all days learns that crises are normal, because the 2008 autumn alone contributes hundreds of them. Training on calm days defines "normal" the way a treasurer means it, and makes "unlike anything in calm history" a statement with a precise reference set. The price is that the siren is loud in any high-volatility regime — which is why the dashboard shows it beside the regime, never instead of it.</p></div>
+</section>
+
+<!-- ===================================================== CH 07 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 07</span><h2>A second opinion: Bayesian online changepoints and consensus</h2></div>
+  <p class="lead">The HMM asks "which weather is it?" A changepoint detector asks a different question — "how old is the current era, and did it just end?" — and asking two different questions of the same data is worth more than asking one question twice. The detector was written from scratch, in about a hundred lines of NumPy, because writing it is the point.</p>
+  <h3>7.1 Adams–MacKay BOCPD with a Normal–Inverse-Gamma prior</h3>
+  <p>Bayesian online changepoint detection keeps a posterior over the <em>run length</em> r<sub>t</sub> — the number of days since the last changepoint. Each day it does two things: it grows every hypothesis ("the run continues") and it spawns a new one ("a changepoint happened, r = 0") with prior probability equal to the <em>hazard</em> H, here 1/60 — a prior belief that eras last about a quarter. Observations are modelled as Gaussian with unknown mean and variance under a Normal–Inverse-Gamma prior, which has closed-form updates and a Student-t predictive:</p>
+  <div class="math"><span class="n">(7.1)</span>P(r<sub>t</sub> = r+1 | x<sub>1:t</sub>) ∝ P(r<sub>t−1</sub> = r) · p(x<sub>t</sub> | run r) · (1 − H), &nbsp;&nbsp; P(r<sub>t</sub> = 0 | x<sub>1:t</sub>) ∝ Σ<sub>r</sub> P(r<sub>t−1</sub> = r) · p(x<sub>t</sub> | run r) · H,<br>
+  with &nbsp; p(x<sub>t</sub> | run r) = Student-t(2α<sub>r</sub>, μ<sub>r</sub>, β<sub>r</sub>(κ<sub>r</sub>+1)/(α<sub>r</sub>κ<sub>r</sub>)) &nbsp; and the conjugate updates μ ← (κμ + x)/(κ+1), κ ← κ+1, α ← α+½, β ← β + κ(x−μ)²/(2(κ+1)).</div>
+  <p>Hypotheses with posterior mass below 10<sup>−6</sup> are pruned so the state stays small. Two numbers are published per pair per day: the MAP run length and P(r<sub>t</sub> &lt; 5) — the probability that a changepoint happened within the last five days, the same horizon as the forecaster. The prior scale β<sub>0</sub> is set from training-era return variance per pair (a weak, scale-aware prior; κ<sub>0</sub> = α<sub>0</sub> = 1). Because the algorithm is online, it is causal by construction — and the truncation test is still run, bit-for-bit.</p>
+  <figure class="card">
+    <img src="fig/f04_bocpd.png" alt="BOCPD on synthetic breaks">
+    <figcaption><b>Figure 7.1 — BOCPD on a synthetic series with planted breaks.</b> Variance quadruples at day 300 (red) and the mean shifts by 0.8σ at day 400 (amber). The MAP run length resets on the day of the variance break and within about a dozen days of the subtle mean shift; P(change ≤ 5 days) spikes accordingly and then decays as the new era ages. This figure is reproduced by a unit test.</figcaption>
+  </figure>
+  <h3>7.2 Three voters and one sentence</h3>
+  <p>The consensus module counts three binary votes, each with a training-era threshold and each asking its own question: <strong>HMM</strong> — filtered crisis probability at or above the train-era 95th percentile (clipped to [0.20, 0.50], so a pair whose crisis state is nearly empty in training still needs a real signal); <strong>BOCPD</strong> — P(change ≤ 5 d) at or above the train-era 90th percentile (≈ 0.11, so the voter fires on about a tenth of training days); <strong>vol rule</strong> — the phase-04 baseline reused verbatim, vol_20 above its trailing 250-day 80th percentile. Agreement 0–3 is shown as three dots on every weather card and written to the ledger, with one template sentence per level: "0/3 agree: quiet conditions — no voter sees stress" … "3/3 agree: storm conditions — every voter sees stress". Templates only; no language model; no direction words.</p>
+  <figure class="card">
+    <img src="fig/f09_consensus.png" alt="Consensus votes 2020">
+    <figcaption><b>Figure 7.2 — The three voters through EUR/USD's 2020.</b> Dots mark days each voter fired; the stepped line is the agreement count. The vol rule is earliest and noisiest, BOCPD flags the variance break around the March crash, the HMM confirms once the crisis state becomes likely. All three agree only inside the storm — which is what the 3/3 alert in chapter 16 is for.</figcaption>
+  </figure>
+  <div class="box interview"><div class="t">Interview lens</div><p>"The vol rule screams, BOCPD is calm — most likely situation?" A slow drift of volatility across the 80th-percentile line without any break in the return distribution: a season change, not an event. "Why train-era-only thresholds?" Because a threshold chosen on the whole history is a parameter fitted on the test set, and the live record would then be scoring a number chosen with hindsight.</p></div>
+</section>
+
+<!-- ===================================================== CH 08 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 08</span><h2>Honest error bars: Mondrian conformal intervals</h2></div>
+  <p class="lead">A probability without an error bar invites false precision. Every change risk the system publishes now wears a band — and the band comes with a receipt showing how often it actually contained the outcome.</p>
+  <h3>8.1 Split conformal in four sentences</h3>
+  <p>Take a calibration set the model has not been trained on. For each row compute a nonconformity score — here |realised outcome − predicted probability|. Take the 90th-percentile score (with a finite-sample correction: the ⌈(n+1)(1−α)⌉-th smallest, α = 0.1). The interval for a new prediction is p̂ ± that quantile, clipped to [0, 1]. Under exchangeability the theorem guarantees ≥ 90 % coverage; time series are not exchangeable, so the project <em>does not cite the theorem anywhere user-facing</em> and instead reports empirical coverage — frozen once, then live as ledger rows mature. The kinship is with VaR coverage backtesting (Kupiec, Christoffersen): promise 90 %, count the hits.</p>
+  <div class="math"><span class="n">(8.1)</span>q<sub>r</sub> = Quantile<sub>⌈(n<sub>r</sub>+1)·0.9⌉/n<sub>r</sub></sub> { |y<sub>i</sub> − p̂<sub>i</sub>| : i ∈ calibration, regime<sub>i</sub> = r } , &nbsp;&nbsp; [lo, hi] = [p̂ − q<sub>r</sub>, p̂ + q<sub>r</sub>] ∩ [0, 1].</div>
+  <h3>8.2 Mondrian: one quantile per regime</h3>
+  <p>"Mondrian" conformal computes the quantile separately per group — here per regime — so that a calm day does not borrow the uncertainty of a crisis day. Calibration is the 2017–2018 validation years only (asserted in code: the calibration dates are strictly inside that window; the 2019+ test is untouched). The report states the dual use plainly: these years also chose the forecaster's early-stopping round and threshold. Regimes with fewer than 30 calibration rows borrow the pooled quantile (crisis has 21).</p>
+  <table>
+    <tr><th>regime</th><th>calibration rows (2017–18)</th><th>half-width q</th><th>frozen-test coverage</th></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--calm)"></span>calm</td><td>780</td><td>0.49</td><td>92.2 %</td></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--trend)"></span>trend</td><td>175</td><td>0.82</td><td>92.0 %</td></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--chop)"></span>chop</td><td>551</td><td>0.78</td><td>90.0 %</td></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--crisis)"></span>crisis</td><td>21 (pooled q)</td><td>0.69</td><td>92.9 %</td></tr>
+    <tr class="hl"><td class="t"><b>overall</b></td><td>1,527</td><td>—</td><td><b>91.6 %</b> on n = 5,922</td></tr>
+  </table>
+  <p>The bands are wide — half-widths of 0.5 to 0.8 on a probability scale — and that is the honest truth about a binary outcome: the nonconformity |y − p̂| for y ∈ {0, 1} cannot be small when p̂ is mid-range. The band answers "is the realised 0/1 outcome inside [p̂ − q, p̂ + q]?" nine times in ten, and the receipt shows it does: 91.6 % overall, 90–93 % per regime, within three points of nominal over 5,922 test days. Crisis q is larger than calm q, as it should be; the cards say "bands are wide on purpose" when the regime is crisis.</p>
+  <figure class="card">
+    <img src="fig/f05_conformal.png" alt="Conformal coverage">
+    <figcaption><b>Figure 8.1 — The coverage receipt.</b> Left: 120-day rolling empirical coverage on the frozen test against the 90 % line — it wanders between 85 % and 97 % and averages 91.6 %. Right: half-width per regime with its test coverage. The same plot is produced live on the Proof page as ledger rows mature.</figcaption>
+  </figure>
+  <div class="box interview"><div class="t">Interview lens</div><p>"Why must calibration never touch the test?" Because the test is the receipt; a quantile fitted on it would certify itself. "Is the true risk definitely inside the band?" No. The band is a frequency statement about a procedure — nine times in ten on the record so far — not a guarantee about any one day, and the record, not the theorem, is what we publish.</p></div>
+</section>
+
+<!-- ===================================================== CH 09 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 09</span><h2>Narration with guardrails</h2></div>
+  <p class="lead">Numbers need sentences; sentences are where language models become dangerous. The narrator is a small model on a very short leash.</p>
+  <p>Every day, per pair, the pipeline assembles a JSON object of computed numbers — regime, confidence, age, change risk and its three drivers, anomaly percentile and nearest calm neighbour — and sends it to <code>claude-haiku-4-5</code> at temperature 0.3 with a system prompt that reads, in full: <em>"You are the narrator for an educational FX dashboard. Using ONLY the JSON provided, write exactly three sentences in calm, plain English: (1) the current regime, its confidence and age; (2) the 5-day regime-change risk and its top drivers, translated into ordinary words; (3) the anomaly status, mentioning the closest historical match only if anomaly_pct &gt; 90. Never predict prices, never give advice, never add facts not present in the JSON, never use jargon without a plain-word gloss."</em> The reply is checked against a banned-word list (rise, fall, buy, sell, bullish, target, upside …); if the API key is absent, the call fails, the reply is empty or it contains a direction word, a deterministic template produces the same three sentences from the same JSON, and the card is labelled <em>auto</em> instead of <em>AI</em>. The entire test-suite, CI and every contributor run without a key.</p>
+  <div class="box rule"><div class="t">Rule 4 in practice</div><p>"EUR/USD is in a calm regime with 100 % confidence, now on day 80 of this regime. The model puts the chance of a regime change within five trading days at 1 %, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 73)." — a template sentence triple from 18 August 2026. Every clause maps to a field; nothing maps to an opinion.</p></div>
+  <p>The same discipline extends to every other text surface: the consensus sentences (chapter 7), the treasury rationale (chapter 14), the weekly report (chapter 18), the alert payloads (chapter 16) and the storm reports (chapter 15) are all templates, all linted for direction words, and all carry the rule-7 line. The language model that <em>reads</em> central-bank statements (chapter 13) is a separate story with a separate wall.</p>
+</section>

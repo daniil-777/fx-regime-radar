@@ -2,6 +2,15 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.21.1 — technical report (2026-08-19)
+
+- `docs/paper/`: the 53-page technical report (HTML source in four parts + generated PDF, figures regenerated
+  from the committed artifacts with the design tokens): abstract, principles, data, the six models with
+  their mathematics and frozen numbers, strategy/stress honesty, ledger/drift/proof, calendar &
+  challenger, central-bank index and the refusal note, treasury mode, storm replays, pipeline/wall/Rust,
+  trust-first UI, go-to-market, limitations, an interview companion, glossary and repo tour.
+- `narrate.py`: replies are now rejected (→ template) if they contain direction words (rule-5 guard), tested.
+
 ## v2.21.0 — phase 31: trust-first UI (2026-08-19)
 
 - Tokens: `design/tokens.json` is the single source (nimbus #0E1420 / front #151D2E / hairline

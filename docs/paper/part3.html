@@ -1,0 +1,176 @@
+
+<!-- ===================================================== PART III OPENER -->
+<section class="opener">
+  <div class="part">Part III</div>
+  <h1><span>Proof,</span><span style="color:var(--chop)">not promises.</span></h1>
+  <p>A backtest is a claim about the past made by someone who has seen the past. Everything in this part exists to replace claims with receipts: a strategy layer that reports its own failure, a hash-chained record sealed before outcomes exist, a challenger raced in public, a central-bank reader that refuses to be backtested, and three crises replayed exactly as the radar would have seen them.</p>
+  <div class="chapters">
+    <div><b>10</b> The strategy layer and the stress lab</div>
+    <div><b>11</b> The live ledger, the drift monitor and the proof page</div>
+    <div><b>12</b> Calendar, context and the challenger</div>
+    <div><b>13</b> Reading the central banks — and the test we refused to run</div>
+    <div><b>14</b> Treasury mode: hedge, wait, ladder</div>
+    <div><b>15</b> Storm replays</div>
+  </div>
+</section>
+
+<!-- ===================================================== CH 10 -->
+<section>
+  <div class="chap"><span class="n">CHAPTER 10</span><h2>The strategy layer and the stress lab — the honest part</h2></div>
+  <p class="lead">If regimes describe conditions, can conditions size risk? The strategy layer asks exactly that and nothing more: a fixed, pre-declared mechanical stance supplies the sign; the models supply only the risk budget. The answer, net of realistic costs, is no — and the report says so in its headline.</p>
+  <h3>10.1 The engine and the lag law</h3>
+  <p>A cost-aware backtest engine was written from scratch with one absolute rule inside it: a position decided from data up to close <i>t</i> earns returns from <i>t</i>+1. This is not left to the strategy author; the engine shifts the exposure series itself, and a "foresight test" feeds the engine tomorrow's return as a signal and asserts that it earns nothing. Costs are <strong>1 bp + 80 × vol_20</strong> per unit of turnover — a spread that widens in volatile conditions — charged on the day the position actually changes. Gross numbers are never shown without net beside them; turnover and cost drag are always printed; the <em>breakeven cost</em>, the cost multiplier at which the edge disappears, is the first number in the stress report. Truncation invariance is tested for the engine as it is for features.</p>
+  <h3>10.2 Three stances, one overlay, one blend</h3>
+  <p>S1 follows 20-day momentum (sign of <code>mom_20</code>, scaled by its strength, capped at ±1); S2 fades the last 5-day move (−clip(z)/2, z = the 5-day return over its expected standard deviation); S3 is the app's thesis as a strategy — S1 in trend, S2 in chop, half-size S1 in calm, flat in crisis. Each is then passed through the <em>overlay</em> — the only place the models speak: exposure is scaled down when change risk exceeds 0.3, cut to zero when the siren is above 98, volatility-targeted to 10 % with a hard 2× cap. BLEND is an equal-weight mix. Parameters were fixed on train and validation; the test (2019+) was scored once.</p>
+  <table>
+    <tr><th>test 2019+, three pairs equal weight</th><th>gross Sharpe</th><th>net Sharpe</th><th>net CAGR</th><th>max DD</th><th>turnover/yr</th><th>cost drag/yr</th><th>breakeven cost ×</th></tr>
+    <tr><td class="t">S1 trend (20-day momentum)</td><td>−0.30</td><td>−1.23</td><td>−6.9 %</td><td>−43 %</td><td>76.6</td><td>5.1 %</td><td>0.00</td></tr>
+    <tr><td class="t">S2 mean reversion</td><td>+0.12</td><td>−1.36</td><td>−6.7 %</td><td>−43 %</td><td>112.6</td><td>7.2 %</td><td>0.10</td></tr>
+    <tr><td class="t">S3 regime gate</td><td>−0.03</td><td>−1.30</td><td>−4.5 %</td><td>−31 %</td><td>62.2</td><td>4.3 %</td><td>0.00</td></tr>
+    <tr class="hl"><td class="t">BLEND</td><td>−0.13</td><td>−2.18</td><td>−5.7 %</td><td>−37 %</td><td>80.4</td><td>5.4 %</td><td>0.00</td></tr>
+  </table>
+  <p>Every strategy loses money net of costs on the frozen test. Even gross of costs only S2 is marginally positive, and the cost model erases it: its breakeven multiplier is 0.10 — it would need costs one-tenth of the (already modest) assumption to break even. The per-regime attribution was tested against the hypothesis that trend-following earns in the trend label and bleeds in chop; the pattern does not hold. Figure 10.1 shows the equity curves; the gross lines are drawn only so the net lines can be read against them.</p>
+  <figure class="card">
+    <img src="../../reports/strategy_equity.png" alt="Strategy equity curves">
+    <figcaption><b>Figure 10.1 — Net equity of the three stances and the blend, with the gross paths behind them.</b> The dashed verticals mark the validation and test boundaries. The story the figure tells is the report's headline: daily-bar FX timing with a mechanical stance does not survive a realistic cost model, with or without the regime overlay.</figcaption>
+  </figure>
+  <h3>10.3 Stress: shocks, cost multiples, bootstrap</h3>
+  <p>The stress lab replays three named windows (the SNB week of January 2015, the COVID crash, the whole of 2022), multiplies costs by 2, 3 and 5, adds execution lag, shocks volatility, perturbs every parameter ±30 %, and block-bootstraps the return paths. The worst case is quoted, never the average: S2 in 2022, maximum drawdown −18.3 %, worst day −2.4 %. The siren stop fired on 197 pair-days across the three windows — the overlay was flat exactly when it was supposed to be, and it still did not make the stance profitable. Nothing was re-tuned after these results.</p>
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/stress_robustness.png" alt="Parameter robustness" style="border-radius:6px;width:100%"></div>
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/stress_bootstrap_dd.png" alt="Bootstrap drawdowns" style="border-radius:6px;width:100%"></div>
+  </figure>
+  <figcaption style="margin-top:-6pt"><b>Figure 10.2 — Robustness and bootstrap.</b> Left: net Sharpe as each parameter is scaled 0.7–1.3× — flat and negative, i.e. no hidden sweet spot. Right: distribution of maximum drawdown over block-bootstrapped paths for the blend — the tail is what a risk committee would ask about.</figcaption>
+  <div class="box honest"><div class="t">Honesty box — why a failed strategy is the strongest chapter</div><p>A portfolio project that reports a Sharpe of 2 invites one question: what did you do to the data? A project that reports −2.18 net, shows the cost model, the turnover, the breakeven multiplier and the stress table, and then ships the models anyway because their purpose was never to trade — that answers the question before it is asked. The product in chapter 14 is built on the risk numbers, not on a strategy.</p></div>
+</section>
+
+<!-- ===================================================== CH 11 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 11</span><h2>The live ledger, the drift monitor and the proof page</h2></div>
+  <p class="lead">"Don't trust us — verify." Every weekday the pipeline writes the forecasts it just published into an append-only, SHA-256 hash-chained ledger <em>before</em> the outcome exists. Five trading days later each row is resolved against the regimes that actually arrived and scored with the very same function the frozen test used. No row is ever edited; a refit starts a new segment; the chain head is committed to GitHub, whose timestamps notarise it for free.</p>
+  <h3>11.1 What a row contains and how it is sealed</h3>
+  <p>One row per pair per day, newest date only — that is what makes it a <em>forward</em> forecast; nothing is ever backfilled, and a missed day is simply absent, forever. Each row carries the date, pair, regime, the four filtered probabilities, the change risk with its conformal band, the siren percentile, the BOCPD run length and P(change), the three votes and the agreement, the model versions, the git SHA of the code, a schema tag and a correction pointer. The hash is computed over the previous row's hash and the canonical sorted-key JSON of those fields (floats rounded to ten decimals, dates as ISO strings), so the same content always hashes the same way on any machine:</p>
+  <div class="chain">
+    <div class="blk">genesis<br><b>000…000</b></div><span class="arr">→</span>
+    <div class="blk">2026-08-17 EURUSD · schema 1<br>prev = genesis<br>row_hash = sha256(prev | json)<br><b>d654c131…</b></div><span class="arr">→</span>
+    <div class="blk">… schema-1 rows (never rewritten)</div><span class="arr">→</span>
+    <div class="blk">2026-08-18 EURUSD · schema 2<br>p_calm 1.00 · risk 0.015 [0, 0.51] · 0/3<br>git 74cea50b · prev = c36b1476…<br><b>312e79bc…</b></div><span class="arr">→</span>
+    <div class="blk">challenger=1.0.0 rows<br>(own segment, same chain)<br><b>58157bd3…</b> = head</div>
+  </div>
+  <p>Rows written before the schema was extended keep their original hash and field set — the verifier reads the <code>schema</code> tag to know which fields a row's hash covers — so the chain never had to be rewritten to grow. Corrections are <em>new</em> rows that point at the original's hash; the original is never touched. Editing or deleting any row breaks every hash after it. Two tests prove it: tamper with a middle row and the stdlib verifier prints BROKEN; run the pipeline twice on the same day and nothing is added.</p>
+  <div class="box rule"><div class="t">Verify on a fresh clone — three lines, standard library only</div><p><code>git clone … && cd fx-regime-radar</code><br><code>python scripts/verify_ledger.py&nbsp;&nbsp;&nbsp;&nbsp;# VALID rows=9 head=58157bd3…</code><br><code>cat data/ledger_head.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# compare with the hash the daily Action committed</code></p><p>What the chain guarantees: no row was edited, inserted or deleted after it was hashed. What it does not: that the forecasts were good — that is what the scoreboard is for.</p></div>
+  <h3>11.2 Scoring by maturity and by segment</h3>
+  <p>Only rows whose five-day window has completed are scored, with the frozen test's metric code — PR-AUC, precision and recall at the frozen threshold 0.22, Brier — and never accuracy. Metrics are null (never 0) until twenty rows have resolved and both classes have appeared. Each model version is a separate segment on the scoreboard; the champion and the challenger (chapter 12) share the chain but never mix. At the time of writing the record is two days old: six champion forecasts, three challenger forecasts, none matured — the README's live column honestly reads "warming up". The table that will fill over the coming weeks is the one number in this report that nobody, including the author, can improve after the fact.</p>
+  <h3>11.3 Drift: is the world still the one the models were fitted on?</h3>
+  <p>Three cheap checks run daily and write <code>status.json</code> with a <code>model_stale</code> flag. <strong>PSI</strong> per feature: ten quantile bins fitted on training rows, the last 60 days binned the same way. The textbook cut-offs (0.10 watch, 0.25 drifted) are reported but not used for the status, because a 60-day window of a slow, regime-switching feature sits at PSI 3–8 against the whole era <em>even inside the training years</em> — vol_20 has about three independent observations in 60 days. The status is therefore judged against the train era's own distribution of 60-day-window PSIs: above its 95th percentile is drifted, above the 75th is watch. <strong>KS</strong>: the two-sample Kolmogorov–Smirnov statistic, train era vs the last 60 days. <strong>HMM staleness</strong>: the mean per-day <em>predictive</em> log-likelihood of the last 60 days under each pair's saved model, compared with the training-era distribution of the same quantity; below its 5th percentile marks the model stale. A stale flag is a message to the human who owns the refit; nothing refits itself.</p>
+  <figure class="card">
+    <img src="fig/f06_drift.png" alt="Drift monitor">
+    <figcaption><b>Figure 11.1 — The drift monitor on 18 August 2026.</b> Grey bars: the training era's own 60-day-window PSI at the 75th and 95th percentile; coloured bars: the last 60 days. Four features are on watch (a quiet summer), none is beyond the training era's own range, no HMM is stale — <code>model_stale = false</code>, shown as a badge beside "data through" on every page.</figcaption>
+  </figure>
+  <figure class="card">
+    <img src="../screenshots/proof.png" alt="Proof page">
+    <figcaption><b>Figure 11.2 — The Proof page.</b> Forward-test days, live Brier vs frozen, coverage vs target, chain head and check, model freshness; the scoreboard by segment; the coverage receipt; the drift tables; the three-line verification box; the newest ledger rows and a download. Everything on it is recomputable from committed files.</figcaption>
+  </figure>
+</section>
+
+<!-- ===================================================== CH 12 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 12</span><h2>Calendar, context and the challenger</h2></div>
+  <p class="lead">"Did you condition on the calendar?" is the first question an FX professional asks. The answer is a second forecaster — a <em>challenger</em> — that sees scheduled central-bank dates, cross-asset context, positioning and a better volatility estimator, and that races the frozen champion on the live ledger. The production wall stays shut: <code>features.parquet</code>, the bundle, the golden vectors and the Rust service were byte-identical before and after this phase.</p>
+  <h3>12.1 Scheduled dates are leakage-safe; released values are not</h3>
+  <p>1,227 scheduled decisions — FOMC, ECB, SNB, Bank of England, US payrolls, US CPI — from 2005 to the end of 2026 were assembled from the institutions' own published calendars (three BLS pages from web archives; the source URL is in every row). Unscheduled actions are deliberately <em>excluded</em>: the emergency FOMC cut of 15 March 2020 and the SNB's floor removal of 15 January 2015 are not in the file, so <code>days_to_SNB</code> on 15 January 2015 honestly reads 63. A countdown to a published date is knowable a year ahead; the value printed at 08:30 on CPI day is not knowable at 08:29, and its "surprise" would need point-in-time consensus data the project does not have. So the features are <code>days_to_&lt;type&gt;</code> and <code>days_since_&lt;type&gt;</code>, and nothing else from the calendar.</p>
+  <h3>12.2 Context with the right lags</h3>
+  <p>From FRED's free endpoint: the Fed's broad dollar index (a DXY proxy, published weekly — lagged eight days), VIX, the US 2-year yield and the daily Economic Policy Uncertainty index (each lagged one day, since they are published after the FX close); EUR/CHF from Yahoo as a context series, never a scored pair. One- and five-day changes and 20-day z-scores, standardised with training-era parameters only. CFTC positioning is the classic trap: the Traders-in-Financial-Futures report is "as of Tuesday" but released Friday afternoon — keying on the report date would let Wednesday and Thursday rows see the future. The feature is therefore keyed on the <em>release</em> date and a test plants a Tuesday report and asserts it is invisible until Friday. Yang–Zhang volatility — overnight, open-to-close and Rogers–Satchell range terms combined with weight k = 0.34/(1.34 + (n+1)/(n−1)) — ships as <code>vol_20_yz</code>; on this feed the overnight term is near zero because Yahoo's open is a start-of-day snapshot, which the ablation notes.</p>
+  <h3>12.3 The challenger — same recipe, wider matrix, no lift</h3>
+  <table>
+    <tr><th>model</th><th>split</th><th>PR-AUC</th><th>precision</th><th>recall</th><th>Brier</th><th>n</th></tr>
+    <tr><td class="t">champion v1.1.0 (15 features)</td><td>val</td><td>0.481</td><td>0.390</td><td>0.618</td><td>0.119</td><td>1,527</td></tr>
+    <tr><td class="t">challenger v1.0.0 (15 + 31 features)</td><td>val</td><td>0.462</td><td>0.386</td><td>0.622</td><td>0.121</td><td>1,527</td></tr>
+    <tr class="hl"><td class="t">champion v1.1.0</td><td>test (once)</td><td><b>0.548</b></td><td>0.452</td><td>0.593</td><td>0.102</td><td>5,925</td></tr>
+    <tr class="hl"><td class="t">challenger v1.0.0</td><td>test (once)</td><td>0.544</td><td>0.421</td><td>0.602</td><td>0.103</td><td>5,925</td></tr>
+  </table>
+  <p>Within noise: the calendar, the context and the positioning did not lift the five-day change-risk forecast. Four of the top fifteen gain features are extended ones (<code>cot_eur_net</code>, its 52-week z-score, <code>days_since_SNB</code>, <code>vol_20_yz</code>), so the model does use them — it just does not predict better with them. Both models now write to the ledger under distinct segments. The promotion rule is written down: the challenger is promoted only if its live PR-AUC beats the champion's over at least 60 matured days with Brier not worse, by a deliberate refit-path act with a new model version — never automatically, never silently.</p>
+  <h3>12.4 Event study with a placebo, and the Yang–Zhang ablation</h3>
+  <p>Around each event type, −10 to +10 trading days, the mean change risk and the regime-flip frequency are compared with a band from 1,000 random non-event anchors. Most curves sit inside the band. The exception worth noting: SNB decision days flip the regime 6.7 % of the time against a placebo median of 3.5 %, and ECB/CPI days show elevated flips on the day after — the bumps are concentrated at +1, consistent with the daily bar convention. Refitting the HMM with <code>vol_20_yz</code> on a research copy relabels 33–69 % of days (mean agreement 44.5 %) — state identities are not robust to the volatility estimator, which is why adopting YZ into the wall is a full bundle rebuild with new goldens, scheduled as a follow-up, and not a swap.</p>
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/event_study_SNB.png" alt="SNB event study" style="border-radius:6px;width:100%"></div>
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/yz_ablation.png" alt="Yang-Zhang ablation" style="border-radius:6px;width:100%"></div>
+  </figure>
+  <figcaption style="margin-top:-6pt"><b>Figure 12.1 — Left:</b> the radar around scheduled SNB decisions — mean change risk (top) and regime-flip frequency (bottom) against the placebo band; the day-0 flip spike is outside the band. <b>Right:</b> the Yang–Zhang ablation timelines — same data, different volatility estimator, different regimes; a warning against casual feature swaps inside a frozen contract.</figcaption>
+</section>
+
+<!-- ===================================================== CH 13 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 13</span><h2>Reading the central banks — and the test we refused to run</h2></div>
+  <p class="lead">About forty official statements a year — FOMC, ECB, SNB, Bank of England — are free, timestamped and never revised. They are the one narrow exception to "no language models analysing markets", and the exception comes with a hard wall between what may touch history and what may not.</p>
+  <h3>13.1 Two legs, one wall</h3>
+  <p><strong>The historical leg has no memory.</strong> A frozen, SHA-256-pinned word list — the official Loughran–McDonald uncertainty list plus a cited hawkish/dovish lexicon (Apel & Blix Grimaldi; Gorodnichenko, Pham & Talavera) — scores each statement as normalised counts: hawkish, dovish, tone = (hawk − dove)/(hawk + dove + ε), uncertainty. A word list cannot know what the franc did after a 2015 letter, so it may score history. <strong>The live leg has memory.</strong> A pinned FinBERT checkpoint (<code>ProsusAI/finbert</code>, revision hash recorded) and — behind a gate — a frontier LLM may score only statements published <em>after the deploy date of 17 August 2026</em>; a guard raises before any model is even imported if a document is older, and a test proves it. Their scores go into the ledger with receipts. Neither ever enters training data.</p>
+  <p>184 statements from 2020 onward were fetched from the four banks' own sites (stdlib HTML parser, one request per second, fixed publication times: ECB 14:15 CET, SNB 09:30 CET, BoE 12:00 London, FOMC 14:00 ET) and turned into daily point-in-time features — tone, uncertainty, tone <em>surprise</em> relative to the bank's own last four statements, days since — known from the publication timestamp onward and merged into the challenger's matrix only. Tone surprise rather than level, because every bank has a house style (the ECB reads dovish, the Fed hawkish on this lexicon) and only a departure is news.</p>
+  <table>
+    <tr><th>bank</th><th>statements</th><th>first</th><th>last</th><th>mean tone</th><th>sd surprise</th></tr>
+    <tr><td class="t">FOMC</td><td>55</td><td>2020-01-29</td><td>2026-07-29</td><td>+0.273</td><td>0.504</td></tr>
+    <tr><td class="t">ECB</td><td>53</td><td>2020-01-23</td><td>2026-07-23</td><td>−0.197</td><td>0.354</td></tr>
+    <tr><td class="t">SNB</td><td>26</td><td>2020-03-19</td><td>2026-06-18</td><td>−0.167</td><td>0.284</td></tr>
+    <tr><td class="t">Bank of England</td><td>50</td><td>2020-01-30</td><td>2026-07-30</td><td>+0.017</td><td>0.310</td></tr>
+  </table>
+  <h3>13.2 What the lexicon leg found</h3>
+  <p>After <em>any</em> statement the next five days are more volatile than random days (EUR/USD volatility change +0.137 against a placebo band of [−0.19, −0.01]) — that is the calendar. Splitting statements at the median |tone surprise| adds +0.067 for EUR/USD and −0.032 for USD/CHF, both <em>inside</em> their permutation bands: no credible surprise effect yet, on a small corpus, with a simple frozen word list that saturates at ±1 on very short statements. The report says so and treats this as the benchmark the live record will be held to, not as evidence.</p>
+  <figure class="card">
+    <img src="../../reports/cb_event_study_vol.png" alt="Central-bank tone event study">
+    <figcaption><b>Figure 13.1 — Tone surprise vs subsequent volatility.</b> High- and low-surprise statements against the placebo band: the statement itself matters; the measured surprise, so far, does not.</figcaption>
+  </figure>
+  <h3>13.3 The gate, and the refusal note</h3>
+  <p>Stage 2 — LLM-scored hawkishness — proceeds only if roughly two policy cycles per bank are on the live record (≈16 statements each for Fed and ECB, 8 for the SNB) <em>and</em> the lexicon surprise shows a credible live event-study effect. On 19 August 2026 the live counts are 0/16, 0/16, 0/8, 0/16. The decision not to build is written down (<code>docs/stage2-decision.md</code>) with the numbers and the re-check condition. What was shipped is inert: a versioned prompt file, a receipts log (prompt hash and version, model string, date, raw reply), a cost cap of sixty documents a year, an ops-log entry on graceful skips, the same pre-deploy guard — and no bypass flag. No API call was made.</p>
+  <div class="box rule"><div class="t">Why we refuse the backtest (the one-page note, condensed)</div><p>A language model trained on the internet has read the ending of every old story — including how markets reacted to each 2015 statement. Scoring a 2015 letter with it tests memory of the ending, not reading skill; the backtest would look superb and mean nothing. That is <em>parametric look-ahead</em>: the leak is not in the data pipeline but in the weights. The only honest test of a model with memory is forward, on text written after its training cut-off, with every call receipted — which is precisely what the hash-chained ledger implements. So history gets word lists, the future gets the models, and the record decides.</p></div>
+</section>
+
+<!-- ===================================================== CH 14 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 14</span><h2>Treasury mode: hedge, wait, ladder</h2></div>
+  <p class="lead">The single most sellable object in the system is one recurring treasurer decision answered with risk mathematics and a price tag — and never a direction call. A treasurer with a euro receivable does not ask where EUR/CHF is going; she asks how large the adverse move could be this week and whether now is a defensible moment to act.</p>
+  <h3>14.1 Regime-conditional VaR and ES, historically simulated</h3>
+  <p>For each pair, every overlapping 5-trading-day window in the training era (≤ 2016) is labelled by the <em>filtered regime on the day the window starts</em> — the regime a treasurer would have known — and its absolute log move is recorded. Value-at-risk at 95 % and 99 % is the quantile of those absolute moves; expected shortfall is the mean beyond it. Absolute moves, because receivables and payables are hurt by opposite signs and the system takes no view on the sign. Cells with fewer than 30 windows fall back to the unconditional table with a flag (USD/CHF's crisis cell, 20 windows). The table is precomputed by the pipeline into <code>treasury_risk.json</code>; the page does arithmetic only: amount × ES × √weeks, converted at the latest close, rounded.</p>
+  <figure class="card">
+    <img src="fig/f07_treasury.png" alt="Treasury ES by regime">
+    <figcaption><b>Figure 14.1 — Why regime conditioning matters.</b> One-week expected shortfall at 99 % by regime at the window start, training era. EUR/USD: 2.7 % in calm against 7.2 % in crisis — a pooled number would overcharge the calm treasurer and under-warn the one in a storm. USD/CHF's calm cell (7.6 %) is higher than its crisis cell because the January 2015 windows <em>start</em> in calm: the shock arrived unannounced, which is exactly the treasurer's point. The asterisk marks the unconditional fallback.</figcaption>
+  </figure>
+  <h3>14.2 The traffic light — a rule table, not a recommendation</h3>
+  <table>
+    <tr><th>light</th><th style="text-align:left">deterministic rule (thresholds set on the training era, documented)</th><th style="text-align:left">template meaning</th></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--crisis)"></span><b>hedge</b></td><td class="t">crisis regime, <em>or</em> change risk ≥ the train-era 80th percentile (0.305) <em>and</em> the conformal band is wide</td><td class="t">lock in a larger share of the exposure now with a forward</td></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--calm)"></span><b>wait</b></td><td class="t">calm regime <em>and</em> change risk &lt; the train-era 40th percentile (0.090) <em>and</em> the band is narrow or unknown <em>and</em> no scheduled event within five days</td><td class="t">hold, re-check daily; the models see a quiet week</td></tr>
+    <tr><td class="t"><span class="dot" style="background:var(--chop)"></span><b>ladder</b></td><td class="t">everything else</td><td class="t">split the exposure into tranches spread over the horizon</td></tr>
+  </table>
+  <p>The page's inputs are an amount, its currency, a horizon of 1–12 weeks, a home currency (CHF by default) and a confidence level. Its outputs are the light as a word with a dot, VaR and ES in the home currency, the per-regime conditioning table so the user sees the distribution behind the number, a rationale template that combines the consensus sentence, the band width and the days to the next scheduled event, and one line a treasurer can forward: <em>"Waiting 1 more week on €800,000 risks ≈ CHF 20,000 at the 99 % level (regime: calm)."</em> Every unit test covers every branch of the rule; a lint test bans direction words from every template; the method note carries the TODO to confirm Swiss FinSA specifics with a professional before charging.</p>
+  <figure class="card">
+    <img src="../screenshots/treasury.png" alt="Treasury page">
+    <figcaption><b>Figure 14.2 — The Treasury page.</b> Inputs across the top; the light with its rationale; VaR, ES and the exposure in home currency; the cost-of-waiting line; what each light means; the inputs the rule saw; the per-regime table with today's regime marked. This page does no modelling: it multiplies artifact numbers by the user's inputs.</figcaption>
+  </figure>
+  <div class="box interview"><div class="t">Interview lens</div><p>"Where is the line between risk information and advice?" Risk information is a property of the market conditioned on published numbers — the same for every reader. Advice is a statement about what <em>you</em> should do given <em>your</em> situation. The light is generic, its rule is public, and the page never stores a position. "So will EUR/CHF go down?" — "The system does not model that, by design; it estimates how large the move could be either way, and how that estimate has held up."</p></div>
+</section>
+
+<!-- ===================================================== CH 15 -->
+<section class="page">
+  <div class="chap"><span class="n">CHAPTER 15</span><h2>Storm replays: three crises, as the radar would have seen them</h2></div>
+  <p class="lead">Hindsight bias is reading 2015 with 2026 eyes: knowing the ending makes every prior wiggle look like a warning. A causal reconstruction cuts the data at each day and asks only what was computable then. Three storms were replayed that way — chosen in advance, published whatever they showed.</p>
+  <h3>15.1 The replay engine shares the pipeline's code path</h3>
+  <p>For each day <i>t</i> in a window, the prices are truncated at <i>t</i> and fed through the <em>same</em> functions and the <em>same</em> loaded models the daily pipeline uses — features, forward filter, forecaster, siren, BOCPD, consensus, conformal band — keeping only the row for day <i>t</i>. Because every component is causal, the replay must equal the full-history artifact at <i>t</i>; a test asserts it to 10<sup>−9</sup> (the measured difference is 0.0) and a second test asserts that the replay equals the live ledger rows on the dates the ledger covers. A separate implementation could quietly smooth, refit or peek; sharing the code path is what makes "the radar would have seen" a fact rather than a story. Windows were fixed in advance; no window was chosen after seeing results.</p>
+  <table>
+    <tr><th>storm (pair)</th><th>window</th><th>first alarm (risk ≥ 0.22)</th><th>first crisis label</th><th>alarm → flip</th><th>peak siren</th><th>crisis days</th></tr>
+    <tr><td class="t">COVID (EUR/USD)</td><td class="t">2020-02-03 → 04-30</td><td class="t">2020-02-28 (32 %)</td><td class="t">2020-03-20</td><td>15 days</td><td class="t">100 on 03-20 (25 days ≥ 98)</td><td>22 / 64</td></tr>
+    <tr><td class="t">Credit Suisse (USD/CHF)</td><td class="t">2023-03-01 → 03-31</td><td class="t">2023-03-13 (25 %)</td><td class="t">none in window</td><td>—</td><td class="t">100 on 03-13 (2 days ≥ 98)</td><td>0 / 23</td></tr>
+    <tr><td class="t">SNB floor removal (USD/CHF)</td><td class="t">2015-01-05 → 01-30</td><td class="t">2015-01-14 (23 %)</td><td class="t">2015-01-16</td><td>2 days</td><td class="t">100 on 01-15 (12 days ≥ 98)</td><td>11 / 20</td></tr>
+  </table>
+  <h3>15.2 Three stories, told by the numbers</h3>
+  <p><strong>COVID, EUR/USD.</strong> The buildup is real: change risk crossed the alarm line on 28 February at 32 %, rose to 95 % on 9 March, the siren pinned at 100, and the label turned crisis on 20 March — fifteen trading days after the first alarm. The crisis lasted 22 days and the window ended in chop. This is the radar working as designed. <strong>Credit Suisse, USD/CHF.</strong> A marginal alarm on 13 March — the Monday after Silicon Valley Bank — at 25 %, the siren at 100 for two days, and then nothing: the label never read crisis in March 2023, and the window ended in trend. The report says so; the Zurich resonance is in the date, not in the model's reaction. <strong>SNB, USD/CHF.</strong> The honest sidebar. Change risk sat at 14, 16, 20, 21 and 23 % in the five days before the floor was removed — one point over the line on the 14th, a marginal alarm at a threshold whose test precision is 45 %, not a call. The siren's 100 on the 15th is detection of an unprecedented move (the intraday range feature screamed while the start-of-day close had not yet moved), not prediction. A volatility-based radar is blind to a pegged cross: suppressed volatility is the peg's whole purpose, and a removal is by definition unscheduled, so the calendar features of chapter 12 had nothing to say either. The cross-asset context series is the response, not a cure.</p>
+  <figure class="card">
+    <img src="../../reports/storms/snb_2015_USDCHF.png" alt="SNB replay">
+    <figcaption><b>Figure 15.1 — The SNB replay, USD/CHF, January 2015.</b> Price with the causally reconstructed regime shading, change risk with its band, and the siren. The radar did not warn; it detected, one day late in close-to-close terms, and then labelled the crisis for eleven days. Publishing this page is the strongest thing the project does.</figcaption>
+  </figure>
+  <figure class="two" style="display:grid">
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/storms/covid_2020_EURUSD.png" alt="COVID replay" style="border-radius:6px;width:100%"></div>
+    <div class="card" style="background:var(--nimbus);border-radius:10px;padding:8px"><img src="../../reports/storms/credit_suisse_2023_USDCHF.png" alt="Credit Suisse replay" style="border-radius:6px;width:100%"></div>
+  </figure>
+  <figcaption style="margin-top:-6pt"><b>Figure 15.2 — COVID (left) and Credit Suisse (right).</b> Same layout as 15.1. The first is the textbook buildup; the second is a non-event for the model, reported as one.</figcaption>
+  <p>Every replay page and report carries "Causal reconstruction — not the live record" with a link to the Proof page, and states the selection rule. A pipeline stage drafts a day-by-day post-mortem into <code>reports/postmortems/</code> whenever a pair enters the crisis regime live, flagged for human review — the next storm will be written up by the same code that wrote these.</p>
+</section>
