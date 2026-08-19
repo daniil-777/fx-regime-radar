@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FX regime radar — design target</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nimbus:#0E1420; --front:#151D2E; --line:rgba(255,255,255,0.08);
+  --tx1:#E8ECF4; --tx2:#9AA6B8; --tx3:#5C6980;
+  --calm:#3ECF8E; --trend:#4DA3FF; --chop:#F5B942; --crisis:#FF5C5C;
+  --beacon:#7FD1C9;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --disp:'Space Grotesk',var(--sans);
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size:15px;line-height:1.6}
+.num{font-family:var(--mono);font-feature-settings:'tnum'}
+a{color:var(--beacon);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--disp);font-weight:500;letter-spacing:0.04em}
+nav{display:flex;gap:18px;font-size:13px}
+nav a{color:var(--tx3)}
+nav a.on{color:var(--tx1);border-bottom:2px solid var(--calm);padding-bottom:2px}
+.live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--tx2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--calm);display:inline-block;animation:lp 2.4s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:0.35}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.banner{padding:44px 0 26px}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--tx3);letter-spacing:0.08em}
+.condrow{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.cond{font-family:var(--disp);font-weight:500;font-size:clamp(56px,10vw,88px);line-height:1.05;color:var(--calm)}
+.metrics{font-family:var(--mono);font-size:14px;color:var(--tx2);font-feature-settings:'tnum'}
+.metrics .dim{color:var(--tx3)}
+.consensus{font-size:12px;color:var(--tx3);text-align:right;padding-bottom:8px}
+.votes{display:flex;gap:14px;margin-top:6px}
+.votes span{display:flex;align-items:center;gap:5px;color:var(--tx2)}
+.pip{width:8px;height:8px;border-radius:50%;background:var(--calm);display:inline-block}
+.trace{margin-top:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:8px 0 30px}
+.card{background:var(--front);border-radius:12px;padding:16px 18px}
+.card h3{font-size:12px;font-weight:400;color:var(--tx3)}
+.card .big{font-size:16px;font-weight:500;margin-top:5px}
+.card .sub{font-family:var(--mono);font-size:12px;color:var(--tx2);margin-top:3px;font-feature-settings:'tnum'}
+.light{display:flex;align-items:center;gap:8px}
+.trust{border-top:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--tx2)}
+footer{padding:14px 0 40px;font-size:12px;color:var(--tx3)}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <div style="display:flex;align-items:baseline;gap:22px;flex-wrap:wrap">
+    <span class="mark">FX regime radar</span>
+    <nav><a class="on" href="#">EURUSD</a><a href="#">EURCHF</a><a href="#">USDCHF</a><a href="#">GBPUSD</a></nav>
+  </div>
+  <span class="live"><span class="dot"></span>live · day 47</span>
+</div></header>
+
+<main class="wrap">
+  <section class="banner">
+    <div class="eyebrow">current condition · Wednesday 19 Aug</div>
+    <div class="condrow">
+      <div>
+        <div class="cond">Calm</div>
+        <div class="metrics">change risk 0.31 <span class="dim">(0.17–0.45 · 90% band)</span> · siren 12<span class="dim">/100</span></div>
+      </div>
+      <div class="consensus">consensus 3/3
+        <div class="votes">
+          <span><span class="pip"></span>HMM</span>
+          <span><span class="pip"></span>BOCPD</span>
+          <span><span class="pip"></span>vol rule</span>
+        </div>
+      </div>
+    </div>
+    <svg class="trace" viewBox="0 0 920 56" width="100%" height="56" role="img" aria-label="Ninety-day change-risk trace with uncertainty band">
+      <polygon points="0,40 90,38 180,42 270,36 360,40 450,33 540,37 630,31 720,36 810,32 920,34 920,50 810,48 720,52 630,47 540,53 450,49 360,54 270,51 180,55 90,52 0,54" fill="#3ECF8E" fill-opacity="0.12"/>
+      <polyline points="0,47 90,45 180,49 270,44 360,47 450,41 540,45 630,39 720,44 810,40 920,41" fill="none" stroke="#3ECF8E" stroke-width="1.5"/>
+    </svg>
+  </section>
+
+  <section class="cards">
+    <div class="card">
+      <h3>next scheduled storm</h3>
+      <div class="big">SNB rate decision</div>
+      <div class="sub" style="color:var(--chop)">in 3 days · Thu 09:30</div>
+    </div>
+    <div class="card">
+      <h3>treasury light · €500k / 4 weeks</h3>
+      <div class="big light"><span class="pip"></span>Wait</div>
+      <div class="sub">waiting risk ≈ CHF 9,400 <span style="color:var(--tx3)">(99% ES)</span></div>
+    </div>
+    <div class="card">
+      <h3>interval coverage · live</h3>
+      <div class="big num" style="font-size:22px">89.6%</div>
+      <div class="sub" style="color:var(--tx3)">target 90 · 42 scored days</div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <span class="num">forward test day 47 · Brier 0.098 <span style="color:var(--tx3)">vs 0.102 frozen</span> · chain a91f…3c <span style="color:var(--calm)">✓</span></span>
+    <a href="#">verify independently ↗</a>
+  </div>
+</main>
+
+<footer><div class="wrap">Risk information, not investment advice. No direction forecasts — ever.</div></footer>
+</body>
+</html>

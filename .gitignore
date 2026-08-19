@@ -37,3 +37,7 @@ deploy/refresh.log
 data/keys.db
 data/keys.db-wal
 data/keys.db-shm
+
+# prompt-pack source archives (contents already extracted into .claude/commands/)
+/.claude.zip
+/claude 2.zip
