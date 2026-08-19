@@ -35,7 +35,11 @@ pages = {
         st.Page(str(VIEWS / "arcade.py"), title="Arcade"),
     ],
     "Trust": [st.Page(str(VIEWS / "proof.py"), title="Proof")],
-    "About": [st.Page(str(VIEWS / "methodology.py"), title="Methodology")],
+    "About": [
+        st.Page(str(VIEWS / "methodology.py"), title="Methodology"),
+        st.Page(str(VIEWS / "weekly.py"), title="Weekly report"),
+        st.Page(str(VIEWS / "metrics.py"), title="Metrics"),
+    ],
 }
 nav = st.navigation(pages, position="sidebar")
 nav.run()

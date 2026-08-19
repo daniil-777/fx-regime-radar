@@ -32,6 +32,12 @@ test:             ## run the test suite quietly
 treasury:         ## rebuild data/treasury_risk.json (regime-conditional VaR/ES + traffic light) from committed artifacts
 	$(PYTHON) -m fxradar.treasury
 
+weekly:           ## write this Monday's FX weather report (md + e-mail HTML + RSS) from committed artifacts
+	$(PYTHON) -m fxradar.weekly
+
+metrics:          ## refresh data/metrics.json (ledger days, subscribers, keys, partners, MRR — honest zeros)
+	$(PYTHON) -m fxradar.metrics_page
+
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py
 

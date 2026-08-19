@@ -1,0 +1,13 @@
+{
+  "ledger_days_live": 2,
+  "forecasts_recorded": 6,
+  "forecasts_resolved": 0,
+  "report_subscribers": 0,
+  "active_api_keys": 0,
+  "design_partners": 0,
+  "mrr_chf": 0.0,
+  "weekly_reports_published": 1,
+  "latest_weekly_report": "2026-08-17",
+  "generated_at": "2026-08-19T14:02:24Z",
+  "note": "Zeros are real zeros: each number is read from an artifact, never estimated. No subscriber data is stored (docs/PRIVACY.md)."
+}

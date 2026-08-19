@@ -1,0 +1,52 @@
+name: weekly-report
+
+on:
+  schedule:
+    - cron: "30 6 * * 1"    # Mondays 06:30 UTC (after the daily refresh has run)
+  workflow_dispatch: {}      # manual runs from the Actions tab
+
+permissions:
+  contents: write            # needed to commit the report + feed + metrics back to the repo
+
+concurrency:
+  group: weekly-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Write this Monday's report (md + e-mail HTML + RSS) from the committed artifacts
+        run: python -m fxradar.weekly
+
+      - name: Refresh the public metrics (honest zeros where nothing exists yet)
+        run: python -m fxradar.metrics_page
+
+      # E-mail delivery is deliberately NOT wired (no subscriber list, no paid services);
+      # the documented hook lives in docs/EMAIL_HOOK.md.
+
+      - name: Commit the report, feed, metrics and ops log
+        run: |
+          git config user.name "fx-regime-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/weekly docs/feed.xml data/metrics.json data/ops_log.jsonl
+          if git diff --cached --quiet; then
+            echo "no report changes (already published)"; exit 0
+          fi
+          git commit -m "docs: weekly FX weather report [skip ci]"
+          git push

@@ -2,6 +2,21 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.15.0 — phase 27: weekly FX weather report + public metrics page (2026-08-19)
+
+- `fxradar.weekly`: deterministic Monday report per pair (regime, change risk ± band, anomaly
+  percentile, generic hedge/wait/ladder light from the treasury artifact — never personalised, days
+  to the next SNB/ECB/FOMC/BoE event, `template_narrate` paragraph, proof link, live-record line) →
+  `docs/weekly/<date>.md` + e-mail-safe light-mode HTML twin (inline styles, phase-31 light tokens,
+  360 px checked) + `docs/feed.xml` (RSS 2.0, last 52) + `docs/weekly/index.md`; `data/ops_log.jsonl`
+  records "weekly_report_published" so a silent Monday is visible; direction-language lint over every
+  string literal; `.github/workflows/weekly.yml` (Mondays 06:30 UTC, commits the report, feed and
+  metrics). `docs/EMAIL_HOOK.md` documents the provider hook; zero paid services.
+- `fxradar.metrics_page` → `data/metrics.json` + README table: ledger days live, forecasts
+  recorded/resolved, report subscribers, active API keys (from `data/keys.db` when it exists), design
+  partners and MRR (from `docs/outreach/tracking.csv`), weekly reports published — honest zeros.
+  App pages **Weekly report** and **Metrics**. 16 tests.
+
 ## v2.14.0 — phase 25: treasury mode (2026-08-19)
 
 - `fxradar.treasury`: regime-conditional 1-week VaR/ES (historical simulation of |5-day log move|,

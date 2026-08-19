@@ -273,6 +273,29 @@ the rate will move. The light combines regime, change risk, the conformal band w
 next scheduled central-bank event. Method, limits, compliance posture:
 [docs/TREASURY.md](docs/TREASURY.md). Educational tool. Not investment advice.
 
+## Weekly report & metrics
+
+Every Monday 06:30 UTC the repo publishes a free FX weather report — regime, change risk ± band,
+siren, a *generic* hedge / wait / ladder light (never personalised), days to the next central-bank
+decision, three template sentences per pair, and the live-record line:
+[latest](docs/weekly/index.md) · [RSS](docs/feed.xml) · e-mail-safe HTML twin beside each page
+(`docs/EMAIL_HOOK.md` for a provider later). Educational tool. Not investment advice.
+
+The five numbers investors ask about, auto-filled where possible and honest zeros otherwise
+(`data/metrics.json`, app page **Metrics**):
+
+| Metric | Value |
+|---|---:|
+| Ledger days live | 2 |
+| Report subscribers | 0 |
+| Active API keys | 0 |
+| Design partners | 0 |
+| MRR (CHF) | 0 |
+| Forecasts recorded / resolved | 6 / 0 |
+| Weekly reports published | 1 |
+
+_Zeros are real zeros — updated 2026-08-19T14:02:25Z by `make metrics`._
+
 ## Universes and the scenario explorer
 
 The pipeline is universe-agnostic. `src/fxradar/universes.py` holds one record per instrument set —
