@@ -167,6 +167,7 @@ if not (REGIMES_PATH.exists() and PRICES_PATH.exists()):
 regimes_all = load_regimes(str(REGIMES_PATH), _mtime(REGIMES_PATH))
 prices_all = load_prices(str(PRICES_PATH), _mtime(PRICES_PATH))
 status = load_json(str(STATUS_PATH), _mtime(STATUS_PATH))
+drift_status = load_json(str(DATA_DIR / "status.json"), _mtime(DATA_DIR / "status.json"))
 report = load_json(str(REPORT_PATH), _mtime(REPORT_PATH))
 latest_date = regimes_all["date"].max()
 
@@ -187,6 +188,8 @@ if updated and not time_machine:
     right += (
         f' · updated <span class="fx-num">{html.escape(updated[:16].replace("T", " "))} UTC</span>'
     )
+if drift_status and not time_machine:
+    right += " " + ui.stale_badge(drift_status)
 if api_latest:
     served = str(next(iter(api_latest.values())).get("served_by", "rust"))
     right += f' <span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{ui.REGIME_COLORS["trend"]};background:{ui.REGIME_COLORS["trend"]}22;border:1px solid {ui.REGIME_COLORS["trend"]}55">served by {html.escape(served)}</span>'
@@ -321,9 +324,20 @@ for col, p in zip(cols, PAIRS, strict=True):
         f"{ui.sparkline_svg(closes, color)}"
         f'<div class="fx-kv"><span>20-day close</span><span class="fx-num">{(closes.iloc[-1] / closes.iloc[0] - 1) * 100:+.2f}%</span></div>'
         + (
-            ui.risk_gauge(latest["change_risk_5d"], list(latest["top_drivers"]))
+            ui.risk_gauge(
+                latest["change_risk_5d"],
+                list(latest["top_drivers"]),
+                lo=latest.get("risk_lo"),
+                hi=latest.get("risk_hi"),
+                regime=str(latest["regime"]),
+            )
             if "change_risk_5d" in latest and pd.notna(latest["change_risk_5d"])
             else ""
+        )
+        + ui.consensus_meter(
+            latest.get("agreement"),
+            {k: latest.get(k) for k in ("vote_hmm", "vote_bocpd", "vote_vol")},
+            latest.get("consensus_text"),
         )
         + ui.narration(narration)
     )

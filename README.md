@@ -26,19 +26,50 @@ phase 07 (test set 2019+, scored once). The right column is the one no backtest 
 deployed pipeline actually said, written down before the outcome existed.
 
 <!-- live-record:start -->
-| 5-day regime-change forecaster | frozen test · 2019+ · scored once (n = 5,922) | **live forward record** · since 2026-08-17 · 0 resolved of 3 |
+| 5-day regime-change forecaster | frozen test · 2019+ · scored once (n = 5,922) | **live forward record** · since 2026-08-17 · 0 resolved of 6 |
 |---|---|---|
 | PR-AUC ↑ | 0.548 (base rate 0.162) | — |
 | Brier ↓ | 0.102 (base rate 0.136) | — |
 | precision · recall @ 0.22 | 0.45 · 0.59 | — · — |
 | positive rate | 16% | — |
 
-**Warming up:** 3 forecasts recorded, 0 resolved — numbers appear at 20 resolved (≈ 7 trading days after the first entry + 5-day horizon). Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-08-18.
+**Warming up:** 6 forecasts recorded, 0 resolved — numbers appear at 20 resolved (≈ 7 trading days after the first entry + 5-day horizon). Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-08-19.
 <!-- live-record:end -->
 
 Model refits start a new ledger segment (a refit can never rewrite the old record); the ledger's hash
 chain is verified in CI. Details: [`src/fxradar/ledger.py`](src/fxradar/ledger.py),
 `data/ledger.parquet`, `data/live_record.json`.
+
+**Don't trust us — verify** (phase 20). Every ledger row since 2026-08-18 carries the four filtered
+probabilities, the conformal band, the three consensus votes, the git SHA of the code and a
+`schema` tag; `row_hash = sha256(prev_hash | canonical sorted-key JSON)`. Corrections are new rows that
+point at the original hash — nothing is ever edited. `data/ledger_head.txt` (head hash + date) is
+committed by the daily Action, so GitHub's commit timestamps notarise the chain head for free. On a
+fresh clone, standard library only:
+
+```bash
+python scripts/verify_ledger.py     # VALID/BROKEN + head hash, from data/ledger.jsonl
+cat data/ledger_head.txt
+```
+
+The app's **Proof** page shows the per-segment scoreboard (`reports/live_scoreboard.md`), the
+conformal coverage receipt, the drift monitor (`data/status.json`: PSI / KS per feature, HMM
+staleness from the saved models' predictive log-likelihood, a `model_stale` flag — refits stay a
+human decision) and the verify instructions.
+
+**Error bars (phase 22).** Every published change risk wears a Mondrian split-conformal band
+(`risk_lo`, `risk_hi`): per-regime 90 % quantiles of |outcome − p̂| calibrated on the 2017–2018
+validation years only (also used for early stopping and the threshold — a documented dual use); the
+2019+ test was touched once, for the receipt: empirical coverage 91.6 % (calm 92 %, chop 90 %,
+trend 92 %, crisis 93 %, n = 5,922). Time series violate exchangeability, so we report empirical
+coverage — frozen and, as ledger rows mature, live — instead of citing the theorem. That is a
+feature, not a confession: the receipt is the claim.
+
+**Second opinion (phase 21).** A from-scratch Bayesian online changepoint detector (Adams–MacKay,
+Normal-Inverse-Gamma, hazard 1/60) asks "how old is the current era?"; its P(change ≤ 5 days) votes
+beside the HMM's crisis probability and the phase-04 vol rule (vol_20 above its trailing 80th
+percentile). Agreement 0–3 and a template sentence ("3/3 agree: storm conditions") sit on every
+weather card and in every ledger row; thresholds are train-era percentiles, nothing is smoothed.
 
 ## Architecture
 

@@ -102,7 +102,12 @@ def test_score_pair_outputs_and_causality(prices_sample: pd.DataFrame) -> None:
     g = feats[feats["pair"] == "EURUSD"].reset_index(drop=True)
     bundle = hm.fit_hmm(g, train_end="2015-12-31", random_state=42)  # fixture is 2014-10..2015-12
     out = hm.score_pair(bundle, g)
-    assert list(out.columns) == [*hm.REGIME_COLUMNS[:6], "vol_trend", "model_version"]
+    assert list(out.columns) == [
+        *hm.REGIME_COLUMNS[:6],
+        *hm.PROB_COLUMNS,
+        "vol_trend",
+        "model_version",
+    ]
     assert set(out["regime"]) <= set(hm.REGIMES)
     assert out["regime_prob"].between(0.25, 1.0).all()
     assert out["hmm_entropy"].between(0.0, np.log(4) + 1e-12).all()

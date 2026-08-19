@@ -171,21 +171,82 @@ def risk_color(p: float) -> str:
     return MUTED if pct < 20 else (REGIME_COLORS["chop"] if pct <= 40 else REGIME_COLORS["crisis"])
 
 
-def risk_gauge(p: float, drivers: list[str] | None = None) -> str:
-    """Horizontal change-risk gauge with band colour and the top drivers beneath."""
+def risk_gauge(
+    p: float,
+    drivers: list[str] | None = None,
+    lo: float | None = None,
+    hi: float | None = None,
+    regime: str | None = None,
+) -> str:
+    """Horizontal change-risk gauge with band colour, the conformal band [lo, hi] as a translucent
+    segment behind the bar (phase 22), and the top drivers beneath."""
     pct = max(0.0, min(1.0, float(p))) * 100
     color = risk_color(p)
     ticks = "".join(
         f'<div style="position:absolute;left:{t}%;top:-2px;width:1px;height:12px;background:{BORDER}"></div>'
         for t in (20, 40)
     )
+    band, band_txt = "", ""
+    if lo is not None and hi is not None and lo == lo and hi == hi:  # NaN-safe
+        lo_p, hi_p = max(0.0, float(lo)) * 100, min(1.0, float(hi)) * 100
+        band = f'<div style="position:absolute;left:{lo_p:.1f}%;width:{max(0.0, hi_p - lo_p):.1f}%;top:0;height:100%;background:{color}33;border-radius:4px"></div>'
+        wide = "bands are wide on purpose" if regime == "crisis" else "90 % empirical band"
+        band_txt = f'<span class="fx-muted" style="font-size:0.72rem"> ± band <span class="fx-num">{lo_p:.0f}–{hi_p:.0f}%</span> · {wide}</span>'
     drv = ""
     if drivers:
         drv = f'<div class="fx-muted" style="font-size:0.75rem;margin-top:4px">drivers: {html.escape(", ".join(str(d) for d in drivers))}</div>'
     return (
-        f'<div class="fx-kv" style="margin-top:10px"><span>5-day change risk</span><span class="fx-num" style="color:{color}">{pct:.0f}%</span></div>'
-        f'<div class="fx-bar" style="position:relative;overflow:visible"><div style="width:{pct:.1f}%;background:{color}"></div>{ticks}</div>'
+        f'<div class="fx-kv" style="margin-top:10px"><span>5-day change risk{band_txt}</span><span class="fx-num" style="color:{color}">{pct:.0f}%</span></div>'
+        f'<div class="fx-bar" style="position:relative;overflow:visible">{band}<div style="position:relative;width:{pct:.1f}%;background:{color};height:100%;border-radius:4px"></div>{ticks}</div>'
         f"{drv}"
+    )
+
+
+def consensus_meter(
+    agreement: int | None, votes: dict | None = None, text: str | None = None
+) -> str:
+    """Three-dot consensus module (phase 21): one dot per voter (HMM · BOCPD · vol rule), filled
+    when that voter sees stress, with the agreement count and the template sentence."""
+    if agreement is None or agreement != agreement:
+        return ""
+    votes = votes or {}
+    names = [("hmm", "vote_hmm"), ("bocpd", "vote_bocpd"), ("vol", "vote_vol")]
+    level = int(agreement)
+    color = (
+        REGIME_COLORS["crisis"] if level == 3 else REGIME_COLORS["chop"] if level == 2 else MUTED
+    )
+    dots = "".join(
+        f'<span title="{label}" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;'
+        f'background:{color if int(votes.get(key, 0) or 0) else "transparent"};border:1.5px solid {color if int(votes.get(key, 0) or 0) else BORDER}"></span>'
+        for label, key in names
+    )
+    sentence = (
+        f'<span class="fx-muted" style="font-size:0.76rem">{html.escape(str(text))}</span>'
+        if text
+        else ""
+    )
+    return (
+        f'<div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">'
+        f'<span style="display:inline-flex;align-items:center">{dots}</span>'
+        f'<span class="fx-num" style="font-size:0.8rem;color:{color}">{level}/3</span>{sentence}</div>'
+    )
+
+
+def stale_badge(status: dict | None) -> str:
+    """Header pill from data/status.json: models fresh / watch / stale (phase 20 drift monitor)."""
+    if not status:
+        return ""
+    stale = bool(status.get("model_stale"))
+    watch = any(v.get("status") == "watch" for v in status.get("features", {}).values())
+    color = (
+        REGIME_COLORS["crisis"]
+        if stale
+        else (REGIME_COLORS["chop"] if watch else REGIME_COLORS["calm"])
+    )
+    word = "models stale" if stale else ("drift watch" if watch else "models fresh")
+    return (
+        f'<span class="fx-pill" title="PSI / KS / HMM log-likelihood vs the train era — see Proof" '
+        f'style="font-size:0.65rem;padding:2px 8px;color:{color};background:{color}22;border:1px solid {color}55">{word}</span>'
     )
 
 
@@ -259,9 +320,12 @@ def html_table(df: pd.DataFrame, formats: dict[str, str] | None = None) -> str:
         cells = []
         for c in df.columns:
             val = r[c]
-            if c in formats and pd.notna(val):
-                cells.append(f"<td>{formats[c].format(val)}</td>")
-            elif isinstance(val, float) and pd.isna(val):
+            if c in formats and pd.notna(val) and not isinstance(val, str):
+                try:
+                    cells.append(f"<td>{formats[c].format(val)}</td>")
+                except (ValueError, TypeError):
+                    cells.append(f"<td>{html.escape(str(val))}</td>")
+            elif (isinstance(val, float) and pd.isna(val)) or val is None:
                 cells.append('<td class="fx-muted">–</td>')
             else:
                 cells.append(f"<td>{html.escape(str(val))}</td>")

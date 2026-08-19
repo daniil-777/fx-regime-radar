@@ -46,7 +46,8 @@ HORIZON = forecaster.HORIZON  # 5 trading days, same as the forecaster label
 MIN_RESOLVED = 20  # below this the live column says "warming up" instead of a number
 GENESIS = "0" * 64  # prev_hash of the first row
 
-FORECAST_COLUMNS = [
+# schema 1 (rows written before phase 20): the original six forecast fields
+FORECAST_COLUMNS_V1 = [
     "date",
     "pair",
     "regime",
@@ -57,8 +58,55 @@ FORECAST_COLUMNS = [
     "prev_hash",
     "row_hash",
 ]
+# schema 2 (phase 20+): filtered probabilities, conformal band (22), BOCPD + votes (21), git SHA,
+# correction pointer. Old rows keep schema 1 and hash exactly as they always did — nothing is
+# ever rewritten or migrated; `schema` tells the verifier which field set a row's hash covers.
+SCHEMA = 2
+PROB_COLUMNS = ["p_calm", "p_trend", "p_chop", "p_crisis"]
+INTERVAL_COLUMNS = ["risk_lo", "risk_hi", "conformal_q"]
+BOCPD_COLUMNS = ["bocpd_run_length", "bocpd_p_change_5d"]
+VOTE_COLUMNS = ["vote_hmm", "vote_bocpd", "vote_vol", "agreement"]
+EXTRA_FORECAST_COLUMNS = [
+    *PROB_COLUMNS,
+    *INTERVAL_COLUMNS,
+    *BOCPD_COLUMNS,
+    *VOTE_COLUMNS,
+    "git_sha",
+    "schema",
+    "correction_of",
+]
+FORECAST_COLUMNS_V2 = [
+    "date",
+    "pair",
+    "regime",
+    *PROB_COLUMNS,
+    "change_risk_5d",
+    *INTERVAL_COLUMNS,
+    "anomaly_pct",
+    *BOCPD_COLUMNS,
+    *VOTE_COLUMNS,
+    "model_version",
+    "git_sha",
+    "schema",
+    "correction_of",
+    "recorded_at_utc",
+    "prev_hash",
+    "row_hash",
+]
+FORECAST_COLUMNS = FORECAST_COLUMNS_V2
 OUTCOME_COLUMNS = ["outcome", "resolved_at_utc"]
 COLUMNS = FORECAST_COLUMNS + OUTCOME_COLUMNS
+FLOAT_COLUMNS = [
+    *PROB_COLUMNS,
+    "change_risk_5d",
+    *INTERVAL_COLUMNS,
+    "anomaly_pct",
+    "bocpd_p_change_5d",
+    "outcome",
+]
+HEAD_PATH = config.DATA_DIR / "ledger_head.txt"
+SCOREBOARD_MD = config.REPORTS_DIR / "live_scoreboard.md"
+SCOREBOARD_JSON = config.REPORTS_DIR / "live_scoreboard.json"
 
 START_MARK, END_MARK = "<!-- live-record:start -->", "<!-- live-record:end -->"
 
@@ -67,20 +115,54 @@ START_MARK, END_MARK = "<!-- live-record:start -->", "<!-- live-record:end -->"
 # hash chain
 # --------------------------------------------------------------------------------------
 def _canon(value) -> object:
-    """Canonical JSON-able value: floats rounded to 10 dp, NaN -> None, timestamps -> ISO date."""
+    """Canonical JSON-able value: floats rounded to 10 dp, NaN -> None, timestamps -> ISO date,
+    numpy ints -> int. Deterministic across pandas/numpy versions on purpose."""
     if isinstance(value, pd.Timestamp | datetime):
         return value.strftime("%Y-%m-%d")
     if value is None or (isinstance(value, float) and np.isnan(value)):
         return None
     if isinstance(value, np.floating | float):
-        return round(float(value), 10)
+        return None if np.isnan(value) else round(float(value), 10)
+    if isinstance(value, np.integer):
+        return int(value)
     return value
 
 
+def git_sha() -> str:
+    """Short git SHA of the code that produced a row ('unknown' outside a checkout)."""
+    import subprocess
+
+    try:
+        return (
+            subprocess.run(
+                ["git", "rev-parse", "--short=12", "HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+                cwd=config.ROOT,
+                check=False,
+            ).stdout.strip()
+            or "unknown"
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+
+
+def _schema_of(record: dict) -> int:
+    v = record.get("schema")
+    return 1 if v is None or (isinstance(v, float) and np.isnan(v)) else int(v)
+
+
+def hashed_fields(schema: int) -> list[str]:
+    cols = FORECAST_COLUMNS_V1 if schema == 1 else FORECAST_COLUMNS_V2
+    return [c for c in cols if c not in ("prev_hash", "row_hash")]
+
+
 def row_hash(prev_hash: str, record: dict) -> str:
-    """SHA-256 over the previous hash and the canonical forecast fields (never the outcome)."""
-    fields = [c for c in FORECAST_COLUMNS if c not in ("prev_hash", "row_hash")]
-    payload = json.dumps({c: _canon(record[c]) for c in fields}, sort_keys=True)
+    """SHA-256 over the previous hash and the canonical sorted-key JSON of the forecast fields
+    (never the outcome). The field set depends on the row's schema version."""
+    fields = hashed_fields(_schema_of(record))
+    payload = json.dumps({c: _canon(record.get(c)) for c in fields}, sort_keys=True)
     return hashlib.sha256(f"{prev_hash}|{payload}".encode()).hexdigest()
 
 
@@ -98,23 +180,33 @@ def verify_chain(ledger: pd.DataFrame) -> bool:
 # io
 # --------------------------------------------------------------------------------------
 def empty_ledger() -> pd.DataFrame:
-    return pd.DataFrame({c: pd.Series(dtype="object") for c in COLUMNS}).astype(
-        {
-            "date": "datetime64[ns]",
-            "change_risk_5d": float,
-            "anomaly_pct": float,
-            "outcome": float,
-        }
-    )
+    df = pd.DataFrame({c: pd.Series(dtype="object") for c in COLUMNS})
+    return _typed(df)
+
+
+def _typed(df: pd.DataFrame) -> pd.DataFrame:
+    """Stable dtypes: floats for numbers, nullable Int64 for run length / votes / schema."""
+    df = df.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    for c in FLOAT_COLUMNS:
+        df[c] = pd.to_numeric(df[c], errors="coerce").astype(float)
+    for c in ["bocpd_run_length", *VOTE_COLUMNS, "schema"]:
+        df[c] = pd.to_numeric(df[c], errors="coerce").astype("Int64")
+    return df
 
 
 def load(path: Path | None = None) -> pd.DataFrame:
-    """The ledger on disk, or an empty one (first run)."""
+    """The ledger on disk (older schema-1 files are widened with empty columns — the stored rows
+    and their hashes are untouched), or an empty one (first run)."""
     path = LEDGER_PATH if path is None else path
     if not Path(path).exists():
         return empty_ledger()
     df = pd.read_parquet(path)
-    df["date"] = pd.to_datetime(df["date"])
+    for c in COLUMNS:
+        if c not in df.columns:
+            df[c] = None
+    df = _typed(df)
+    df.loc[df["schema"].isna(), "schema"] = 1  # pre-phase-20 rows
     return df[COLUMNS]
 
 
@@ -128,7 +220,7 @@ def save(ledger: pd.DataFrame, path: Path | None = None) -> None:
 # append + resolve
 # --------------------------------------------------------------------------------------
 def append_latest(
-    ledger: pd.DataFrame, regimes: pd.DataFrame, recorded_at_utc: str
+    ledger: pd.DataFrame, regimes: pd.DataFrame, recorded_at_utc: str, sha: str | None = None
 ) -> tuple[pd.DataFrame, int]:
     """Record the newest date's forecast per pair, if the ledger has not seen it yet.
 
@@ -137,32 +229,87 @@ def append_latest(
     forward or not at all). Returns (ledger, rows_added). Idempotent within a day.
     """
     latest = regimes.sort_values("date").groupby("pair").tail(1).sort_values("pair")
+    fam = ledger["model_version"].astype(str).map(_family) if len(ledger) else pd.Series(dtype=str)
     last_seen = (
-        ledger.groupby("pair")["date"].max() if len(ledger) else pd.Series(dtype="datetime64[ns]")
+        ledger.assign(_fam=fam).groupby(["pair", "_fam"])["date"].max()
+        if len(ledger)
+        else pd.Series(dtype="datetime64[ns]")
     )
     prev = ledger["row_hash"].iloc[-1] if len(ledger) else GENESIS
+    sha = sha if sha is not None else git_sha()
     new_rows: list[dict] = []
-    for r in latest.itertuples(index=False):
-        if r.pair in last_seen.index and pd.Timestamp(r.date) <= last_seen[r.pair]:
+    for r in latest.to_dict("records"):
+        key = (r["pair"], _family(str(r["model_version"])))
+        if key in last_seen.index and pd.Timestamp(r["date"]) <= last_seen[key]:
             continue
-        rec = {
-            "date": pd.Timestamp(r.date),
-            "pair": r.pair,
-            "regime": r.regime,
-            "change_risk_5d": float(r.change_risk_5d),
-            "anomaly_pct": float(r.anomaly_pct) if pd.notna(r.anomaly_pct) else np.nan,
-            "model_version": str(r.model_version),
-            "recorded_at_utc": recorded_at_utc,
-            "prev_hash": prev,
-        }
-        rec["row_hash"] = row_hash(prev, rec)
-        rec["outcome"], rec["resolved_at_utc"] = np.nan, None
+        rec = _forecast_record(r, recorded_at_utc, sha, prev)
         prev = rec["row_hash"]
         new_rows.append(rec)
     if not new_rows:
         return ledger, 0
-    out = pd.concat([ledger, pd.DataFrame(new_rows)[COLUMNS]], ignore_index=True)
+    out = pd.concat([ledger, _typed(pd.DataFrame(new_rows)[COLUMNS])], ignore_index=True)
     return out, len(new_rows)
+
+
+def _family(model_version: str) -> str:
+    """Champion rows and challenger rows (phase 23) keep separate 'newest date' pointers."""
+    return "challenger" if model_version.startswith("challenger") else "champion"
+
+
+def _num(value, cast=float):
+    if value is None:
+        return np.nan if cast is float else None
+    if isinstance(value, float) and np.isnan(value):
+        return np.nan if cast is float else None
+    try:
+        return cast(value)
+    except (TypeError, ValueError):
+        return np.nan if cast is float else None
+
+
+def _forecast_record(
+    r: dict, recorded_at_utc: str, sha: str, prev: str, correction_of=None
+) -> dict:
+    """One schema-2 row from a regimes row (missing optional columns become null)."""
+    rec = {
+        "date": pd.Timestamp(r["date"]),
+        "pair": r["pair"],
+        "regime": r["regime"],
+        "change_risk_5d": _num(r.get("change_risk_5d")),
+        "anomaly_pct": _num(r.get("anomaly_pct")),
+        "model_version": str(r["model_version"]),
+        "git_sha": sha,
+        "schema": SCHEMA,
+        "correction_of": correction_of,
+        "recorded_at_utc": recorded_at_utc,
+        "prev_hash": prev,
+    }
+    for c in [*PROB_COLUMNS, *INTERVAL_COLUMNS, "bocpd_p_change_5d"]:
+        rec[c] = _num(r.get(c))
+    for c in ["bocpd_run_length", *VOTE_COLUMNS]:
+        rec[c] = _num(r.get(c), int)
+    rec["row_hash"] = row_hash(prev, rec)
+    rec["outcome"], rec["resolved_at_utc"] = np.nan, None
+    return rec
+
+
+def append_correction(
+    ledger: pd.DataFrame,
+    original_row_hash: str,
+    corrected: dict,
+    recorded_at_utc: str,
+    sha: str | None = None,
+) -> pd.DataFrame:
+    """Corrections are NEW rows that point at the original row's hash — the original is never
+    edited. `corrected` holds the replacement forecast fields (date/pair/regime/... as a regimes row).
+    """
+    if not (ledger["row_hash"] == original_row_hash).any():
+        raise KeyError(f"no ledger row with hash {original_row_hash[:12]}…")
+    prev = ledger["row_hash"].iloc[-1]
+    rec = _forecast_record(
+        corrected, recorded_at_utc, sha or git_sha(), prev, correction_of=original_row_hash
+    )
+    return pd.concat([ledger, _typed(pd.DataFrame([rec])[COLUMNS])], ignore_index=True)
 
 
 def resolve(
@@ -266,6 +413,81 @@ def summarize(
     return out
 
 
+def scoreboard(
+    ledger: pd.DataFrame, threshold: float, base_rate_p: float, min_resolved: int = MIN_RESOLVED
+) -> list[dict]:
+    """Live scores per model_version segment (champion and challenger rows never mix)."""
+    rows = []
+    for version, seg in ledger.groupby("model_version", sort=False):
+        resolved = seg[seg["outcome"].notna()]
+        rec = {
+            "model_version": str(version),
+            "family": _family(str(version)),
+            "since": str(seg["date"].min().date()),
+            "through": str(seg["date"].max().date()),
+            "n_forecasts": int(len(seg)),
+            "n_resolved": int(len(resolved)),
+            "brier": None,
+            "pr_auc": None,
+            "precision": None,
+            "recall": None,
+            "base_rate_brier": None,
+        }
+        if len(resolved) >= min_resolved:
+            y = resolved["outcome"].to_numpy(dtype=float)
+            p = np.clip(resolved["change_risk_5d"].to_numpy(dtype=float), 0, 1)
+            rec["brier"] = float(np.mean((p - y) ** 2))
+            rec["base_rate_brier"] = float(np.mean((base_rate_p - y) ** 2))
+            if 0 < y.mean() < 1:
+                m = forecaster.metrics(y, p, threshold)
+                rec.update({k: m.get(k) for k in ("pr_auc", "precision", "recall")})
+        rows.append(rec)
+    return rows
+
+
+def scoreboard_markdown(board: list[dict], frozen: dict | None) -> str:
+    fz = frozen or {}
+    lines = [
+        "# Live scoreboard — forward forecasts scored after maturity",
+        "",
+        "Only rows whose 5-trading-day window has completed are scored; each model version is a",
+        "separate segment so a refit can never launder an earlier record. Metrics appear at "
+        f"{MIN_RESOLVED} resolved rows; null means not yet defined, never 0.",
+        "",
+        f"Frozen test (2019+, scored once): PR-AUC {_fmt(fz.get('pr_auc'))} · Brier {_fmt(fz.get('brier'))} "
+        f"(base rate {_fmt(fz.get('base_rate_brier'))}) · n = {fz.get('n', 0)}",
+        "",
+        "| model version | family | since | through | forecasts | resolved | Brier ↓ | base-rate Brier | PR-AUC ↑ | precision | recall |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for r in board:
+        lines.append(
+            f"| `{r['model_version']}` | {r['family']} | {r['since']} | {r['through']} | {r['n_forecasts']} | {r['n_resolved']} | "
+            f"{_fmt(r['brier'])} | {_fmt(r['base_rate_brier'])} | {_fmt(r['pr_auc'])} | {_fmt(r['precision'], '{:.2f}')} | {_fmt(r['recall'], '{:.2f}')} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def to_jsonl(ledger: pd.DataFrame) -> str:
+    """Canonical JSON-lines mirror of the ledger (same rows, hashed fields already canonical) so
+    `scripts/verify_ledger.py` can re-verify the chain with the standard library alone."""
+    lines = []
+    for rec in ledger.to_dict("records"):
+        fields = hashed_fields(_schema_of(rec))
+        row = {c: _canon(rec.get(c)) for c in fields}
+        row["prev_hash"], row["row_hash"] = rec["prev_hash"], rec["row_hash"]
+        row["outcome"] = _canon(rec.get("outcome"))
+        lines.append(json.dumps(row, sort_keys=True))
+    return "\n".join(lines) + ("\n" if lines else "")
+
+
+def head_line(ledger: pd.DataFrame) -> str:
+    """'<head hash> <newest date> <rows>' — committed daily so GitHub timestamps the chain head."""
+    if not len(ledger):
+        return f"{GENESIS} none 0\n"
+    return f"{ledger['row_hash'].iloc[-1]} {ledger['date'].max():%Y-%m-%d} {len(ledger)}\n"
+
+
 # --------------------------------------------------------------------------------------
 # renderers: badge (shields.io endpoint schema) + README block
 # --------------------------------------------------------------------------------------
@@ -328,7 +550,10 @@ def readme_block(summary: dict) -> str:
         + [f"| {a} | {b} | {c} |" for a, b, c in rows]
     )
     if m:
-        state = f"**Live: {n_res} forecasts resolved.**"
+        state = (
+            f"**Since {summary['since']}: live PR-AUC {_fmt(m.get('pr_auc'))} / Brier {_fmt(m.get('brier'))} "
+            f"on {n_res} unseen forecasts, vs frozen test PR-AUC {_fmt(fz.get('pr_auc'))} / Brier {_fmt(fz.get('brier'))}.**"
+        )
     else:
         state = (
             f"**Warming up:** {n_all} forecasts recorded, {n_res} resolved — numbers appear at "
@@ -378,6 +603,8 @@ def record(
         ledger, float(meta["threshold"]), base_p, frozen_from_meta(meta), generated_at_utc=now_utc
     )
     summary["added_today"], summary["resolved_today"] = added, resolved
+    summary["scoreboard"] = scoreboard(ledger, float(meta["threshold"]), base_p)
+    summary["head_hash"] = ledger["row_hash"].iloc[-1] if len(ledger) else GENESIS
     return ledger, summary
 
 
@@ -388,6 +615,7 @@ def write_outputs(
     record_path: Path | None = None,
     badge_path: Path | None = None,
     readme_path: Path | None = README_PATH,
+    reports_dir: Path | None = None,
 ) -> None:
     """Persist ledger + summary + badge, and refresh the README block (fx universe only).
     Paths default to the module-level ones at call time (so tests can redirect them)."""
@@ -398,6 +626,18 @@ def write_outputs(
     Path(record_path).write_text(json.dumps(summary, indent=1, default=str))
     Path(badge_path).parent.mkdir(parents=True, exist_ok=True)
     Path(badge_path).write_text(json.dumps(badge(summary)))
+    head_path = Path(ledger_path).with_name("ledger_head.txt")
+    head_path.write_text(head_line(ledger))
+    Path(ledger_path).with_suffix(".jsonl").write_text(to_jsonl(ledger))
+    if "scoreboard" in summary:
+        rdir = Path(reports_dir) if reports_dir is not None else SCOREBOARD_MD.parent
+        rdir.mkdir(parents=True, exist_ok=True)
+        (rdir / SCOREBOARD_MD.name).write_text(
+            scoreboard_markdown(summary["scoreboard"], summary.get("frozen_test"))
+        )
+        (rdir / SCOREBOARD_JSON.name).write_text(
+            json.dumps(summary["scoreboard"], indent=1, default=str)
+        )
     if readme_path is not None and Path(readme_path).exists():
         text = Path(readme_path).read_text()
         new = update_readme(text, readme_block(summary))

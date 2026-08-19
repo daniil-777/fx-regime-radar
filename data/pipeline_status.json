@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-08-18T11:26:25Z",
-  "data_through": "2026-08-17",
+  "last_run_utc": "2026-08-19T13:56:58Z",
+  "data_through": "2026-08-18",
   "rows": {
-    "prices": 16840,
-    "features": 16660,
-    "regimes": 16660
+    "prices": 16843,
+    "features": 16663,
+    "regimes": 16663
   },
   "model_versions": {
     "hmm": "0.4.0",
@@ -13,24 +13,29 @@
   },
   "ecb_check": {
     "EURUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.20070331502688027,
+      "n_compared": 765,
+      "mean_abs_pct": 0.20051761205387247,
       "max_abs_pct": 2.2389805612301137
     },
     "USDCHF": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.23132528056757656,
+      "n_compared": 765,
+      "mean_abs_pct": 0.231338210952869,
       "max_abs_pct": 2.010446310950397
     }
   },
   "stage_seconds": {
-    "data": 1.83,
+    "data": 3.01,
     "features": 0.04,
-    "hmm": 1.84,
-    "forecaster": 1.4,
-    "siren": 0.46,
-    "narrator": 0.91,
-    "advisor": 0.18,
+    "hmm": 1.83,
+    "forecaster": 1.21,
+    "siren": 0.48,
+    "bocpd": 1.0,
+    "conformal": 0.03,
+    "drift": 8.39,
+    "ledger": 0.55,
+    "narrator": 1.3,
+    "advisor": 0.1,
+    "treasury": 0.09,
     "arcade": 0.0
   }
 }

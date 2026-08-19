@@ -24,7 +24,18 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from fxradar import advisor, arcade, config, data, features, forecaster, ledger, narrate, siren
+from fxradar import (
+    advisor,
+    arcade,
+    config,
+    data,
+    drift,
+    features,
+    forecaster,
+    ledger,
+    narrate,
+    siren,
+)
 from fxradar import hmm_model as hm
 
 log = logging.getLogger("pipeline")
@@ -118,12 +129,12 @@ def stage_ledger(ctx: dict) -> None:
     test. Files (ledger, live_record.json, badge, README block) are written in the write stage."""
     new_ledger, summary = ledger.record(ctx["regimes"], ctx["forecaster_meta"])
     ctx["ledger"], ctx["live_record"] = new_ledger, summary
-    ctx.setdefault("extra_writers", {})["ledger.parquet + live_record.json (+ README block)"] = (
-        lambda c: ledger.write_outputs(
-            c["ledger"],
-            c["live_record"],
-            readme_path=ledger.README_PATH if config.UNIVERSE_NAME == "fx" else None,
-        )
+    ctx.setdefault("extra_writers", {})[
+        "ledger.parquet + head + live_record.json (+ README block)"
+    ] = lambda c: ledger.write_outputs(
+        c["ledger"],
+        c["live_record"],
+        readme_path=ledger.README_PATH if config.UNIVERSE_NAME == "fx" else None,
     )
     m = summary["metrics"]
     log.info(
@@ -215,6 +226,7 @@ register("features", stage_features)
 register("hmm", stage_hmm)
 register("forecaster", stage_forecaster)
 register("siren", stage_siren)
+register("drift", drift.stage)  # phase 20: PSI / KS / HMM staleness → status.json
 register(
     "ledger", stage_ledger
 )  # forward record of what was just published (before outcomes exist)

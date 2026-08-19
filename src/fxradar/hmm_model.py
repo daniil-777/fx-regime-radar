@@ -43,6 +43,8 @@ HMM_KWARGS = dict(n_components=N_STATES, covariance_type="full", n_iter=1000, ra
 # columns this phase adds to features.parquet (post-HMM contract features)
 POST_HMM_FEATURES: list[str] = ["hmm_entropy", "days_in_regime", "vol_trend"]
 # columns of regimes.parquet written by this phase (phases 07/08 enrich in place)
+# the four FILTERED probabilities in the frozen regime order (phase 20: they go into the ledger)
+PROB_COLUMNS: list[str] = ["p_calm", "p_trend", "p_chop", "p_crisis"]
 REGIME_COLUMNS: list[str] = [
     "date",
     "pair",
@@ -50,6 +52,7 @@ REGIME_COLUMNS: list[str] = [
     "regime_prob",
     "hmm_entropy",
     "days_in_regime",
+    *PROB_COLUMNS,
     "model_version",
 ]
 
@@ -167,6 +170,8 @@ def score_pair(bundle: HMMBundle, feats_pair: pd.DataFrame) -> pd.DataFrame:
         axis=1
     )  # nats, max ln(4)
     out["days_in_regime"] = run_length(out["regime"]).astype("int64")
+    for state, name in bundle.mapping.items():  # filtered probability per named regime
+        out[f"p_{name}"] = probs[:, state]
     out["vol_trend"] = np.sign(feats_pair["vol_20"] - feats_pair["vol_20"].shift(10)).fillna(0.0)
     out["model_version"] = f"hmm={bundle.version}"
     return out

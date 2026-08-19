@@ -159,3 +159,11 @@ def test_regime_space_page_renders_and_replays() -> None:
         at.selectbox(key="episode_fx").select(snb[0]).run()
         assert not at.exception, at.exception
         assert "as of 2015-01-15" in " ".join(m.value for m in at.markdown)
+
+
+def test_proof_page_renders_scoreboard_and_verify_box() -> None:
+    at = _run("app/views/proof.py")
+    assert not at.exception, at.exception
+    assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
+    text = " ".join(m.value for m in at.markdown)
+    assert "verify_ledger.py" in text and "Verify independently" in text

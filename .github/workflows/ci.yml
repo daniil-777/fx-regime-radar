@@ -44,3 +44,5 @@ jobs:
           assert ledger.verify_chain(led), "data/ledger.parquet: hash chain broken"
           print(f"ledger ok: {len(led)} rows, chain verified")
           PY
+      - name: Public verifier (stdlib only) agrees
+        run: python scripts/verify_ledger.py

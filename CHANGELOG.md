@@ -2,6 +2,44 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.13.0 — phase 22: Mondrian conformal intervals + coverage receipt (2026-08-19)
+
+- `conformal.py` (~30 lines of math): calibration rows = 2017–2018 validation only
+  (asserted), per-regime finite-sample quantile of |y − p̂| (α = 0.1; regimes with < 30 rows borrow
+  the pooled q), `[p̂ ± q_r]` clipped; `models/conformal_v1.json`; frozen-test coverage receipt 91.6 %
+  (per regime 90–93 %) + 120-day rolling series and live coverage on matured ledger rows →
+  `data/conformal_coverage.json`; gauge band on the cards ("bands are wide on purpose" in crisis);
+  README exchangeability paragraph; pipeline stage `conformal`; ledger columns `risk_lo/risk_hi/conformal_q`.
+  Tests: coverage within 90 ± 3 pp, crisis q > calm q, calibration dates inside 2017–2018,
+  deterministic, committed params reproduce.
+
+## v2.12.0 — phase 21: BOCPD + three-voter consensus (2026-08-19)
+
+- `bocpd.py` (~100 lines numpy): Normal-Inverse-Gamma BOCPD, hazard 1/60, pruning 1e-6,
+  MAP run length + P(change ≤ 5d); train-era prior scale and voter thresholds in
+  `models/bocpd_params.json`; consensus = HMM crisis prob ≥ train p95 (clipped 0.2–0.5) + BOCPD
+  ≥ train p90 + `validate.naive_stress` verbatim → `agreement` 0–3 + template sentence; pipeline
+  stage `bocpd`; consensus meter on the weather cards; ledger columns. Tests: bit-for-bit truncation
+  invariance, planted vol/mean breaks flagged within days, determinism, no direction words.
+
+## v2.11.0 — phase 20: live ledger v2 + drift monitor + public proof (2026-08-19)
+
+- `ledger.py` schema 2: rows carry the four filtered probabilities (`hmm_model.score_pair`
+  now emits `p_calm…p_crisis`; `REGIME_COLUMNS` extended), conformal band, BOCPD outputs, three votes
+  + agreement, git SHA, `schema`, `correction_of`; hash = sha256(prev_hash | canonical sorted-key
+  JSON) over the schema's field set — legacy schema-1 rows keep their original hash and are never
+  rewritten; `append_correction` (new row pointing at the original); champion/challenger families keep
+  separate newest-date pointers; `scoreboard()` per model-version segment → `reports/live_scoreboard.md/.json`;
+  `data/ledger_head.txt` + canonical `data/ledger.jsonl` mirror; `scripts/verify_ledger.py` (stdlib,
+  36 lines, VALID/BROKEN + head). `drift.py`: PSI (10 train quantile bins; status judged against the
+  train-era distribution of 60-day-window PSIs because regime-switching features sit at PSI 3–8 inside
+  train), KS, HMM staleness (predictive log-likelihood vs train p5) → `data/status.json` with
+  `model_stale`; header badge. New app page **Proof** (trust strip, scoreboard, coverage receipt, drift
+  tables, verify box, ledger download). README live sentence "Since <deploy>: live PR-AUC / Brier vs
+  frozen". Tests: tamper/delete → BROKEN, double run → one row per pair, unmatured rows refused,
+  legacy file verifies from genesis, drift fires on shifted fixtures. Pipeline stage `drift`
+  registered after the siren, before the ledger; CI runs the public verifier.
+
 ## v2.10.1 — always-on deploy: Docker + Oracle Always-Free (2026-08-18)
 
 - Cloud Run path: image honours `$PORT`; `deploy/cloudbuild.yaml` (Cloud Build, no local Docker);

@@ -104,4 +104,4 @@ def test_ledger_stage_records_and_defers_writes_to_write_stage(monkeypatch, tmp_
     run_daily.stage_ledger(ctx)
     assert len(ctx["ledger"]) == 2 and ctx["live_record"]["added_today"] == 2
     assert not (tmp_path / "ledger.parquet").exists()  # nothing on disk until the write stage
-    assert "ledger.parquet + live_record.json (+ README block)" in ctx["extra_writers"]
+    assert "ledger.parquet + head + live_record.json (+ README block)" in ctx["extra_writers"]
