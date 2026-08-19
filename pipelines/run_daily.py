@@ -28,11 +28,14 @@ from fxradar import (
     advisor,
     arcade,
     bocpd,
+    cb_features,
+    challenger,
     config,
     conformal,
     data,
     drift,
     features,
+    features_ext,
     forecaster,
     ledger,
     narrate,
@@ -131,7 +134,9 @@ def stage_ledger(ctx: dict) -> None:
     """Live forward-test record: append today's forecasts (newest date per pair) to the append-only
     hash-chained ledger, resolve rows whose 5-day window has completed, score them like the frozen
     test. Files (ledger, live_record.json, badge, README block) are written in the write stage."""
-    new_ledger, summary = ledger.record(ctx["regimes"], ctx["forecaster_meta"])
+    new_ledger, summary = ledger.record(
+        ctx["regimes"], ctx["forecaster_meta"], challenger=ctx.get("challenger_scores")
+    )
     ctx["ledger"], ctx["live_record"] = new_ledger, summary
     ctx.setdefault("extra_writers", {})[
         "ledger.parquet + head + live_record.json (+ README block)"
@@ -228,7 +233,16 @@ def stage_write(ctx: dict) -> None:
 register("data", stage_data)
 register("features", stage_features)
 register("hmm", stage_hmm)
+register(
+    "cb_features", cb_features.stage
+)  # phase 29: lexicon tone features (date-level; challenger only)
+register(
+    "features_ext", features_ext.stage
+)  # phase 23: calendar / context / COT / Yang-Zhang → features_ext.parquet
 register("forecaster", stage_forecaster)
+register(
+    "challenger", challenger.stage
+)  # phase 23: challenger forecaster on features + features_ext (ledger-raced)
 register("siren", stage_siren)
 register("bocpd", bocpd.stage)  # phase 21: run-length posterior + three-voter consensus
 register("conformal", conformal.stage)  # phase 22: Mondrian band on change risk + coverage receipt
@@ -237,7 +251,9 @@ register(
     "ledger", stage_ledger
 )  # forward record of what was just published (before outcomes exist)
 register("narrator", stage_narrator)  # narrates the finished numbers
-register("postmortem", replay.stage)  # phase 26: DRAFT day-by-day report on a live entry into crisis
+register(
+    "postmortem", replay.stage
+)  # phase 26: DRAFT day-by-day report on a live entry into crisis
 register(
     "advisor", stage_advisor
 )  # stability / durability / risk budgets from the finished numbers

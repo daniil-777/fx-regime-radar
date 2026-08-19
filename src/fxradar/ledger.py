@@ -372,7 +372,8 @@ def summarize(
     Metrics are null until `min_resolved` rows have resolved; PR-AUC is also null when only one
     class has been observed. `base_rate_p` is the frozen base-rate forecast (train positive rate).
     """
-    version = str(ledger["model_version"].iloc[-1]) if len(ledger) else None
+    champ = ledger[~ledger["model_version"].astype(str).str.startswith("challenger")]
+    version = str(champ["model_version"].iloc[-1]) if len(champ) else None
     seg = ledger[ledger["model_version"] == version] if version else ledger
     resolved = seg[seg["outcome"].notna()]
     out = {
@@ -588,15 +589,33 @@ def record(
     meta: dict,
     now_utc: str | None = None,
     ledger_path: Path | None = None,
+    challenger: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, dict]:
-    """load → append today's forecasts → resolve matured rows → summarise. Pure w.r.t. disk
-    (returns the new ledger + summary; the caller writes)."""
+    """load → append today's forecasts (champion, then challenger rows if given) → resolve matured
+    rows → summarise. Pure w.r.t. disk (returns the new ledger + summary; the caller writes).
+
+    `challenger` = DataFrame(date, pair, change_risk_5d, model_version starting with "challenger")
+    from phase 23: its rows share the regime/siren fields of the champion row for the same (date,
+    pair) but carry the challenger's change risk and model_version, so the two race on the same
+    chain under distinct segments (the summary headline scores the champion only)."""
     now_utc = now_utc or datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     ledger_path = LEDGER_PATH if ledger_path is None else ledger_path
     ledger = load(ledger_path)
     if not verify_chain(ledger):
         raise RuntimeError(f"ledger hash chain broken in {ledger_path} — refusing to append")
-    ledger, added = append_latest(ledger, regimes, now_utc)
+    sha = git_sha()
+    ledger, added = append_latest(ledger, regimes, now_utc, sha=sha)
+    if challenger is not None and len(challenger):
+        ch = regimes.drop(columns=["change_risk_5d", "model_version"]).merge(
+            challenger[["date", "pair", "change_risk_5d", "model_version"]],
+            on=["date", "pair"],
+            how="inner",
+        )
+        for c in INTERVAL_COLUMNS:  # the band belongs to the champion's forecast, not this one
+            if c in ch.columns:
+                ch[c] = np.nan
+        ledger, added_ch = append_latest(ledger, ch, now_utc, sha=sha)
+        added += added_ch
     ledger, resolved = resolve(ledger, regimes, now_utc)
     base_p = float(meta.get("train_pos_rate", 0.17))
     summary = summarize(
