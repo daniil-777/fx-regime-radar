@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -28,6 +28,12 @@ docker-down:      ## stop the production stack
 
 test:             ## run the test suite quietly
 	$(PYTHON) -m pytest -q
+
+treasury:         ## rebuild data/treasury_risk.json (regime-conditional VaR/ES + traffic light) from committed artifacts
+	$(PYTHON) -m fxradar.treasury
+
+verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
+	python3 scripts/verify_ledger.py
 
 ledger:           ## append today's forecasts to the live forward-test ledger from the committed artifacts
 	$(PYTHON) -m fxradar.ledger --record

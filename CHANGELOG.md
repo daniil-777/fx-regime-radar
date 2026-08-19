@@ -2,6 +2,21 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.14.0 — phase 25: treasury mode (2026-08-19)
+
+- `fxradar.treasury`: regime-conditional 1-week VaR/ES (historical simulation of |5-day log move|,
+  labelled by the filtered regime at the window start, train era only; cells with < 30 windows fall
+  back to the unconditional table with a flag) + deterministic hedge / wait / ladder rule table with
+  train-era thresholds (HIGH 0.305 / LOW 0.090 change risk; band width 0.25 / 0.12 defaults until the
+  conformal q is wired); pipeline stage writes `data/treasury_risk.json` (table × regime × level,
+  current regime pointer, light + reason, latest crosses for conversion).
+- Treasury page: exposure → light + VaR/ES in the home currency (√t scaling beyond one week, stated
+  as an approximation), the cost-of-waiting line ("Waiting 1 more week on €800,000 risks ≈ CHF 20,000
+  at the 99 % level"), per-regime conditioning table; arithmetic on the artifact only. `docs/TREASURY.md`
+  (method, limits, compliance posture, FinSA TODO); direction-word lint over every template; 12 tests.
+  Honest finding: USDCHF's *calm* ES99 (7.6 %) exceeds its crisis cell because the 2015-01-15 SNB
+  windows start in calm — the shock arrived unannounced.
+
 ## v2.13.0 — phase 22: Mondrian conformal intervals + coverage receipt (2026-08-19)
 
 - `conformal.py` (~30 lines of math): calibration rows = 2017–2018 validation only

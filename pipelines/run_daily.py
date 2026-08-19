@@ -37,6 +37,7 @@ from fxradar import (
     ledger,
     narrate,
     siren,
+    treasury,
 )
 from fxradar import hmm_model as hm
 
@@ -238,6 +239,7 @@ register("narrator", stage_narrator)  # narrates the finished numbers
 register(
     "advisor", stage_advisor
 )  # stability / durability / risk budgets from the finished numbers
+register("treasury", treasury.stage)  # phase 25: regime-conditional VaR/ES + traffic light
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

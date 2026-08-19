@@ -259,6 +259,20 @@ plain-language questions strictly from a JSON snapshot of these numbers (no web,
 fields it used; template answers without a key). Everything works in the scenario explorer, so you can
 ask "how much risk on 2022-11-09?" and get the honest answer: FTX day, BTC 35 % of normal size, ETH/LTC 0.
 
+## Treasury mode — hedge / wait / ladder, in francs
+
+The one question a treasurer with a foreign-currency receivable or payable keeps asking: how large
+could the adverse move be this week, and is now a defensible moment to act? The **Treasury** page
+turns an exposure (amount, currency, horizon, home currency — CHF by default) into a traffic light —
+**hedge / wait / ladder** — and a price tag: VaR and expected shortfall of the 1-week move,
+conditioned on the current filtered regime, converted at the latest close ("Waiting 1 more week on
+€800,000 risks ≈ CHF 20,000 at the 99 % level"). Numbers come from a historical simulation of
+absolute 5-day moves on the train era only (`data/treasury_risk.json`, written by the pipeline),
+labelled by the regime at the window start; the page does no modelling and never says which way
+the rate will move. The light combines regime, change risk, the conformal band width and days to the
+next scheduled central-bank event. Method, limits, compliance posture:
+[docs/TREASURY.md](docs/TREASURY.md). Educational tool. Not investment advice.
+
 ## Universes and the scenario explorer
 
 The pipeline is universe-agnostic. `src/fxradar/universes.py` holds one record per instrument set —

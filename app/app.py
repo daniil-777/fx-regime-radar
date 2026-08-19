@@ -26,6 +26,7 @@ pages = {
     "Radar": [
         st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
         st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
+        st.Page(str(VIEWS / "treasury.py"), title="Treasury"),
         st.Page(str(VIEWS / "regime_space.py"), title="Regime space"),
         st.Page(str(VIEWS / "probability_space.py"), title="Probability space"),
     ],
