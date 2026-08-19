@@ -74,7 +74,8 @@ strong, b {{ font-weight: 500; }}
 .fx-live {{ display: inline-flex; align-items: center; gap: 7px; font-family: {FONT_MONO}; font-size: 0.76rem; color: {MUTED}; }}
 .fx-dot {{ width: 7px; height: 7px; border-radius: 50%; background: {REGIME_COLORS["calm"]}; display: inline-block; animation: fx-lp 2.4s ease-in-out infinite; }}
 @keyframes fx-lp {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.35; }} }}
-@media (prefers-reduced-motion: reduce) {{ .fx-dot {{ animation: none; }} }}
+@media (prefers-reduced-motion: reduce) {{ .fx-dot, .fx-now {{ animation: none; }} }}
+.fx-now {{ animation: fx-lp 2.4s ease-in-out infinite; }}  /* the trace's end point — the same single heartbeat as the live dot */
 .fx-pill {{ display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-weight: 500; font-size: 0.78rem; letter-spacing: 0.02em; font-family: {FONT_UI}; }}
 .fx-pill::before {{ content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }}
 .fx-pill-lg {{ padding: 6px 14px; font-size: 1rem; font-family: {FONT_DISPLAY}; }}
@@ -807,7 +808,8 @@ def risk_trace_svg(
         f'aria-label="Ninety-day change-risk trace with its uncertainty band" preserveAspectRatio="none">'
         f'<line x1="0" y1="{y_thr:.1f}" x2="{width}" y2="{y_thr:.1f}" stroke="{DIM}" stroke-width="0.8" stroke-dasharray="3 4" opacity="0.7"/>'
         f'{poly}<polyline points="{line}" fill="none" stroke="{color}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'
-        f'<circle cx="{x_end:.1f}" cy="{y_end:.1f}" r="3" fill="{color}"/></svg>'
+        f'<circle class="fx-now" cx="{x_end:.1f}" cy="{y_end:.1f}" r="3" fill="{color}"/>'
+        f'<circle cx="{x_end:.1f}" cy="{y_end:.1f}" r="1.4" fill="{color}"/></svg>'
         f'<div class="fx-trace-axis"><span>90 days ago</span><span>alarm line 0.22</span><span>today</span></div>'
     )
 

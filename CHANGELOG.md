@@ -2,6 +2,18 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.23.1 — honest motion: the "now" pulse and bar replay (2026-08-19)
+
+- Decision, recorded in CLAUDE.md: the main curve never vibrates — a daily-data product may not
+  fabricate intraday motion, and ambient chart motion is false urgency (rule 13). The professional
+  equivalents instead:
+- The condition banner's 90-day risk trace ends in a pulsing "now" point sharing the live dot's one
+  heartbeat (same keyframe — the motion-budget test still counts exactly one; reduced-motion safe).
+- Pairs: **bar replay** behind an off-by-default toggle — the last ~250 trading days draw in via
+  native Plotly frames (2 days/frame, ≤ 125 frames), the moving point wearing the filtered regime of
+  its day, play/pause buttons, ending exactly on the as-of day. User-initiated interaction, never
+  ambience; works in the time machine and for every universe.
+
 ## v2.23.0 — EM majors universe, with the ruble flagged honestly (2026-08-19)
 
 - New universe **`em`** — USD/MXN, USD/BRL, USD/ZAR, USD/PLN, USD/RUB: the free-floating EM majors

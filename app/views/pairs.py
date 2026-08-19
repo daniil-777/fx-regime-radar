@@ -406,7 +406,94 @@ if markers:
         '<div class="fx-dim" style="font-size:0.72rem;margin:-8px 0 8px 2px">baseline markers = scheduled central-bank decisions (◆ SNB · ● ECB · ■ FOMC · ▲ BoE), known in advance — surprises have no marker</div>',
         unsafe_allow_html=True,
     )
-st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+replay_on = st.toggle(
+    "Replay the last year",
+    key=f"replay_{pair}",
+    help="Press ▶ to watch the last ~250 trading days draw themselves, day by day, exactly as "
+    "they were published — motion here is interaction, never decoration. Everything drawn is "
+    "filtered/causal, so the replay is honest by construction.",
+)
+if replay_on and len(g) >= 40:
+    # ---- bar replay (user-initiated): the last ~250 days draw in via native Plotly frames.
+    # Plotly validates frames one by one (~2 ms each), so we keep ≤ ~125: every 2nd trading day.
+    rg = g.tail(250).merge(sel_g[["date", "regime"]], on="date", how="left").reset_index(drop=True)
+    rg["regime"] = rg["regime"].ffill().fillna("calm")
+    rruns = runs[runs["end"] >= rg["date"].iloc[0]].copy()
+    rruns["start"] = rruns["start"].clip(lower=rg["date"].iloc[0])
+    step_idx = list(range(2, len(rg), 2))
+    if step_idx[-1] != len(rg) - 1:
+        step_idx.append(len(rg) - 1)  # always end exactly on the as-of day
+
+    def _slice(k: int) -> list:
+        head = rg.iloc[: k + 1]
+        return [
+            go.Scatter(
+                x=head["date"],
+                y=head["close"],
+                mode="lines",
+                line=dict(color=ui.TEXT, width=1.1),
+                hovertemplate="%{x|%Y-%m-%d}<br>%{y}<extra></extra>",
+            ),
+            go.Scatter(  # the advancing "now" point
+                x=[head["date"].iloc[-1]],
+                y=[head["close"].iloc[-1]],
+                mode="markers",
+                marker=dict(size=7, color=ui.REGIME_COLORS[str(rg["regime"].iloc[k])]),
+                hoverinfo="skip",
+            ),
+        ]
+
+    rfig = go.Figure(data=_slice(step_idx[0]))
+    rfig.frames = [
+        go.Frame(data=_slice(k), name=f"{rg['date'].iloc[k]:%Y-%m-%d}") for k in step_idx
+    ]
+    pad = (rg["close"].max() - rg["close"].min()) * 0.06
+    rfig.update_layout(
+        template=ui.PLOTLY_TEMPLATE,
+        shapes=ui.regime_bands(rruns),
+        height=430,
+        margin=dict(l=40, r=20, t=30, b=40),
+        xaxis_range=[rg["date"].iloc[0], rg["date"].iloc[-1]],
+        yaxis=dict(range=[rg["close"].min() - pad, rg["close"].max() + pad], tickformat=",.5~g"),
+        showlegend=False,
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="left",
+                x=0.0,
+                y=1.12,
+                bgcolor=ui.SURFACE,
+                bordercolor=ui.BORDER,
+                font=dict(color=ui.TEXT),
+                buttons=[
+                    dict(
+                        label="▶ play",
+                        method="animate",
+                        args=[
+                            None,
+                            dict(
+                                frame=dict(duration=45, redraw=False),
+                                transition=dict(duration=0),
+                                fromcurrent=True,
+                            ),
+                        ],
+                    ),
+                    dict(
+                        label="❚❚",
+                        method="animate",
+                        args=[[None], dict(frame=dict(duration=0, redraw=False), mode="immediate")],
+                    ),
+                ],
+            )
+        ],
+    )
+    st.plotly_chart(rfig, width="stretch", config={"displayModeBar": False})
+    st.markdown(
+        '<div class="fx-dim" style="font-size:0.72rem;margin:-8px 0 8px 2px">replaying the published record, two trading days per frame; the moving point wears the regime of its day</div>',
+        unsafe_allow_html=True,
+    )
+else:
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
 # --------------------------------------------------------------------------------------
 # regime anatomy (out of sample, full history — a property of the model, not of the as-of date)

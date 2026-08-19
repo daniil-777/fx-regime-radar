@@ -3,6 +3,7 @@
 Veo 3.1 "ingredients" / first-frame conditioning, derived from the real design tokens so the
 generated footage inherits the product's exact palette. Run: .venv/bin/python docs/film/make_refs.py
 (orb + chain frames additionally need tools/screenshot.py, called below)."""
+
 from __future__ import annotations
 
 import subprocess
@@ -78,12 +79,15 @@ def radar_sweep():
     # topographic contours from a smooth random field
     field = rng.normal(size=(h // 8, w // 8))
     field_im = Image.fromarray((field - field.min()) / (np.ptp(field) + 1e-9) * 255).convert("L")
-    field = np.asarray(field_im.resize((w, h)).filter(ImageFilter.GaussianBlur(60)), dtype=float) / 255.0
+    field = (
+        np.asarray(field_im.resize((w, h)).filter(ImageFilter.GaussianBlur(60)), dtype=float)
+        / 255.0
+    )
     contours = (np.abs((field * 14) % 1 - 0.5) < 0.03).astype(float)
     base += contours[..., None] * np.array(TEXT) * 0.05
     # range rings + spokes at 7% white
     rings = (np.abs((r % 130) - 0) < 1.1) & (r < 540)
-    spokes = (np.abs(((theta + np.pi) % (np.pi / 4))) < 0.004) & (r < 540)
+    spokes = (np.abs((theta + np.pi) % (np.pi / 4)) < 0.004) & (r < 540)
     base += (rings | spokes)[..., None] * np.array(TEXT) * 0.07
     # the sweep beam with decaying trail (classic radar)
     sweep_at = 0.8
@@ -94,7 +98,7 @@ def radar_sweep():
     base += edge[..., None] * np.array(TEXT) * 0.55
     # anomaly bloom in amber, just behind the beam
     bx, by = cx + 300, cy - 150
-    bloom = np.exp(-(((x - bx) ** 2 + (y - by) ** 2)) / 70**2)
+    bloom = np.exp(-((x - bx) ** 2 + (y - by) ** 2) / 70**2)
     base += bloom[..., None] * np.array(CHOP) * 1.0
     im = Image.fromarray(np.clip(base, 0, 255).astype(np.uint8))
     # particles clustering toward the hotspot
@@ -128,7 +132,11 @@ def monitor_room(src: str, out: str, size=(1920, 1080), screen_w=1150):
     # desk band + screen reflection smear + amber lamp accent
     desk = ImageDraw.Draw(im)
     desk.rectangle([0, y0 + sh + 14, w, h], fill=(9, 12, 19))
-    refl = screen.resize((sw, 140)).transpose(Image.FLIP_TOP_BOTTOM).filter(ImageFilter.GaussianBlur(24))
+    refl = (
+        screen.resize((sw, 140))
+        .transpose(Image.FLIP_TOP_BOTTOM)
+        .filter(ImageFilter.GaussianBlur(24))
+    )
     refl = Image.fromarray((np.asarray(refl, dtype=float) * 0.25).astype(np.uint8))
     im.paste(refl, (x0, y0 + sh + 15))
     glow(im, (int(w * 0.12), int(h * 0.86)), 260, CHOP, 0.22)
@@ -144,7 +152,9 @@ def phone_alert():
     glow(im, (w // 2, h // 2 + 40), 520, CRISIS, 0.16)  # coral wash on the desk
     d = ImageDraw.Draw(im)
     d.rounded_rectangle([x0 - 10, y0 - 10, x0 + pw + 10, y0 + ph + 10], 46, fill=(12, 16, 25))
-    d.rounded_rectangle([x0 - 10, y0 - 10, x0 + pw + 10, y0 + ph + 10], 46, outline=(40, 52, 74), width=2)
+    d.rounded_rectangle(
+        [x0 - 10, y0 - 10, x0 + pw + 10, y0 + ph + 10], 46, outline=(40, 52, 74), width=2
+    )
     scr = canvas(pw, ph, top=CRISIS, bottom=TREND).filter(ImageFilter.GaussianBlur(40))
     scr = Image.fromarray((np.asarray(scr, dtype=float) * 0.55).astype(np.uint8))
     mask = Image.new("L", (pw, ph), 0)
@@ -181,7 +191,11 @@ LINK = """<div style="width:44px;height:6px;border-radius:3px;background:rgba(12
 def chain_html(seal_index: int = 2, n: int = 5, w: int = 150) -> str:
     parts = []
     for i in range(n):
-        seal = ",0 0 90px rgba(232,236,244,0.95),inset 0 0 40px rgba(232,236,244,0.5)" if i == seal_index else ""
+        seal = (
+            ",0 0 90px rgba(232,236,244,0.95),inset 0 0 40px rgba(232,236,244,0.5)"
+            if i == seal_index
+            else ""
+        )
         ba, ga, g = (0.95, 0.75, 70) if i == seal_index else (0.55, 0.35, 34)
         parts.append(BLOCK.format(w=w, ba=ba, g=g, ga=ga, seal=seal))
         if i < n - 1:
@@ -193,8 +207,18 @@ def shoot(html: str, out: str, w: int, h: int):
     tmp = OUT / "_tmp.html"
     tmp.write_text(html)
     subprocess.run(
-        [sys.executable, str(ROOT / "tools" / "screenshot.py"), f"file://{tmp}", str(OUT / out),
-         "--wait", "6", "--width", str(w), "--height", str(h)],
+        [
+            sys.executable,
+            str(ROOT / "tools" / "screenshot.py"),
+            f"file://{tmp}",
+            str(OUT / out),
+            "--wait",
+            "6",
+            "--width",
+            str(w),
+            "--height",
+            str(h),
+        ],
         check=True,
     )
     tmp.unlink()
@@ -227,8 +251,18 @@ def orb_frames():
 
 
 def chain_frames():
-    shoot(CHAIN_PAGE.format(bg=tk.BG, top=52, rtop=64, blocks=chain_html()), "ref_chain_seal.png", 1920, 1080)
-    shoot(CHAIN_PAGE.format(bg=tk.BG, top=44, rtop=56, blocks=chain_html(n=3, w=170)), "ref_v3_chain_916.png", 1080, 1920)
+    shoot(
+        CHAIN_PAGE.format(bg=tk.BG, top=52, rtop=64, blocks=chain_html()),
+        "ref_chain_seal.png",
+        1920,
+        1080,
+    )
+    shoot(
+        CHAIN_PAGE.format(bg=tk.BG, top=44, rtop=56, blocks=chain_html(n=3, w=170)),
+        "ref_v3_chain_916.png",
+        1080,
+        1920,
+    )
 
 
 if __name__ == "__main__":

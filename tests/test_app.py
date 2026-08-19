@@ -186,3 +186,13 @@ def test_proof_page_renders_scoreboard_and_verify_box() -> None:
     assert config.DISCLAIMER in [c.value for c in at.sidebar.caption]
     text = " ".join(m.value for m in at.markdown)
     assert "verify_ledger.py" in text and "Verify independently" in text
+
+
+def test_pairs_bar_replay_is_user_initiated_and_renders() -> None:
+    """Motion budget: the chart never animates on its own — replay exists only behind a toggle,
+    and when enabled it ships ≤ ~125 causal frames ending exactly on the as-of day."""
+    at = _run("app/views/pairs.py")
+    assert len(at.toggle) == 1 and at.toggle[0].value is False  # off by default: still surface
+    at.toggle[0].set_value(True).run()
+    assert not at.exception, at.exception
+    assert len(at.get("plotly_chart")) == 1
