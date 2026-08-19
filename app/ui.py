@@ -1,108 +1,164 @@
-"""Shared UI for the Streamlit app: CSS (fonts, cards, pills), the single Plotly dark template,
-and small HTML helpers. Everything visual lives here so pages stay thin (CLAUDE.md design system).
+"""Shared UI for the Streamlit app: CSS (fonts, cards, pills), the single Plotly template, and
+small HTML helpers. Everything visual lives here so pages stay thin (CLAUDE.md design system).
+
+Phase 31 (trust-first UI): every colour comes from design/tokens.json via `fxradar.tokens` — no hex
+literal may appear in app/ or src/ (`make lint-ui`). Two signature structures live here: the
+condition banner (`condition_banner`) and the trust strip (`trust_strip`). Motion budget: the orb
+is the one ambient element; the only other motion is the live dot's slow pulse.
 """
 
 from __future__ import annotations
 
 import html
+import json
+import os
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
 import streamlit as st
 
-# ---- design tokens ---------------------------------------------------------------------
-BG = "#0B0F17"
-SURFACE = "#131A26"
-BORDER = "#232D3F"
-TEXT = "#E7ECF4"
-MUTED = "#8A94A6"
-REGIME_COLORS = {"calm": "#34D399", "trend": "#60A5FA", "chop": "#FBBF24", "crisis": "#F87171"}
+from fxradar import tokens as tk
+
+# ---- design tokens (single source: design/tokens.json) ------------------------------------
+BG = tk.BG  # nimbus — app background
+SURFACE = tk.SURFACE  # front — cards, sidebar
+LINE = tk.LINE  # rgba hairline for CSS borders
+BORDER = tk.BORDER  # hex twin of the hairline for SVG/Plotly strokes
+GRID = tk.GRID
+TEXT = tk.TEXT
+MUTED = tk.MUTED
+DIM = tk.DIM
+ACCENT = tk.ACCENT  # beacon: links and actions only
+REGIME_COLORS = tk.REGIME_COLORS
 REGIME_BLURB = {
     "calm": "low volatility, quiet drift",
     "trend": "moderate volatility, persistent direction",
     "chop": "moderate volatility, no direction",
     "crisis": "high volatility, storm conditions",
 }
-FONT_UI = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-FONT_MONO = "'JetBrains Mono', 'SF Mono', Menlo, monospace"
+FONT_UI = tk.FONT_UI
+FONT_MONO = tk.FONT_MONO
+FONT_DISPLAY = tk.FONT_DISPLAY
+alpha = tk.with_alpha
 
 CSS = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('{tk.FONT_IMPORT}');
+{tk.css_variables()}
 #MainMenu, footer, [data-testid="stToolbarActions"], [data-testid="stAppDeployButton"], [data-testid="stMainMenu"], [data-testid="stMainMenuButton"], [data-testid="stDecoration"], [data-testid="stStatusWidget"], .stDeployButton {{ display: none !important; visibility: hidden !important; }}
 header[data-testid="stHeader"] {{ background: transparent !important; pointer-events: none; }}
-header[data-testid="stHeader"] button {{ pointer-events: auto; background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 8px; color: {TEXT}; }}
+header[data-testid="stHeader"] button {{ pointer-events: auto; background: {SURFACE}; border: 1px solid {LINE}; border-radius: 8px; color: {TEXT}; }}
 [data-testid="stSidebarCollapseButton"] button, [data-testid="stSidebarCollapsedControl"] button {{ color: {MUTED}; }}
-html, body, [data-testid="stAppViewContainer"], .stApp {{ background: {BG} !important; color: {TEXT}; font-family: {FONT_UI}; }}
-[data-testid="stSidebar"] {{ background: {SURFACE} !important; border-right: 1px solid {BORDER}; }}
+html, body, [data-testid="stAppViewContainer"], .stApp {{ background: {BG} !important; color: {TEXT}; font-family: {FONT_UI}; font-size: 15px; line-height: 1.55; }}
+[data-testid="stSidebar"] {{ background: {SURFACE} !important; border-right: 1px solid {LINE}; }}
 [data-testid="stSidebar"] *:not([data-testid="stIconMaterial"]):not(.material-symbols-rounded) {{ font-family: {FONT_UI}; }}
-.block-container {{ padding-top: 1.6rem; padding-bottom: 2rem; max-width: 1280px; }}
-h1, h2, h3, h4 {{ font-family: {FONT_UI}; color: {TEXT}; letter-spacing: -0.01em; }}
+.block-container {{ padding-top: 1.4rem; padding-bottom: 2rem; max-width: 1280px; }}
+h1, h2, h3, h4 {{ font-family: {FONT_UI}; color: {TEXT}; letter-spacing: -0.005em; font-weight: 500; }}
 p, li, label, .stMarkdown {{ color: {TEXT}; }}
-.fx-num {{ font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
+a, a:visited {{ color: {ACCENT}; text-decoration: none; }}
+a:hover {{ text-decoration: underline; }}
+:focus-visible, button:focus-visible, a:focus-visible, [role="tab"]:focus-visible {{ outline: 2px solid {ACCENT} !important; outline-offset: 2px; }}
+strong, b {{ font-weight: 500; }}
+.fx-num {{ font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }}
 .fx-muted {{ color: {MUTED}; }}
-.fx-card {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; padding: 20px; margin-bottom: 14px; }}
-.fx-card h3 {{ margin: 0 0 8px 0; font-size: 1.05rem; font-weight: 600; }}
-.fx-header {{ display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }}
-.fx-wordmark {{ font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; }}
-.fx-sub {{ color: {MUTED}; margin-left: 12px; font-size: 0.95rem; }}
-.fx-right {{ color: {MUTED}; font-size: 0.85rem; text-align: right; }}
-.fx-pill {{ display: inline-block; padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.02em; text-transform: uppercase; }}
-.fx-pill-lg {{ padding: 8px 18px; font-size: 1.15rem; }}
-.fx-bar {{ height: 8px; border-radius: 4px; background: {BORDER}; overflow: hidden; margin: 8px 0 4px 0; }}
-.fx-bar > div {{ height: 100%; border-radius: 4px; }}
-.fx-kv {{ display: flex; justify-content: space-between; font-size: 0.85rem; color: {MUTED}; }}
-.fx-table {{ width: 100%; border-collapse: collapse; font-size: 0.86rem; }}
-.fx-table th {{ text-align: left; color: {MUTED}; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid {BORDER}; }}
-.fx-table td {{ padding: 8px 10px; border-bottom: 1px solid {BORDER}; font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
-.fx-table td:first-child {{ font-family: {FONT_UI}; }}
-.fx-footer {{ color: {MUTED}; font-size: 0.8rem; margin-top: 28px; padding-top: 12px; border-top: 1px solid {BORDER}; }}
-div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label, div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSlider"] label {{ color: {MUTED}; font-size: 0.8rem; }}
-.fx-side-h {{ color: {MUTED}; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 14px 0 -6px 0; }}
+.fx-dim {{ color: {DIM}; }}
+.fx-disp {{ font-family: {FONT_DISPLAY}; font-weight: 500; letter-spacing: 0.01em; }}
+.fx-card {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }}
+.fx-card h3 {{ margin: 0 0 8px 0; font-size: 0.78rem; font-weight: 400; color: {DIM}; letter-spacing: 0.04em; text-transform: uppercase; }}
+.fx-header {{ display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid {LINE}; padding-bottom: 10px; gap: 12px; flex-wrap: wrap; }}
+.fx-wordmark {{ font-family: {FONT_DISPLAY}; font-size: 1.25rem; font-weight: 500; letter-spacing: 0.04em; }}
+.fx-sub {{ color: {DIM}; margin-left: 12px; font-size: 0.85rem; }}
+.fx-right {{ color: {MUTED}; font-size: 0.8rem; text-align: right; font-family: {FONT_MONO}; }}
+.fx-live {{ display: inline-flex; align-items: center; gap: 7px; font-family: {FONT_MONO}; font-size: 0.76rem; color: {MUTED}; }}
+.fx-dot {{ width: 7px; height: 7px; border-radius: 50%; background: {REGIME_COLORS["calm"]}; display: inline-block; animation: fx-lp 2.4s ease-in-out infinite; }}
+@keyframes fx-lp {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.35; }} }}
+@media (prefers-reduced-motion: reduce) {{ .fx-dot {{ animation: none; }} }}
+.fx-pill {{ display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-weight: 500; font-size: 0.78rem; letter-spacing: 0.02em; font-family: {FONT_UI}; }}
+.fx-pill::before {{ content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }}
+.fx-pill-lg {{ padding: 6px 14px; font-size: 1rem; font-family: {FONT_DISPLAY}; }}
+.fx-bar {{ height: 6px; border-radius: 3px; background: {LINE}; overflow: hidden; margin: 8px 0 4px 0; }}
+.fx-bar > div {{ height: 100%; border-radius: 3px; }}
+.fx-kv {{ display: flex; justify-content: space-between; font-size: 0.84rem; color: {MUTED}; }}
+.fx-table {{ width: 100%; border-collapse: collapse; font-size: 0.85rem; }}
+.fx-table th {{ text-align: left; color: {DIM}; font-weight: 400; padding: 8px 10px; border-bottom: 1px solid {LINE}; font-size: 0.76rem; letter-spacing: 0.03em; text-transform: uppercase; }}
+.fx-table td {{ padding: 8px 10px; border-bottom: 1px solid {LINE}; font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; text-align: right; }}
+.fx-table th:not(:first-child) {{ text-align: right; }}
+.fx-table td:first-child {{ font-family: {FONT_UI}; text-align: left; }}
+.fx-footer {{ color: {DIM}; font-size: 0.78rem; margin-top: 28px; padding-top: 12px; border-top: 1px solid {LINE}; }}
+div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label, div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSlider"] label, div[data-testid="stRadio"] label {{ color: {MUTED}; font-size: 0.78rem; }}
+.fx-side-h {{ color: {DIM}; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 14px 0 -6px 0; }}
 .fx-kpis {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 4px 0 14px 0; }}
-.fx-kpi {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; padding: 12px 14px; }}
-.fx-kpi-l {{ color: {MUTED}; font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; }}
-.fx-kpi-v {{ font-size: 1.35rem; font-weight: 600; margin-top: 2px; }}
-.fx-kpi-s {{ color: {MUTED}; font-size: 0.76rem; margin-top: 2px; }}
-.fx-section {{ font-weight: 600; font-size: 1.0rem; margin: 18px 0 8px 2px; letter-spacing: -0.01em; }}
-.fx-alert {{ display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 8px; border: 1px solid {BORDER}; margin-bottom: 6px; font-size: 0.84rem; }}
+.fx-kpi {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 12px; padding: 12px 14px; }}
+.fx-kpi-l {{ color: {DIM}; font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; }}
+.fx-kpi-v {{ font-size: 1.3rem; font-weight: 500; margin-top: 2px; }}
+.fx-kpi-s {{ color: {MUTED}; font-size: 0.76rem; margin-top: 2px; font-family: {FONT_MONO}; }}
+.fx-section {{ font-weight: 500; font-size: 0.98rem; margin: 18px 0 8px 2px; }}
+.fx-alert {{ display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 8px; border: 1px solid {LINE}; margin-bottom: 6px; font-size: 0.84rem; }}
 [data-testid="stSidebarNav"] a span:not([data-testid="stIconMaterial"]) {{ color: {TEXT}; font-family: {FONT_UI}; }}
 [data-testid="stSidebarNav"] a {{ border-radius: 8px; }}
-[data-testid="stSidebarNavSeparator"] {{ border-color: {BORDER}; }}
-div[data-testid="stExpander"] details {{ background: {SURFACE}; border: 1px solid {BORDER}; border-radius: 12px; }}
-button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1px solid {BORDER}; background: {SURFACE}; color: {TEXT}; }}
-.stButton > button:hover {{ border-color: #60A5FA; color: #60A5FA; }}
+[data-testid="stSidebarNav"] a[aria-current="page"] {{ border-left: 2px solid {REGIME_COLORS["calm"]}; border-radius: 0 8px 8px 0; }}
+[data-testid="stSidebarNavSeparator"] {{ border-color: {LINE}; }}
+div[data-testid="stExpander"] details {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 12px; }}
+button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1px solid {LINE}; background: {SURFACE}; color: {TEXT}; font-weight: 500; }}
+.stButton > button:hover {{ border-color: {ACCENT}; color: {ACCENT}; }}
 .fx-table-wrap {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
 .fx-mobile-bar {{ display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: -4px 0 10px 0; }}
 .fx-mobile-hint {{ color: {MUTED}; font-size: 0.74rem; }}
 .st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}
+/* ---- signature 1: the condition banner ----------------------------------------------- */
+.fx-banner {{ padding: 22px 0 14px 0; }}
+.fx-eyebrow {{ font-family: {FONT_MONO}; font-size: 0.76rem; color: {DIM}; letter-spacing: 0.08em; text-transform: uppercase; }}
+.fx-condrow {{ display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }}
+.fx-cond {{ font-family: {FONT_DISPLAY}; font-weight: 500; font-size: clamp(52px, 8vw, 84px); line-height: 1.05; letter-spacing: -0.01em; }}
+.fx-metrics {{ font-family: {FONT_MONO}; font-size: 0.9rem; color: {MUTED}; font-feature-settings: 'tnum'; margin-top: 4px; }}
+.fx-metrics .fx-dim {{ color: {DIM}; }}
+.fx-consensus {{ font-size: 0.78rem; color: {DIM}; text-align: right; padding-bottom: 8px; }}
+.fx-votes {{ display: flex; gap: 14px; margin-top: 6px; justify-content: flex-end; }}
+.fx-votes span {{ display: inline-flex; align-items: center; gap: 5px; color: {MUTED}; font-size: 0.78rem; }}
+.fx-pip {{ width: 8px; height: 8px; border-radius: 50%; display: inline-block; border: 1.5px solid {DIM}; }}
+.fx-trace {{ margin-top: 12px; display: block; }}
+/* ---- signature 2: the trust strip ---------------------------------------------------- */
+.fx-trust {{ border-top: 1px solid {LINE}; border-bottom: 1px solid {LINE}; padding: 9px 0; margin: 6px 0 14px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: {FONT_MONO}; font-size: 0.76rem; color: {MUTED}; font-feature-settings: 'tnum'; }}
+.fx-trust .fx-dim {{ color: {DIM}; }}
+.fx-trust a {{ color: {ACCENT}; }}
+.fx-state {{ border: 1px dashed {LINE}; border-radius: 12px; padding: 16px 18px; color: {MUTED}; font-size: 0.88rem; }}
+.fx-state b {{ color: {TEXT}; }}
 /* ---- responsive: one layout that adapts (no device sniffing) --------------------------- */
 @media (min-width: 769px) {{ .st-key-fx_mobile_bar {{ display: none; }} }}
 @media (max-width: 768px) {{
   .block-container {{ padding: 3.4rem 0.85rem 2rem 0.85rem !important; }}  /* room for the » sidebar button */
   .fx-header {{ flex-direction: column; align-items: flex-start; gap: 2px; margin-bottom: 10px; }}
-  .fx-wordmark {{ font-size: 1.35rem; }}
-  .fx-sub {{ display: block; margin-left: 0; font-size: 0.85rem; }}
-  .fx-right {{ text-align: left; font-size: 0.78rem; }}
+  .fx-wordmark {{ font-size: 1.1rem; }}
+  .fx-sub {{ display: block; margin-left: 0; font-size: 0.82rem; }}
+  .fx-right {{ text-align: left; font-size: 0.74rem; }}
   .fx-kpis {{ grid-template-columns: 1fr 1fr; gap: 8px; }}
   .fx-kpi {{ padding: 10px 12px; }}
-  .fx-kpi-v {{ font-size: 1.15rem; }}
+  .fx-kpi-v {{ font-size: 1.1rem; }}
   .fx-card {{ padding: 14px; margin-bottom: 10px; }}
-  .fx-pill-lg {{ padding: 6px 12px; font-size: 1rem; }}
+  .fx-pill-lg {{ padding: 5px 12px; font-size: 0.95rem; }}
   .fx-table {{ font-size: 0.8rem; }}
   .fx-table th, .fx-table td {{ padding: 6px 8px; white-space: nowrap; }}
   .fx-section {{ margin-top: 12px; }}
+  .fx-banner {{ padding: 12px 0 8px 0; }}
+  .fx-cond {{ font-size: clamp(44px, 14vw, 64px); }}
+  .fx-consensus {{ text-align: left; }}
+  .fx-votes {{ justify-content: flex-start; }}
+  .fx-trust {{ font-size: 0.7rem; gap: 6px; }}
   [data-testid="stSidebar"] {{ width: min(86vw, 330px) !important; }}
   .stButton > button, [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}  /* touch targets */
 }}
 @media (max-width: 1024px) {{
-  /* tablets (sidebar still open): three-across blocks become two-across instead of squeezing */
   [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {{ min-width: calc(50% - 8px); }}
   .fx-kpis {{ grid-template-columns: 1fr 1fr; }}
 }}
 @media (max-width: 640px) {{
   .st-key-fx_orb {{ display: none; }}   /* the 3-D orb is decorative; phones get the numbers only */
+}}
+@media (max-width: 400px) {{
+  .fx-kpis {{ grid-template-columns: 1fr; }}
+  .fx-cond {{ font-size: 40px; }}
 }}
 </style>
 """
@@ -119,14 +175,14 @@ def _register_template() -> None:
         return
     tpl = go.layout.Template()
     tpl.layout = go.Layout(
-        paper_bgcolor=BG,
-        plot_bgcolor=SURFACE,
+        paper_bgcolor="rgba(0,0,0,0)",  # transparent: the card or page paints the ground
+        plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family=FONT_UI, color=TEXT, size=12),
         xaxis=dict(
-            gridcolor=BORDER, zeroline=False, linecolor=BORDER, tickfont=dict(family=FONT_MONO)
+            gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)
         ),
         yaxis=dict(
-            gridcolor=BORDER, zeroline=False, linecolor=BORDER, tickfont=dict(family=FONT_MONO)
+            gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(family=FONT_MONO)
         ),
         margin=dict(l=40, r=20, t=40, b=40),
         legend=dict(bgcolor="rgba(0,0,0,0)", orientation="h", y=1.05, x=0),
@@ -148,12 +204,32 @@ _register_template()
 PLOTLY_TEMPLATE = "fxradar_dark"
 
 
+def regime_bands(runs: pd.DataFrame, opacity: float = 0.22) -> list[dict]:
+    """Plotly shapes shading regime runs (columns regime, start, end) — the one way bands are drawn."""
+    return [
+        dict(
+            type="rect",
+            xref="x",
+            yref="paper",
+            x0=r.start,
+            x1=r.end,
+            y0=0,
+            y1=1,
+            fillcolor=REGIME_COLORS[r.regime],
+            opacity=opacity,
+            line_width=0,
+            layer="below",
+        )
+        for r in runs.itertuples(index=False)
+    ]
+
+
 # ---- HTML helpers ----------------------------------------------------------------------
 def regime_pill(name: str, large: bool = False) -> str:
     """Coloured pill for a regime name."""
     color = REGIME_COLORS.get(name, MUTED)
     cls = "fx-pill fx-pill-lg" if large else "fx-pill"
-    return f'<span class="{cls}" style="background:{color}22;color:{color};border:1px solid {color}55">{html.escape(name)}</span>'
+    return f'<span class="{cls}" style="background:{alpha(color, 0.12)};color:{color};border:1px solid {alpha(color, 0.35)}">{html.escape(name)}</span>'
 
 
 def confidence_bar(p: float, color: str = TEXT, label: str = "confidence") -> str:
@@ -189,16 +265,16 @@ def risk_gauge(
     band, band_txt = "", ""
     if lo is not None and hi is not None and lo == lo and hi == hi:  # NaN-safe
         lo_p, hi_p = max(0.0, float(lo)) * 100, min(1.0, float(hi)) * 100
-        band = f'<div style="position:absolute;left:{lo_p:.1f}%;width:{max(0.0, hi_p - lo_p):.1f}%;top:0;height:100%;background:{color}33;border-radius:4px"></div>'
-        wide = "bands are wide on purpose" if regime == "crisis" else "90 % empirical band"
-        band_txt = f'<span class="fx-muted" style="font-size:0.72rem"> ± band <span class="fx-num">{lo_p:.0f}–{hi_p:.0f}%</span> · {wide}</span>'
+        band = f'<div style="position:absolute;left:{lo_p:.1f}%;width:{max(0.0, hi_p - lo_p):.1f}%;top:0;height:100%;background:{alpha(color, 0.2)};border-radius:4px"></div>'
+        wide = " · bands are wide on purpose" if regime == "crisis" else ""
+        band_txt = f'<div class="fx-dim" style="font-size:0.72rem;margin-top:2px">90 % band <span class="fx-num">{lo_p:.0f}–{hi_p:.0f}%</span>{wide}</div>'
     drv = ""
     if drivers:
         drv = f'<div class="fx-muted" style="font-size:0.75rem;margin-top:4px">drivers: {html.escape(", ".join(str(d) for d in drivers))}</div>'
     return (
-        f'<div class="fx-kv" style="margin-top:10px"><span>5-day change risk{band_txt}</span><span class="fx-num" style="color:{color}">{pct:.0f}%</span></div>'
+        f'<div class="fx-kv" style="margin-top:10px"><span>5-day change risk</span><span class="fx-num" style="color:{color}">{pct:.0f}%</span></div>'
         f'<div class="fx-bar" style="position:relative;overflow:visible">{band}<div style="position:relative;width:{pct:.1f}%;background:{color};height:100%;border-radius:4px"></div>{ticks}</div>'
-        f"{drv}"
+        f"{band_txt}{drv}"
     )
 
 
@@ -246,7 +322,7 @@ def stale_badge(status: dict | None) -> str:
     word = "models stale" if stale else ("drift watch" if watch else "models fresh")
     return (
         f'<span class="fx-pill" title="PSI / KS / HMM log-likelihood vs the train era — see Proof" '
-        f'style="font-size:0.65rem;padding:2px 8px;color:{color};background:{color}22;border:1px solid {color}55">{word}</span>'
+        f'style="font-size:0.65rem;padding:2px 8px;color:{color};background:{alpha(color, 0.12)};border:1px solid {alpha(color, 0.35)}">{word}</span>'
     )
 
 
@@ -265,7 +341,7 @@ def siren_dial(pct: float, label: str) -> str:
         f'<div style="display:flex;align-items:center;gap:14px">'
         f'<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="{r}" fill="none" stroke="{BORDER}" stroke-width="6"/>'
         f'<circle cx="32" cy="32" r="{r}" fill="none" stroke="{color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{dash:.1f} {c:.1f}" transform="rotate(-90 32 32)"/>'
-        f'<text x="32" y="37" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="{TEXT}">{pct:.0f}</text></svg>'
+        f'<text x="32" y="37" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="{TEXT}">{pct:.0f}</text></svg>'
         f'<div><div style="font-weight:600">{html.escape(label)}</div><div class="fx-muted" style="font-size:0.8rem">anomaly percentile</div></div></div>'
     )
 
@@ -276,7 +352,7 @@ def narration(entry: dict | None) -> str:
         return ""
     ai = entry.get("source") == "llm"
     badge_color = REGIME_COLORS["trend"] if ai else MUTED
-    badge = f'<span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{badge_color};background:{badge_color}22;border:1px solid {badge_color}55">{"AI" if ai else "auto"}</span>'
+    badge = f'<span class="fx-pill" style="font-size:0.65rem;padding:2px 8px;color:{badge_color};background:{alpha(badge_color, 0.12)};border:1px solid {alpha(badge_color, 0.35)}">{"AI" if ai else "auto"}</span>'
     stamp = str(entry.get("generated_at", ""))
     when = html.escape(
         stamp[:16].replace("T", " ") if "T" in stamp else stamp
@@ -343,9 +419,19 @@ def sidebar(disclaimer: str) -> None:
         st.caption(disclaimer)
 
 
+REPO_URL = os.environ.get("FXRADAR_REPO_URL", "https://github.com/daniil-777/fx-regime-radar")
+
+
 def footer(disclaimer: str, extra: str = "") -> None:
+    """Every surface ends with the rule-7 line, the legal drafts (phase 28) and no direction talk."""
+    legal = (
+        f' · <a href="{REPO_URL}/blob/main/docs/TERMS.md">terms</a>'
+        f' · <a href="{REPO_URL}/blob/main/docs/PRIVACY.md">privacy</a>'
+        f' · <a href="{REPO_URL}/blob/main/docs/PRICING.md">pricing</a>'
+    )
     st.markdown(
-        f'<div class="fx-footer">{html.escape(disclaimer)} {extra}</div>', unsafe_allow_html=True
+        f'<div class="fx-footer">{html.escape(disclaimer)} {extra}{legal}</div>',
+        unsafe_allow_html=True,
     )
 
 
@@ -546,6 +632,169 @@ def gauge_svg(score: float, size: int = 120, label: str = "") -> str:
             if score > 0.5
             else ""
         )
-        + f'<text x="{cx}" y="{cy - 2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="{size * 0.2:.0f}" fill="{TEXT}">{score:.0f}</text>'
-        f'<text x="{cx}" y="{cy + size * 0.13:.1f}" text-anchor="middle" font-family="Inter, sans-serif" font-size="{size * 0.09:.0f}" fill="{MUTED}">{html.escape(label)}</text></svg>'
+        + f'<text x="{cx}" y="{cy - 2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="{size * 0.2:.0f}" fill="{TEXT}">{score:.0f}</text>'
+        f'<text x="{cx}" y="{cy + size * 0.13:.1f}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="{size * 0.09:.0f}" fill="{MUTED}">{html.escape(label)}</text></svg>'
+    )
+
+
+# ---- signature structures (phase 31) ------------------------------------------------------------
+def live_dot(label: str) -> str:
+    """'● live · day N' — the only motion besides the orb (slow pulse, off under reduced-motion)."""
+    return f'<span class="fx-live"><span class="fx-dot"></span>{html.escape(label)}</span>'
+
+
+def risk_trace_svg(
+    risk: pd.Series,
+    lo: pd.Series | None,
+    hi: pd.Series | None,
+    color: str,
+    width: int = 920,
+    height: int = 56,
+) -> str:
+    """The quiet 90-day change-risk trace with its shaded band (inline SVG, no axes on purpose)."""
+    r = pd.Series(risk).astype(float).dropna()
+    if len(r) < 2:
+        return ""
+    n = len(r)
+    xs = [i * width / (n - 1) for i in range(n)]
+
+    def y(v: float) -> float:
+        v = max(0.0, min(1.0, float(v)))
+        return height - 4 - v * (height - 8)
+
+    line = " ".join(f"{x:.1f},{y(v):.1f}" for x, v in zip(xs, r, strict=True))
+    poly = ""
+    if lo is not None and hi is not None:
+        lo_s = pd.Series(lo).astype(float).reindex(r.index).ffill().fillna(0.0)
+        hi_s = pd.Series(hi).astype(float).reindex(r.index).ffill().fillna(0.0)
+        top = " ".join(f"{x:.1f},{y(v):.1f}" for x, v in zip(xs, hi_s, strict=True))
+        bottom = " ".join(
+            f"{x:.1f},{y(v):.1f}" for x, v in zip(reversed(xs), reversed(list(lo_s)), strict=True)
+        )
+        poly = f'<polygon points="{top} {bottom}" fill="{color}" fill-opacity="0.07"/>'
+    return (
+        f'<svg class="fx-trace" viewBox="0 0 {width} {height}" width="100%" height="{height}" role="img" '
+        f'aria-label="Ninety-day change-risk trace with its uncertainty band" preserveAspectRatio="none">'
+        f'{poly}<polyline points="{line}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
+    )
+
+
+def condition_banner(
+    pair_label: str,
+    data_through: str,
+    regime: str,
+    change_risk: float | None,
+    lo: float | None,
+    hi: float | None,
+    siren_pct: float | None,
+    agreement: int | None = None,
+    votes: dict | None = None,
+    trace: str = "",
+    eyebrow_extra: str = "",
+) -> None:
+    """Signature 1 — the condition banner: the full market state readable in three seconds from two
+    metres. Eyebrow (pair + data-through), the regime word huge in its colour, one metrics line,
+    the quiet risk trace, and the three-dot consensus module."""
+    color = REGIME_COLORS.get(regime, MUTED)
+    metrics = []
+    if change_risk is not None and change_risk == change_risk:
+        band = (
+            f' <span class="fx-dim">({float(lo):.2f}–{float(hi):.2f} · 90% band)</span>'
+            if lo is not None and hi is not None and lo == lo and hi == hi
+            else ""
+        )
+        metrics.append(f"change risk {float(change_risk):.2f}{band}")
+    if siren_pct is not None and siren_pct == siren_pct:
+        metrics.append(f'siren {float(siren_pct):.0f}<span class="fx-dim">/100</span>')
+    consensus = ""
+    if agreement is not None and agreement == agreement:
+        votes = votes or {}
+        pips = "".join(
+            f'<span><span class="fx-pip" style="{("background:" + color + ";border-color:" + color) if int(votes.get(k, 0) or 0) else ""}"></span>{lbl}</span>'
+            for lbl, k in (("HMM", "vote_hmm"), ("BOCPD", "vote_bocpd"), ("vol rule", "vote_vol"))
+        )
+        consensus = f'<div class="fx-consensus">consensus {int(agreement)}/3<div class="fx-votes">{pips}</div></div>'
+    st.markdown(
+        f'<section class="fx-banner" aria-label="current condition">'
+        f'<div class="fx-eyebrow">{html.escape(pair_label)} · current condition · data through {html.escape(data_through)}{eyebrow_extra}</div>'
+        f'<div class="fx-condrow"><div><div class="fx-cond" style="color:{color}">{html.escape(regime.capitalize())}</div>'
+        f'<div class="fx-metrics">{" · ".join(metrics)}</div></div>{consensus}</div>{trace}</section>',
+        unsafe_allow_html=True,
+    )
+
+
+@st.cache_data(show_spinner=False)
+def _trust_numbers(data_dir: str, mtimes: tuple) -> dict:
+    """Small artifact reads for the trust strip (cached on file mtimes)."""
+    d = Path(data_dir)
+    out: dict = {}
+    for name, key in (
+        ("live_record.json", "live"),
+        ("conformal_coverage.json", "coverage"),
+        ("status.json", "status"),
+    ):
+        p = d / name
+        out[key] = json.loads(p.read_text()) if p.exists() else {}
+    head = d / "ledger_head.txt"
+    out["head"] = head.read_text().split() if head.exists() else []
+    return out
+
+
+def trust_strip(data_dir: Path | str | None = None, proof_href: str = "proof") -> None:
+    """Signature 2 — the trust strip: forward-test day count, live Brier vs frozen, coverage vs
+    target, chain head + check, and the 'verify independently' link. Mono. Never below the fold."""
+    from fxradar import config
+
+    d = Path(data_dir) if data_dir else config.DATA_DIR
+    files = ("live_record.json", "conformal_coverage.json", "status.json", "ledger_head.txt")
+    mtimes = tuple(os.path.getmtime(d / f) if (d / f).exists() else -1.0 for f in files)
+    t = _trust_numbers(str(d), mtimes)
+    live, cov, head = t["live"], t["coverage"], t["head"]
+    if not live:
+        st.markdown(
+            '<div class="fx-trust"><span>forward test not started — the first daily run writes the ledger</span>'
+            f'<a href="{proof_href}" target="_self">verify independently ↗</a></div>',
+            unsafe_allow_html=True,
+        )
+        return
+    m = live.get("metrics") or {}
+    fz = live.get("frozen_test") or {}
+    days = live.get("days_recorded", 0)
+    brier = (
+        f"Brier {m['brier']:.3f} <span class=\"fx-dim\">vs {fz.get('brier', float('nan')):.3f} frozen</span>"
+        if m.get("brier") is not None
+        else f"Brier <span class=\"fx-dim\">warming up · {live.get('n_resolved', 0)}/{live.get('min_resolved', 20)} resolved</span>"
+    )
+    live_cov = (cov.get("live") or {}).get("coverage")
+    test_cov = (cov.get("frozen_test") or {}).get("overall")
+    coverage = (
+        f"coverage {live_cov:.0%} <span class=\"fx-dim\">vs 90 target</span>"
+        if live_cov is not None
+        else (
+            f"coverage {test_cov:.1%} <span class=\"fx-dim\">frozen · target 90</span>"
+            if test_cov is not None
+            else ""
+        )
+    )
+    head_hash = head[0] if head else live.get("head_hash", "")
+    ok = bool(live.get("chain_ok"))
+    chain = (
+        f'chain {head_hash[:4]}…{head_hash[-2:]} <span style="color:{REGIME_COLORS["calm"] if ok else REGIME_COLORS["crisis"]}">{"✓" if ok else "✗"}</span>'
+        if head_hash
+        else ""
+    )
+    parts = " · ".join(x for x in (f"forward test day {days}", brier, coverage, chain) if x)
+    st.markdown(
+        f'<div class="fx-trust"><span class="fx-num">{parts}</span>'
+        f'<a href="{proof_href}" target="_self">verify independently ↗</a></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def state(title: str, what_happened: str, what_to_do: str) -> None:
+    """Empty / loading / error state with directive copy: say what happened and what to do."""
+    st.markdown(
+        f'<div class="fx-state"><b>{html.escape(title)}</b><br>{html.escape(what_happened)} '
+        f"{html.escape(what_to_do)}</div>",
+        unsafe_allow_html=True,
     )

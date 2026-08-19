@@ -2,6 +2,22 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.18.0 — phase 28: first revenue rails (2026-08-19)
+
+- Tiers written down: Free (weekly report + public widget) · Pro CHF 79/month (alerts on chosen
+  pairs, Treasury mode, monthly PDF) · Partner CHF 500+/month (API + white-label); monthly, cancel
+  any time, no annual-only lock-in — `docs/PRICING.md`. Enforcement lives in the phase-24 middleware;
+  the Stripe test-mode webhook (phase 24 commit) moves a key between tiers; TEST MODE until the first
+  design partner converts.
+- `docs/TERMS.md` + `docs/PRIVACY.md` (plain-language DRAFTS, rule-7 disclaimer, TODO: confirm
+  Swiss FinSA specifics with a professional before going live); footer links on every page.
+- Outreach kit `docs/outreach/`: design-partner e-mail in German and English (≤ 150 words; six months
+  free for a monthly feedback call + signed LOI at CHF 79/month if useful), one-page LOI template,
+  target criteria (Swiss SMEs with EUR/USD invoicing, fiduciaries, treasury associations),
+  `tracking.csv` (15 placeholder rows, no personal data). Metrics page shows design partners + MRR
+  from the tracking file — honest zeros. Nothing is sent, nothing is charged: ten conversations come
+  before the next feature.
+
 ## v2.17.0 — phase 24: productised API (rust/fxradar-serve v2.11.0) (2026-08-19)
 
 - `X-API-Key` auth: sha256-only sqlite store (`--keys-db` / `FXRADAR_KEYS_DB`, default

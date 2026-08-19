@@ -318,6 +318,15 @@ The five numbers investors ask about, auto-filled where possible and honest zero
 
 _Zeros are real zeros — updated 2026-08-19T14:02:25Z by `make metrics`._
 
+## Pricing & design partners
+
+Free: weekly report + public widget · Pro CHF 79/month: alerts, Treasury mode, monthly PDF ·
+Partner CHF 500+/month: API + white-label. Monthly, cancel any time — TEST MODE until the first
+design partner converts ([PRICING](docs/PRICING.md), [TERMS](docs/TERMS.md),
+[PRIVACY](docs/PRIVACY.md) — drafts, FinSA review pending). Looking for five Swiss SMEs /
+fiduciaries as design partners: [outreach kit](docs/outreach/). The ledger and the traffic light are
+the pitch; there are no direction promises anywhere in the sales copy.
+
 ## Universes and the scenario explorer
 
 The pipeline is universe-agnostic. `src/fxradar/universes.py` holds one record per instrument set —

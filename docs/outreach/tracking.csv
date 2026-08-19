@@ -1,0 +1,16 @@
+company,type,contact_role,status,monthly_chf,notes
+PLACEHOLDER-SME-01,sme_eurusd_invoicing,CFO / finance lead,todo,,Swiss SME invoicing in EUR or USD; replace with a real company before first contact
+PLACEHOLDER-SME-02,sme_eurusd_invoicing,owner-manager,todo,,
+PLACEHOLDER-SME-03,sme_eurusd_invoicing,head of finance,todo,,
+PLACEHOLDER-SME-04,sme_eurusd_invoicing,treasurer,todo,,
+PLACEHOLDER-SME-05,sme_eurusd_invoicing,CFO / finance lead,todo,,
+PLACEHOLDER-SME-06,sme_eurusd_invoicing,controller,todo,,
+PLACEHOLDER-SME-07,sme_gbpusd_exporter,head of finance,todo,,GBP exposure (UK customers or suppliers)
+PLACEHOLDER-FID-01,fiduciary_firm,partner,todo,,Treuhand / fiduciary serving several SME clients — one conversation reaches many
+PLACEHOLDER-FID-02,fiduciary_firm,partner,todo,,
+PLACEHOLDER-FID-03,fiduciary_firm,mandate lead,todo,,
+PLACEHOLDER-FID-04,fiduciary_firm,partner,todo,,
+PLACEHOLDER-ASSOC-01,treasury_association,programme lead,todo,,Treasury association or CFO network: newsletter slot or member webinar
+PLACEHOLDER-ASSOC-02,treasury_association,board member,todo,,
+PLACEHOLDER-ACAD-01,university_treasury_course,lecturer,todo,,Educational use: classroom licence of the weekly report and the arcade
+PLACEHOLDER-INTRO-01,warm_intro,referrer,todo,,Personal network introductions; log the referrer role only — never a person's name in this file
