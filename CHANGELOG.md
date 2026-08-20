@@ -2,6 +2,33 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.29.0 — speech that waits for you to finish, and hears accents (2026-08-20)
+
+- One turn, one question. The recogniser fires a "final" result at every pause, so a multi-sentence
+  question used to arrive as several truncated ones. Segments now accumulate into a turn and are
+  sent only after 1.8 s of real silence — measured from the live audio level, not the recogniser's
+  impatience — with ceilings (45 s, 700 chars) so a hot mic cannot run away, and stopping the
+  conversation mid-thought sends what you already said rather than discarding it. Verified in-page:
+  two sentences separated by a pause arrive as ONE question.
+- Accented English gets a domain-aware second chance: `maxAlternatives = 5`, and the alternative
+  mentioning things this app actually talks about wins (siren, regime, change risk, ledger, the
+  currency and pair names); ties keep the engine's own confidence order. A fixup table then repairs
+  the mishearings these terms attract ("sirene" → siren, "bit coin" → bitcoin, "rubble" → ruble,
+  spelled-out "e u r u s d" → EURUSD).
+- An accent field ("Your English") picks the recogniser locale — US, UK, India, Australia, Canada,
+  Ireland, New Zealand, South Africa, Singapore, or match-my-browser — remembered in localStorage
+  and applied to a live conversation without restarting it.
+- Her speaking clock no longer caps at 20 s, so long answers hold the speaking state (and its
+  click-to-skip) for their real duration.
+- NEW GATE, from a real incident this session: an edit inserted a statement into an async function
+  ("async const ..."), which broke the WHOLE widget script — every function undefined — while the
+  page still served 200 and screenshotted fine. `tests/test_widget_js.py` now parses the inline
+  widget JavaScript with `node --check` and asserts the voice contract's symbols exist. This class
+  of failure can no longer ship silently.
+- A taken vendor slot reported as "unknown error" now gets the same plain recovery steps as the
+  explicit concurrency error (single-session plans report it both ways).
+- 302 python (+3) + 56 rust tests green; clippy and `make lint-ui` clean.
+
 ## v2.28.2 — a real voice-conversation control that never scrolls away (2026-08-20)
 
 - The control disappeared as soon as the transcript grew, and the cause was one inline style:

@@ -85,6 +85,12 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){button.voice[aria-pressed="true"] svg{animation:none}}
 .start{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 16px;text-align:center}
 .start p{color:var(--tx2);font-size:13.5px;max-width:400px}
+.accentrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 16px 8px 16px;
+  font-size:11px;color:var(--tx3)}
+.accentrow select{background:var(--nimbus);border:1px solid var(--line);border-radius:8px;
+  color:var(--tx2);font-family:var(--sans);font-size:11.5px;padding:4px 8px;outline:none}
+.accentrow select:focus-visible{outline:2px solid var(--beacon);outline-offset:1px}
+.accentrow .fx-hint{color:var(--tx3)}
 .privacy{font-size:11px;color:var(--tx3);padding:0 16px 12px 16px}
 .privacy a{color:var(--beacon);text-decoration:none}
 @media (max-width:400px){body{padding:8px}.stage{aspect-ratio:16/11}.msg{font-size:13.5px}}
@@ -166,6 +172,22 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
           <button id="btn-send">Ask</button>
         </div>
       </div>
+      <div class="accentrow">
+        <label for="lang">Your English</label>
+        <select id="lang" aria-label="accent the speech recogniser should expect">
+          <option value="auto">Match my browser</option>
+          <option value="en-US">United States</option>
+          <option value="en-GB">United Kingdom</option>
+          <option value="en-IN">India</option>
+          <option value="en-AU">Australia</option>
+          <option value="en-CA">Canada</option>
+          <option value="en-IE">Ireland</option>
+          <option value="en-NZ">New Zealand</option>
+          <option value="en-ZA">South Africa</option>
+          <option value="en-SG">Singapore</option>
+        </select>
+        <span class="fx-hint" id="lang-hint">Non-native speakers: United States or United Kingdom usually score best.</span>
+      </div>
       <div class="privacy"><span id="mic-note">The microphone streams only while voice conversation is on.</span>
         Conversations are logged and reviewed weekly by a human to keep the
         presenter honest; transcripts are used for nothing else. <a href="/docs" target="_blank">API docs</a></div>
@@ -232,7 +254,7 @@ async function speak(text){
     try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);
       // talk() resolves when the command is SENT; she speaks after. Hold the speaking state on an
       // estimated clock so "click to skip" is offered while she talks; interruptSpeech() ends it early.
-      const est=Math.min(2000+55*text.length,20000),t0=performance.now();
+      const est=Math.min(2000+55*text.length,60000),t0=performance.now();
       await new Promise(r=>{const iv=setInterval(()=>{
         if(!state.speaking||performance.now()-t0>est){clearInterval(iv);r();}},150);});
       state.speaking=false;setStatus("listening");return;}
@@ -302,7 +324,9 @@ async function startSession(){
         v.style.display="block";$("disc").style.display="none";
         const pl=v.play();if(pl&&pl.catch)pl.catch(()=>soundUnlock());
       }catch(e){console.warn("anam attach failed, using the drawn face:",e);
-        const busy=/concurrency/i.test(String(e&&e.message||e));
+        // Anam reports a taken slot as "concurrency limit" and sometimes only as "unknown error";
+        // both mean the same thing on a single-session plan, so give the same recovery steps.
+        const busy=/concurrency|unknown error/i.test(String(e&&e.message||e));
         addMsg("avatar",busy
           ?"The photoreal studio allows one live session at a time and another is still active \u2014 close any other radar tab (or wait about a minute for the old session to expire), then reload this page and press Start again. Until then you have the drawn presenter and the browser voice."
           :"The photoreal face could not start ("+(e&&e.message||e)+") \u2014 continuing with the drawn presenter; voice and answers still work.");
@@ -332,6 +356,42 @@ function addToStart(msg){
   p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
   p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
 }
+/* Accented English gets a domain-aware second chance: the recogniser returns several
+   alternatives, and we prefer the one that mentions things this app actually talks about. Then a
+   short fixup table repairs the mishearings we see most for these terms. Both are client-side and
+   cost nothing — the gated brain still decides what may be said. */
+const VOCAB=["siren","regime","calm","trend","chop","crisis","change risk","band","conformal",
+  "ledger","brier","consensus","methodology","hedge","exposure","tolerance","forecast","anomaly",
+  "autoencoder","markov","validation","embargo","drift","coverage","radar","market","euro","dollar",
+  "yen","sterling","pound","franc","swiss","bitcoin","ethereum","ripple","cardano","ruble","rouble",
+  "peso","rand","zloty","krona","krone","aussie","kiwi","loonie","eurusd","usdjpy","gbpusd",
+  "usdchf","usdrub","btc","eth","xrp"];
+const FIXUPS=[
+  [/\b(?:sirene?|syren|siron|sarin)\b/gi,"siren"],
+  [/\bregim(?:e)?s?\b/gi,"regime"],
+  [/\bbit\s?coin\b/gi,"bitcoin"],
+  [/\bether(?:eum)?\b/gi,"ethereum"],
+  [/\be\.?\s?u\.?\s?r\.?\s?(?:slash|\/)?\s?u\.?\s?s\.?\s?d\.?\b/gi,"EURUSD"],
+  [/\bg\.?\s?b\.?\s?p\.?\s?(?:slash|\/)?\s?u\.?\s?s\.?\s?d\.?\b/gi,"GBPUSD"],
+  [/\bu\.?\s?s\.?\s?d\.?\s?(?:slash|\/)?\s?c\.?\s?h\.?\s?f\.?\b/gi,"USDCHF"],
+  [/\bswiss\s?ie\b/gi,"franc"],
+  [/\brubble|rooble\b/gi,"ruble"],
+  [/\bmethodolog(?:y|ies|ical)\b/gi,"methodology"],
+  [/\bchange\s+risks?\b/gi,"change risk"],
+  [/\bbreyer|briar|bryer\b/gi,"brier"],
+];
+function vocabScore(t){const l=(t||"").toLowerCase();let n=0;
+  for(const w of VOCAB)if(l.includes(w))n++;
+  return n;}
+function pickAlternative(res){  // highest vocabulary hit wins; ties fall back to the engine's own
+  let best=res[0]&&res[0].transcript||"",bs=vocabScore(best);        // confidence ordering
+  for(let i=1;i<res.length;i++){
+    const t=res[i]&&res[i].transcript;if(!t)continue;
+    const sc=vocabScore(t);
+    if(sc>bs){best=t;bs=sc;}
+  }
+  return best;}
+function applyFixups(t){let out=t;for(const [re,to] of FIXUPS)out=out.replace(re,to);return out;}
 function normHeard(t){return t.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
 function routeHeard(text){  // two ears, one mouth: vendor ASR and browser recognition both land
   const n=normHeard(text);if(!n)return;  // here; whichever hears a phrase first wins, echoes drop
@@ -384,6 +444,30 @@ function setVendorMic(on){
       addMsg("avatar","The browser has the microphone blocked for this page \u2014 allow it via the address-bar icon, then reload and start again. Typing always works.");}
   }catch(_){/* older SDKs: routing gate below still applies */}
 }
+const SILENCE_MS=1800;      // how long you may pause mid-thought before the turn is sent
+const MAX_TURN_MS=45000;    // hard stop so a hot mic in a noisy room cannot run forever
+const MAX_TURN_CHARS=700;
+function turnText(){return (state.utt||[]).join(" ").replace(/\s+/g," ").trim();}
+function flushTurn(){          // one complete turn -> one question
+  const raw=turnText();
+  state.utt=[];state.turnStart=0;
+  clearTimeout(state.silenceTimer);
+  if(!raw)return;
+  routeHeard(applyFixups(raw));
+}
+function noteSpeech(){         // any voice activity postpones the end of the turn
+  state.lastVoiceAt=performance.now();
+  if(!state.turnStart)state.turnStart=performance.now();
+  clearTimeout(state.silenceTimer);
+  state.silenceTimer=setTimeout(()=>{
+    if(state.conversation&&turnText())flushTurn();
+  },SILENCE_MS);
+}
+function turnGuards(){         // length/duration ceilings, checked as the meter runs
+  if(!state.conversation||!turnText())return;
+  const tooLong=state.turnStart&&performance.now()-state.turnStart>MAX_TURN_MS;
+  if(tooLong||turnText().length>MAX_TURN_CHARS)flushTurn();
+}
 async function startLevelMeter(){  // proof, not decoration: the bar moves only with real input,
   if(state.meterStream)return true;    // and only while the mic toggle is on (user-initiated).
   try{
@@ -400,7 +484,12 @@ async function startLevelMeter(){  // proof, not decoration: the bar moves only 
       if(!state.conversation){bars.forEach(b=>b.style.height="3px");return;}
       an.getByteFrequencyData(freq);an.getByteTimeDomainData(wave);
       let peak=0;for(let i=0;i<wave.length;i++)peak=Math.max(peak,Math.abs(wave[i]-128));
-      if(peak>6)state.heardSound=true;
+      if(peak>6){state.heardSound=true;
+        // real audio, not the recogniser's opinion: while you are still making sound the turn
+        // stays open, so a pause between sentences never truncates the question.
+        if(turnText())noteSpeech();
+        state.lastVoiceAt=performance.now();}
+      turnGuards();
       BANDS.forEach(([a,b],i)=>{
         let sum=0;for(let k=a;k<b&&k<freq.length;k++)sum+=freq[k];
         const avg=sum/(b-a);
@@ -437,16 +526,22 @@ function micDiagnostic(){  // 12 s with the mic on and nothing recognised: say w
 function startLocalConversation(assist){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){if(!assist)addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
-  localRec=new SR();localRec.lang="en-US";localRec.interimResults=true;localRec.continuous=true;
+  localRec=new SR();localRec.lang=voiceLang();localRec.interimResults=true;
+  localRec.continuous=true;localRec.maxAlternatives=5;
   localRec.onresult=e=>{const res=e.results[e.results.length-1];
     if(!res)return;
-    if(!res.isFinal){
-      if(state.conversation){state.heardText=true;
-        if(state.speaking)interruptSpeech();  // barge-in without the vendor's own detector
-        else setStatus("heard: "+res[0].transcript.slice(0,60));}
-      return;}
     state.heardText=true;
-    if(!state.speaking)routeHeard(res[0].transcript);};
+    if(state.conversation&&state.speaking)interruptSpeech();  // barge-in, vendor detector or not
+    if(!res.isFinal){
+      if(state.conversation){noteSpeech();
+        const sofar=(turnText()+" "+(res[0].transcript||"")).trim();
+        setStatus("hearing: "+sofar.slice(-70));}
+      return;}
+    if(!state.conversation)return;
+    state.utt=state.utt||[];
+    state.utt.push(pickAlternative(res));      // accented speech: prefer the domain-plausible take
+    noteSpeech();                              // ...and keep the turn open for the next sentence
+    setStatus("hearing: "+turnText().slice(-70));};
   localRec.onend=()=>{if(state.conversation){try{localRec.start();}catch(_){/* tab lost focus */}}};
   localRec.onerror=ev=>{state.srError=ev.error;
     if(ev.error==="not-allowed"&&!assist){toggleConversation(false);
@@ -464,9 +559,10 @@ function toggleConversation(on){
       if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
   $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the button to stop.")
     :"The microphone streams only while voice conversation is on.";
-  if(on){state.heardSound=false;state.heardText=false;state.srError=null;
+  if(on){state.heardSound=false;state.heardText=false;state.srError=null;state.utt=[];state.turnStart=0;
     startLevelMeter();micDiagnostic();}
-  else{stopLevelMeter();clearTimeout(state.micTimer);}
+  else{stopLevelMeter();clearTimeout(state.micTimer);clearTimeout(state.silenceTimer);
+    if(turnText())flushTurn();}  // stopping mid-thought asks the question rather than losing it
   if(state.vendorClient){setVendorMic(on);
     // the vendor transcribes NOTHING in BYO-brain mode (llmId CUSTOMER_CLIENT_V1): its ASR is off
     // by design so our gated brain is the only voice. Browser recognition is therefore the ear.
@@ -476,6 +572,23 @@ function toggleConversation(on){
   else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}
   setStatus(on?"listening":"ready");
 }
+function voiceLang(){
+  const v=(localStorage.getItem("fx-voice-lang")||"auto");
+  if(v!=="auto")return v;
+  const n=(navigator.language||"en-US");
+  return /^en\b/i.test(n)?n:"en-US";  // any English locale is honoured; otherwise US English
+}
+(function initLang(){
+  const sel=$("lang");if(!sel)return;
+  sel.value=localStorage.getItem("fx-voice-lang")||"auto";
+  sel.onchange=()=>{
+    localStorage.setItem("fx-voice-lang",sel.value);
+    if(state.conversation&&localRec){       // apply immediately: stop, restart on the new locale
+      try{localRec.onend=null;localRec.stop();}catch(_){}
+      localRec=null;startLocalConversation(!!state.vendorClient);
+    }
+  };
+})();
 $("btn-voice").onclick=()=>toggleConversation(!state.conversation);
 $("status").onclick=()=>{if(state.speaking)interruptSpeech();};
 /* one-session vendor plans: free the slot the moment this page goes away */
