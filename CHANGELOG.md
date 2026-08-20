@@ -2,6 +2,24 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.28.2 — a real voice-conversation control that never scrolls away (2026-08-20)
+
+- The control disappeared as soon as the transcript grew, and the cause was one inline style:
+  `#session.style.display = "block"` overrode the stylesheet's flex column, so the card could not
+  size itself and the controls overflowed the iframe. Measured before: the button sat at y=1526 in
+  an 820 px frame — unreachable. The card is now a genuine flex column (transcript scrolls, stage
+  capped at 42vh, controls pinned), verified with a full transcript at 560×820 and 390×780: the
+  control is on screen in both.
+- The round mic icon becomes a proper voice-conversation pill: full width, mic glyph, an explicit
+  state label ("Start voice conversation" ↔ "Listening — tap to stop"), and a five-bar level meter
+  INSIDE the button driven by the real input spectrum (five frequency bands, flat when silent).
+  It is honest feedback rather than ambience — the bars only exist while the user has the
+  conversation on, and flat bars are themselves the diagnostic. Text input keeps its own row
+  beneath, always available.
+- Briefing iframe grown to 820 px and its caption now names the browser requirement; widget copy
+  updated to match the new control ("voice conversation", not "the mic button").
+- 299 python + 56 rust tests green; clippy and `make lint-ui` clean.
+
 ## v2.28.1 — the mic tells you the truth (2026-08-20)
 
 - Found the real reason the microphone "did nothing", by feeding a spoken WAV into Chrome as a real

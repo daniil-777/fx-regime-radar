@@ -18,13 +18,17 @@
 html,body{height:100%}
 body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size:15px;line-height:1.55;
   display:flex;justify-content:center;padding:18px}
-.wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px}
-.card{background:var(--front);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px;
+  height:100%;min-height:0}
+.card{background:var(--front);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+#session{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
 .head{display:flex;align-items:baseline;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
 .head .t{font-family:var(--disp);font-weight:500;letter-spacing:0.03em}
 .head .s{font-family:var(--mono);font-size:11px;color:var(--tx3)}
 /* the face: vendor <video> when connected, else the presenter disc (regime colour, one pulse) */
-.stage{position:relative;aspect-ratio:16/10;background:var(--nimbus);display:flex;align-items:center;justify-content:center}
+.stage{position:relative;aspect-ratio:16/10;max-height:42vh;background:var(--nimbus);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
 .disc{display:flex;align-items:center;justify-content:center}
 #eye-l,#eye-r{transform-box:fill-box;transform-origin:center}
@@ -37,15 +41,11 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
   display:flex;align-items:center;gap:7px}
 .status .dot{width:7px;height:7px;border-radius:50%;background:var(--calm);display:inline-block}
 /* the non-dismissible disclosure bar */
-#level{display:none;width:44px;height:6px;border-radius:3px;background:var(--nimbus);
-  border:1px solid var(--line);overflow:hidden;flex:0 0 auto}
-#level.on{display:block}
-#level i{display:block;height:100%;width:0%;background:var(--beacon);
-  transition:width .09s linear}
 .caption{background:var(--nimbus);border-top:1px solid var(--line);padding:8px 16px;
   font-family:var(--mono);font-size:11.5px;color:var(--beacon);letter-spacing:0.02em}
 /* transcript */
-.log{display:flex;flex-direction:column;gap:8px;padding:14px 16px;min-height:120px;max-height:44vh;overflow-y:auto}
+.log{display:flex;flex-direction:column;gap:8px;padding:14px 16px;min-height:0;
+  flex:1 1 auto;overflow-y:auto}
 .msg{max-width:92%;padding:8px 12px;border-radius:10px;font-size:14px}
 .msg.user{align-self:flex-end;background:var(--nimbus);border:1px solid var(--line);color:var(--tx2)}
 .msg.avatar{align-self:flex-start;background:var(--nimbus);border:1px solid var(--line)}
@@ -53,8 +53,22 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
 .msg .meta .ok{color:var(--calm)} .msg .meta .ref{color:var(--chop)}
 .chip{font-family:var(--mono);font-variant-numeric:tabular-nums;background:var(--front);
   border:1px solid var(--line);border-radius:5px;padding:0 4px;color:var(--beacon);font-size:13px}
-/* controls */
-.controls{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+/* controls: the voice pill is the primary action, the text row its always-there fallback */
+.controls{display:flex;flex-direction:column;gap:8px;padding:12px 16px;border-top:1px solid var(--line);
+  flex:0 0 auto;background:var(--front)}
+.row{display:flex;gap:8px}
+.talk{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:44px;
+  border-radius:999px;border:1px solid var(--line);background:var(--nimbus);color:var(--tx2);
+  font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;padding:0 18px}
+.talk:hover{border-color:var(--beacon);color:var(--beacon)}
+.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon);
+  box-shadow:0 0 0 3px rgba(127,209,201,0.16)}
+/* five bars driven by the REAL input spectrum — they are a level meter, not an animation:
+   with no sound they sit flat, which is exactly the diagnostic the user needs. */
+.bars{display:flex;align-items:center;gap:3px;height:20px;flex:0 0 auto}
+.bars i{display:block;width:3px;height:3px;border-radius:2px;background:currentColor;
+  transition:height .08s linear}
+.talk .lbl{white-space:nowrap}
 input[type=text]{flex:1;background:var(--nimbus);border:1px solid var(--line);border-radius:8px;
   color:var(--tx1);font-family:var(--sans);font-size:14px;padding:9px 12px;outline:none}
 input[type=text]:focus{border-color:var(--beacon)}
@@ -131,24 +145,28 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
     <div class="caption">AI presenter · risk information, not investment advice</div>
     <div class="start" id="start">
       <p>A computer-generated presenter that answers only from the radar's published numbers.
-         Nothing plays until you start — no autoplay, no sound without your click.</p>
+         Nothing plays until you start — no autoplay, no sound without your click. Voice conversation needs desktop Chrome or Edge.</p>
       <button id="btn-start">Start session</button>
     </div>
     <div id="session" style="display:none">
       <div class="log" id="log" aria-live="polite"></div>
       <div class="controls">
-        <button class="voice" id="btn-voice" aria-pressed="false" title="start a live voice conversation" aria-label="start a live voice conversation">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <button class="talk" id="btn-voice" aria-pressed="false"
+                aria-label="start a live voice conversation">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
             <path d="M 5.5 11 a 6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
+          <span class="lbl" id="talk-label">Start voice conversation</span>
+          <span class="bars" id="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
         </button>
-        <div id="level" aria-hidden="true" title="microphone input level"><i></i></div>
-        <input type="text" id="q" placeholder="Type — or tap the mic and just talk" autocomplete="off">
-        <button id="btn-send">Ask</button>
+        <div class="row">
+          <input type="text" id="q" placeholder="Or type your question" autocomplete="off">
+          <button id="btn-send">Ask</button>
+        </div>
       </div>
-      <div class="privacy"><span id="mic-note">The microphone streams only while the mic button is on.</span>
+      <div class="privacy"><span id="mic-note">The microphone streams only while voice conversation is on.</span>
         Conversations are logged and reviewed weekly by a human to keep the
         presenter honest; transcripts are used for nothing else. <a href="/docs" target="_blank">API docs</a></div>
     </div>
@@ -297,7 +315,9 @@ async function startSession(){
     state.advice=!!tok.advice;
     const g=await api("/avatar/greeting");
     $("through").textContent="data through "+g.data_through;
-    $("start").style.display="none";$("session").style.display="block";
+    $("start").style.display="none";$("session").style.display="flex";  // flex, not block: the inline
+    // style wins over the stylesheet, and "block" was collapsing the column that keeps the voice
+    // control on screen while the transcript grows
     addMsg("avatar",g.text,'template · <span class="ok">gate pass</span>');
     if(state.vendorReady)await state.vendorReady;  // talk() before the WebRTC session is ready is lost
     if(state.audioReady&&!(await state.audioReady)){
@@ -372,16 +392,20 @@ async function startLevelMeter(){  // proof, not decoration: the bar moves only 
     const ctx=new (window.AudioContext||window.webkitAudioContext)();
     state.meterCtx=ctx;
     const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();
-    an.fftSize=512;src.connect(an);
-    const buf=new Uint8Array(an.fftSize),bar=document.querySelector("#level i");
-    $("level").classList.add("on");
+    an.fftSize=256;an.smoothingTimeConstant=0.75;src.connect(an);
+    const freq=new Uint8Array(an.frequencyBinCount),wave=new Uint8Array(an.fftSize);
+    const bars=[...document.querySelectorAll("#bars i")];
+    const BANDS=[[1,4],[4,9],[9,18],[18,36],[36,72]];  // low → high, one bar each
     const tick=()=>{
-      if(!state.conversation){$("level").classList.remove("on");bar.style.width="0%";return;}
-      an.getByteTimeDomainData(buf);
-      let peak=0;for(let i=0;i<buf.length;i++)peak=Math.max(peak,Math.abs(buf[i]-128));
-      const pct=Math.min(100,Math.round((peak/40)*100));
-      if(pct>12)state.heardSound=true;
-      bar.style.width=pct+"%";
+      if(!state.conversation){bars.forEach(b=>b.style.height="3px");return;}
+      an.getByteFrequencyData(freq);an.getByteTimeDomainData(wave);
+      let peak=0;for(let i=0;i<wave.length;i++)peak=Math.max(peak,Math.abs(wave[i]-128));
+      if(peak>6)state.heardSound=true;
+      BANDS.forEach(([a,b],i)=>{
+        let sum=0;for(let k=a;k<b&&k<freq.length;k++)sum+=freq[k];
+        const avg=sum/(b-a);
+        bars[i].style.height=Math.max(3,Math.min(20,Math.round(avg/9)))+"px";
+      });
       state.meterRAF=requestAnimationFrame(tick);
     };
     tick();
@@ -396,8 +420,7 @@ function stopLevelMeter(){
   try{state.meterStream&&state.meterStream.getTracks().forEach(t=>t.stop());}catch(_){}
   try{state.meterCtx&&state.meterCtx.close();}catch(_){}
   state.meterStream=null;state.meterCtx=null;
-  $("level").classList.remove("on");
-  const bar=document.querySelector("#level i");if(bar)bar.style.width="0%";
+  document.querySelectorAll("#bars i").forEach(b=>b.style.height="3px");
 }
 function micDiagnostic(){  // 12 s with the mic on and nothing recognised: say why, do not sulk
   clearTimeout(state.micTimer);
@@ -434,11 +457,13 @@ function startLocalConversation(assist){
 function toggleConversation(on){
   state.conversation=on;
   $("btn-voice").setAttribute("aria-pressed",on?"true":"false");
+  $("talk-label").textContent=on?"Listening — tap to stop":"Start voice conversation";
+  $("btn-voice").setAttribute("aria-label",on?"stop the live voice conversation":"start a live voice conversation");
   let micState="";
   try{const st=state.vendorClient&&state.vendorClient.getInputAudioState();
       if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
-  $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the mic to stop.")
-    :"The microphone streams only while the mic button is on.";
+  $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the button to stop.")
+    :"The microphone streams only while voice conversation is on.";
   if(on){state.heardSound=false;state.heardText=false;state.srError=null;
     startLevelMeter();micDiagnostic();}
   else{stopLevelMeter();clearTimeout(state.micTimer);}
