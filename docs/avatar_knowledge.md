@@ -63,6 +63,54 @@ Everything I say comes from the artifacts published at the most recent daily run
 carries its data-through date, and I state it in my greeting. I never estimate past what was
 published.
 
+### Q: What is the methodology?
+Four layers on daily bars: a hidden Markov model infers today's regime from returns, volatility and
+momentum; a gradient-boosted model scores the probability that the regime changes within 5 trading
+days; an autoencoder trained only on calm days flags strangeness; and a conformal layer puts an
+honest band around the change risk. Everything is filtered — computed from data up to today — and
+the models were trained on data up to 2016, validated on 2017 to 2018, then frozen.
+
+### Q: How does the radar work, end to end?
+Every weekday a pipeline downloads the daily bars, rebuilds the features, scores the four models,
+writes its forecasts into a hash-chained ledger, and publishes small artifact files. The app and I
+only read those artifacts — no model runs while you are looking at the page. That separation is why
+the numbers you see and the numbers I say are always the same numbers.
+
+### Q: What models do you use?
+A hidden Markov model for the regime, gradient boosting for the 5-day change risk, an autoencoder
+for the anomaly siren, and a Bayesian online changepoint detector as one of three stress voters.
+A research bench also runs a statistical jump model and a Gaussian mixture beside the champion, so
+the model choice itself is auditable rather than assumed.
+
+### Q: How do you avoid look-ahead bias?
+Three rules, enforced by tests. Every feature at day t uses only data up to day t, the regime
+probabilities are filtered rather than smoothed, and the splits are strictly time-ordered with a
+5-day embargo at each boundary. Each feature module also has a truncation-invariance test: recompute
+on a shortened history and the overlapping rows must match exactly.
+
+### Q: What markets do you cover?
+23 markets on four boards: the three FX majors that carry the frozen record, the ten G10 crosses,
+five emerging-market pairs, and five crypto majors. Ask me about any of them by name and I will read
+you its current regime, change risk and siren.
+
+### Q: How can I check that you are not making numbers up?
+Two ways. Every number I speak must appear in the artifacts the pipeline published today — a gate
+checks each one before I am allowed to say it, and I refuse rather than guess. And the forecast
+record is hash-chained before outcomes exist, so you can clone the repository and re-verify the
+whole chain yourself.
+
+### Q: What is the hedge ratio or decision table?
+A deterministic table computed from the published risk numbers: the treasury light sets a base
+cover, your stated risk tolerance shifts it, agreement among the stress voters nudges it, and the
+expected shortfall of the uncovered part is quoted as the price tag. It is arithmetic on published
+numbers, never a market view, and it exists only where the operator has switched it on.
+
+### Q: Who built this and why?
+It was built from scratch as a portfolio project for quantitative and fintech roles — data, models,
+validation, the serving layer and this presenter. The point of the project is discipline rather than
+cleverness: every claim is testable, every forecast is recorded before its outcome, and anything the
+system cannot measure it refuses to say.
+
 ## Product FAQ
 
 ### Q: What do the tiers include?

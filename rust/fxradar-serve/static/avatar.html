@@ -37,6 +37,11 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
   display:flex;align-items:center;gap:7px}
 .status .dot{width:7px;height:7px;border-radius:50%;background:var(--calm);display:inline-block}
 /* the non-dismissible disclosure bar */
+#level{display:none;width:44px;height:6px;border-radius:3px;background:var(--nimbus);
+  border:1px solid var(--line);overflow:hidden;flex:0 0 auto}
+#level.on{display:block}
+#level i{display:block;height:100%;width:0%;background:var(--beacon);
+  transition:width .09s linear}
 .caption{background:var(--nimbus);border-top:1px solid var(--line);padding:8px 16px;
   font-family:var(--mono);font-size:11.5px;color:var(--beacon);letter-spacing:0.02em}
 /* transcript */
@@ -139,6 +144,7 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
             <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
+        <div id="level" aria-hidden="true" title="microphone input level"><i></i></div>
         <input type="text" id="q" placeholder="Type — or tap the mic and just talk" autocomplete="off">
         <button id="btn-send">Ask</button>
       </div>
@@ -267,6 +273,14 @@ async function startSession(){
         state.vendorClient=client;
         setVendorMic(false);  // privacy by default: her ears open only with the mic button
         const v=$("video");v.muted=false;v.volume=1;  // her voice arrives on this element's audio track
+        state.audioReady=(async()=>{  // talk() before the audio track lands = a greeting nobody hears
+          for(let i=0;i<60;i++){
+            const n=v.srcObject?v.srcObject.getAudioTracks().length:0;
+            if(n>0)return true;
+            await new Promise(r=>setTimeout(r,200));
+          }
+          return false;
+        })();
         v.style.display="block";$("disc").style.display="none";
         const pl=v.play();if(pl&&pl.catch)pl.catch(()=>soundUnlock());
       }catch(e){console.warn("anam attach failed, using the drawn face:",e);
@@ -286,6 +300,10 @@ async function startSession(){
     $("start").style.display="none";$("session").style.display="block";
     addMsg("avatar",g.text,'template · <span class="ok">gate pass</span>');
     if(state.vendorReady)await state.vendorReady;  // talk() before the WebRTC session is ready is lost
+    if(state.audioReady&&!(await state.audioReady)){
+      addMsg("avatar","Her voice track never arrived, so I will speak through this browser instead. The answers are identical \u2014 only the voice changes.");
+      try{state.vendorClient=null;}catch(_){}  // fall back to an audible path rather than mime silently
+    }
     await speak(g.text);state.greeted=true;
   }catch(e){setStatus("unavailable");addToStart(e.message);}
 }
@@ -302,7 +320,7 @@ function routeHeard(text){  // two ears, one mouth: vendor ASR and browser recog
     const a=state.lastHeard.text;
     if(a===n||a.includes(n)||n.includes(a))return;
   }
-  state.lastHeard={text:n,at:now};
+  state.lastHeard={text:n,at:now};state.heardText=true;clearTimeout(state.micTimer);
   addMsg("user",text);ask(text,true);
 }
 async function askVendor(question){return ask(question,true);}  // barge-in: ask() interrupts her itself
@@ -346,16 +364,69 @@ function setVendorMic(on){
       addMsg("avatar","The browser has the microphone blocked for this page \u2014 allow it via the address-bar icon, then reload and start again. Typing always works.");}
   }catch(_){/* older SDKs: routing gate below still applies */}
 }
+async function startLevelMeter(){  // proof, not decoration: the bar moves only with real input,
+  if(state.meterStream)return true;    // and only while the mic toggle is on (user-initiated).
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    state.meterStream=stream;
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    state.meterCtx=ctx;
+    const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();
+    an.fftSize=512;src.connect(an);
+    const buf=new Uint8Array(an.fftSize),bar=document.querySelector("#level i");
+    $("level").classList.add("on");
+    const tick=()=>{
+      if(!state.conversation){$("level").classList.remove("on");bar.style.width="0%";return;}
+      an.getByteTimeDomainData(buf);
+      let peak=0;for(let i=0;i<buf.length;i++)peak=Math.max(peak,Math.abs(buf[i]-128));
+      const pct=Math.min(100,Math.round((peak/40)*100));
+      if(pct>12)state.heardSound=true;
+      bar.style.width=pct+"%";
+      state.meterRAF=requestAnimationFrame(tick);
+    };
+    tick();
+    return true;
+  }catch(e){
+    addMsg("avatar","This browser would not give me the microphone ("+(e&&e.name||e)+"). Allow it via the address-bar icon and tap the mic again \u2014 typing always works.");
+    return false;
+  }
+}
+function stopLevelMeter(){
+  try{if(state.meterRAF)cancelAnimationFrame(state.meterRAF);}catch(_){}
+  try{state.meterStream&&state.meterStream.getTracks().forEach(t=>t.stop());}catch(_){}
+  try{state.meterCtx&&state.meterCtx.close();}catch(_){}
+  state.meterStream=null;state.meterCtx=null;
+  $("level").classList.remove("on");
+  const bar=document.querySelector("#level i");if(bar)bar.style.width="0%";
+}
+function micDiagnostic(){  // 12 s with the mic on and nothing recognised: say why, do not sulk
+  clearTimeout(state.micTimer);
+  state.micTimer=setTimeout(()=>{
+    if(!state.conversation||state.heardText)return;
+    const why=state.heardSound
+      ? "I can see your microphone level moving, so the microphone is fine \u2014 the speech recogniser returned nothing"
+        +(state.srError?" ("+state.srError+")":"")+". Chrome or Edge on the desktop recognise speech most reliably; Safari and Firefox often do not."
+      : "I am not seeing any level from your microphone"
+        +(state.srError?" ("+state.srError+")":"")+". Check the input device in your system sound settings, or that another app has not taken it.";
+    addMsg("avatar",why+" You can always type your question \u2014 the answers are exactly the same.");
+  },12000);
+}
 function startLocalConversation(assist){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){if(!assist)addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
   localRec=new SR();localRec.lang="en-US";localRec.interimResults=true;localRec.continuous=true;
   localRec.onresult=e=>{const res=e.results[e.results.length-1];
     if(!res)return;
-    if(!res.isFinal){if(state.conversation&&!state.speaking)setStatus("heard: "+res[0].transcript.slice(0,60));return;}
+    if(!res.isFinal){
+      if(state.conversation){state.heardText=true;
+        if(state.speaking)interruptSpeech();  // barge-in without the vendor's own detector
+        else setStatus("heard: "+res[0].transcript.slice(0,60));}
+      return;}
+    state.heardText=true;
     if(!state.speaking)routeHeard(res[0].transcript);};
   localRec.onend=()=>{if(state.conversation){try{localRec.start();}catch(_){/* tab lost focus */}}};
-  localRec.onerror=ev=>{if(ev.error==="not-allowed"&&!assist){toggleConversation(false);
+  localRec.onerror=ev=>{state.srError=ev.error;
+    if(ev.error==="not-allowed"&&!assist){toggleConversation(false);
     addMsg("avatar","Microphone permission was denied — the text box still works.");}};
   try{localRec.start();}catch(_){return false;}
   return true;
@@ -368,8 +439,13 @@ function toggleConversation(on){
       if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
   $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the mic to stop.")
     :"The microphone streams only while the mic button is on.";
+  if(on){state.heardSound=false;state.heardText=false;state.srError=null;
+    startLevelMeter();micDiagnostic();}
+  else{stopLevelMeter();clearTimeout(state.micTimer);}
   if(state.vendorClient){setVendorMic(on);
-    if(on){startLocalConversation(true);}  // the second ear: browser recognition beside vendor ASR
+    // the vendor transcribes NOTHING in BYO-brain mode (llmId CUSTOMER_CLIENT_V1): its ASR is off
+    // by design so our gated brain is the only voice. Browser recognition is therefore the ear.
+    if(on){startLocalConversation(true);}
     else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}}
   else if(on){if(!startLocalConversation(false))return toggleConversation(false);}
   else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}

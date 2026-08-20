@@ -489,8 +489,18 @@ pub async fn widget_js() -> Response {
 /// Demo page embedding the widget three times.
 #[utoipa::path(get, path = "/widget", tag = "public",
     responses((status = 200, description = "text/html", body = String)))]
-pub async fn avatar_page() -> Html<&'static str> {
-    Html(include_str!("../static/avatar.html"))
+pub async fn avatar_page() -> Response {
+    // no-store, deliberately: this page IS the application (its script drives WebRTC, the mic and
+    // the gated brain). A cached copy silently pairs old client code with a new server — the exact
+    // failure that made "the mic does nothing" survive three fixes. It is 26 kB; correctness wins.
+    (
+        [
+            (header::CONTENT_TYPE, "text/html; charset=utf-8"),
+            (header::CACHE_CONTROL, "no-store, must-revalidate"),
+        ],
+        include_str!("../static/avatar.html"),
+    )
+        .into_response()
 }
 
 #[utoipa::path(get, path = "/widget", tag = "public",

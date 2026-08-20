@@ -104,3 +104,22 @@ urge the user to keep talking.
 
 Hard-refresh (Cmd-Shift-R) after any redeploy: the widget is served from the binary and browsers
 cache it.
+
+## Why the browser does the listening (a vendor fact worth knowing)
+
+The persona is created with `llmId: "CUSTOMER_CLIENT_V1"` so that OUR gated brain is the only thing
+she can say. Measured consequence (probed with a real spoken WAV fed as Chrome's microphone,
+2026-08-20): in that mode Anam runs **no speech recognition** — `MESSAGE_HISTORY_UPDATED` never
+carries a user turn, and `USER_SPEECH_STARTED` does not fire. The vendor is a face and a voice,
+nothing more. So the ear is the browser's own Web Speech API, started by the mic toggle; the vendor
+mic is unmuted only for parity and interruption.
+
+Verified: Web Speech starts in BOTH the standalone widget and inside the Briefing iframe
+(`allow="microphone"`), so the iframe is not a blocker. It needs desktop Chrome or Edge — Safari and
+Firefox are unreliable — and it is the reason the widget shows a live input-level meter: the meter
+proves the microphone itself works even when the recogniser returns nothing, and after 12 s of
+silence the presenter says which of the two failed.
+
+The page is served `Cache-Control: no-store`. It is the application, not a document: a cached copy
+pairs old client code with a new server, which is exactly how "the mic does nothing" survived three
+server-side fixes.

@@ -2,6 +2,31 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.28.1 — the mic tells you the truth (2026-08-20)
+
+- Found the real reason the microphone "did nothing", by feeding a spoken WAV into Chrome as a real
+  microphone: with `llmId: CUSTOMER_CLIENT_V1` — the BYO-brain mode that makes our gates the only
+  voice — Anam performs **no speech recognition at all**. No vendor transcript can ever arrive, so
+  the browser's Web Speech API is the ear (already added in v2.28.0, now the documented primary).
+  Probed and recorded in docs/AVATAR.md; Web Speech verified to start both standalone and inside
+  the Briefing iframe, so the iframe was never the blocker.
+- `/avatar` is now served `Cache-Control: no-store`. It had NO cache headers, so Chrome reused the
+  old script against a new server — which is how a fixed mic kept looking broken (the new greeting
+  came from the server, the old JavaScript from the disk cache).
+- The mic is now observable instead of mysterious: a live input-level meter (our own getUserMedia +
+  AudioContext, moving only while the toggle is on — interaction, not ambience) proves the
+  microphone works even when recognition fails, and after 12 s of silence the presenter says which
+  half failed, in plain words, naming the recogniser error.
+- Voice barge-in no longer depends on the vendor's detector: interim browser-recognition text
+  interrupts her directly.
+- An audio-ready gate: if the WebRTC audio track never lands, she falls back to an audible voice and
+  says so, instead of miming a greeting nobody hears.
+- Methodology questions are answered, not refused: 8 new knowledge-pack entries (methodology
+  overview, end-to-end pipeline, model inventory, look-ahead-bias discipline, market coverage,
+  how to verify the numbers, the hedge-ratio table, who built it and why) — 22 FAQ entries, all
+  lint-gated at build. "What is methodology?" now answers keylessly.
+- 299 python + 56 rust tests green; clippy clean; `make lint-ui` clean.
+
 ## v2.28.0 — the presenter knows every market, and you can interrupt her (2026-08-20)
 
 - Barge-in: the user always outranks the presenter. While she speaks the status line reads
