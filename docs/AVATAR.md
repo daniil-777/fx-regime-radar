@@ -6,7 +6,7 @@ Three layers behind a feature flag (`FXRADAR_AVATAR=on`, **off by default**):
 |---|---|---|
 | MIND | `data/avatar_context.json` — today's regimes, risks, bands, sirens, consensus, events, treasury lights, ledger stats, drift flag, the pre-gated greeting, the refusal texts, the FAQ, and `allowed_numbers` (the closed set of numbers the presenter may speak). Rebuilt by the daily pipeline (`fxradar.avatar_context`). | Python |
 | MOUTH | `POST /avatar/brain` — answers from the pack + `docs/avatar_knowledge.md` only. Gates, in order: topic guard (direction/advice → branded refusal) → direction-word lint → numeric grounding (every number must be in `allowed_numbers` or echoed from the question); one corrective regeneration, then the `not_in_pack` refusal. With `ANTHROPIC_API_KEY`: Haiku, ≤220 tokens, versioned system prompt `prompts/avatar_system_v1.txt`. Without: the keyless FAQ matcher (same gates). | Rust |
-| FACE | `/avatar` widget (tokens only): vendor video over WebRTC when configured, else the regime-coloured presenter disc + browser TTS — fully real-time with zero external services. | static HTML |
+| FACE | `/avatar` widget (tokens only): vendor video over WebRTC when configured, else the DRAWN PRESENTER — a geometric bust in the token palette (blinking eyes, speaking mouth, teal headset, regime-coloured ring) + browser TTS — fully real-time with zero external services. The drawn face is deliberately non-photoreal (no likeness questions; the disclosure is still spoken first) and occupies exactly the slot the vendor video replaces. | static HTML |
 
 ## Environment
 

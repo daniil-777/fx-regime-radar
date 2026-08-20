@@ -2,6 +2,17 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.25.1 — the presenter gets a face + one-command demo (2026-08-20)
+
+- The keyless FACE is now a drawn presenter: a geometric bust in the token palette — blinking eyes,
+  a mouth that animates while speaking, brows, collar, a beacon-teal headset with mic boom, and a
+  regime-coloured ring that wears today's lead regime. Pure SVG, tokens only (tested), deliberately
+  non-photoreal (no likeness questions; the spoken disclosure still opens every session), honours
+  prefers-reduced-motion, and occupies exactly the slot a vendor's photoreal WebRTC video replaces.
+- `make avatar` starts the presenter in one command (dev mode); the Briefing page auto-discovers a
+  presenter on localhost when FXRADAR_AVATAR_URL is unset. TTS stall can no longer lock the input
+  (onend/onerror/timeout all release it).
+
 ## v2.25.0 — phase 35: the grounded real-time presenter (2026-08-20)
 
 - MIND — `fxradar.avatar_context` (daily stage): `data/avatar_context.json` with per-pair regime /

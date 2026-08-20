@@ -26,9 +26,10 @@ body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size
 /* the face: vendor <video> when connected, else the presenter disc (regime colour, one pulse) */
 .stage{position:relative;aspect-ratio:16/10;background:var(--nimbus);display:flex;align-items:center;justify-content:center}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
-.disc{width:132px;height:132px;border-radius:50%;border:1.5px solid var(--line);
-  display:flex;align-items:center;justify-content:center;background:var(--front)}
-.disc i{width:64px;height:64px;border-radius:50%;display:block;background:var(--calm);opacity:0.9}
+.disc{display:flex;align-items:center;justify-content:center}
+#eye-l,#eye-r{transform-box:fill-box;transform-origin:center}
+.blink #eye-l,.blink #eye-r{transform:scaleY(0.12)}
+@media (prefers-reduced-motion:reduce){#mouth{height:4px !important}.blink #eye-l,.blink #eye-r{transform:none}}
 .pulse{animation:lp 2.4s ease-in-out infinite}
 @keyframes lp{0%,100%{opacity:0.9}50%{opacity:0.35}}
 @media (prefers-reduced-motion:reduce){.pulse{animation:none}}
@@ -71,7 +72,47 @@ button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
     <div class="head"><span class="t">Ask the radar</span><span class="s" id="through">—</span></div>
     <div class="stage">
       <video id="video" autoplay playsinline></video>
-      <div class="disc" id="disc"><i id="disc-core"></i></div>
+      <div class="disc" id="disc">
+        <!-- the keyless face: a drawn presenter in the token palette. The vendor's photoreal
+             video replaces this whole element when a face vendor is configured. -->
+        <svg id="face" viewBox="0 0 240 240" width="230" height="230" role="img" aria-label="AI presenter">
+          <defs>
+            <clipPath id="portrait"><circle cx="120" cy="120" r="112"/></clipPath>
+          </defs>
+          <circle cx="120" cy="120" r="112" fill="var(--front)"/>
+          <circle cx="120" cy="120" r="112" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+          <g clip-path="url(#portrait)">
+            <!-- shoulders -->
+            <path d="M 40 240 Q 46 168 120 168 Q 194 168 200 240 Z" fill="var(--nimbus)"/>
+            <path d="M 40 240 Q 46 168 120 168 Q 194 168 200 240" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+            <!-- collar accent -->
+            <path d="M 96 176 L 120 196 L 144 176" fill="none" stroke="var(--tx3)" stroke-width="2"/>
+            <!-- head -->
+            <circle id="head" cx="120" cy="104" r="52" fill="var(--nimbus)" stroke="var(--line)" stroke-width="1.5"/>
+            <!-- hair cap -->
+            <path d="M 68 104 A 52 52 0 0 1 172 104 L 172 96 Q 168 56 120 54 Q 72 56 68 96 Z" fill="var(--front)"/>
+            <!-- eyes (blink by squashing ry) -->
+            <ellipse id="eye-l" cx="100" cy="102" rx="6" ry="6.5" fill="var(--tx1)"/>
+            <ellipse id="eye-r" cx="140" cy="102" rx="6" ry="6.5" fill="var(--tx1)"/>
+            <!-- brows -->
+            <path d="M 92 88 Q 100 84 108 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 132 88 Q 140 84 148 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- nose hint -->
+            <path d="M 120 104 L 118 116" stroke="var(--tx3)" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <!-- mouth: height animates while speaking -->
+            <rect id="mouth" x="104" y="128" width="32" height="4" rx="2" fill="var(--tx1)" opacity="0.92"/>
+            <!-- headset: the presenter's tell -->
+            <path d="M 66 96 A 56 56 0 0 1 174 96" fill="none" stroke="var(--beacon)" stroke-width="3" stroke-linecap="round"/>
+            <rect x="61" y="94" width="9" height="20" rx="4.5" fill="var(--beacon)"/>
+            <rect x="170" y="94" width="9" height="20" rx="4.5" fill="var(--beacon)"/>
+            <path d="M 170 112 Q 164 132 146 136" fill="none" stroke="var(--beacon)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle id="mic" cx="143" cy="137" r="3.5" fill="var(--beacon)"/>
+          </g>
+          <!-- regime ring: wears today's lead regime colour -->
+          <circle id="ring" cx="120" cy="120" r="112" fill="none" stroke="var(--calm)" stroke-width="2.5"
+                  stroke-dasharray="52 651" stroke-linecap="round" transform="rotate(-64 120 120)" opacity="0.9"/>
+        </svg>
+      </div>
       <div class="status"><span class="dot pulse" id="live"></span><span id="status">ready</span></div>
     </div>
     <div class="caption">AI presenter · risk information, not investment advice</div>
@@ -178,11 +219,36 @@ if(SR){
   rec.onresult=e=>{const q=e.results[0][0].transcript;ask(q);};
   rec.onerror=()=>{setStatus("ready");};
 }else{$("btn-talk").style.display="none";}
-/* the disc wears today's lead regime colour once the greeting arrives */
+/* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
+   spec's "avatar video" slot (the one moving element of the stage); prefers-reduced-motion is
+   honoured via CSS, and the whole group is replaced by the vendor's video when one is attached. */
+const face=$("face"), mouth=$("mouth");
+const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function scheduleBlink(){
+  if(reduced||!face)return;
+  setTimeout(()=>{face.classList.add("blink");
+    setTimeout(()=>{face.classList.remove("blink");scheduleBlink();},130);},2600+Math.random()*3200);
+}
+scheduleBlink();
+let mouthTimer=null;
+function mouthLoop(){
+  if(reduced||!mouth)return;
+  if(mouthTimer)return;
+  mouthTimer=setInterval(()=>{
+    if(!state.speaking){clearInterval(mouthTimer);mouthTimer=null;
+      mouth.setAttribute("height","4");mouth.setAttribute("y","128");return;}
+    const h=4+Math.random()*11;
+    mouth.setAttribute("height",h.toFixed(1));
+    mouth.setAttribute("y",(130-h/2).toFixed(1));
+  },75);
+}
+const _speak=speak;
+speak=function(text){mouthLoop();const p=_speak(text);p.then(()=>{if(mouth){mouth.setAttribute("height","4");mouth.setAttribute("y","128");}});return p;};
+/* the ring + mic wear today's lead regime colour once the greeting arrives */
 fetch("/avatar/greeting").then(r=>r.ok?r.json():null).then(g=>{
   if(!g)return;
   const m=(g.text.match(/is (calm|trend|chop|crisis)/)||[])[1];
-  if(m)$("disc-core").style.background=REGIME_COLORS[m];
+  if(m&&$("ring"))$("ring").setAttribute("stroke",REGIME_COLORS[m]);
 }).catch(()=>{});
 </script>
 </body>
