@@ -2,6 +2,31 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.27.0 — decision support + a voice path that explains itself (2026-08-20)
+
+- Personal hedging decision support, computed — never generated (owner decision 2026-08-20,
+  CLAUDE.md rule 4 amended): `src/fxradar/decision.py` derives a deterministic hedge ratio from the
+  treasury light (hedge 0.75 / ladder 0.50 / wait 0.25), risk tolerance ±0.15, consensus ≥2/3
+  +0.05, clipped to [0.10, 0.95] in 5 % steps, with tranche schedules and the ES of the uncovered
+  remainder as the price tag; the daily pipeline writes `data/decision_table.json` (a `decision`
+  stage after `avatar`). The Rust brain answers hedge questions from that table by TEMPLATE —
+  parse pair/amount/currency/horizon/tolerance, arithmetic on the user's stated amount, disclosure
+  prefix on the first advice answer of a session, direction lint still blocking — the LLM never
+  writes advice. Flag `FXRADAR_AVATAR_ADVICE` (default OFF); `source: "decision"` in the widget
+  meta. Swiss FinSA review required before offering to clients (compliance note in the artifact).
+- The voice path now explains itself instead of failing silently — the real fix for "I press the
+  mic and hear nothing": (a) `talk()` failures fall back to audible TTS instead of returning into
+  silence; (b) the greeting waits for the vendor session's SESSION_READY before speaking (talk()
+  before WebRTC is ready was simply lost); (c) the SDK's mic-permission events and
+  `getInputAudioState()` surface the true mic state in the mic note, and a blocked mic says how to
+  unblock it; (d) an autoplay-blocked voice gets an explicit "Enable sound" button; (e) the Anam
+  one-session concurrency limit — the silent killer: a stale tab holds the only slot and attach
+  dies — now produces a plain-language message with the recovery steps, and `pagehide` releases
+  the slot by stopping the stream; (f) spoken questions queue behind her speech instead of being
+  dropped. Verified headless over real WebRTC: 1 audio track, unmuted, mic granted, zero console
+  errors.
+- 299 python + 54 rust tests green; `make lint-ui` clean.
+
 ## v2.26.3 — live voice conversation (2026-08-20)
 
 - One tap to talk: the hold-to-talk emoji button becomes a proper conversation toggle — an SVG mic

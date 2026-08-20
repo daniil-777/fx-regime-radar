@@ -712,3 +712,157 @@ async fn heygen_and_anam_vendor_responses_carry_a_brain_token() {
     assert_eq!(b.status(), 200);
     assert!(store.avatar_session_valid(tok, now_unix()).unwrap());
 }
+
+// ---------------------------------------------------------------------------------------------
+// delta: deterministic hedging decision support (advice mode)
+// ---------------------------------------------------------------------------------------------
+
+const DEC_DISCLOSURE: &str = "DECISION-DISCLOSURE: software-generated decision support from the \
+radar's published numbers, not advice from a licensed adviser.";
+
+fn write_decision_table(root: &Path) {
+    let row = |ratio: f64, sched4: Value| {
+        json!({
+            "light": "wait", "regime": "calm", "hedge_ratio": ratio,
+            "schedule_by_horizon": {
+                "1": [{"week": 0, "fraction": ratio}],
+                "2": [{"week": 0, "fraction": ratio}],
+                "4": sched4,
+                "8": [{"week": 0, "fraction": ratio}],
+                "12": [{"week": 0, "fraction": ratio}],
+            },
+            "es_99_1w": 0.02, "es_95_1w": 0.016, "var_99_1w": 0.018,
+            "review_trigger": "revisit if the regime flips or the consensus reaches 2 of 3; otherwise review weekly",
+        })
+    };
+    let pair = |cons4: Value| {
+        json!({
+            "conservative": row(0.6, cons4),
+            "balanced": row(0.5, json!([{"week": 0, "fraction": 0.5}])),
+            "aggressive": row(0.3, json!([{"week": 0, "fraction": 0.3}])),
+        })
+    };
+    let cons4 = json!([
+        {"week": 0, "fraction": 0.3}, {"week": 1, "fraction": 0.1},
+        {"week": 2, "fraction": 0.1}, {"week": 3, "fraction": 0.1}]);
+    let table = json!({
+        "generated_at_utc": "2026-08-19T06:00:00Z",
+        "data_through": "2026-08-18",
+        "disclosure": DEC_DISCLOSURE,
+        "method": "deterministic",
+        "fx": {"EURUSD": 1.16, "USDCHF": 0.81, "GBPUSD": 1.35, "EURCHF": 0.94, "GBPCHF": 1.10},
+        "pairs": {
+            "EURUSD": pair(cons4),
+            "GBPUSD": pair(json!([{"week": 0, "fraction": 0.6}])),
+            "USDCHF": pair(json!([{"week": 0, "fraction": 0.6}])),
+        },
+        "compliance": "software-generated decision support; Swiss FinSA review required",
+    });
+    std::fs::write(
+        root.join("data/decision_table.json"),
+        serde_json::to_vec_pretty(&table).unwrap(),
+    )
+    .unwrap();
+}
+
+#[tokio::test]
+async fn advice_mode_gives_deterministic_decision_support() {
+    let root = scratch_dir("advice_on");
+    write_pack(&root, GREETING);
+    write_decision_table(&root);
+    let cfg = AvatarCfg {
+        advice: true,
+        ..base_cfg()
+    };
+    let (base, _) = spawn_app(&root, cfg).await;
+    // full question: pair + amount + horizon + tolerance
+    let v = ask(
+        &base,
+        "brt_test",
+        "Should I hedge my 800000 euro exposure for 4 weeks? I am conservative",
+        None,
+    )
+    .await;
+    assert_eq!(v["source"], "decision");
+    assert_eq!(v["gate"], "pass");
+    let text = v["text"].as_str().unwrap();
+    assert!(
+        text.starts_with(DEC_DISCLOSURE),
+        "first advice answer of a session carries the disclosure: {text}"
+    );
+    assert!(text.contains("cover 60% of the exposure"), "{text}");
+    assert!(
+        text.contains("30% now, then 10% in each of the next 3 weeks"),
+        "{text}"
+    );
+    // 800000 × (1 − 0.6) × 0.02 × sqrt(4) = 12800, in the user's own currency
+    assert!(text.contains("12800 EUR"), "{text}");
+    assert!(text.contains("Today's light: wait (calm regime)"), "{text}");
+    // second advice answer in the SAME session: no disclosure repeat
+    let v = ask(
+        &base,
+        "brt_test",
+        "should i hedge my 800000 euro exposure?",
+        None,
+    )
+    .await;
+    assert_eq!(v["source"], "decision");
+    assert!(!v["text"].as_str().unwrap().contains("DECISION-DISCLOSURE"));
+    // defaults path: no pair, no amount, no horizon → balanced, first table pair, 4 weeks,
+    // amount-free phrasing
+    let body = json!({"session_id": "fresh", "messages": [{"role": "user", "content": "should I hedge?"}]});
+    let v: Value = reqwest::Client::new()
+        .post(format!("{base}/avatar/brain"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&body)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(v["source"], "decision");
+    assert_eq!(v["gate"], "pass");
+    let text = v["text"].as_str().unwrap();
+    assert!(
+        text.contains("balanced profile on EUR/USD over 4 weeks"),
+        "{text}"
+    );
+    assert!(text.contains("cover 50% of the exposure"), "{text}");
+    // 0.02 × sqrt(4) = 4.0% of the amount
+    assert!(text.contains("about 4.0% of the amount"), "{text}");
+    assert!(
+        text.starts_with(DEC_DISCLOSURE),
+        "fresh session hears the disclosure"
+    );
+    // direction questions are STILL refused with advice on
+    let v = ask(&base, "brt_test", "will EURUSD rise?", None).await;
+    assert_eq!(v["gate"], "refused:direction");
+    // badges
+    let g: Value = reqwest::get(format!("{base}/avatar/greeting"))
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(g["advice"], true);
+}
+
+#[tokio::test]
+async fn advice_off_keeps_the_refusal_even_with_a_table_present() {
+    let root = scratch_dir("advice_off");
+    write_pack(&root, GREETING);
+    write_decision_table(&root);
+    let (base, _) = spawn_app(&root, base_cfg()).await; // advice: false (default)
+    let v = ask(&base, "brt_test", "should I hedge my exposure?", None).await;
+    assert_eq!(v["source"], "refusal");
+    assert_eq!(v["gate"], "refused:advice");
+    assert_eq!(v["text"], REF_ADVICE);
+    let g: Value = reqwest::get(format!("{base}/avatar/greeting"))
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(g["advice"], false);
+}

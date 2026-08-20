@@ -96,6 +96,10 @@ pub struct AvatarCfg {
     pub voice_id: String,
     /// FXRADAR_AVATAR_MAX_TTS_CHARS_MONTH (default 100000).
     pub max_tts_chars_month: i64,
+    /// FXRADAR_AVATAR_ADVICE=1 — personal hedging decision support from the DETERMINISTIC
+    /// decision table (data/decision_table.json). The LLM never produces advice text; with the
+    /// flag off, advice intent gets the standard refusal.
+    pub advice: bool,
 }
 
 impl Default for AvatarCfg {
@@ -119,6 +123,7 @@ impl Default for AvatarCfg {
             elevenlabs_key: None,
             voice_id: "21m00Tcm4TlvDq8ikWAM".into(),
             max_tts_chars_month: 100_000,
+            advice: false,
         }
     }
 }
@@ -220,6 +225,279 @@ pub fn load_pack(path: &Path) -> Result<Pack, String> {
         knowledge_rel: pf.knowledge_pack,
         context_json: v.to_string(),
     })
+}
+
+// ---------------------------------------------------------------------------------------------
+// decision table (advice mode): data/decision_table.json, written by the Python pipeline
+// ---------------------------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Tranche {
+    pub week: i64,
+    pub fraction: f64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct DecisionRow {
+    pub light: String,
+    pub regime: String,
+    pub hedge_ratio: f64,
+    #[serde(default)]
+    pub schedule_by_horizon: std::collections::BTreeMap<String, Vec<Tranche>>,
+    pub es_99_1w: f64,
+    #[serde(default)]
+    pub es_95_1w: f64,
+    #[serde(default)]
+    pub var_99_1w: f64,
+    #[serde(default)]
+    pub review_trigger: String,
+}
+
+/// pairs: PAIR → tolerance (conservative|balanced|aggressive) → row.
+#[derive(Debug, Clone, Deserialize)]
+pub struct DecisionTable {
+    #[serde(default)]
+    pub disclosure: String,
+    #[serde(default)]
+    pub fx: std::collections::HashMap<String, f64>,
+    #[serde(default)]
+    pub pairs: std::collections::BTreeMap<String, std::collections::BTreeMap<String, DecisionRow>>,
+}
+
+/// mtime-keyed cache entry held in [`AppState`].
+pub struct DecisionCache {
+    pub modified: SystemTime,
+    pub len: u64,
+    pub table: std::sync::Arc<DecisionTable>,
+}
+
+pub fn load_decision_table(path: &Path) -> Result<DecisionTable, String> {
+    let raw = std::fs::read_to_string(path)
+        .map_err(|e| format!("decision table unreadable ({}): {e}", path.display()))?;
+    serde_json::from_str(&raw).map_err(|e| format!("decision table has a bad shape: {e}"))
+}
+
+/// What the advice builder needs from the user's question (parsed deterministically, defaults
+/// applied — never by the LLM).
+#[derive(Debug, Clone, PartialEq)]
+pub struct AdviceQuery {
+    pub pair: String,
+    pub amount: Option<f64>,
+    /// "EUR" | "USD" | "CHF" | "GBP" when the user named one.
+    pub currency: Option<String>,
+    /// One of 1, 2, 4, 8, 12 (table horizons).
+    pub horizon_weeks: u8,
+    /// "conservative" | "balanced" | "aggressive".
+    pub tolerance: String,
+}
+
+fn amount_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(
+            r"(\d[\d'.,]*)\s*(k|m|thousand|million)?\s*(euros?|eur|€|dollars?|usd|\$|francs?|chf|pounds?|gbp|£)",
+        )
+        .expect("static regex")
+    })
+}
+
+fn weeks_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new(r"(\d+)\s*week").expect("static regex"))
+}
+
+fn months_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new(r"(\d+)\s*month").expect("static regex"))
+}
+
+fn risk_tolerant_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new(r"risk.?tolerant").expect("static regex"))
+}
+
+/// Nearest table horizon (ties resolve to the shorter one).
+fn nearest_horizon(h: i64) -> u8 {
+    let h = h.clamp(1, 12);
+    *[1u8, 2, 4, 8, 12]
+        .iter()
+        .min_by_key(|&&o| ((i64::from(o) - h).abs(), o))
+        .expect("non-empty")
+}
+
+/// Parse pair / amount+currency / horizon / tolerance from an advice question, with defaults.
+pub fn parse_advice_query(question: &str, default_pair: &str) -> AdviceQuery {
+    let q = question.to_lowercase();
+    let words: Vec<String> = q
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| w.to_string())
+        .collect();
+    let has = |w: &str| words.iter().any(|x| x == w);
+    let pair = if has("eurusd") || has("euro") || has("euros") || has("eur") || q.contains('€') {
+        "EURUSD".to_string()
+    } else if has("usdchf") || has("franc") || has("francs") || has("chf") {
+        "USDCHF".to_string()
+    } else if has("gbpusd")
+        || has("pound")
+        || has("pounds")
+        || has("sterling")
+        || has("gbp")
+        || q.contains('£')
+    {
+        "GBPUSD".to_string()
+    } else {
+        default_pair.to_string()
+    };
+    let (amount, currency) = match amount_re().captures(&q) {
+        Some(c) => {
+            let raw: String = c[1]
+                .chars()
+                .filter(|ch| *ch != '\'' && *ch != ',')
+                .collect();
+            let mult = match c.get(2).map(|mm| mm.as_str()) {
+                Some("k") | Some("thousand") => 1e3,
+                Some("m") | Some("million") => 1e6,
+                _ => 1.0,
+            };
+            let cur = match &c[3] {
+                x if x.starts_with("euro") || x == "eur" || x == "€" => "EUR",
+                x if x.starts_with("dollar") || x == "usd" || x == "$" => "USD",
+                x if x.starts_with("franc") || x == "chf" => "CHF",
+                _ => "GBP",
+            };
+            (
+                raw.parse::<f64>().ok().map(|a| a * mult),
+                Some(cur.to_string()),
+            )
+        }
+        None => (None, None),
+    };
+    let currency = if amount.is_some() { currency } else { None };
+    let horizon = weeks_re()
+        .captures(&q)
+        .and_then(|c| c[1].parse::<i64>().ok())
+        .or_else(|| {
+            months_re()
+                .captures(&q)
+                .and_then(|c| c[1].parse::<i64>().ok())
+                .map(|n| n * 4)
+        })
+        .unwrap_or(4);
+    let tolerance = if has("conservative") || has("cautious") || has("careful") {
+        "conservative"
+    } else if has("aggressive") || risk_tolerant_re().is_match(&q) {
+        "aggressive"
+    } else {
+        "balanced"
+    };
+    AdviceQuery {
+        pair,
+        amount,
+        currency,
+        horizon_weeks: nearest_horizon(horizon),
+        tolerance: tolerance.to_string(),
+    }
+}
+
+fn capitalize_first(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+        None => String::new(),
+    }
+}
+
+/// Deterministic decision-support text from the table row — the LLM NEVER writes advice.
+/// Returns (text, numbers-in-text): every number is arithmetic over the table and the user's
+/// own inputs, so the grounding gate accepts them by construction. The direction lint still
+/// runs for real on the result.
+pub fn build_advice(
+    table: &DecisionTable,
+    q: &AdviceQuery,
+    with_disclosure: bool,
+) -> Option<(String, Vec<String>)> {
+    let row = table.pairs.get(&q.pair)?.get(&q.tolerance)?;
+    if q.pair.len() != 6 {
+        return None;
+    }
+    let label = format!("{}/{}", &q.pair[..3], &q.pair[3..]);
+    let h = q.horizon_weeks;
+    let weeks_word = if h == 1 { "week" } else { "weeks" };
+    let ratio_pct = format!("{:.0}", row.hedge_ratio * 100.0);
+    let fmt_pct = |f: f64| format!("{:.0}", f * 100.0);
+    let sched = row
+        .schedule_by_horizon
+        .get(&h.to_string())
+        .cloned()
+        .unwrap_or_else(|| {
+            vec![Tranche {
+                week: 0,
+                fraction: row.hedge_ratio,
+            }]
+        });
+    let schedule = if sched.len() <= 1 {
+        format!("all {ratio_pct}% now")
+    } else {
+        let head = format!("{}% now", fmt_pct(sched[0].fraction));
+        let rest = &sched[1..];
+        let uniform = rest
+            .windows(2)
+            .all(|w| (w[0].fraction - w[1].fraction).abs() < 1e-12 && w[1].week == w[0].week + 1)
+            && rest[0].week == 1;
+        if uniform {
+            format!(
+                "{head}, then {}% in each of the next {} weeks",
+                fmt_pct(rest[0].fraction),
+                rest.len()
+            )
+        } else {
+            let parts: Vec<String> = rest
+                .iter()
+                .map(|t| format!("{}% in week {}", fmt_pct(t.fraction), t.week))
+                .collect();
+            format!("{head}, then {}", parts.join(", "))
+        }
+    };
+    let es_h = row.es_99_1w * f64::from(h).sqrt();
+    let risk = match q.amount {
+        Some(a) => {
+            // The user always names a currency alongside an amount (the regex requires it), so
+            // the figure stays in their currency; the CHF conversion via table.fx covers the
+            // defensive no-currency case only.
+            let (money_raw, cur) = match q.currency.as_deref() {
+                Some(cur) => (a * (1.0 - row.hedge_ratio) * es_h, cur.to_string()),
+                None => {
+                    let to_chf = match q.pair.as_str() {
+                        "EURUSD" => table.fx.get("EURCHF").copied().unwrap_or(1.0),
+                        "GBPUSD" => table.fx.get("GBPCHF").copied().unwrap_or(1.0),
+                        _ => 1.0,
+                    };
+                    (a * (1.0 - row.hedge_ratio) * es_h * to_chf, "CHF".to_string())
+                }
+            };
+            let money = ((money_raw / 100.0).round() * 100.0) as i64;
+            format!(
+                "Leaving the rest uncovered carries a 99% expected shortfall of about {money} {cur} over that horizon"
+            )
+        }
+        None => format!(
+            "Leaving the rest uncovered carries a 99% expected shortfall of about {:.1}% of the amount over that horizon",
+            es_h * 100.0
+        ),
+    };
+    let review = capitalize_first(row.review_trigger.trim());
+    let body = format!(
+        "For a {} profile on {label} over {h} {weeks_word}: cover {ratio_pct}% of the exposure — {schedule}. {risk}. {review}. Today's light: {} ({} regime).",
+        q.tolerance, row.light, row.regime
+    );
+    let text = if with_disclosure {
+        format!("{} {body}", table.disclosure)
+    } else {
+        body
+    };
+    let numbers = extract_numbers(&text);
+    Some((text, numbers))
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -581,7 +859,7 @@ pub struct BrainRequest {
 #[derive(Serialize, ToSchema)]
 pub struct BrainResponse {
     pub text: String,
-    /// "llm" | "template" | "refusal"
+    /// "llm" | "template" | "refusal" | "decision" (deterministic advice engine)
     pub source: String,
     /// "pass" | "refused:<kind>" | "regenerated" | "blocked" | "open:ungrounded"
     pub gate: String,
@@ -657,6 +935,57 @@ fn finish(
     })
 }
 
+/// Advice mode: deterministic decision support from the table — parse → row → template → gates.
+/// The LLM never writes advice. Any failure (table absent, no row, lint) returns None and the
+/// caller falls back to the standard advice refusal.
+fn decision_advice(
+    st: &AppState,
+    pack: &Pack,
+    session_id: &str,
+    question: &str,
+    question_numbers: &HashSet<String>,
+    t0: Instant,
+) -> Option<Json<BrainResponse>> {
+    let table = match st.decision_table() {
+        Ok(t) => t,
+        Err(e) => {
+            warn!(error = %e, "advice mode is on but the decision table is unavailable");
+            return None;
+        }
+    };
+    let default_pair = table.pairs.keys().next()?.clone();
+    let q = parse_advice_query(question, &default_pair);
+    let already = st
+        .advice_disclosed
+        .lock()
+        .ok()
+        .map(|set| set.contains(session_id))
+        .unwrap_or(true);
+    let (text, computed) = build_advice(&table, &q, !already)?;
+    // Grounding: pack ∪ question-echo ∪ builder-computed (grounded by construction — arithmetic
+    // over the table and the user's own inputs). The direction lint runs for real.
+    let mut allowed = pack.allowed.clone();
+    allowed.extend(computed);
+    match gate(&text, &allowed, question_numbers, true) {
+        Ok(()) => {
+            if let Ok(mut set) = st.advice_disclosed.lock() {
+                set.insert(session_id.to_string());
+            }
+            Some(finish(
+                st, session_id, question, text, "decision", "pass", t0,
+            ))
+        }
+        Err(reason) => {
+            m::avatar_lint_rejection(reason);
+            warn!(
+                gate = reason,
+                "decision advice failed its lint; falling back to the refusal"
+            );
+            None
+        }
+    }
+}
+
 /// BYO-LLM brain endpoint: topic guard → generate (LLM, or keyless FAQ fallback) → direction
 /// lint → numeric grounding → one corrective regeneration → refusal. Auth: X-Avatar-Token
 /// (static vendor token or a live session token).
@@ -699,6 +1028,18 @@ pub async fn brain(
         ));
     }
     if advice_intent_re().is_match(&q_lower) {
+        if st.avatar.advice {
+            if let Some(resp) = decision_advice(
+                &st,
+                &pack,
+                &req.session_id,
+                &question,
+                &question_numbers,
+                t0,
+            ) {
+                return Ok(resp);
+            }
+        }
         m::avatar_refusal("advice");
         let text = pack.refusals.advice.clone();
         return Ok(finish(
@@ -847,6 +1188,7 @@ pub async fn greeting(State(st): State<AppState>) -> Result<Json<Value>, ApiErro
         "source": "template",
         "disclaimer": DISCLAIMER,
         "open": st.avatar.open,
+        "advice": st.avatar.advice,
     })))
 }
 
@@ -990,6 +1332,7 @@ pub async fn session_token(
     };
     if let Some(obj) = out.as_object_mut() {
         obj.insert("open".into(), json!(st.avatar.open));
+        obj.insert("advice".into(), json!(st.avatar.advice));
         obj.insert(
             "tts".into(),
             json!(if st.avatar.elevenlabs_key.is_some() {
@@ -1173,6 +1516,44 @@ mod tests {
         assert!(advice_intent_re().is_match("help with position sizing"));
         assert!(advice_intent_re().is_match("where do i put my stop-loss"));
         assert!(!advice_intent_re().is_match("what is the siren?"));
+    }
+
+    #[test]
+    fn advice_query_parsing() {
+        let q = parse_advice_query(
+            "hedge my 1.5m dollars over 2 months, i am risk tolerant",
+            "EURUSD",
+        );
+        assert_eq!(
+            q.pair, "EURUSD",
+            "dollars alone fall back to the default pair"
+        );
+        assert_eq!(q.amount, Some(1_500_000.0));
+        assert_eq!(q.currency.as_deref(), Some("USD"));
+        assert_eq!(q.horizon_weeks, 8, "2 months = 8 weeks");
+        assert_eq!(q.tolerance, "aggressive");
+        let q = parse_advice_query("800'000 francs for 3 weeks, cautious please", "EURUSD");
+        assert_eq!(q.pair, "USDCHF");
+        assert_eq!(q.amount, Some(800_000.0));
+        assert_eq!(q.currency.as_deref(), Some("CHF"));
+        assert_eq!(
+            q.horizon_weeks, 2,
+            "3 clamps to the nearer, shorter horizon"
+        );
+        assert_eq!(q.tolerance, "conservative");
+        let q = parse_advice_query("should i hedge 250k pounds", "EURUSD");
+        assert_eq!(q.pair, "GBPUSD");
+        assert_eq!(q.amount, Some(250_000.0));
+        assert_eq!(q.currency.as_deref(), Some("GBP"));
+        assert_eq!(q.horizon_weeks, 4, "default horizon");
+        assert_eq!(q.tolerance, "balanced");
+        let q = parse_advice_query("protect my exposure for 1 month", "EURUSD");
+        assert_eq!((q.amount, q.currency), (None, None));
+        assert_eq!(q.horizon_weeks, 4);
+        let q = parse_advice_query("hedge 2m euros over 12 weeks", "GBPUSD");
+        assert_eq!(q.pair, "EURUSD");
+        assert_eq!(q.amount, Some(2_000_000.0));
+        assert_eq!(q.horizon_weeks, 12);
     }
 
     #[test]

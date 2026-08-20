@@ -71,8 +71,36 @@ Monday briefing script from `template_narrate` output and, when `HEYGEN_API_KEY`
 to the HeyGen video API; the MP4 is **human-reviewed before publish**, always. Without a key it
 writes the reviewed-script text next to the weekly report and stops — honestly.
 
+## Decision support (owner decision, 2026-08-20 — flag `FXRADAR_AVATAR_ADVICE`, off by default)
+
+The presenter may give personal HEDGING decision support: hedge ratio, tranche schedule and the
+expected-shortfall price tag of the uncovered remainder, personalised by the user's stated amount,
+horizon and risk tolerance. The decision comes from the DETERMINISTIC engine (`fxradar.decision` →
+`data/decision_table.json`: treasury light → base ratio, tolerance ±15 pp, consensus nudge, 5 %
+steps) — **the LLM never generates a recommendation**; the brain routes advice questions to the
+engine's templates, every number is table arithmetic or the user's own amount, and the first
+advice answer of a session carries the software-generated-not-a-licensed-adviser disclosure.
+Direction remains outside every output — hedging is insurance sizing, and no direction model
+exists here to lean on. **Operating this for third parties in Switzerland likely constitutes
+financial advice under FinSA: professional review required before client exposure.**
+
 ## What the presenter will never do
 
-State or imply price direction · give personal advice · speak a number outside the packs ·
+State or imply price direction · generate advice from the LLM (decision support is engine-computed only) · speak a number outside the packs ·
 improvise methodology · appear on the Proof page (the ledger stays human-free) · autoplay sound ·
 urge the user to keep talking.
+
+## Voice troubleshooting (the three real causes, in order of likelihood)
+
+1. **The photoreal slot is busy.** The Anam dev plan allows ONE live session; a stale tab (or a
+   just-closed one, for up to ~a minute) holds it and attach fails. The widget now says so in the
+   transcript and frees the slot on page close. Fix: close other radar tabs, wait a minute, reload,
+   Start again.
+2. **Microphone permission.** The SDK asks for the mic when the session starts; inside the Briefing
+   page the iframe carries `allow="microphone"`. If it was ever denied, the mic note reads
+   `Mic permission: denied` — allow it via the address-bar icon, then reload.
+3. **Autoplay-blocked audio.** If the browser refuses audio without a gesture, an "Enable sound"
+   button appears under the video — one tap.
+
+Hard-refresh (Cmd-Shift-R) after any redeploy: the widget is served from the binary and browsers
+cache it.

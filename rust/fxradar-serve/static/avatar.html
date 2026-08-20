@@ -155,7 +155,7 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
    endpoint returns vendor credentials and the vendor SDK attaches its WebRTC stream to <video>
    (adapter below; the SDK script is added at deploy time, never in this repo). */
 const $=id=>document.getElementById(id);
-const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,vendorClient:null};
+const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,advice:false,vendorClient:null};
 const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
 function setStatus(s){$("status").textContent=s;}
 function chipify(text){
@@ -195,15 +195,21 @@ async function elevenSpeak(text){
 }
 async function speak(text){
   if(state.vendorClient){  // the photoreal face speaks with the vendor's own voice
-    try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);}
-    catch(_){/* fall through to audio */}
-    state.speaking=false;setStatus("listening");
-    return;
+    try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);
+      state.speaking=false;setStatus("listening");return;}
+    catch(e){console.warn("vendor talk failed, falling back to audio:",e);state.speaking=false;}
   }
   if(state.tts==="elevenlabs"){
     try{return await elevenSpeak(text);}catch(_){/* fall back to the browser voice */}
   }
   return browserSpeak(text);
+}
+function soundUnlock(){  // the browser blocked audio autoplay: one explicit tap enables her voice
+  if(document.getElementById("sound-unlock"))return;
+  const b=document.createElement("button");b.id="sound-unlock";b.textContent="Enable sound";
+  b.style.cssText="margin:10px auto;display:block;background:var(--beacon);color:var(--nimbus);border:0;border-radius:8px;padding:8px 14px;font:500 14px var(--sans);cursor:pointer";
+  b.onclick=()=>{const v=$("video");v.muted=false;v.volume=1;v.play().catch(()=>{});b.remove();};
+  $("video").parentElement.appendChild(b);
 }
 async function api(path,opts){
   const r=await fetch(path,opts);
@@ -224,30 +230,47 @@ async function startSession(){
         // OUR gated brain returns via talk(); her mic transcript is routed through ask() below.
         const mod=await import("https://esm.sh/@anam-ai/js-sdk@latest");
         const client=(mod.createClient||mod.default?.createClient)(tok.token);
-        await client.streamToVideoElement("video");
-        state.vendorClient=client;
-        setVendorMic(false);  // privacy by default: her ears open only with the mic button
-        $("video").style.display="block";$("disc").style.display="none";
         const Ev=mod.AnamEvent||mod.default?.AnamEvent;
-        if(Ev&&client.addListener){
+        let readyRes;state.vendorReady=new Promise(r=>{readyRes=r;setTimeout(r,8000);});
+        if(Ev&&client.addListener){  // listeners BEFORE streaming starts, or early events are lost
+          client.addListener(Ev.SESSION_READY,()=>readyRes());
+          client.addListener(Ev.CONNECTION_ESTABLISHED,()=>setTimeout(readyRes,600));
+          client.addListener(Ev.MIC_PERMISSION_DENIED,()=>{state.micDenied=true;
+            addMsg("avatar","The browser blocked the microphone for this page. Click the mic icon in the address bar, allow the microphone, then reload and start again \u2014 typing always works.");});
+          client.addListener(Ev.USER_SPEECH_STARTED,()=>{if(state.conversation)setStatus("hearing you\u2026");});
+          client.addListener(Ev.USER_SPEECH_ENDED,()=>{if(state.conversation)setStatus("thinking");});
           let seen=0;
           client.addListener(Ev.MESSAGE_HISTORY_UPDATED,(messages)=>{
             const users=(messages||[]).filter(m=>m.role==="user");
             if(users.length>seen){seen=users.length;
               const q=users[users.length-1].content;
-              if(q&&!state.speaking&&state.conversation){addMsg("user",q);askVendor(q);}
+              if(q&&state.conversation){addMsg("user",q);askVendor(q);}
             }
           });
         }
-      }catch(e){console.warn("anam attach failed, using the drawn face:",e);}
+        await client.streamToVideoElement("video");
+        state.vendorClient=client;
+        setVendorMic(false);  // privacy by default: her ears open only with the mic button
+        const v=$("video");v.muted=false;v.volume=1;  // her voice arrives on this element's audio track
+        v.style.display="block";$("disc").style.display="none";
+        const pl=v.play();if(pl&&pl.catch)pl.catch(()=>soundUnlock());
+      }catch(e){console.warn("anam attach failed, using the drawn face:",e);
+        const busy=/concurrency/i.test(String(e&&e.message||e));
+        addMsg("avatar",busy
+          ?"The photoreal studio allows one live session at a time and another is still active \u2014 close any other radar tab (or wait about a minute for the old session to expire), then reload this page and press Start again. Until then you have the drawn presenter and the browser voice."
+          :"The photoreal face could not start ("+(e&&e.message||e)+") \u2014 continuing with the drawn presenter; voice and answers still work.");
+      }
     }else if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
       await window.FXAvatarVendor.attach(tok,$("video"));$("video").style.display="block";$("disc").style.display="none";
     }
-    if(state.open){document.querySelector(".caption").textContent="AI presenter · open conversation · risk information, not investment advice";}
+    if(tok.advice){document.querySelector(".caption").textContent="AI presenter · decision support — software-generated, not a licensed adviser";}
+    else if(state.open){document.querySelector(".caption").textContent="AI presenter · open conversation · risk information, not investment advice";}
+    state.advice=!!tok.advice;
     const g=await api("/avatar/greeting");
     $("through").textContent="data through "+g.data_through;
     $("start").style.display="none";$("session").style.display="block";
     addMsg("avatar",g.text,'template · <span class="ok">gate pass</span>');
+    if(state.vendorReady)await state.vendorReady;  // talk() before the WebRTC session is ready is lost
     await speak(g.text);state.greeted=true;
   }catch(e){setStatus("unavailable");addToStart(e.message);}
 }
@@ -256,7 +279,9 @@ function addToStart(msg){
   p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
   p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
 }
-async function askVendor(question){return ask(question,true);}
+async function askVendor(question){
+  for(let i=0;i<40&&state.speaking;i++)await new Promise(r=>setTimeout(r,250));  // let her finish first
+  return ask(question,true);}
 async function ask(question,fromVendor){
   if(!question.trim()||state.speaking)return;
   if(!fromVendor){addMsg("user",question);}
@@ -267,7 +292,8 @@ async function ask(question,fromVendor){
       headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
       body:JSON.stringify({session_id:state.session,messages:[{role:"user",content:question}]})});
     const ms=Math.round(performance.now()-t0);
-    const gate=r.gate==="pass"?'<span class="ok">gate pass</span>'
+    const src=r.source==="decision"?'<span class="chip">decision engine</span> ':"";
+    const gate=r.gate==="pass"?src+'<span class="ok">gate pass</span>'
       :r.gate&&r.gate.startsWith("open:")?'<span class="ref">'+r.gate+' — number not in today\'s pack</span>'
       :'<span class="ref">'+r.gate+"</span>";
     addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
@@ -287,8 +313,11 @@ let localRec=null;
 function setVendorMic(on){
   const c=state.vendorClient;
   if(!c)return;
-  try{if(on&&c.unmuteInputAudio)c.unmuteInputAudio();
-      if(!on&&c.muteInputAudio)c.muteInputAudio();}catch(_){/* older SDKs: routing gate below still applies */}
+  try{
+    const st=on?(c.unmuteInputAudio&&c.unmuteInputAudio()):(c.muteInputAudio&&c.muteInputAudio());
+    if(on&&st&&st.permissionState==="denied"&&!state.micDenied){state.micDenied=true;
+      addMsg("avatar","The browser has the microphone blocked for this page \u2014 allow it via the address-bar icon, then reload and start again. Typing always works.");}
+  }catch(_){/* older SDKs: routing gate below still applies */}
 }
 function startLocalConversation(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -305,13 +334,19 @@ function startLocalConversation(){
 function toggleConversation(on){
   state.conversation=on;
   $("btn-voice").setAttribute("aria-pressed",on?"true":"false");
-  $("mic-note").textContent=on?"Live conversation — the microphone is streaming. Tap the mic to stop.":"The microphone streams only while the mic button is on.";
+  let micState="";
+  try{const st=state.vendorClient&&state.vendorClient.getInputAudioState();
+      if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
+  $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the mic to stop.")
+    :"The microphone streams only while the mic button is on.";
   if(state.vendorClient){setVendorMic(on);}
   else if(on){if(!startLocalConversation())return toggleConversation(false);}
   else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}
   setStatus(on?"listening":"ready");
 }
 $("btn-voice").onclick=()=>toggleConversation(!state.conversation);
+/* one-session vendor plans: free the slot the moment this page goes away */
+addEventListener("pagehide",()=>{try{state.vendorClient&&state.vendorClient.stopStreaming();}catch(_){}});
 /* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
    spec's "avatar video" slot (the one moving element of the stage); prefers-reduced-motion is
    honoured via CSS, and the whole group is replaced by the vendor's video when one is attached. */

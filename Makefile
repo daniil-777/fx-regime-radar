@@ -79,7 +79,7 @@ avatar:           ## start the AI presenter (open mode, dev) → http://localhos
 	  [ -n "$$ANTHROPIC_API_KEY" ] && echo "  LLM answers: on (Anthropic key found)" || echo "  LLM answers: off — keyless FAQ (add ANTHROPIC_API_KEY for open conversation)"; \
 	  [ -n "$$ELEVENLABS_API_KEY" ] && echo "  studio voice: on (ElevenLabs)" || echo "  studio voice: off — browser voice (add ELEVENLABS_API_KEY)"; \
 	  [ -n "$$ANAM_API_KEY" ] && echo "  photoreal face: on (Anam)" || echo "  photoreal face: off — drawn presenter (add ANAM_API_KEY)"; \
-	  FXRADAR_AVATAR=on FXRADAR_AVATAR_DEV=1 FXRADAR_AVATAR_OPEN=1 \
+	  FXRADAR_AVATAR=on FXRADAR_AVATAR_DEV=1 FXRADAR_AVATAR_OPEN=1 FXRADAR_AVATAR_ADVICE=1 \
 	  ./rust/fxradar-serve/target/release/fxradar-serve --bundle models/bundle_v1.4.0 --data-dir data --bind 127.0.0.1:8080'
 
 model-lab:        ## race every regime model (hmm/jump/gmm) + forecaster engine (xgb/histgb/logistic) -> reports/model_lab.md

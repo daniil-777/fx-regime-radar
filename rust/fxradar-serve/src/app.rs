@@ -96,6 +96,9 @@ pub struct AppState {
     avatar_pack_cache: Arc<Mutex<Option<avatar::PackCache>>>,
     /// sha256 of gated brain answers per session (last 8) — /avatar/tts only speaks these.
     pub(crate) tts_hashes: Arc<Mutex<HashMap<String, std::collections::VecDeque<String>>>>,
+    decision_cache: Arc<Mutex<Option<avatar::DecisionCache>>>,
+    /// Sessions that already heard the decision-support disclosure (advice mode).
+    pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
 }
 
 /// Newest-row-per-pair view of regimes.parquet, re-read only when the file changes (the pipeline
@@ -142,6 +145,8 @@ impl AppState {
             regimes_cache: Arc::new(Mutex::new(None)),
             avatar_pack_cache: Arc::new(Mutex::new(None)),
             tts_hashes: Arc::new(Mutex::new(HashMap::new())),
+            decision_cache: Arc::new(Mutex::new(None)),
+            advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
     }
 
@@ -149,6 +154,31 @@ impl AppState {
     pub fn with_avatar(mut self, cfg: avatar::AvatarCfg) -> AppState {
         self.avatar = cfg;
         self
+    }
+
+    /// The decision table (advice mode), reloaded from `<data_dir>/decision_table.json` on
+    /// mtime change — same pattern as the context pack.
+    pub fn decision_table(&self) -> Result<Arc<avatar::DecisionTable>, String> {
+        let path = self.data_dir.join("decision_table.json");
+        let meta = std::fs::metadata(&path).map_err(|e| format!("decision table missing: {e}"))?;
+        let modified = meta.modified().unwrap_or(std::time::UNIX_EPOCH);
+        let len = meta.len();
+        if let Ok(guard) = self.decision_cache.lock() {
+            if let Some(c) = guard.as_ref() {
+                if c.modified == modified && c.len == len {
+                    return Ok(Arc::clone(&c.table));
+                }
+            }
+        }
+        let table = Arc::new(avatar::load_decision_table(&path)?);
+        if let Ok(mut guard) = self.decision_cache.lock() {
+            *guard = Some(avatar::DecisionCache {
+                modified,
+                len,
+                table: Arc::clone(&table),
+            });
+        }
+        Ok(table)
     }
 
     /// The avatar context pack, reloaded from `<data_dir>/avatar_context.json` on mtime change

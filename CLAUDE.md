@@ -19,7 +19,11 @@ in interviews.
 3. NEVER REPORT PLAIN ACCURACY for the forecaster. Report PR-AUC, precision/recall
    on transition events, and Brier score with a calibration plot. Always compare
    against the persistence base rate, a logistic regression, and a one-feature rule.
-4. THE LLM NARRATES COMPUTED NUMBERS ONLY. It never analyzes markets from its own
+4. THE LLM NARRATES COMPUTED NUMBERS ONLY. (Amended 2026-08-20, owner decision: the presenter
+   may additionally give personal HEDGING decision support — but only by voicing the output of
+   the deterministic decision engine (`fxradar.decision`, `data/decision_table.json`); the LLM
+   never generates a recommendation itself. Flag-gated `FXRADAR_AVATAR_ADVICE`, off by default;
+   FinSA review required before offering to third parties.) It never analyzes markets from its own
    knowledge, never predicts prices, never gives advice. Structured JSON in, short
    text out. Deterministic template fallback if the API is unavailable.
 5. NO PRICE-DIRECTION PREDICTION anywhere in this project. We model regimes,

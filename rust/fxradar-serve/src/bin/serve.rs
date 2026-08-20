@@ -167,6 +167,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let env_opt = |k: &str| std::env::var(k).ok().filter(|s| !s.trim().is_empty());
     let avatar_dev = std::env::var("FXRADAR_AVATAR_DEV").as_deref() == Ok("1");
     let avatar_open = std::env::var("FXRADAR_AVATAR_OPEN").as_deref() == Ok("1");
+    let avatar_advice = std::env::var("FXRADAR_AVATAR_ADVICE").as_deref() == Ok("1");
+    if avatar_advice {
+        info!("avatar advice mode ON: hedging decision support comes from data/decision_table.json (deterministic; the LLM never writes advice)");
+    }
     if avatar_dev {
         warn!("FXRADAR_AVATAR_DEV=1: /avatar/session-token waives the API key for the LOCAL vendor. DEV ONLY — never set this in production.");
     }
@@ -196,6 +200,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         elevenlabs_key: env_opt("ELEVENLABS_API_KEY"),
         voice_id: args.avatar_voice_id.clone(),
         max_tts_chars_month: args.avatar_max_tts_chars_month,
+        advice: avatar_advice,
         dev: avatar_dev,
         test_hook: cfg!(debug_assertions)
             || std::env::var("FXRADAR_AVATAR_TEST").as_deref() == Ok("1"),
