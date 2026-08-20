@@ -2,6 +2,15 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.26.2 — fix: vendor sessions carry two tokens (2026-08-20)
+
+- Bug found in live use: in Anam mode the widget presented the VENDOR's session token to OUR
+  `/avatar/brain`, which rightly rejected it → 401, dead questions, no voice. Vendor session
+  responses now also mint our own 30-minute `brain_token` (same store as local sessions); the
+  widget uses the vendor token for the WebRTC face and the brain token for brain/tts. New contract
+  test; friendlier expiry message in the widget. Verified live end-to-end: question → gated answer
+  (`gate pass · 5 ms`) → spoken by the photoreal persona.
+
 ## v2.26.1 — the photoreal face is live (2026-08-20)
 
 - Anam integration VERIFIED LIVE with a real key: fixed the session payload to `llmId =

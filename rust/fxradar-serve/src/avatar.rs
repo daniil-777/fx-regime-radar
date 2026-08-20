@@ -948,8 +948,13 @@ pub async fn session_token(
                 .or_else(|| v.get("token"))
                 .cloned()
                 .unwrap_or(Value::Null);
-            json!({"vendor": "anam", "token": token, "session_id": session_id,
-                   "disclaimer": DISCLAIMER})
+            // the widget needs TWO tokens: the vendor's (WebRTC face) and OURS (brain + tts) —
+            // the vendor token means nothing to /avatar/brain, which caused a 401 without this.
+            let brain_token = st
+                .store
+                .create_avatar_session(&session_id, SESSION_TTL_SECS)?;
+            json!({"vendor": "anam", "token": token, "brain_token": brain_token,
+                   "session_id": session_id, "disclaimer": DISCLAIMER})
         }
         _ => {
             // HeyGen streaming token flow. UNVERIFIED without a live HEYGEN_API_KEY.
@@ -976,8 +981,11 @@ pub async fn session_token(
                 ));
             }
             let token = v["data"]["token"].clone();
-            json!({"vendor": "heygen", "token": token, "session_id": session_id,
-                   "disclaimer": DISCLAIMER})
+            let brain_token = st
+                .store
+                .create_avatar_session(&session_id, SESSION_TTL_SECS)?;
+            json!({"vendor": "heygen", "token": token, "brain_token": brain_token,
+                   "session_id": session_id, "disclaimer": DISCLAIMER})
         }
     };
     if let Some(obj) = out.as_object_mut() {

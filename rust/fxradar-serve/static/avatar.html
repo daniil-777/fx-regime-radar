@@ -203,7 +203,9 @@ async function startSession(){
   try{
     const tok=await api("/avatar/session-token",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({vendor:null})});
-    state.token=tok.token;state.session=tok.session_id||String(Date.now());
+    // vendor sessions carry two tokens: tok.token drives the vendor's WebRTC face,
+    // tok.brain_token authenticates OUR brain/tts calls (they are different systems).
+    state.token=tok.brain_token||tok.token;state.session=tok.session_id||String(Date.now());
     state.tts=tok.tts||"browser";state.open=!!tok.open;
     if(tok.vendor==="anam"&&tok.token){
       try{  // photoreal face: Anam SDK, llmId=CUSTOMER_CLIENT_V1 — the persona speaks ONLY what
@@ -257,7 +259,8 @@ async function ask(question,fromVendor){
       :'<span class="ref">'+r.gate+"</span>";
     addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
     await speak(r.text);
-  }catch(e){setStatus("error");addMsg("avatar","The brain endpoint is not reachable: "+e.message);}
+  }catch(e){setStatus("error");
+    addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");}
 }
 $("btn-start").onclick=startSession;
 $("btn-send").onclick=()=>ask($("q").value);

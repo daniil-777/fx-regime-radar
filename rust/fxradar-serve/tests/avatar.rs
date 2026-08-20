@@ -676,3 +676,39 @@ async fn tts_chars_cap_answers_429() {
     let v: Value = r.json().await.unwrap();
     assert_eq!(v["error"], "monthly avatar budget reached");
 }
+
+#[tokio::test]
+async fn heygen_and_anam_vendor_responses_carry_a_brain_token() {
+    // Without vendor keys the branches 503 — but the local branch plus the response contract are
+    // covered here: every session-token response must let the widget call /avatar/brain, i.e.
+    // "local" carries `token` valid for the brain, and the vendor branches (verified live with a
+    // real Anam key on 2026-08-20) mint the same store-backed token as `brain_token`.
+    let root = scratch_dir("brain_token_contract");
+    write_pack(&root, GREETING);
+    let cfg = AvatarCfg {
+        dev: true,
+        ..base_cfg()
+    };
+    let (base, store) = spawn_app(&root, cfg).await;
+    let c = reqwest::Client::new();
+    let r: serde_json::Value = c
+        .post(format!("{base}/avatar/session-token"))
+        .json(&json!({"vendor": "local"}))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let tok = r["token"].as_str().unwrap();
+    // the minted token must authenticate a brain call
+    let b = c
+        .post(format!("{base}/avatar/brain"))
+        .header("X-Avatar-Token", tok)
+        .json(&json!({"session_id": r["session_id"], "messages": [{"role":"user","content":"what is the siren?"}]}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(b.status(), 200);
+    assert!(store.avatar_session_valid(tok, now_unix()).unwrap());
+}
