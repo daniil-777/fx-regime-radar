@@ -34,6 +34,7 @@ from fxradar import (
     config,
     conformal,
     data,
+    decision,
     drift,
     features,
     features_ext,
@@ -287,6 +288,9 @@ register("treasury", fx_only(treasury.stage))  # phase 25: regime-conditional Va
 register(
     "avatar", avatar_context.stage
 )  # phase 35: the presenter's daily mind → avatar_context.json
+register(
+    "decision", fx_only(decision.stage)
+)  # phase 36: deterministic hedging decision table → decision_table.json
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 
