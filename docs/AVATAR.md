@@ -37,12 +37,15 @@ browser voice, gated FAQ.
 
 ## Vendors and likeness
 
-Primary: Anam.ai (BYO-LLM — the vendor's face calls our `/avatar/brain`, so every sentence passes
+Primary: Anam.ai — VERIFIED LIVE 2026-08-20: session minted through our server with `llmId =
+CUSTOMER_CLIENT_V1` (their brain OFF — the persona speaks only what our gated brain returns via
+`talk()`), WebRTC stream attached in the widget, persona speech transcripts routed back through
+`/avatar/brain`. (BYO-LLM — the vendor's face speaks our `/avatar/brain` output, so every sentence passes
 our gates before their TTS; ElevenLabs Flash voice via their audio passthrough). Fallback: HeyGen
 LiveAvatar (streaming token flow). **Likeness policy: a licensed stock avatar or the founder's own
 consented scan only** — record the licence/consent reference here before enabling a vendor face:
 
-- likeness licence/consent reference: _none yet — local disc face only_.
+- likeness licence/consent reference: **Anam stock persona “Cara”** (avatarId 30fa96d0-26c4-4e55-94a0-517025942e18, model cara-4) — a vendor-licensed stock likeness under Anam's terms of service; enabled 2026-08-20. The drawn presenter remains the keyless fallback.
 
 No GPU on the VM: faces render in the vendor cloud; our server only serves text and tokens.
 

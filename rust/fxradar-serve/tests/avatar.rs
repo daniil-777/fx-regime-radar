@@ -409,7 +409,7 @@ async fn session_token_flow_local_vendor_and_expiry() {
 }
 
 #[tokio::test]
-async fn dev_flag_waives_the_key_for_local_only() {
+async fn dev_flag_waives_the_key_in_dev_mode_only() {
     let root = scratch_dir("dev");
     write_pack(&root, GREETING);
     let cfg = AvatarCfg {
@@ -429,14 +429,15 @@ async fn dev_flag_waives_the_key_for_local_only() {
     // still counted against the monthly budget
     let month = &fxradar_serve::store::iso_from_unix(now_unix())[..7];
     assert_eq!(store.avatar_usage(month).unwrap().0, 1);
-    // non-local vendors still require the key even in dev mode
+    // dev waives the key for non-local vendors too (the widget never holds one); the anam key
+    // itself is absent in this test config, so the proxy correctly answers 503 — NOT 401.
     let r = c
         .post(format!("{base}/avatar/session-token"))
         .json(&json!({"vendor": "anam"}))
         .send()
         .await
         .unwrap();
-    assert_eq!(r.status(), 401);
+    assert_eq!(r.status(), 503);
 }
 
 #[tokio::test]

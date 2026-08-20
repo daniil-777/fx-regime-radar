@@ -69,6 +69,12 @@ pub struct AvatarCfg {
     pub anam_key: Option<String>,
     /// HEYGEN_API_KEY (vendor "heygen"). Unset → 503 "heygen not configured".
     pub heygen_key: Option<String>,
+    /// FXRADAR_AVATAR_ANAM_AVATAR_ID — the persona's face (default: Anam's licensed stock "Cara").
+    pub anam_avatar_id: String,
+    /// FXRADAR_AVATAR_ANAM_AVATAR_MODEL (default "cara-4").
+    pub anam_avatar_model: String,
+    /// FXRADAR_AVATAR_ANAM_VOICE_ID — the persona's voice (default: the stock Cara voice).
+    pub anam_voice_id: String,
     /// Path to the versioned system prompt file (default prompts/avatar_system_v1.txt).
     pub system_prompt_path: PathBuf,
     /// FXRADAR_AVATAR_DEV=1 — DEV ONLY, never set in production: lets /avatar/session-token
@@ -98,6 +104,9 @@ impl Default for AvatarCfg {
             enabled: false,
             brain_token: None,
             vendor_default: "local".into(),
+            anam_avatar_id: "30fa96d0-26c4-4e55-94a0-517025942e18".into(),
+            anam_avatar_model: "cara-4".into(),
+            anam_voice_id: "6bfbe25a-979d-40f3-a92b-5394170af54b".into(),
             max_sessions_month: 300,
             max_minutes_month: 600.0,
             anthropic_key: None,
@@ -874,8 +883,9 @@ pub async fn session_token(
             "vendor must be local | anam | heygen".into(),
         ));
     }
-    // DEV ONLY: FXRADAR_AVATAR_DEV=1 skips the key for the "local" vendor (still cost-capped).
-    if !(st.avatar.dev && vendor == "local") {
+    // DEV ONLY: FXRADAR_AVATAR_DEV=1 skips the key entirely (the widget never holds one; the
+    // bind is a laptop loopback). Still cost-capped and counted. Production keeps the key gate.
+    if !st.avatar.dev {
         require_paid_key(&st, &headers)?;
     }
     let month = current_month();
@@ -904,9 +914,10 @@ pub async fn session_token(
             })
         }
         "anam" => {
-            // Anam BYO-LLM session-token flow (schema per their docs at build time; if the
-            // exact field names differ at runtime this is config-side — the call is proxied
-            // as-is and never fakes success). UNVERIFIED without a live ANAM_API_KEY.
+            // Anam BYO-LLM session-token flow, VERIFIED LIVE 2026-08-20 against api.anam.ai:
+            // llmId = CUSTOMER_CLIENT_V1 disables Anam's own brain, so the persona speaks ONLY
+            // what our gated /avatar/brain produces via the SDK's talk() — the whole point.
+            // avatar/voice are the vendor's licensed stock persona (Cara) unless overridden.
             let key = st.avatar.anam_key.as_deref().ok_or_else(|| {
                 ApiError(
                     StatusCode::SERVICE_UNAVAILABLE,
@@ -918,7 +929,11 @@ pub async fn session_token(
                 .header("Authorization", format!("Bearer {key}"))
                 .timeout(Duration::from_secs(10))
                 .json(&json!({"personaConfig": {
-                    "name": "Radar presenter", "brainType": "CUSTOMER_CLIENT_V1"}}))
+                    "name": "Radar presenter",
+                    "avatarId": st.avatar.anam_avatar_id,
+                    "avatarModel": st.avatar.anam_avatar_model,
+                    "voiceId": st.avatar.anam_voice_id,
+                    "llmId": "CUSTOMER_CLIENT_V1"}}))
                 .send()
                 .await
                 .map_err(|e| ApiError(StatusCode::BAD_GATEWAY, format!("anam: {e}")))?;

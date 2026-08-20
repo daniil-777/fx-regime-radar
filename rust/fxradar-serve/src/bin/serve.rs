@@ -181,6 +181,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         max_minutes_month: args.avatar_max_minutes_month,
         anthropic_key: env_opt("ANTHROPIC_API_KEY"),
         anam_key: env_opt("ANAM_API_KEY"),
+        anam_avatar_id: std::env::var("FXRADAR_AVATAR_ANAM_AVATAR_ID")
+            .unwrap_or_else(|_| "30fa96d0-26c4-4e55-94a0-517025942e18".into()),
+        anam_avatar_model: std::env::var("FXRADAR_AVATAR_ANAM_AVATAR_MODEL")
+            .unwrap_or_else(|_| "cara-4".into()),
+        anam_voice_id: std::env::var("FXRADAR_AVATAR_ANAM_VOICE_ID")
+            .unwrap_or_else(|_| "6bfbe25a-979d-40f3-a92b-5394170af54b".into()),
         heygen_key: env_opt("HEYGEN_API_KEY"),
         system_prompt_path: args
             .avatar_system_prompt

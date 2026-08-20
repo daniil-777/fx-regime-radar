@@ -206,12 +206,24 @@ async function startSession(){
     state.token=tok.token;state.session=tok.session_id||String(Date.now());
     state.tts=tok.tts||"browser";state.open=!!tok.open;
     if(tok.vendor==="anam"&&tok.token){
-      try{  // photoreal face: Anam SDK (loaded only when the vendor is configured), our brain, our gates
-        const mod=await import("https://esm.sh/@anam-ai/js-sdk@2");
+      try{  // photoreal face: Anam SDK, llmId=CUSTOMER_CLIENT_V1 — the persona speaks ONLY what
+        // OUR gated brain returns via talk(); her mic transcript is routed through ask() below.
+        const mod=await import("https://esm.sh/@anam-ai/js-sdk@latest");
         const client=(mod.createClient||mod.default?.createClient)(tok.token);
         await client.streamToVideoElement("video");
         state.vendorClient=client;
         $("video").style.display="block";$("disc").style.display="none";
+        const Ev=mod.AnamEvent||mod.default?.AnamEvent;
+        if(Ev&&client.addListener){
+          let seen=0;
+          client.addListener(Ev.MESSAGE_HISTORY_UPDATED,(messages)=>{
+            const users=(messages||[]).filter(m=>m.role==="user");
+            if(users.length>seen){seen=users.length;
+              const q=users[users.length-1].content;
+              if(q&&!state.speaking){addMsg("user",q);askVendor(q);}
+            }
+          });
+        }
       }catch(e){console.warn("anam attach failed, using the drawn face:",e);}
     }else if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
       await window.FXAvatarVendor.attach(tok,$("video"));$("video").style.display="block";$("disc").style.display="none";
@@ -229,9 +241,11 @@ function addToStart(msg){
   p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
   p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
 }
-async function ask(question){
+async function askVendor(question){return ask(question,true);}
+async function ask(question,fromVendor){
   if(!question.trim()||state.speaking)return;
-  addMsg("user",question);$("q").value="";setStatus("thinking");
+  if(!fromVendor){addMsg("user",question);}
+  $("q").value="";setStatus("thinking");
   const t0=performance.now();
   try{
     const r=await api("/avatar/brain",{method:"POST",

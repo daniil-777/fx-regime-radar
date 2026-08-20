@@ -2,6 +2,19 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.26.1 — the photoreal face is live (2026-08-20)
+
+- Anam integration VERIFIED LIVE with a real key: fixed the session payload to `llmId =
+  CUSTOMER_CLIENT_V1` (the critical bit — it switches the vendor's own brain OFF, so the persona
+  speaks only what our gated `/avatar/brain` returns via `talk()`; the earlier `brainType` field
+  would have let their LLM answer around our gates), stock persona Cara + voice configurable via
+  `FXRADAR_AVATAR_ANAM_*` envs, likeness reference recorded in docs/AVATAR.md. Widget: SDK pinned
+  to `@latest` (there is no v2), persona speech transcripts routed through our brain via
+  `MESSAGE_HISTORY_UPDATED`. Dev waiver now covers non-local vendors too (the widget never holds an
+  API key; production keeps the key gate — test updated: keyless anam in dev → 503 not-configured,
+  not 401). Screenshot tool grants fake media so WebRTC widgets can be captured headless.
+  Live proof: 1152×768 WebRTC stream playing in the widget, greeting spoken through the persona.
+
 ## v2.26.0 — the presenter opens up: studio voice, photoreal wiring, open conversation (2026-08-20)
 
 - **Open conversation** (`FXRADAR_AVATAR_OPEN=1`, the `make avatar` default): the presenter answers
