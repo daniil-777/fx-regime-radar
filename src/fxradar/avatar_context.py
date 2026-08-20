@@ -26,7 +26,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from fxradar import config, narrate
+from fxradar import config, universes, narrate
 
 log = logging.getLogger(__name__)
 
@@ -90,6 +90,32 @@ def _pair_block(row: pd.Series, universe) -> dict:
             str(row.get("consensus_text")) if pd.notna(row.get("consensus_text")) else None
         ),
     }
+
+
+def read_market_frames() -> dict[str, pd.DataFrame]:
+    """I/O edge: the latest regimes frame for every universe with artifacts on disk."""
+    frames: dict[str, pd.DataFrame] = {}
+    for name, uni in universes.UNIVERSES.items():
+        base = config.DATA_DIR / uni.subdir if uni.subdir else config.DATA_DIR
+        path = base / "regimes.parquet"
+        if path.exists():
+            frames[name] = pd.read_parquet(path)
+    return frames
+
+
+def _markets_block(frames: dict[str, pd.DataFrame]) -> dict:
+    """The presenter's whole map: per universe, the latest block for every pair it tracks.
+    Same fields as the majors' blocks, so one grounding rule covers the lot."""
+    out: dict = {}
+    for name, df in frames.items():
+        uni = universes.get(name)
+        latest = df.sort_values("date").groupby("pair").tail(1)
+        out[name] = {
+            "label": uni.label,
+            "data_through": f"{latest['date'].max():%Y-%m-%d}",
+            "pairs": {str(r["pair"]): _pair_block(r, uni) for _, r in latest.iterrows()},
+        }
+    return out
 
 
 def _events_block(events: pd.DataFrame, as_of: pd.Timestamp) -> list[dict]:
@@ -159,8 +185,13 @@ def parse_faq(md_text: str) -> list[dict]:
     return out
 
 
-def build_greeting(pairs: dict, ledger: dict, data_through: str, universe) -> str:
+def build_greeting(pairs: dict, ledger: dict, data_through: str, universe, n_markets: int = 0) -> str:
     """Deterministic, gated first words of every session — today's real numbers, then the offer."""
+    markets_txt = (
+        f" I also track the G10, emerging and crypto boards — {n_markets} markets in all."
+        if n_markets > len(pairs)
+        else ""
+    )
     lead_key = next(iter(pairs))
     p = pairs[lead_key]
     band = (
@@ -178,7 +209,7 @@ def build_greeting(pairs: dict, ledger: dict, data_through: str, universe) -> st
     return (
         f"{DISCLOSURE} As of the {data_through} close, {p['label']} is {p['regime']} — "
         f"change risk {p['change_risk_5d']:.2f}, {band}siren {p['anomaly_pct']:.0f} of 100."
-        f"{others_txt}{record} Ask me anything about the radar."
+        f"{others_txt}{record}{markets_txt} Ask me anything about the radar."
     )
 
 
@@ -229,6 +260,7 @@ def build_pack(
     knowledge_text: str,
     universe=None,
     now_utc: str | None = None,
+    market_frames: dict[str, pd.DataFrame] | None = None,
 ) -> dict:
     universe = universe or config.UNIVERSE
     latest = regimes.sort_values("date").groupby("pair").tail(1)
@@ -254,7 +286,11 @@ def build_pack(
         "faq": parse_faq(knowledge_text),
         "knowledge_pack": str(KNOWLEDGE_PATH.relative_to(config.ROOT)),
     }
-    pack["greeting"] = build_greeting(pairs, ledger, pack["data_through"], universe)
+    markets = _markets_block(market_frames or {})
+    if markets:
+        pack["markets"] = markets
+    n_markets = sum(len(u["pairs"]) for u in markets.values())
+    pack["greeting"] = build_greeting(pairs, ledger, pack["data_through"], universe, n_markets)
     # gate every spoken template at build time — the pack refuses to exist with direction words
     for text in [
         pack["greeting"],
@@ -296,6 +332,7 @@ def stage(ctx: dict) -> None:
         _read_json(config.DATA_DIR / "conformal_coverage.json"),
         ctx.get("status") or _read_json(config.DATA_DIR / "status.json"),
         knowledge,
+        market_frames=read_market_frames() if config.UNIVERSE.name == "fx" else None,
     )
     ctx["avatar_context"] = pack
     ctx.setdefault("extra_writers", {})["avatar_context.json"] = lambda c: CONTEXT_PATH.write_text(
@@ -322,6 +359,7 @@ def main() -> None:
         _read_json(config.DATA_DIR / "conformal_coverage.json"),
         _read_json(config.DATA_DIR / "status.json"),
         knowledge,
+        market_frames=read_market_frames() if config.UNIVERSE.name == "fx" else None,
     )
     CONTEXT_PATH.write_text(json.dumps(pack, indent=1, ensure_ascii=False))
     print(f"wrote {CONTEXT_PATH}")

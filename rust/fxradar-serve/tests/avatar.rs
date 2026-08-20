@@ -51,7 +51,18 @@ fn write_pack(root: &Path, greeting: &str) {
             {"q": "What is the change risk?", "keywords": ["change", "risk", "probability"],
              "answer": "The chance the regime label differs within 5 trading days."},
         ],
-        "allowed_numbers": ["0", "0.01", "0.51", "5", "73", "100", "2016", "2026", "8", "18"],
+        "markets": {
+            "fx": {"label": "FX majors", "data_through": "2026-08-18", "pairs": {
+                "EURUSD": {"label": "EUR/USD", "regime": "calm", "regime_prob": 0.99,
+                           "days_in_regime": 12, "change_risk_5d": 0.01, "risk_lo": 0.0,
+                           "risk_hi": 0.51, "anomaly_pct": 73.0, "agreement": 0}}},
+            "crypto": {"label": "Crypto majors", "data_through": "2026-08-17", "pairs": {
+                "BTC-USD": {"label": "BTC/USD", "regime": "chop", "regime_prob": 0.88,
+                            "days_in_regime": 4, "change_risk_5d": 0.4, "risk_lo": 0.2,
+                            "risk_hi": 0.6, "anomaly_pct": 55.0, "agreement": 1}}}
+        },
+        "allowed_numbers": ["0", "0.01", "0.2", "0.4", "0.51", "0.6", "0.88", "0.99", "1", "3",
+                            "4", "5", "12", "17", "55", "73", "100", "2016", "2026", "8", "18"],
         "knowledge_pack": "docs/avatar_knowledge.md",
     });
     std::fs::create_dir_all(root.join("data")).unwrap();
@@ -865,4 +876,33 @@ async fn advice_off_keeps_the_refusal_even_with_a_table_present() {
         .await
         .unwrap();
     assert_eq!(g["advice"], false);
+}
+
+/// Keyless market lookup: any pair the radar computes gets a template answer from the pack —
+/// crypto board included — and the gate passes because every number is the pack's own.
+#[tokio::test]
+async fn brain_answers_market_questions_keyless() {
+    let root = scratch_dir("markets");
+    write_pack(&root, GREETING);
+    let (base, _) = spawn_app(&root, base_cfg()).await;
+    for (q, must_contain) in [
+        ("how is bitcoin doing today?", "BTC/USD"),
+        ("what about the euro?", "EUR/USD"),
+    ] {
+        let v = ask(&base, "brt_test", q, None).await;
+        assert_eq!(v["source"], "template", "{q}");
+        assert_eq!(v["gate"], "pass", "{q}: {}", v["text"]);
+        let text = v["text"].as_str().unwrap();
+        assert!(text.contains(must_contain), "{q} -> {text}");
+    }
+    // crypto answers carry their own board and data-through, not the majors'
+    let v = ask(&base, "brt_test", "btc?", None).await;
+    let text = v["text"].as_str().unwrap();
+    assert!(
+        text.contains("Crypto majors") && text.contains("2026-08-17"),
+        "{text}"
+    );
+    // no market words → the FAQ still wins ("siren" answer, not a market read)
+    let v = ask(&base, "brt_test", "what is the siren?", None).await;
+    assert_eq!(v["text"], SIREN_ANSWER);
 }

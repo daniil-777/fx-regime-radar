@@ -22,7 +22,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 use std::time::{Duration, Instant, SystemTime};
@@ -162,6 +162,38 @@ pub struct FaqEntry {
     pub answer: String,
 }
 
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct MarketPair {
+    #[serde(default)]
+    pub label: String,
+    #[serde(default)]
+    pub regime: String,
+    #[serde(default)]
+    pub regime_prob: Option<f64>,
+    #[serde(default)]
+    pub days_in_regime: Option<i64>,
+    #[serde(default)]
+    pub change_risk_5d: Option<f64>,
+    #[serde(default)]
+    pub risk_lo: Option<f64>,
+    #[serde(default)]
+    pub risk_hi: Option<f64>,
+    #[serde(default)]
+    pub anomaly_pct: Option<f64>,
+    #[serde(default)]
+    pub agreement: Option<i64>,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct MarketUniverse {
+    #[serde(default)]
+    pub label: String,
+    #[serde(default)]
+    pub data_through: String,
+    #[serde(default)]
+    pub pairs: BTreeMap<String, MarketPair>,
+}
+
 /// Parsed context pack plus derived views (allowed-number set, LLM context JSON).
 #[derive(Debug, Clone)]
 pub struct Pack {
@@ -176,6 +208,8 @@ pub struct Pack {
     pub knowledge_rel: String,
     /// The pack minus allowed_numbers/faq, serialized once for the LLM CONTEXT block.
     pub context_json: String,
+    /// Every universe the radar computes (fx/g10/em/crypto), for the deterministic market lookup.
+    pub markets: BTreeMap<String, MarketUniverse>,
 }
 
 /// mtime-keyed cache entry held in [`AppState`].
@@ -201,6 +235,8 @@ struct PackFile {
     allowed_numbers: Vec<String>,
     #[serde(default)]
     knowledge_pack: String,
+    #[serde(default)]
+    markets: BTreeMap<String, MarketUniverse>,
 }
 
 /// Load and parse the context pack. Errors are strings so the caller can map them to 503.
@@ -224,6 +260,7 @@ pub fn load_pack(path: &Path) -> Result<Pack, String> {
         allowed: pf.allowed_numbers.into_iter().collect(),
         knowledge_rel: pf.knowledge_pack,
         context_json: v.to_string(),
+        markets: pf.markets,
     })
 }
 
@@ -624,6 +661,135 @@ pub fn faq_best<'a>(faq: &'a [FaqEntry], question: &str) -> Option<&'a FaqEntry>
         }
     }
     best.map(|(_, _, e)| e)
+}
+
+/// Currency-word synonyms for the market lookup ("yen" → jpy). "usd"/"dollar" are deliberately
+/// absent (every pair contains the dollar) and so is "real" (too common an English word; say
+/// "brazilian" or "USDBRL").
+const CCY_SYNONYMS: &[(&str, &str)] = &[
+    ("yen", "jpy"),
+    ("sterling", "gbp"),
+    ("pound", "gbp"),
+    ("cable", "gbp"),
+    ("euro", "eur"),
+    ("franc", "chf"),
+    ("swissy", "chf"),
+    ("aussie", "aud"),
+    ("australian", "aud"),
+    ("kiwi", "nzd"),
+    ("loonie", "cad"),
+    ("canadian", "cad"),
+    ("krona", "sek"),
+    ("swedish", "sek"),
+    ("krone", "nok"),
+    ("norwegian", "nok"),
+    ("peso", "mxn"),
+    ("mexican", "mxn"),
+    ("brazilian", "brl"),
+    ("rand", "zar"),
+    ("zloty", "pln"),
+    ("polish", "pln"),
+    ("ruble", "rub"),
+    ("rouble", "rub"),
+    ("russian", "rub"),
+    ("bitcoin", "btc"),
+    ("ethereum", "eth"),
+    ("ether", "eth"),
+    ("ripple", "xrp"),
+    ("cardano", "ada"),
+    ("binance", "bnb"),
+];
+
+/// Deterministic market lookup over every universe in the pack: pair codes ("usdjpy", "usd/jpy"),
+/// bare non-USD legs ("jpy", "btc") and currency words ("yen", "bitcoin"). Best score wins;
+/// ties resolve in fx → g10 → em → crypto order. None means "not a market question".
+pub fn market_lookup<'a>(
+    pack: &'a Pack,
+    q_lower: &str,
+) -> Option<(&'a MarketUniverse, &'a MarketPair)> {
+    let compact: String = q_lower
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .collect();
+    let words: Vec<&str> = q_lower
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .collect();
+    let mut codes: HashSet<&str> = HashSet::new();
+    for (word, code) in CCY_SYNONYMS {
+        if words.contains(word) {
+            codes.insert(code);
+        }
+    }
+    let mut best: Option<(i32, &MarketUniverse, &MarketPair)> = None;
+    for uni_name in ["fx", "g10", "em", "crypto"] {
+        let Some(uni) = pack.markets.get(uni_name) else {
+            continue;
+        };
+        for (pair, blk) in &uni.pairs {
+            let code: String = pair
+                .to_lowercase()
+                .chars()
+                .filter(|c| c.is_ascii_alphanumeric())
+                .collect();
+            if code.len() != 6 {
+                continue;
+            }
+            let legs = [&code[..3], &code[3..]];
+            let mut score = 0;
+            if compact.contains(&code) {
+                score += 4;
+            }
+            for leg in legs {
+                if codes.contains(leg) {
+                    score += 2;
+                }
+                if leg != "usd" && words.contains(&leg) {
+                    score += 2;
+                }
+            }
+            if score > 0 && legs.contains(&"usd") {
+                score += 1; // "the yen" means the dollar cross, not EUR/JPY
+            }
+            if score > 0 && best.as_ref().is_none_or(|(s, _, _)| score > *s) {
+                best = Some((score, uni, blk));
+            }
+        }
+    }
+    best.map(|(_, u, b)| (u, b))
+}
+
+/// Verbatim-from-pack market answer (mirrors the greeting's proven phrasing): every number is a
+/// pack value, so the grounding gate passes by construction; the direction lint is off for
+/// template content and no fixed word here is a direction word anyway.
+pub fn market_answer(uni: &MarketUniverse, pair: &MarketPair) -> String {
+    let mut head = format!(
+        "As of the {} close, {} on the {} board reads {}",
+        uni.data_through, pair.label, uni.label, pair.regime
+    );
+    if let Some(p) = pair.regime_prob {
+        head.push_str(&format!(" with probability {p:.2}"));
+    }
+    if let Some(d) = pair.days_in_regime {
+        head.push_str(&format!(", day {d} of this regime"));
+    }
+    head.push('.');
+    let mut parts = vec![head];
+    if let Some(cr) = pair.change_risk_5d {
+        let band = match (pair.risk_lo, pair.risk_hi) {
+            (Some(lo), Some(hi)) => format!(", band {lo:.2} to {hi:.2}"),
+            _ => String::new(),
+        };
+        let siren = pair
+            .anomaly_pct
+            .map(|a| format!(", siren {a:.0} of 100"))
+            .unwrap_or_default();
+        parts.push(format!("Change risk {cr:.2}{band}{siren}."));
+    }
+    if let Some(a) = pair.agreement {
+        parts.push(format!("Stress consensus {a} of 3."));
+    }
+    parts.join(" ")
 }
 
 fn constant_time_eq(a: &str, b: &str) -> bool {
@@ -1091,24 +1257,30 @@ pub async fn brain(
                 source = "llm";
                 can_regen = true;
             }
-            None => match faq_best(&pack.faq, &question) {
-                Some(entry) => {
-                    candidate = entry.answer.clone();
+            None => match market_lookup(&pack, &q_lower) {
+                Some((uni, blk)) => {
+                    candidate = market_answer(uni, blk);
                     source = "template";
                 }
-                None => {
-                    m::avatar_refusal("off_topic");
-                    let text = pack.refusals.off_topic.clone();
-                    return Ok(finish(
-                        &st,
-                        &req.session_id,
-                        &question,
-                        text,
-                        "refusal",
-                        "refused:off_topic",
-                        t0,
-                    ));
-                }
+                None => match faq_best(&pack.faq, &question) {
+                    Some(entry) => {
+                        candidate = entry.answer.clone();
+                        source = "template";
+                    }
+                    None => {
+                        m::avatar_refusal("off_topic");
+                        let text = pack.refusals.off_topic.clone();
+                        return Ok(finish(
+                            &st,
+                            &req.session_id,
+                            &question,
+                            text,
+                            "refusal",
+                            "refused:off_topic",
+                            t0,
+                        ));
+                    }
+                },
             },
         }
     }
@@ -1516,6 +1688,88 @@ mod tests {
         assert!(advice_intent_re().is_match("help with position sizing"));
         assert!(advice_intent_re().is_match("where do i put my stop-loss"));
         assert!(!advice_intent_re().is_match("what is the siren?"));
+    }
+
+    #[test]
+    fn market_lookup_codes_and_synonyms() {
+        let mk = |label: &str, regime: &str| MarketPair {
+            label: label.into(),
+            regime: regime.into(),
+            regime_prob: Some(0.9),
+            days_in_regime: Some(3),
+            change_risk_5d: Some(0.2),
+            risk_lo: Some(0.1),
+            risk_hi: Some(0.5),
+            anomaly_pct: Some(40.0),
+            agreement: Some(1),
+        };
+        let mut markets = BTreeMap::new();
+        markets.insert(
+            "fx".to_string(),
+            MarketUniverse {
+                label: "FX majors".into(),
+                data_through: "2026-08-18".into(),
+                pairs: BTreeMap::from([("EURUSD".to_string(), mk("EUR/USD", "calm"))]),
+            },
+        );
+        markets.insert(
+            "g10".to_string(),
+            MarketUniverse {
+                label: "FX G10".into(),
+                data_through: "2026-08-18".into(),
+                pairs: BTreeMap::from([("USDJPY".to_string(), mk("USD/JPY", "trend"))]),
+            },
+        );
+        markets.insert(
+            "crypto".to_string(),
+            MarketUniverse {
+                label: "Crypto majors".into(),
+                data_through: "2026-08-17".into(),
+                pairs: BTreeMap::from([("BTC-USD".to_string(), mk("BTC/USD", "chop"))]),
+            },
+        );
+        let pack = Pack {
+            data_through: "2026-08-18".into(),
+            disclosure: String::new(),
+            greeting: String::new(),
+            refusals: Refusals::default(),
+            faq: vec![],
+            allowed: HashSet::new(),
+            knowledge_rel: String::new(),
+            context_json: String::new(),
+            markets,
+        };
+        // currency word, bare leg, compact code, and slash form all resolve
+        assert_eq!(
+            market_lookup(&pack, "how is the yen today?")
+                .unwrap()
+                .1
+                .label,
+            "USD/JPY"
+        );
+        assert_eq!(
+            market_lookup(&pack, "tell me about btc").unwrap().1.label,
+            "BTC/USD"
+        );
+        assert_eq!(
+            market_lookup(&pack, "usd/jpy please").unwrap().1.label,
+            "USD/JPY"
+        );
+        assert_eq!(
+            market_lookup(&pack, "bitcoin situation?").unwrap().1.label,
+            "BTC/USD"
+        );
+        assert_eq!(
+            market_lookup(&pack, "how is the euro?").unwrap().1.label,
+            "EUR/USD"
+        );
+        // no market words → None (the FAQ handles it)
+        assert!(market_lookup(&pack, "what is the siren?").is_none());
+        // the answer carries the pack's numbers and the universe board
+        let (uni, blk) = market_lookup(&pack, "yen?").unwrap();
+        let text = market_answer(uni, blk);
+        assert!(text.contains("USD/JPY") && text.contains("trend") && text.contains("0.20"));
+        assert!(text.contains("FX G10") && text.contains("40 of 100"));
     }
 
     #[test]

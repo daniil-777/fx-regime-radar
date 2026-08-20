@@ -2,6 +2,29 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.28.0 — the presenter knows every market, and you can interrupt her (2026-08-20)
+
+- Barge-in: the user always outranks the presenter. While she speaks the status line reads
+  "speaking — click to skip" (one click stops her, `interruptPersona()` on the vendor); typing or
+  sending interrupts and asks; with the mic on, starting to speak interrupts (the vendor's
+  echo-cancelled voice-activity event). ElevenLabs playback resolves on pause so an interrupt never
+  wedges the input.
+- Two ears, one mouth: in photoreal mode the browser's own speech recognition now runs BESIDE the
+  vendor's ASR — whichever hears a phrase first wins, near-duplicates within 5 s drop, interim
+  text shows live as "heard: …" so a working mic is visible. One dead pipeline no longer means a
+  dead conversation.
+- The whole map in the mind: `data/avatar_context.json` gains `markets` — every universe
+  (FX majors, G10, EM, crypto), per pair the regime + probability + days-in, change risk with its
+  band, siren, consensus — 23 markets, all inside the grounding gate's closed number set by the
+  existing recursive walk. The greeting names the count.
+- Keyless market answers: a deterministic lookup in the Rust brain (pair codes, bare legs,
+  currency words — "yen", "bitcoin", "ruble"; single-currency questions resolve to the dollar
+  cross) answers from the pack by template before the FAQ — grounded by construction, no LLM
+  needed. With ANTHROPIC_API_KEY set the LLM path sees the same markets in CONTEXT.
+- 299 python + 56 rust tests green; clippy -D warnings clean; verified in the live widget over
+  real WebRTC: greeting skippable mid-word, mic granted, crypto question answered, zero console
+  errors.
+
 ## v2.27.0 — decision support + a voice path that explains itself (2026-08-20)
 
 - Personal hedging decision support, computed — never generated (owner decision 2026-08-20,

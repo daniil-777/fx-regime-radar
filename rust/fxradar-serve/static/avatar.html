@@ -157,7 +157,10 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
 const $=id=>document.getElementById(id);
 const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,advice:false,vendorClient:null};
 const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
-function setStatus(s){$("status").textContent=s;}
+function setStatus(s){
+  $("status").textContent=s==="speaking"?"speaking \u2014 click to skip":s;
+  $("status").style.cursor=s==="speaking"?"pointer":"";
+}
 function chipify(text){
   return text.replace(/&/g,"&amp;").replace(/</g,"&lt;")
     .replace(/\d+(?:\.\d+)?/g,m=>'<span class="chip">'+m+"</span>");
@@ -188,14 +191,26 @@ async function elevenSpeak(text){
   const blob=await r.blob();
   return new Promise(res=>{
     const a=new Audio(URL.createObjectURL(blob));
+    state.audioEl=a;
     const done=()=>{state.speaking=false;setStatus("listening");res();};
-    a.onended=done;a.onerror=done;
+    a.onended=done;a.onerror=done;a.onpause=done;
     state.speaking=true;setStatus("speaking");a.play().catch(done);
   });
+}
+function interruptSpeech(){  // barge-in: the user always outranks the presenter
+  try{const c=state.vendorClient;if(c&&c.interruptPersona)c.interruptPersona();}catch(_){}
+  try{if("speechSynthesis" in window)speechSynthesis.cancel();}catch(_){}
+  try{if(state.audioEl)state.audioEl.pause();}catch(_){}
+  state.speaking=false;setStatus("listening");
 }
 async function speak(text){
   if(state.vendorClient){  // the photoreal face speaks with the vendor's own voice
     try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);
+      // talk() resolves when the command is SENT; she speaks after. Hold the speaking state on an
+      // estimated clock so "click to skip" is offered while she talks; interruptSpeech() ends it early.
+      const est=Math.min(2000+55*text.length,20000),t0=performance.now();
+      await new Promise(r=>{const iv=setInterval(()=>{
+        if(!state.speaking||performance.now()-t0>est){clearInterval(iv);r();}},150);});
       state.speaking=false;setStatus("listening");return;}
     catch(e){console.warn("vendor talk failed, falling back to audio:",e);state.speaking=false;}
   }
@@ -237,14 +252,14 @@ async function startSession(){
           client.addListener(Ev.CONNECTION_ESTABLISHED,()=>setTimeout(readyRes,600));
           client.addListener(Ev.MIC_PERMISSION_DENIED,()=>{state.micDenied=true;
             addMsg("avatar","The browser blocked the microphone for this page. Click the mic icon in the address bar, allow the microphone, then reload and start again \u2014 typing always works.");});
-          client.addListener(Ev.USER_SPEECH_STARTED,()=>{if(state.conversation)setStatus("hearing you\u2026");});
+          client.addListener(Ev.USER_SPEECH_STARTED,()=>{if(state.conversation){interruptSpeech();setStatus("hearing you\u2026");}});
           client.addListener(Ev.USER_SPEECH_ENDED,()=>{if(state.conversation)setStatus("thinking");});
           let seen=0;
           client.addListener(Ev.MESSAGE_HISTORY_UPDATED,(messages)=>{
             const users=(messages||[]).filter(m=>m.role==="user");
             if(users.length>seen){seen=users.length;
               const q=users[users.length-1].content;
-              if(q&&state.conversation){addMsg("user",q);askVendor(q);}
+              if(q&&state.conversation){routeHeard(q);}
             }
           });
         }
@@ -279,11 +294,22 @@ function addToStart(msg){
   p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
   p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
 }
-async function askVendor(question){
-  for(let i=0;i<40&&state.speaking;i++)await new Promise(r=>setTimeout(r,250));  // let her finish first
-  return ask(question,true);}
+function normHeard(t){return t.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
+function routeHeard(text){  // two ears, one mouth: vendor ASR and browser recognition both land
+  const n=normHeard(text);if(!n)return;  // here; whichever hears a phrase first wins, echoes drop
+  const now=performance.now();
+  if(state.lastHeard&&now-state.lastHeard.at<5000){
+    const a=state.lastHeard.text;
+    if(a===n||a.includes(n)||n.includes(a))return;
+  }
+  state.lastHeard={text:n,at:now};
+  addMsg("user",text);ask(text,true);
+}
+async function askVendor(question){return ask(question,true);}  // barge-in: ask() interrupts her itself
 async function ask(question,fromVendor){
-  if(!question.trim()||state.speaking)return;
+  if(!question.trim()||state.thinking)return;
+  if(state.speaking||state.vendorClient)interruptSpeech();
+  state.thinking=true;
   if(!fromVendor){addMsg("user",question);}
   $("q").value="";setStatus("thinking");
   const t0=performance.now();
@@ -297,8 +323,9 @@ async function ask(question,fromVendor){
       :r.gate&&r.gate.startsWith("open:")?'<span class="ref">'+r.gate+' — number not in today\'s pack</span>'
       :'<span class="ref">'+r.gate+"</span>";
     addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
+    state.thinking=false;
     await speak(r.text);
-  }catch(e){setStatus("error");
+  }catch(e){state.thinking=false;setStatus("error");
     addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");}
 }
 $("btn-start").onclick=startSession;
@@ -319,14 +346,16 @@ function setVendorMic(on){
       addMsg("avatar","The browser has the microphone blocked for this page \u2014 allow it via the address-bar icon, then reload and start again. Typing always works.");}
   }catch(_){/* older SDKs: routing gate below still applies */}
 }
-function startLocalConversation(){
+function startLocalConversation(assist){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
-  localRec=new SR();localRec.lang="en-US";localRec.interimResults=false;localRec.continuous=true;
+  if(!SR){if(!assist)addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
+  localRec=new SR();localRec.lang="en-US";localRec.interimResults=true;localRec.continuous=true;
   localRec.onresult=e=>{const res=e.results[e.results.length-1];
-    if(res&&res.isFinal&&!state.speaking){ask(res[0].transcript);}};
+    if(!res)return;
+    if(!res.isFinal){if(state.conversation&&!state.speaking)setStatus("heard: "+res[0].transcript.slice(0,60));return;}
+    if(!state.speaking)routeHeard(res[0].transcript);};
   localRec.onend=()=>{if(state.conversation){try{localRec.start();}catch(_){/* tab lost focus */}}};
-  localRec.onerror=ev=>{if(ev.error==="not-allowed"){toggleConversation(false);
+  localRec.onerror=ev=>{if(ev.error==="not-allowed"&&!assist){toggleConversation(false);
     addMsg("avatar","Microphone permission was denied — the text box still works.");}};
   try{localRec.start();}catch(_){return false;}
   return true;
@@ -339,12 +368,15 @@ function toggleConversation(on){
       if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
   $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the mic to stop.")
     :"The microphone streams only while the mic button is on.";
-  if(state.vendorClient){setVendorMic(on);}
-  else if(on){if(!startLocalConversation())return toggleConversation(false);}
+  if(state.vendorClient){setVendorMic(on);
+    if(on){startLocalConversation(true);}  // the second ear: browser recognition beside vendor ASR
+    else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}}
+  else if(on){if(!startLocalConversation(false))return toggleConversation(false);}
   else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}
   setStatus(on?"listening":"ready");
 }
 $("btn-voice").onclick=()=>toggleConversation(!state.conversation);
+$("status").onclick=()=>{if(state.speaking)interruptSpeech();};
 /* one-session vendor plans: free the slot the moment this page goes away */
 addEventListener("pagehide",()=>{try{state.vendorClient&&state.vendorClient.stopStreaming();}catch(_){}});
 /* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
