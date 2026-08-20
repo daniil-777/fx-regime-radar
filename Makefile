@@ -63,10 +63,24 @@ cb-features:      ## lexicon-score data/cb/ -> data/cb_features.parquet + event 
 cb-gate:          ## print the Stage-2 gate with the real live counts (never scores when closed)
 	$(PYTHON) -m fxradar.cb_llm
 
-avatar:           ## start the Rust service with the AI presenter ON (dev mode: no API key needed) → http://localhost:8080/avatar
+# `make avatar` starts the presenter in OPEN conversation mode (any topic; the direction and
+# advice bans stay — they are the constitution). Keys are picked up from the environment or from
+# .streamlit/secrets.toml (ANTHROPIC_API_KEY → LLM answers; ELEVENLABS_API_KEY → studio voice;
+# ANAM_API_KEY → photoreal face). Keyless it still runs: drawn face + browser voice + gated FAQ.
+avatar:           ## start the AI presenter (open mode, dev) → http://localhost:8080/avatar
 	cd rust/fxradar-serve && cargo build --release --bin fxradar-serve
 	@echo "presenter → http://localhost:8080/avatar  (Briefing page finds it automatically; Ctrl-C stops)"
-	FXRADAR_AVATAR=on FXRADAR_AVATAR_DEV=1 ./rust/fxradar-serve/target/release/fxradar-serve --bundle models/bundle_v1.4.0 --data-dir data --bind 127.0.0.1:8080
+	@sh -c '\
+	  sec() { sed -n "s/^$$1 *= *\"\{0,1\}\([^\"]*\)\"\{0,1\}/\1/p" .streamlit/secrets.toml 2>/dev/null | head -1; }; \
+	  export ANTHROPIC_API_KEY="$${ANTHROPIC_API_KEY:-$$(sec ANTHROPIC_API_KEY)}"; \
+	  export ELEVENLABS_API_KEY="$${ELEVENLABS_API_KEY:-$$(sec ELEVENLABS_API_KEY)}"; \
+	  export ANAM_API_KEY="$${ANAM_API_KEY:-$$(sec ANAM_API_KEY)}"; \
+	  if [ -n "$$ANAM_API_KEY" ]; then export FXRADAR_AVATAR_VENDOR=anam; fi; \
+	  [ -n "$$ANTHROPIC_API_KEY" ] && echo "  LLM answers: on (Anthropic key found)" || echo "  LLM answers: off — keyless FAQ (add ANTHROPIC_API_KEY for open conversation)"; \
+	  [ -n "$$ELEVENLABS_API_KEY" ] && echo "  studio voice: on (ElevenLabs)" || echo "  studio voice: off — browser voice (add ELEVENLABS_API_KEY)"; \
+	  [ -n "$$ANAM_API_KEY" ] && echo "  photoreal face: on (Anam)" || echo "  photoreal face: off — drawn presenter (add ANAM_API_KEY)"; \
+	  FXRADAR_AVATAR=on FXRADAR_AVATAR_DEV=1 FXRADAR_AVATAR_OPEN=1 \
+	  ./rust/fxradar-serve/target/release/fxradar-serve --bundle models/bundle_v1.4.0 --data-dir data --bind 127.0.0.1:8080'
 
 model-lab:        ## race every regime model (hmm/jump/gmm) + forecaster engine (xgb/histgb/logistic) -> reports/model_lab.md
 	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.model_lab

@@ -13,7 +13,7 @@ use crate::metrics as m;
 use crate::store::now_unix;
 use axum::body::Bytes;
 use axum::extract::{Request, State};
-use axum::http::{HeaderMap, StatusCode};
+use axum::http::{header, HeaderMap, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -21,6 +21,7 @@ use rand::RngCore;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
@@ -79,6 +80,16 @@ pub struct AvatarCfg {
     /// planted-fabrication test can prove the gates block a fabricated number; it skips
     /// generation, never the gates.
     pub test_hook: bool,
+    /// FXRADAR_AVATAR_OPEN=1 — open conversation: the system prompt defaults to v2 and the
+    /// numeric-grounding gate becomes ANNOTATE-ONLY (gate="open:ungrounded") so general-knowledge
+    /// numbers can flow. The topic guard and the direction lint stay fully blocking.
+    pub open: bool,
+    /// ELEVENLABS_API_KEY: enables realistic TTS on /avatar/tts; unset → 404 {"tts":"browser"}.
+    pub elevenlabs_key: Option<String>,
+    /// FXRADAR_AVATAR_VOICE_ID (ElevenLabs voice; default "21m00Tcm4TlvDq8ikWAM").
+    pub voice_id: String,
+    /// FXRADAR_AVATAR_MAX_TTS_CHARS_MONTH (default 100000).
+    pub max_tts_chars_month: i64,
 }
 
 impl Default for AvatarCfg {
@@ -95,8 +106,22 @@ impl Default for AvatarCfg {
             system_prompt_path: PathBuf::from("prompts/avatar_system_v1.txt"),
             dev: false,
             test_hook: cfg!(debug_assertions),
+            open: false,
+            elevenlabs_key: None,
+            voice_id: "21m00Tcm4TlvDq8ikWAM".into(),
+            max_tts_chars_month: 100_000,
         }
     }
+}
+
+/// Default system prompt file per mode: v2 (conversational) in open mode, v1 otherwise. An
+/// explicit FXRADAR_AVATAR_SYSTEM_PROMPT always wins (resolved in `bin/serve.rs`).
+pub fn default_system_prompt(open: bool) -> PathBuf {
+    PathBuf::from(if open {
+        "prompts/avatar_system_v2.txt"
+    } else {
+        "prompts/avatar_system_v1.txt"
+    })
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -322,6 +347,30 @@ fn constant_time_eq(a: &str, b: &str) -> bool {
             == 0
 }
 
+fn sha256_hex(text: &str) -> String {
+    hex::encode(Sha256::digest(text.as_bytes()))
+}
+
+/// Remember a gated brain answer's hash so /avatar/tts will only ever speak it (last 8 per
+/// session, in-memory — restarting the service simply requires re-asking).
+fn remember_tts_text(st: &AppState, session_id: &str, text: &str) {
+    if let Ok(mut map) = st.tts_hashes.lock() {
+        let q = map.entry(session_id.to_string()).or_default();
+        q.push_back(sha256_hex(text));
+        while q.len() > 8 {
+            q.pop_front();
+        }
+    }
+}
+
+fn tts_text_known(st: &AppState, session_id: &str, text: &str) -> bool {
+    let h = sha256_hex(text);
+    st.tts_hashes
+        .lock()
+        .map(|map| map.get(session_id).map(|q| q.contains(&h)).unwrap_or(false))
+        .unwrap_or(false)
+}
+
 fn random_hex(n_bytes: usize) -> String {
     let mut buf = vec![0u8; n_bytes];
     rand::thread_rng().fill_bytes(&mut buf);
@@ -525,7 +574,7 @@ pub struct BrainResponse {
     pub text: String,
     /// "llm" | "template" | "refusal"
     pub source: String,
-    /// "pass" | "refused:<kind>" | "regenerated" | "blocked"
+    /// "pass" | "refused:<kind>" | "regenerated" | "blocked" | "open:ungrounded"
     pub gate: String,
     /// Canonical numbers cited in `text` (the widget renders them as receipts).
     pub numbers: Vec<String>,
@@ -545,6 +594,14 @@ pub struct HeartbeatRequest {
     pub session_id: String,
     /// Seconds of avatar session time consumed since the last heartbeat.
     pub seconds: f64,
+}
+
+#[derive(Deserialize, ToSchema)]
+pub struct TtsRequest {
+    #[serde(default)]
+    pub session_id: String,
+    /// Must be a text the gated brain (or the greeting) actually produced; anything else is 403.
+    pub text: String,
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -571,6 +628,7 @@ fn finish(
     m::avatar_request(source);
     m::avatar_brain_latency(t0.elapsed().as_secs_f64());
     let numbers = extract_numbers(&text);
+    remember_tts_text(st, session_id, &text);
     if let Err(e) = st.store.add_transcript(
         session_id,
         question,
@@ -717,6 +775,11 @@ pub async fn brain(
             Ok(()) => break if regenerated { "regenerated" } else { "pass" },
             Err(reason) => {
                 m::avatar_lint_rejection(reason);
+                if reason == "grounding" && st.avatar.open {
+                    // Open mode: general-knowledge numbers may flow — annotate, never block.
+                    // Direction failures never take this branch (constitutional, still block).
+                    break "open:ungrounded";
+                }
                 if can_regen && !regenerated {
                     regenerated = true;
                     let mut msgs = llm_messages.clone();
@@ -774,6 +837,7 @@ pub async fn greeting(State(st): State<AppState>) -> Result<Json<Value>, ApiErro
         "data_through": pack.data_through,
         "source": "template",
         "disclaimer": DISCLAIMER,
+        "open": st.avatar.open,
     })))
 }
 
@@ -823,7 +887,7 @@ pub async fn session_token(
         ));
     }
     let session_id = random_hex(8);
-    let out = match vendor.as_str() {
+    let mut out = match vendor.as_str() {
         "local" => {
             // The widget talks to /avatar/brain directly with this short-lived token and uses
             // browser TTS + the orb — no external vendor, no per-minute cost.
@@ -901,6 +965,17 @@ pub async fn session_token(
                    "disclaimer": DISCLAIMER})
         }
     };
+    if let Some(obj) = out.as_object_mut() {
+        obj.insert("open".into(), json!(st.avatar.open));
+        obj.insert(
+            "tts".into(),
+            json!(if st.avatar.elevenlabs_key.is_some() {
+                "elevenlabs"
+            } else {
+                "browser"
+            }),
+        );
+    }
     st.store.add_avatar_session_count(&month)?;
     m::avatar_session();
     Ok(Json(out))
@@ -933,6 +1008,78 @@ pub async fn heartbeat(
     Ok(Json(
         json!({"ok": true, "session_id": req.session_id, "minutes_month": total}),
     ))
+}
+
+/// Realistic voice for a gated answer (ElevenLabs Flash). Order matters: token auth → answer
+/// hash check (403 for any text our gates did not produce — TTS can never be used to voice
+/// arbitrary text) → monthly character cap (429) → vendor key (404 → the widget falls back to
+/// browser TTS) → the vendor call. Vendor schema UNVERIFIED without a live ELEVENLABS_API_KEY.
+#[utoipa::path(post, path = "/avatar/tts", tag = "avatar",
+    request_body = TtsRequest,
+    responses((status = 200, description = "audio/mpeg bytes", body = String),
+              (status = 401, description = "missing/unknown X-Avatar-Token", body = ApiErrorBody),
+              (status = 403, description = "text was not produced by the gated brain", body = ApiErrorBody),
+              (status = 404, description = "no TTS key configured — use browser TTS", body = Object),
+              (status = 429, description = "monthly avatar budget reached", body = ApiErrorBody),
+              (status = 503, description = "avatar disabled", body = Object)))]
+pub async fn tts(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<TtsRequest>,
+) -> Result<Response, ApiError> {
+    brain_auth(&st, &headers)?;
+    if req.text.is_empty() {
+        return Err(ApiError(StatusCode::BAD_REQUEST, "text is empty".into()));
+    }
+    // Only speak what OUR gates produced: an answer remembered for this session, or the exact
+    // current pack greeting (the greeting is spoken before any session exists).
+    let is_greeting = st
+        .avatar_pack()
+        .map(|p| p.greeting == req.text)
+        .unwrap_or(false);
+    if !tts_text_known(&st, &req.session_id, &req.text) && !is_greeting {
+        return Err(ApiError(
+            StatusCode::FORBIDDEN,
+            "tts only speaks gated answers".into(),
+        ));
+    }
+    let month = current_month();
+    let n_chars = req.text.chars().count() as i64;
+    if st.store.avatar_chars(&month)? + n_chars > st.avatar.max_tts_chars_month {
+        return Err(ApiError(
+            StatusCode::TOO_MANY_REQUESTS,
+            "monthly avatar budget reached".into(),
+        ));
+    }
+    let Some(key) = st.avatar.elevenlabs_key.as_deref() else {
+        return Ok((StatusCode::NOT_FOUND, Json(json!({"tts": "browser"}))).into_response());
+    };
+    st.store.add_avatar_chars(&month, n_chars)?;
+    m::avatar_tts_chars(n_chars as u64);
+    let url = format!(
+        "https://api.elevenlabs.io/v1/text-to-speech/{}?output_format=mp3_44100_64",
+        st.avatar.voice_id
+    );
+    let resp = http_client()
+        .post(&url)
+        .header("xi-api-key", key)
+        .timeout(Duration::from_secs(20))
+        .json(&json!({"text": req.text, "model_id": "eleven_flash_v2_5"}))
+        .send()
+        .await
+        .map_err(|e| ApiError(StatusCode::BAD_GATEWAY, format!("elevenlabs: {e}")))?;
+    let status = resp.status();
+    if !status.is_success() {
+        return Err(ApiError(
+            StatusCode::BAD_GATEWAY,
+            format!("elevenlabs {status}"),
+        ));
+    }
+    let bytes = resp
+        .bytes()
+        .await
+        .map_err(|e| ApiError(StatusCode::BAD_GATEWAY, format!("elevenlabs: {e}")))?;
+    Ok(([(header::CONTENT_TYPE, "audio/mpeg")], bytes).into_response())
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1003,6 +1150,12 @@ mod tests {
         assert!(advice_intent_re().is_match("help with position sizing"));
         assert!(advice_intent_re().is_match("where do i put my stop-loss"));
         assert!(!advice_intent_re().is_match("what is the siren?"));
+    }
+
+    #[test]
+    fn default_prompt_per_mode() {
+        assert!(default_system_prompt(false).ends_with("avatar_system_v1.txt"));
+        assert!(default_system_prompt(true).ends_with("avatar_system_v2.txt"));
     }
 
     #[test]

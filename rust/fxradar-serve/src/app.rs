@@ -94,6 +94,8 @@ pub struct AppState {
     touched: Arc<Mutex<HashMap<String, Instant>>>,
     regimes_cache: Arc<Mutex<Option<RegimesCache>>>,
     avatar_pack_cache: Arc<Mutex<Option<avatar::PackCache>>>,
+    /// sha256 of gated brain answers per session (last 8) — /avatar/tts only speaks these.
+    pub(crate) tts_hashes: Arc<Mutex<HashMap<String, std::collections::VecDeque<String>>>>,
 }
 
 /// Newest-row-per-pair view of regimes.parquet, re-read only when the file changes (the pipeline
@@ -139,6 +141,7 @@ impl AppState {
             touched: Arc::new(Mutex::new(HashMap::new())),
             regimes_cache: Arc::new(Mutex::new(None)),
             avatar_pack_cache: Arc::new(Mutex::new(None)),
+            tts_hashes: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 
@@ -819,11 +822,11 @@ take `X-API-Key` (tier pro or partner). Educational tool. Not investment advice.
     ),
     paths(health, regimes, metrics_handler, widget_js, widget_demo, score, treasury_handler,
           webhooks_create, webhooks_list, webhooks_delete, stripe_webhook,
-          avatar::brain, avatar::greeting, avatar::session_token, avatar::heartbeat),
+          avatar::brain, avatar::greeting, avatar::session_token, avatar::heartbeat, avatar::tts),
     components(schemas(ApiErrorBody, ScoreRequest, ScoreResponse, ScoredRowJson, PairWindow,
         WebhookCreate, WebhookCreated, WebhookInfo, StripeAck, SelftestStatus,
         avatar::BrainRequest, avatar::BrainMessage, avatar::BrainResponse,
-        avatar::SessionTokenRequest, avatar::HeartbeatRequest)),
+        avatar::SessionTokenRequest, avatar::HeartbeatRequest, avatar::TtsRequest)),
     modifiers(&SecurityAddon),
     tags((name = "public", description = "No key needed"),
          (name = "keyed", description = "X-API-Key with tier pro or partner"),
@@ -860,6 +863,7 @@ pub fn build_router(state: AppState) -> Router {
         .route("/avatar/brain", post(avatar::brain))
         .route("/avatar/session-token", post(avatar::session_token))
         .route("/avatar/heartbeat", post(avatar::heartbeat))
+        .route("/avatar/tts", post(avatar::tts))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             avatar::require_enabled,

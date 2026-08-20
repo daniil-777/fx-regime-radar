@@ -2,6 +2,25 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.26.0 — the presenter opens up: studio voice, photoreal wiring, open conversation (2026-08-20)
+
+- **Open conversation** (`FXRADAR_AVATAR_OPEN=1`, the `make avatar` default): the presenter answers
+  ANY topic with the conversational v2 system prompt — app-state numbers still come only from the
+  pack; general-knowledge numbers are allowed and the grounding gate becomes annotate-only
+  (`open:ungrounded` badge, still counted). The two constitutional bans stay hard in every mode:
+  never price direction, never personal advice (verified live: a planted "bullish" still blocks in
+  open mode while "Bretton Woods ended in 1971" passes annotated).
+- **Studio voice**: `POST /avatar/tts` — ElevenLabs Flash v2.5 when `ELEVENLABS_API_KEY` is set,
+  monthly character cap, and a hash gate so the server only voices answers OUR gates produced
+  (403 for anything else — the TTS cannot be used to speak ungated text; verified live). Keyless →
+  404 and the widget falls back to the browser voice.
+- **Photoreal face wiring**: vendor `anam` sessions attach the Anam JS SDK stream to the widget's
+  video and speak gated answers via the vendor voice; the drawn presenter (now with catchlights and
+  a resting smile) remains the keyless face and the reduced-motion fallback.
+- `make avatar` resolves ANTHROPIC / ELEVENLABS / ANAM keys from the environment or
+  `.streamlit/secrets.toml`, prints what's on/off, and picks the anam vendor automatically when its
+  key exists. docs/AVATAR.md: the three keys, one table. 50 rust tests.
+
 ## v2.25.1 — the presenter gets a face + one-command demo (2026-08-20)
 
 - The keyless FACE is now a drawn presenter: a geometric bust in the token palette — blinking eyes,

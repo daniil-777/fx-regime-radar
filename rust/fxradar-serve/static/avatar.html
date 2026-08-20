@@ -92,15 +92,18 @@ button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
             <!-- hair cap -->
             <path d="M 68 104 A 52 52 0 0 1 172 104 L 172 96 Q 168 56 120 54 Q 72 56 68 96 Z" fill="var(--front)"/>
             <!-- eyes (blink by squashing ry) -->
-            <ellipse id="eye-l" cx="100" cy="102" rx="6" ry="6.5" fill="var(--tx1)"/>
-            <ellipse id="eye-r" cx="140" cy="102" rx="6" ry="6.5" fill="var(--tx1)"/>
+            <ellipse id="eye-l" cx="100" cy="102" rx="6.5" ry="7" fill="var(--tx1)"/>
+            <ellipse id="eye-r" cx="140" cy="102" rx="6.5" ry="7" fill="var(--tx1)"/>
+            <circle cx="102.5" cy="99.5" r="1.8" fill="var(--front)"/>
+            <circle cx="142.5" cy="99.5" r="1.8" fill="var(--front)"/>
             <!-- brows -->
             <path d="M 92 88 Q 100 84 108 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
             <path d="M 132 88 Q 140 84 148 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
             <!-- nose hint -->
             <path d="M 120 104 L 118 116" stroke="var(--tx3)" stroke-width="2" stroke-linecap="round" fill="none"/>
             <!-- mouth: height animates while speaking -->
-            <rect id="mouth" x="104" y="128" width="32" height="4" rx="2" fill="var(--tx1)" opacity="0.92"/>
+            <path id="smile" d="M 106 128 Q 120 136 134 128" fill="none" stroke="var(--tx1)" stroke-width="3.5" stroke-linecap="round" opacity="0.92"/>
+            <rect id="mouth" x="104" y="128" width="32" height="4" rx="2" fill="var(--tx1)" opacity="0.92" style="display:none"/>
             <!-- headset: the presenter's tell -->
             <path d="M 66 96 A 56 56 0 0 1 174 96" fill="none" stroke="var(--beacon)" stroke-width="3" stroke-linecap="round"/>
             <rect x="61" y="94" width="9" height="20" rx="4.5" fill="var(--beacon)"/>
@@ -140,7 +143,7 @@ button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
    endpoint returns vendor credentials and the vendor SDK attaches its WebRTC stream to <video>
    (adapter below; the SDK script is added at deploy time, never in this repo). */
 const $=id=>document.getElementById(id);
-const state={token:null,session:null,speaking:false,greeted:false};
+const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,vendorClient:null};
 const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
 function setStatus(s){$("status").textContent=s;}
 function chipify(text){
@@ -152,7 +155,7 @@ function addMsg(role,text,meta){
   d.innerHTML=chipify(text)+(meta?'<div class="meta">'+meta+"</div>":"");
   $("log").appendChild(d);$("log").scrollTop=$("log").scrollHeight;
 }
-function speak(text){
+function browserSpeak(text){
   return new Promise(res=>{
     if(!("speechSynthesis" in window)){setStatus("listening");res();return;}
     const u=new SpeechSynthesisUtterance(text.replace(/[—·]/g,","));
@@ -163,6 +166,32 @@ function speak(text){
     state.speaking=true;setStatus("speaking");speechSynthesis.speak(u);
     setTimeout(done,1500+65*text.length);  // belt and braces: never let a TTS stall lock the input
   });
+}
+async function elevenSpeak(text){
+  // the studio voice: the server only speaks answers OUR gates produced (hash-checked there)
+  const r=await fetch("/avatar/tts",{method:"POST",
+    headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
+    body:JSON.stringify({session_id:state.session,text})});
+  if(!r.ok)throw new Error("tts "+r.status);
+  const blob=await r.blob();
+  return new Promise(res=>{
+    const a=new Audio(URL.createObjectURL(blob));
+    const done=()=>{state.speaking=false;setStatus("listening");res();};
+    a.onended=done;a.onerror=done;
+    state.speaking=true;setStatus("speaking");a.play().catch(done);
+  });
+}
+async function speak(text){
+  if(state.vendorClient){  // the photoreal face speaks with the vendor's own voice
+    try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);}
+    catch(_){/* fall through to audio */}
+    state.speaking=false;setStatus("listening");
+    return;
+  }
+  if(state.tts==="elevenlabs"){
+    try{return await elevenSpeak(text);}catch(_){/* fall back to the browser voice */}
+  }
+  return browserSpeak(text);
 }
 async function api(path,opts){
   const r=await fetch(path,opts);
@@ -175,9 +204,19 @@ async function startSession(){
     const tok=await api("/avatar/session-token",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({vendor:null})});
     state.token=tok.token;state.session=tok.session_id||String(Date.now());
-    if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
+    state.tts=tok.tts||"browser";state.open=!!tok.open;
+    if(tok.vendor==="anam"&&tok.token){
+      try{  // photoreal face: Anam SDK (loaded only when the vendor is configured), our brain, our gates
+        const mod=await import("https://esm.sh/@anam-ai/js-sdk@2");
+        const client=(mod.createClient||mod.default?.createClient)(tok.token);
+        await client.streamToVideoElement("video");
+        state.vendorClient=client;
+        $("video").style.display="block";$("disc").style.display="none";
+      }catch(e){console.warn("anam attach failed, using the drawn face:",e);}
+    }else if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
       await window.FXAvatarVendor.attach(tok,$("video"));$("video").style.display="block";$("disc").style.display="none";
     }
+    if(state.open){document.querySelector(".caption").textContent="AI presenter · open conversation · risk information, not investment advice";}
     const g=await api("/avatar/greeting");
     $("through").textContent="data through "+g.data_through;
     $("start").style.display="none";$("session").style.display="block";
@@ -199,7 +238,9 @@ async function ask(question){
       headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
       body:JSON.stringify({session_id:state.session,messages:[{role:"user",content:question}]})});
     const ms=Math.round(performance.now()-t0);
-    const gate=r.gate==="pass"?'<span class="ok">gate pass</span>':'<span class="ref">'+r.gate+"</span>";
+    const gate=r.gate==="pass"?'<span class="ok">gate pass</span>'
+      :r.gate&&r.gate.startsWith("open:")?'<span class="ref">'+r.gate+' — number not in today\'s pack</span>'
+      :'<span class="ref">'+r.gate+"</span>";
     addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
     await speak(r.text);
   }catch(e){setStatus("error");addMsg("avatar","The brain endpoint is not reachable: "+e.message);}
@@ -222,7 +263,7 @@ if(SR){
 /* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
    spec's "avatar video" slot (the one moving element of the stage); prefers-reduced-motion is
    honoured via CSS, and the whole group is replaced by the vendor's video when one is attached. */
-const face=$("face"), mouth=$("mouth");
+const face=$("face"), mouth=$("mouth"), smile=$("smile");
 const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function scheduleBlink(){
   if(reduced||!face)return;
@@ -234,16 +275,19 @@ let mouthTimer=null;
 function mouthLoop(){
   if(reduced||!mouth)return;
   if(mouthTimer)return;
+  if(smile)smile.style.display="none";
+  mouth.style.display="";
   mouthTimer=setInterval(()=>{
     if(!state.speaking){clearInterval(mouthTimer);mouthTimer=null;
-      mouth.setAttribute("height","4");mouth.setAttribute("y","128");return;}
+      mouth.style.display="none";if(smile)smile.style.display="";return;}
     const h=4+Math.random()*11;
     mouth.setAttribute("height",h.toFixed(1));
     mouth.setAttribute("y",(130-h/2).toFixed(1));
   },75);
 }
 const _speak=speak;
-speak=function(text){mouthLoop();const p=_speak(text);p.then(()=>{if(mouth){mouth.setAttribute("height","4");mouth.setAttribute("y","128");}});return p;};
+speak=async function(text){mouthLoop();try{return await _speak(text);}finally{
+  if(mouth){mouth.style.display="none";}if(smile){smile.style.display="";}}};
 /* the ring + mic wear today's lead regime colour once the greeting arrives */
 fetch("/avatar/greeting").then(r=>r.ok?r.json():null).then(g=>{
   if(!g)return;

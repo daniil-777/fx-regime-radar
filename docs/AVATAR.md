@@ -22,6 +22,19 @@ FXRADAR_AVATAR_DEV=1                 # DEV ONLY: session-token without an API ke
 FXRADAR_AVATAR_URL=https://host/avatar   # lets the Streamlit Briefing page embed the widget
 ```
 
+## Turning on the real thing — three keys, each optional
+
+| you add | you get | where |
+|---|---|---|
+| `ANTHROPIC_API_KEY` (console.anthropic.com) | open conversation on any topic — the model already knows the app via the context + knowledge packs; app numbers stay pack-grounded | env or `.streamlit/secrets.toml` |
+| `ELEVENLABS_API_KEY` (elevenlabs.io — free tier) | the studio voice (Flash v2.5, ~75 ms) — the server only voices answers our gates produced (hash-checked) | env or secrets.toml |
+| `ANAM_API_KEY` (anam.ai — free dev tier) | the photoreal face over WebRTC, speaking with the vendor's own voice — text still comes from OUR gated brain | env or secrets.toml |
+
+`make avatar` picks all three up automatically and runs in OPEN mode: any topic is fair game; the
+numeric-grounding gate switches to annotate-only (`open:ungrounded` badge instead of a block) —
+but the direction and advice bans stay hard, always. Keyless, everything still runs: drawn face,
+browser voice, gated FAQ.
+
 ## Vendors and likeness
 
 Primary: Anam.ai (BYO-LLM — the vendor's face calls our `/avatar/brain`, so every sentence passes

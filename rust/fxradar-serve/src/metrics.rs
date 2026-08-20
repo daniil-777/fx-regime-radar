@@ -103,6 +103,11 @@ pub fn avatar_session() {
     metrics::counter!("avatar_sessions_total").increment(1);
 }
 
+/// Characters actually sent to the TTS vendor (browser-TTS fallback is free and uncounted).
+pub fn avatar_tts_chars(n: u64) {
+    metrics::counter!("avatar_tts_chars_total").increment(n);
+}
+
 /// Monotone-increasing total of avatar minutes. A gauge because the metrics crate's counters are
 /// integer-only and minutes are fractional; it is only ever incremented.
 pub fn avatar_minutes(minutes: f64) {

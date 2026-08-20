@@ -141,6 +141,7 @@ async fn flag_off_all_avatar_routes_answer_503() {
         ("POST", "/avatar/brain"),
         ("POST", "/avatar/session-token"),
         ("POST", "/avatar/heartbeat"),
+        ("POST", "/avatar/tts"),
     ] {
         let req = match method {
             "GET" => c.get(format!("{base}{path}")),
@@ -506,4 +507,171 @@ async fn every_brain_answer_writes_a_transcript_row() {
     assert_eq!(rows[1].answer, SIREN_ANSWER);
     assert_eq!(rows[1].gate, "pass");
     assert_eq!(rows[1].session_id, "s-test");
+}
+
+// ---------------------------------------------------------------------------------------------
+// delta: open mode + realistic TTS
+// ---------------------------------------------------------------------------------------------
+
+#[test]
+fn v2_prompt_exists_and_is_the_open_mode_default() {
+    let p = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../prompts/avatar_system_v2.txt");
+    let text = std::fs::read_to_string(&p).unwrap();
+    assert!(text.contains("avatar_system_v2"));
+    assert!(text.contains("price direction"), "the hard bans stay in v2");
+    assert!(fxradar_serve::avatar::default_system_prompt(true).ends_with("avatar_system_v2.txt"));
+    assert!(fxradar_serve::avatar::default_system_prompt(false).ends_with("avatar_system_v1.txt"));
+}
+
+#[tokio::test]
+async fn open_mode_annotates_ungrounded_numbers_but_direction_stays_blocking() {
+    let root = scratch_dir("open");
+    write_pack(&root, GREETING);
+    let cfg = AvatarCfg {
+        open: true,
+        ..base_cfg()
+    };
+    let (base, store) = spawn_app(&root, cfg).await;
+    // a general-knowledge number flows, annotated — never blocked
+    let v = ask(
+        &base,
+        "brt_test",
+        "what happened in the financial crisis?",
+        Some("The 2008 crisis pushed volatility to historic extremes near 80 percent."),
+    )
+    .await;
+    assert_eq!(v["gate"], "open:ungrounded");
+    assert_eq!(v["source"], "llm");
+    assert!(v["text"].as_str().unwrap().contains("2008"), "text intact");
+    // the direction lint is constitutional and still blocks
+    let v = ask(
+        &base,
+        "brt_test",
+        "tell me about markets",
+        Some("Stocks look bullish this quarter"),
+    )
+    .await;
+    assert_eq!(v["gate"], "blocked");
+    assert_eq!(v["text"], REF_NOT_IN_PACK);
+    // and so does the topic guard
+    let v = ask(&base, "brt_test", "will EURUSD rise?", None).await;
+    assert_eq!(v["gate"], "refused:direction");
+    // greeting + session-token badge the mode (and the TTS transport)
+    let g: Value = reqwest::get(format!("{base}/avatar/greeting"))
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(g["open"], true);
+    let (pro, _) = store.issue_key("pro", Tier::Pro).unwrap();
+    let t: Value = reqwest::Client::new()
+        .post(format!("{base}/avatar/session-token"))
+        .header("X-API-Key", pro)
+        .json(&json!({"vendor": "local"}))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(t["open"], true);
+    assert_eq!(t["tts"], "browser", "no ElevenLabs key in tests");
+}
+
+#[tokio::test]
+async fn closed_mode_still_blocks_ungrounded_numbers() {
+    let root = scratch_dir("closed");
+    write_pack(&root, GREETING);
+    let (base, _) = spawn_app(&root, base_cfg()).await; // open: false
+    let v = ask(
+        &base,
+        "brt_test",
+        "what happened in the financial crisis?",
+        Some("The 2008 crisis pushed volatility near 80 percent."),
+    )
+    .await;
+    assert_eq!(v["gate"], "blocked");
+}
+
+#[tokio::test]
+async fn tts_only_speaks_gated_answers() {
+    let root = scratch_dir("tts");
+    write_pack(&root, GREETING);
+    let (base, _) = spawn_app(&root, base_cfg()).await;
+    let c = reqwest::Client::new();
+    // 401 without a token
+    let r = c
+        .post(format!("{base}/avatar/tts"))
+        .json(&json!({"session_id": "s-test", "text": "x"}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 401);
+    // un-hashed text → 403 (the hash check runs BEFORE the vendor-key check, so this is keyless)
+    let r = c
+        .post(format!("{base}/avatar/tts"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&json!({"session_id": "s-test", "text": "a text the brain never produced"}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 403);
+    let v: Value = r.json().await.unwrap();
+    assert_eq!(v["error"], "tts only speaks gated answers");
+    // a real brain answer passes the hash check; keyless → 404 browser fallback (proves the
+    // request reached the vendor-key step)
+    let ans = ask(&base, "brt_test", "what is the siren?", None).await;
+    let text = ans["text"].as_str().unwrap();
+    let r = c
+        .post(format!("{base}/avatar/tts"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&json!({"session_id": "s-test", "text": text}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 404);
+    let v: Value = r.json().await.unwrap();
+    assert_eq!(v["tts"], "browser");
+    // hashes are per-session: the same text under another session id is refused
+    let r = c
+        .post(format!("{base}/avatar/tts"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&json!({"session_id": "other-session", "text": text}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 403);
+    // the exact current pack greeting is always speakable (spoken before any session exists)
+    let r = c
+        .post(format!("{base}/avatar/tts"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&json!({"session_id": "nosession", "text": GREETING}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 404);
+}
+
+#[tokio::test]
+async fn tts_chars_cap_answers_429() {
+    let root = scratch_dir("ttscap");
+    write_pack(&root, GREETING);
+    let cfg = AvatarCfg {
+        max_tts_chars_month: 3,
+        ..base_cfg()
+    };
+    let (base, _) = spawn_app(&root, cfg).await;
+    let ans = ask(&base, "brt_test", "what is the siren?", None).await;
+    let text = ans["text"].as_str().unwrap();
+    let r = reqwest::Client::new()
+        .post(format!("{base}/avatar/tts"))
+        .header("X-Avatar-Token", "brt_test")
+        .json(&json!({"session_id": "s-test", "text": text}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 429, "answer length exceeds the 3-char cap");
+    let v: Value = r.json().await.unwrap();
+    assert_eq!(v["error"], "monthly avatar budget reached");
 }

@@ -190,7 +190,8 @@ CREATE TABLE IF NOT EXISTS avatar_transcripts (
 CREATE TABLE IF NOT EXISTS avatar_usage (
   month      TEXT PRIMARY KEY,
   sessions   INTEGER NOT NULL DEFAULT 0,
-  minutes    REAL NOT NULL DEFAULT 0
+  minutes    REAL NOT NULL DEFAULT 0,
+  chars      INTEGER NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS avatar_sessions (
   token      TEXT PRIMARY KEY,
@@ -222,6 +223,12 @@ impl Store {
             "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=ON;",
         )?;
         conn.execute_batch(SCHEMA)?;
+        // phase-35 delta: TTS character column on databases created before it existed (the
+        // error when the column is already there is the expected no-op).
+        let _ = conn.execute(
+            "ALTER TABLE avatar_usage ADD COLUMN chars INTEGER NOT NULL DEFAULT 0",
+            [],
+        );
         Ok(Store {
             conn: Arc::new(Mutex::new(conn)),
         })
@@ -479,6 +486,30 @@ impl Store {
         Ok(())
     }
 
+    /// TTS characters consumed in a "YYYY-MM" month; 0 if unseen.
+    pub fn avatar_chars(&self, month: &str) -> StoreResult<i64> {
+        self.with(|c| {
+            c.query_row(
+                "SELECT chars FROM avatar_usage WHERE month = ?1",
+                params![month],
+                |r| r.get(0),
+            )
+            .optional()
+            .map(|v| v.unwrap_or(0))
+        })
+    }
+
+    pub fn add_avatar_chars(&self, month: &str, n: i64) -> StoreResult<()> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO avatar_usage (month, sessions, minutes, chars) VALUES (?1, 0, 0, ?2)
+                 ON CONFLICT(month) DO UPDATE SET chars = chars + excluded.chars",
+                params![month, n],
+            )
+        })?;
+        Ok(())
+    }
+
     /// Mint a short-lived avatar session token (32 hex chars) and prune expired rows.
     pub fn create_avatar_session(&self, session_id: &str, ttl_secs: u64) -> StoreResult<String> {
         let mut buf = [0u8; 16];
@@ -665,6 +696,16 @@ mod tests {
         let (n, m) = s.avatar_usage("2026-08").unwrap();
         assert_eq!(n, 2);
         assert!((m - 1.5).abs() < 1e-12);
+        // TTS character cap arithmetic
+        assert_eq!(s.avatar_chars("2026-08").unwrap(), 0);
+        s.add_avatar_chars("2026-08", 120).unwrap();
+        s.add_avatar_chars("2026-09", 80).unwrap();
+        assert_eq!(s.avatar_chars("2026-08").unwrap(), 120);
+        s.add_avatar_chars("2026-08", 80).unwrap();
+        assert_eq!(s.avatar_chars("2026-08").unwrap(), 200);
+        assert_eq!(s.avatar_chars("2026-09").unwrap(), 80);
+        // months are independent buckets for sessions too
+        assert_eq!(s.avatar_usage("2026-09").unwrap().0, 0);
         // session tokens: mint, validate, expire, prune
         let now = now_unix();
         let tok = s.create_avatar_session("sess1", 1800).unwrap();
