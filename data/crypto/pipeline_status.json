@@ -1,5 +1,5 @@
 {
-  "last_run_utc": "2026-08-19T15:40:11Z",
+  "last_run_utc": "2026-08-20T06:49:07Z",
   "data_through": "2026-08-18",
   "rows": {
     "prices": 16024,
@@ -7,26 +7,27 @@
     "regimes": 15724
   },
   "model_versions": {
+    "regime_model": "hmm",
     "hmm": "0.4.1",
     "forecaster": "1.1.0",
     "siren": "1.2.0"
   },
   "ecb_check": {},
   "stage_seconds": {
-    "data": 3.72,
+    "data": 1.79,
     "features": 0.06,
-    "hmm": 1.84,
+    "hmm": 1.98,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 1.23,
+    "forecaster": 0.91,
     "challenger": 0.0,
-    "siren": 0.31,
-    "bocpd": 1.27,
-    "conformal": 0.06,
-    "drift": 2.68,
-    "ledger": 0.25,
-    "narrator": 1.58,
-    "postmortem": 0.0,
+    "siren": 0.38,
+    "bocpd": 0.8,
+    "conformal": 0.03,
+    "drift": 2.55,
+    "ledger": 0.04,
+    "narrator": 0.68,
+    "postmortem": 0.01,
     "advisor": 0.05,
     "treasury": 0.0,
     "arcade": 0.0
