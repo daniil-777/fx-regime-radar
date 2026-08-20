@@ -2,6 +2,18 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.26.3 — live voice conversation (2026-08-20)
+
+- One tap to talk: the hold-to-talk emoji button becomes a proper conversation toggle — an SVG mic
+  (no emoji as UI), beacon ring + the single sanctioned pulse while live, and a mic-status line that
+  says plainly when the microphone is streaming. Vendor mode: the persona's own speech recognition
+  hears you continuously over WebRTC; her transcripts route through the gated brain only while the
+  toggle is on, and sessions start MUTED (privacy by default — her ears open only with the button).
+  Local mode: a continuous browser-recognition loop with permission-denied handling.
+- Fix that made voice possible at all inside the app: the Briefing page's iframe is now hand-rolled
+  with `allow="microphone; autoplay"` — Streamlit's iframe helper cannot grant mic permission, which
+  silently killed voice in the embedded widget.
+
 ## v2.26.2 — fix: vendor sessions carry two tokens (2026-08-20)
 
 - Bug found in live use: in Anam mode the widget presented the VENDOR's session token to OUR

@@ -55,10 +55,16 @@ ui.card(
 )
 
 if AVATAR_URL:
-    st.components.v1.iframe(AVATAR_URL, height=760)
+    # a hand-rolled iframe: st.components.v1.iframe cannot grant microphone permission,
+    # which silently killed voice conversation inside this page
+    st.markdown(
+        f'<iframe src="{AVATAR_URL}" style="width:100%;height:780px;border:0;border-radius:12px" '
+        'allow="microphone; autoplay" title="AI presenter"></iframe>',
+        unsafe_allow_html=True,
+    )
     st.markdown(
         f'<div class="fx-dim" style="font-size:0.74rem">Served from <span class="fx-num">{AVATAR_URL}</span> '
-        "over WebRTC/HTTPS; the microphone is used only while you hold the talk button.</div>",
+        "over WebRTC; the microphone streams only while the mic button in the widget is on.</div>",
         unsafe_allow_html=True,
     )
 else:

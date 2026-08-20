@@ -58,7 +58,12 @@ button{background:var(--nimbus);border:1px solid var(--line);border-radius:999px
 button:hover{border-color:var(--beacon);color:var(--beacon)}
 button:focus-visible{outline:2px solid var(--beacon);outline-offset:2px}
 button:disabled{color:var(--tx3);cursor:default}
-button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
+button.voice{width:46px;height:46px;padding:0;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;color:var(--tx2);flex:0 0 auto}
+button.voice[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon);
+  box-shadow:0 0 0 3px rgba(127,209,201,0.18)}
+button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){button.voice[aria-pressed="true"] svg{animation:none}}
 .start{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 16px;text-align:center}
 .start p{color:var(--tx2);font-size:13.5px;max-width:400px}
 .privacy{font-size:11px;color:var(--tx3);padding:0 16px 12px 16px}
@@ -127,11 +132,18 @@ button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
     <div id="session" style="display:none">
       <div class="log" id="log" aria-live="polite"></div>
       <div class="controls">
-        <button class="talk" id="btn-talk" aria-pressed="false" title="hold to talk">🎙 talk</button>
-        <input type="text" id="q" placeholder="Type a question — e.g. what is the siren?" autocomplete="off">
+        <button class="voice" id="btn-voice" aria-pressed="false" title="start a live voice conversation" aria-label="start a live voice conversation">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
+            <path d="M 5.5 11 a 6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <input type="text" id="q" placeholder="Type — or tap the mic and just talk" autocomplete="off">
         <button id="btn-send">Ask</button>
       </div>
-      <div class="privacy">Conversations are logged and reviewed weekly by a human to keep the
+      <div class="privacy"><span id="mic-note">The microphone streams only while the mic button is on.</span>
+        Conversations are logged and reviewed weekly by a human to keep the
         presenter honest; transcripts are used for nothing else. <a href="/docs" target="_blank">API docs</a></div>
     </div>
   </div>
@@ -214,6 +226,7 @@ async function startSession(){
         const client=(mod.createClient||mod.default?.createClient)(tok.token);
         await client.streamToVideoElement("video");
         state.vendorClient=client;
+        setVendorMic(false);  // privacy by default: her ears open only with the mic button
         $("video").style.display="block";$("disc").style.display="none";
         const Ev=mod.AnamEvent||mod.default?.AnamEvent;
         if(Ev&&client.addListener){
@@ -222,7 +235,7 @@ async function startSession(){
             const users=(messages||[]).filter(m=>m.role==="user");
             if(users.length>seen){seen=users.length;
               const q=users[users.length-1].content;
-              if(q&&!state.speaking){addMsg("user",q);askVendor(q);}
+              if(q&&!state.speaking&&state.conversation){addMsg("user",q);askVendor(q);}
             }
           });
         }
@@ -265,18 +278,40 @@ async function ask(question,fromVendor){
 $("btn-start").onclick=startSession;
 $("btn-send").onclick=()=>ask($("q").value);
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter")ask($("q").value);});
-/* press-to-talk via the browser recognizer where it exists; the text input is the always-there path */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(SR){
-  const rec=new SR();rec.lang="en-US";rec.interimResults=false;
-  let holding=false;
-  const down=()=>{if(state.speaking)return;holding=true;$("btn-talk").setAttribute("aria-pressed","true");setStatus("listening");rec.start();};
-  const up=()=>{if(!holding)return;holding=false;$("btn-talk").setAttribute("aria-pressed","false");try{rec.stop();}catch(_){}};
-  $("btn-talk").addEventListener("mousedown",down);$("btn-talk").addEventListener("touchstart",down);
-  $("btn-talk").addEventListener("mouseup",up);$("btn-talk").addEventListener("mouseleave",up);$("btn-talk").addEventListener("touchend",up);
-  rec.onresult=e=>{const q=e.results[0][0].transcript;ask(q);};
-  rec.onerror=()=>{setStatus("ready");};
-}else{$("btn-talk").style.display="none";}
+/* ---- live conversation: one toggle, always user-initiated. Vendor mode: the persona's own
+   speech recognition hears the mic over WebRTC; the toggle gates whether her transcripts are
+   routed into the gated brain (and mutes the input track when the SDK exposes it). Local mode:
+   a continuous browser-recognition loop. The text input is the always-there fallback. */
+state.conversation=false;
+let localRec=null;
+function setVendorMic(on){
+  const c=state.vendorClient;
+  if(!c)return;
+  try{if(on&&c.unmuteInputAudio)c.unmuteInputAudio();
+      if(!on&&c.muteInputAudio)c.muteInputAudio();}catch(_){/* older SDKs: routing gate below still applies */}
+}
+function startLocalConversation(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
+  localRec=new SR();localRec.lang="en-US";localRec.interimResults=false;localRec.continuous=true;
+  localRec.onresult=e=>{const res=e.results[e.results.length-1];
+    if(res&&res.isFinal&&!state.speaking){ask(res[0].transcript);}};
+  localRec.onend=()=>{if(state.conversation){try{localRec.start();}catch(_){/* tab lost focus */}}};
+  localRec.onerror=ev=>{if(ev.error==="not-allowed"){toggleConversation(false);
+    addMsg("avatar","Microphone permission was denied — the text box still works.");}};
+  try{localRec.start();}catch(_){return false;}
+  return true;
+}
+function toggleConversation(on){
+  state.conversation=on;
+  $("btn-voice").setAttribute("aria-pressed",on?"true":"false");
+  $("mic-note").textContent=on?"Live conversation — the microphone is streaming. Tap the mic to stop.":"The microphone streams only while the mic button is on.";
+  if(state.vendorClient){setVendorMic(on);}
+  else if(on){if(!startLocalConversation())return toggleConversation(false);}
+  else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}
+  setStatus(on?"listening":"ready");
+}
+$("btn-voice").onclick=()=>toggleConversation(!state.conversation);
 /* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
    spec's "avatar video" slot (the one moving element of the stage); prefers-reduced-motion is
    honoured via CSS, and the whole group is replaced by the vendor's video when one is attached. */
