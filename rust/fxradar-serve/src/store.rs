@@ -73,6 +73,19 @@ pub struct Webhook {
     pub created_at: String,
 }
 
+/// One avatar Q/A row (phase 35).
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct Transcript {
+    pub id: i64,
+    pub ts: String,
+    pub session_id: String,
+    pub question: String,
+    pub answer: String,
+    pub source: String,
+    pub gate: String,
+    pub latency_ms: i64,
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
     #[error("sqlite error: {0}")]
@@ -163,6 +176,27 @@ CREATE TABLE IF NOT EXISTS last_alerted (
   value      TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   PRIMARY KEY (key_hash, pair, trigger)
+);
+CREATE TABLE IF NOT EXISTS avatar_transcripts (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts         TEXT NOT NULL,
+  session_id TEXT NOT NULL,
+  question   TEXT NOT NULL,
+  answer     TEXT NOT NULL,
+  source     TEXT NOT NULL,
+  gate       TEXT NOT NULL,
+  latency_ms INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS avatar_usage (
+  month      TEXT PRIMARY KEY,
+  sessions   INTEGER NOT NULL DEFAULT 0,
+  minutes    REAL NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS avatar_sessions (
+  token      TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL,
+  created_ts INTEGER NOT NULL,
+  expires_ts INTEGER NOT NULL
 );
 "#;
 
@@ -364,6 +398,133 @@ impl Store {
         })
     }
 
+    // ---- avatar (phase 35): transcripts, monthly usage caps, short-lived session tokens ------
+
+    /// Log one gated Q/A (weekly human review is a standing ops task; never used for anything
+    /// else — see docs/PRIVACY.md).
+    pub fn add_transcript(
+        &self,
+        session_id: &str,
+        question: &str,
+        answer: &str,
+        source: &str,
+        gate: &str,
+        latency_ms: i64,
+    ) -> StoreResult<i64> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO avatar_transcripts (ts, session_id, question, answer, source, gate, latency_ms)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                params![now_iso(), session_id, question, answer, source, gate, latency_ms],
+            )?;
+            Ok(c.last_insert_rowid())
+        })
+    }
+
+    /// Newest transcripts first.
+    pub fn recent_transcripts(&self, limit: i64) -> StoreResult<Vec<Transcript>> {
+        self.with(|c| {
+            let mut st = c.prepare(
+                "SELECT id, ts, session_id, question, answer, source, gate, latency_ms
+                 FROM avatar_transcripts ORDER BY id DESC LIMIT ?1",
+            )?;
+            let rows = st.query_map(params![limit], |r| {
+                Ok(Transcript {
+                    id: r.get(0)?,
+                    ts: r.get(1)?,
+                    session_id: r.get(2)?,
+                    question: r.get(3)?,
+                    answer: r.get(4)?,
+                    source: r.get(5)?,
+                    gate: r.get(6)?,
+                    latency_ms: r.get(7)?,
+                })
+            })?;
+            rows.collect()
+        })
+    }
+
+    /// (sessions, minutes) consumed in a "YYYY-MM" month; (0, 0.0) if unseen.
+    pub fn avatar_usage(&self, month: &str) -> StoreResult<(i64, f64)> {
+        self.with(|c| {
+            c.query_row(
+                "SELECT sessions, minutes FROM avatar_usage WHERE month = ?1",
+                params![month],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional()
+            .map(|v| v.unwrap_or((0, 0.0)))
+        })
+    }
+
+    pub fn add_avatar_session_count(&self, month: &str) -> StoreResult<()> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO avatar_usage (month, sessions, minutes) VALUES (?1, 1, 0)
+                 ON CONFLICT(month) DO UPDATE SET sessions = sessions + 1",
+                params![month],
+            )
+        })?;
+        Ok(())
+    }
+
+    pub fn add_avatar_minutes(&self, month: &str, minutes: f64) -> StoreResult<()> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO avatar_usage (month, sessions, minutes) VALUES (?1, 0, ?2)
+                 ON CONFLICT(month) DO UPDATE SET minutes = minutes + excluded.minutes",
+                params![month, minutes],
+            )
+        })?;
+        Ok(())
+    }
+
+    /// Mint a short-lived avatar session token (32 hex chars) and prune expired rows.
+    pub fn create_avatar_session(&self, session_id: &str, ttl_secs: u64) -> StoreResult<String> {
+        let mut buf = [0u8; 16];
+        rand::thread_rng().fill_bytes(&mut buf);
+        let token = hex::encode(buf);
+        let now = now_unix();
+        self.insert_avatar_session(&token, session_id, now, now + ttl_secs)?;
+        self.with(|c| {
+            c.execute(
+                "DELETE FROM avatar_sessions WHERE expires_ts < ?1",
+                params![now],
+            )
+        })?;
+        Ok(token)
+    }
+
+    /// Raw insert (also used by tests to plant an expired session).
+    pub fn insert_avatar_session(
+        &self,
+        token: &str,
+        session_id: &str,
+        created_ts: u64,
+        expires_ts: u64,
+    ) -> StoreResult<()> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO avatar_sessions (token, session_id, created_ts, expires_ts) VALUES (?1, ?2, ?3, ?4)",
+                params![token, session_id, created_ts as i64, expires_ts as i64],
+            )
+        })?;
+        Ok(())
+    }
+
+    /// True iff the token exists and has not expired at `now`.
+    pub fn avatar_session_valid(&self, token: &str, now: u64) -> StoreResult<bool> {
+        self.with(|c| {
+            c.query_row(
+                "SELECT expires_ts FROM avatar_sessions WHERE token = ?1",
+                params![token],
+                |r| r.get::<_, i64>(0),
+            )
+            .optional()
+        })
+        .map(|v| v.map(|exp| exp >= now as i64).unwrap_or(false))
+    }
+
     pub fn set_last_alerted(
         &self,
         key_hash: &str,
@@ -475,6 +636,47 @@ mod tests {
                 .as_deref(),
             Some("chop")
         );
+    }
+
+    #[test]
+    fn avatar_transcripts_usage_and_sessions() {
+        let s = Store::open_in_memory().unwrap();
+        // transcripts
+        let id = s
+            .add_transcript(
+                "sess1",
+                "what is the siren?",
+                "An answer.",
+                "template",
+                "pass",
+                3,
+            )
+            .unwrap();
+        assert!(id > 0);
+        let rows = s.recent_transcripts(10).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].question, "what is the siren?");
+        assert_eq!(rows[0].gate, "pass");
+        // usage upserts
+        assert_eq!(s.avatar_usage("2026-08").unwrap(), (0, 0.0));
+        s.add_avatar_session_count("2026-08").unwrap();
+        s.add_avatar_session_count("2026-08").unwrap();
+        s.add_avatar_minutes("2026-08", 1.5).unwrap();
+        let (n, m) = s.avatar_usage("2026-08").unwrap();
+        assert_eq!(n, 2);
+        assert!((m - 1.5).abs() < 1e-12);
+        // session tokens: mint, validate, expire, prune
+        let now = now_unix();
+        let tok = s.create_avatar_session("sess1", 1800).unwrap();
+        assert_eq!(tok.len(), 32);
+        assert!(s.avatar_session_valid(&tok, now).unwrap());
+        assert!(!s.avatar_session_valid("nope", now).unwrap());
+        s.insert_avatar_session("deadbeef", "old", now - 100, now - 1)
+            .unwrap();
+        assert!(!s.avatar_session_valid("deadbeef", now).unwrap());
+        // a later mint prunes the expired row
+        let _ = s.create_avatar_session("sess2", 1800).unwrap();
+        assert!(!s.avatar_session_valid("deadbeef", now).unwrap());
     }
 
     #[test]

@@ -4,6 +4,7 @@
 //! on the background queue in [`crate::alerts`]). The start-up gate stays in `bin/serve.rs`.
 
 use crate::alerts;
+use crate::avatar;
 use crate::features::PairWindow;
 use crate::metrics as m;
 use crate::ratelimit::RateLimiter;
@@ -88,8 +89,11 @@ pub struct AppState {
     pub git_commit: String,
     /// From env STRIPE_WEBHOOK_SECRET; never logged.
     pub stripe_secret: Option<String>,
+    /// Avatar layer config (phase 35). Defaults to disabled; set via [`AppState::with_avatar`].
+    pub avatar: avatar::AvatarCfg,
     touched: Arc<Mutex<HashMap<String, Instant>>>,
     regimes_cache: Arc<Mutex<Option<RegimesCache>>>,
+    avatar_pack_cache: Arc<Mutex<Option<avatar::PackCache>>>,
 }
 
 /// Newest-row-per-pair view of regimes.parquet, re-read only when the file changes (the pipeline
@@ -131,9 +135,43 @@ impl AppState {
             bundle_version,
             git_commit,
             stripe_secret,
+            avatar: avatar::AvatarCfg::default(),
             touched: Arc::new(Mutex::new(HashMap::new())),
             regimes_cache: Arc::new(Mutex::new(None)),
+            avatar_pack_cache: Arc::new(Mutex::new(None)),
         }
+    }
+
+    /// Attach the avatar configuration (builder-style, so `new`'s signature stays stable).
+    pub fn with_avatar(mut self, cfg: avatar::AvatarCfg) -> AppState {
+        self.avatar = cfg;
+        self
+    }
+
+    /// The avatar context pack, reloaded from `<data_dir>/avatar_context.json` on mtime change
+    /// (same pattern as the regimes cache). Errors map to 503 in the handlers.
+    pub fn avatar_pack(&self) -> Result<Arc<avatar::Pack>, String> {
+        let path = self.data_dir.join("avatar_context.json");
+        let meta =
+            std::fs::metadata(&path).map_err(|e| format!("avatar context pack missing: {e}"))?;
+        let modified = meta.modified().unwrap_or(std::time::UNIX_EPOCH);
+        let len = meta.len();
+        if let Ok(guard) = self.avatar_pack_cache.lock() {
+            if let Some(c) = guard.as_ref() {
+                if c.modified == modified && c.len == len {
+                    return Ok(Arc::clone(&c.pack));
+                }
+            }
+        }
+        let pack = Arc::new(avatar::load_pack(&path)?);
+        if let Ok(mut guard) = self.avatar_pack_cache.lock() {
+            *guard = Some(avatar::PackCache {
+                modified,
+                len,
+                pack: Arc::clone(&pack),
+            });
+        }
+        Ok(pack)
     }
 
     /// Latest regimes rows, served from the mtime-keyed cache.
@@ -418,6 +456,12 @@ pub async fn widget_js() -> Response {
 /// Demo page embedding the widget three times.
 #[utoipa::path(get, path = "/widget", tag = "public",
     responses((status = 200, description = "text/html", body = String)))]
+pub async fn avatar_page() -> Html<&'static str> {
+    Html(include_str!("../static/avatar.html"))
+}
+
+#[utoipa::path(get, path = "/widget", tag = "public",
+    responses((status = 200, description = "Demo page embedding the widget")))]
 pub async fn widget_demo() -> Html<&'static str> {
     Html(WIDGET_HTML)
 }
@@ -774,12 +818,17 @@ take `X-API-Key` (tier pro or partner). Educational tool. Not investment advice.
         license(name = "MIT")
     ),
     paths(health, regimes, metrics_handler, widget_js, widget_demo, score, treasury_handler,
-          webhooks_create, webhooks_list, webhooks_delete, stripe_webhook),
+          webhooks_create, webhooks_list, webhooks_delete, stripe_webhook,
+          avatar::brain, avatar::greeting, avatar::session_token, avatar::heartbeat),
     components(schemas(ApiErrorBody, ScoreRequest, ScoreResponse, ScoredRowJson, PairWindow,
-        WebhookCreate, WebhookCreated, WebhookInfo, StripeAck, SelftestStatus)),
+        WebhookCreate, WebhookCreated, WebhookInfo, StripeAck, SelftestStatus,
+        avatar::BrainRequest, avatar::BrainMessage, avatar::BrainResponse,
+        avatar::SessionTokenRequest, avatar::HeartbeatRequest)),
     modifiers(&SecurityAddon),
     tags((name = "public", description = "No key needed"),
-         (name = "keyed", description = "X-API-Key with tier pro or partner"))
+         (name = "keyed", description = "X-API-Key with tier pro or partner"),
+         (name = "avatar", description = "AI presenter (feature-flagged; 503 while FXRADAR_AVATAR is off). \
+/avatar/brain and /avatar/heartbeat take X-Avatar-Token; /avatar/session-token takes X-API-Key"))
 )]
 pub struct ApiDoc;
 
@@ -802,9 +851,23 @@ pub fn build_router(state: AppState) -> Router {
         .route("/api/webhooks", post(webhooks_create).get(webhooks_list))
         .route("/api/webhooks/{id}", delete(webhooks_delete))
         .route_layer(middleware::from_fn_with_state(state.clone(), auth_paid));
+    // Avatar routes (phase 35), all behind the feature flag (503 when off). Auth is per-route:
+    // brain/heartbeat check X-Avatar-Token, session-token checks X-API-Key in-handler (so the
+    // DEV flag can waive it for the "local" vendor only), greeting is public while the flag is on.
+    let avatar_routes = Router::new()
+        .route("/avatar", get(avatar_page))
+        .route("/avatar/greeting", get(avatar::greeting))
+        .route("/avatar/brain", post(avatar::brain))
+        .route("/avatar/session-token", post(avatar::session_token))
+        .route("/avatar/heartbeat", post(avatar::heartbeat))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            avatar::require_enabled,
+        ));
     Router::new()
         .merge(public)
         .merge(keyed)
+        .merge(avatar_routes)
         .merge(SwaggerUi::new("/docs").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .layer(middleware::from_fn(track_metrics))
         .layer(TraceLayer::new_for_http())

@@ -391,6 +391,23 @@ The five numbers investors ask about, auto-filled where possible and honest zero
 
 _Zeros are real zeros — updated 2026-08-19T14:02:25Z by `make metrics`._
 
+## The AI presenter — grounded, gated, disclosed
+
+Ask the radar a question and a computer-generated presenter answers — from today's published
+numbers and a fixed methodology FAQ, and from nothing else. The brand law survives by relocating:
+instead of pre-approving scripts, **every generated sentence passes two hard gates before any
+audio** — the rule-5 direction-word lint, and a *numeric-grounding* check against the closed set of
+numbers the pipeline published today (`allowed_numbers` in `data/avatar_context.json`); a number
+not in the pack cannot be spoken, one corrective regeneration, then a branded refusal. Direction
+and advice questions short-circuit to refusals that say what the radar *can* tell you. The first
+sentence of every session is the disclosure ("I am the radar's AI presenter — an AI, not a
+person"), and the widget carries a permanent "AI presenter · risk information, not investment
+advice" caption. Off by default (`FXRADAR_AVATAR=on`); faces render in the vendor cloud (Anam
+BYO-LLM primary, HeyGen fallback) or, keyless, the regime-coloured presenter disc + browser voice —
+fully real-time with zero external services. Transcripts are logged and human-reviewed weekly; the
+Proof page stays presenter-free on purpose. Setup and policy: [docs/AVATAR.md](docs/AVATAR.md);
+the presenter's entire knowledge: [docs/avatar_knowledge.md](docs/avatar_knowledge.md).
+
 ## Pricing & design partners
 
 Free: weekly report + public widget · Pro CHF 79/month: alerts, Treasury mode, monthly PDF ·

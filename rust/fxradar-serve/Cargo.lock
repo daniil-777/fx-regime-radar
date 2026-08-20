@@ -699,6 +699,7 @@ dependencies = [
  "ort",
  "parquet",
  "rand 0.8.7",
+ "regex",
  "reqwest",
  "rusqlite",
  "serde",

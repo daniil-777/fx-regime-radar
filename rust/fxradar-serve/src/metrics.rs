@@ -29,6 +29,14 @@ pub fn handle() -> &'static PrometheusHandle {
                     ],
                 )
             })
+            .and_then(|b| {
+                b.set_buckets_for_metric(
+                    Matcher::Full("avatar_brain_latency_seconds".into()),
+                    &[
+                        0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0,
+                    ],
+                )
+            })
             .unwrap_or_else(|_| PrometheusBuilder::new());
         match builder.install_recorder() {
             Ok(h) => h,
@@ -68,4 +76,35 @@ pub fn alert_delivery(outcome: &str) {
 
 pub fn alert_poll(outcome: &str) {
     metrics::counter!("alert_poll_total", "outcome" => outcome.to_string()).increment(1);
+}
+
+// ---- avatar (phase 35) ----------------------------------------------------------------------
+
+/// source ∈ {"llm", "template", "refusal"}
+pub fn avatar_request(source: &str) {
+    metrics::counter!("avatar_requests_total", "source" => source.to_string()).increment(1);
+}
+
+/// kind ∈ {"direction", "advice", "off_topic", "not_in_pack"}
+pub fn avatar_refusal(kind: &str) {
+    metrics::counter!("avatar_refusals_total", "kind" => kind.to_string()).increment(1);
+}
+
+/// gate ∈ {"direction", "grounding"}
+pub fn avatar_lint_rejection(gate: &str) {
+    metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);
+}
+
+pub fn avatar_brain_latency(seconds: f64) {
+    metrics::histogram!("avatar_brain_latency_seconds").record(seconds);
+}
+
+pub fn avatar_session() {
+    metrics::counter!("avatar_sessions_total").increment(1);
+}
+
+/// Monotone-increasing total of avatar minutes. A gauge because the metrics crate's counters are
+/// integer-only and minutes are fractional; it is only ever incremented.
+pub fn avatar_minutes(minutes: f64) {
+    metrics::gauge!("avatar_minutes_total").increment(minutes);
 }

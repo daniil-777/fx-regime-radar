@@ -154,3 +154,20 @@ target/release/keys --db data/keys.db issue --label first --tier pro
 ```
 Flags / env: `--keys-db` (`FXRADAR_KEYS_DB`), `--rate-limit-per-min` (`FXRADAR_RATE_LIMIT_PER_MIN`),
 `--alert-poll-secs` (`FXRADAR_ALERT_POLL_SECS`, 0 disables alerts), `STRIPE_WEBHOOK_SECRET` (env only).
+
+## Avatar (phase 35 — behind `FXRADAR_AVATAR=on`, else every route is 503)
+
+| route | auth | what |
+|---|---|---|
+| `GET /avatar` | public | the presenter widget page (tokens-only palette) |
+| `GET /avatar/greeting` | public | today's pre-gated greeting (disclosure first) + data-through |
+| `POST /avatar/brain` | `X-Avatar-Token` (vendor env token or a live session token) | `{session_id, messages[]}` → `{text, source: llm\|template\|refusal, gate: pass\|refused:<kind>\|regenerated\|blocked, numbers[], latency_ms}`; topic guard → direction lint → numeric grounding, one corrective regeneration, then the branded refusal |
+| `POST /avatar/session-token` | `X-API-Key` (pro/partner; `FXRADAR_AVATAR_DEV=1` waives it for vendor `local` only) | `{vendor: local\|anam\|heygen}` → short-lived token; 429 over the monthly session/minute caps |
+| `POST /avatar/heartbeat` | `X-Avatar-Token` | `{session_id, seconds}` accumulates minutes toward the cap |
+
+Env: `FXRADAR_AVATAR`, `FXRADAR_AVATAR_BRAIN_TOKEN`, `FXRADAR_AVATAR_VENDOR`,
+`FXRADAR_AVATAR_MAX_SESSIONS_MONTH` (300), `FXRADAR_AVATAR_MAX_MINUTES_MONTH` (600),
+`ANTHROPIC_API_KEY` (optional — keyless falls back to the gated FAQ), `ANAM_API_KEY` /
+`HEYGEN_API_KEY`. Policy + latency budget: docs/AVATAR.md. Metrics: `avatar_requests_total`,
+`avatar_refusals_total`, `avatar_lint_rejections_total`, `avatar_sessions_total`,
+`avatar_minutes_total`, `avatar_brain_latency_seconds`.

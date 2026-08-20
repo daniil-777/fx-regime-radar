@@ -27,6 +27,7 @@ import pandas as pd
 from fxradar import (
     advisor,
     arcade,
+    avatar_context,
     bocpd,
     cb_features,
     challenger,
@@ -283,6 +284,9 @@ register(
     "advisor", stage_advisor
 )  # stability / durability / risk budgets from the finished numbers
 register("treasury", fx_only(treasury.stage))  # phase 25: regime-conditional VaR/ES + traffic light
+register(
+    "avatar", avatar_context.stage
+)  # phase 35: the presenter's daily mind → avatar_context.json
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

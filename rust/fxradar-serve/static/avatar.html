@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the radar — AI presenter</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* palette = design/tokens.json verbatim (tested against it); no other colours exist on this page */
+:root{
+  --nimbus:#0E1420; --front:#151D2E; --line:rgba(255,255,255,0.08); --grid:rgba(255,255,255,0.06);
+  --tx1:#E8ECF4; --tx2:#9AA6B8; --tx3:#7B89A1;
+  --calm:#3ECF8E; --trend:#4DA3FF; --chop:#F5B942; --crisis:#FF5C5C; --beacon:#7FD1C9;
+  --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --disp:'Space Grotesk',var(--sans);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size:15px;line-height:1.55;
+  display:flex;justify-content:center;padding:18px}
+.wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--front);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.head{display:flex;align-items:baseline;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+.head .t{font-family:var(--disp);font-weight:500;letter-spacing:0.03em}
+.head .s{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+/* the face: vendor <video> when connected, else the presenter disc (regime colour, one pulse) */
+.stage{position:relative;aspect-ratio:16/10;background:var(--nimbus);display:flex;align-items:center;justify-content:center}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.disc{width:132px;height:132px;border-radius:50%;border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;background:var(--front)}
+.disc i{width:64px;height:64px;border-radius:50%;display:block;background:var(--calm);opacity:0.9}
+.pulse{animation:lp 2.4s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:0.9}50%{opacity:0.35}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+.status{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:11.5px;color:var(--tx2);
+  display:flex;align-items:center;gap:7px}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--calm);display:inline-block}
+/* the non-dismissible disclosure bar */
+.caption{background:var(--nimbus);border-top:1px solid var(--line);padding:8px 16px;
+  font-family:var(--mono);font-size:11.5px;color:var(--beacon);letter-spacing:0.02em}
+/* transcript */
+.log{display:flex;flex-direction:column;gap:8px;padding:14px 16px;min-height:120px;max-height:44vh;overflow-y:auto}
+.msg{max-width:92%;padding:8px 12px;border-radius:10px;font-size:14px}
+.msg.user{align-self:flex-end;background:var(--nimbus);border:1px solid var(--line);color:var(--tx2)}
+.msg.avatar{align-self:flex-start;background:var(--nimbus);border:1px solid var(--line)}
+.msg .meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px}
+.msg .meta .ok{color:var(--calm)} .msg .meta .ref{color:var(--chop)}
+.chip{font-family:var(--mono);font-variant-numeric:tabular-nums;background:var(--front);
+  border:1px solid var(--line);border-radius:5px;padding:0 4px;color:var(--beacon);font-size:13px}
+/* controls */
+.controls{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+input[type=text]{flex:1;background:var(--nimbus);border:1px solid var(--line);border-radius:8px;
+  color:var(--tx1);font-family:var(--sans);font-size:14px;padding:9px 12px;outline:none}
+input[type=text]:focus{border-color:var(--beacon)}
+button{background:var(--nimbus);border:1px solid var(--line);border-radius:999px;color:var(--tx1);
+  font-family:var(--sans);font-size:14px;font-weight:500;padding:9px 16px;cursor:pointer}
+button:hover{border-color:var(--beacon);color:var(--beacon)}
+button:focus-visible{outline:2px solid var(--beacon);outline-offset:2px}
+button:disabled{color:var(--tx3);cursor:default}
+button.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon)}
+.start{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 16px;text-align:center}
+.start p{color:var(--tx2);font-size:13.5px;max-width:400px}
+.privacy{font-size:11px;color:var(--tx3);padding:0 16px 12px 16px}
+.privacy a{color:var(--beacon);text-decoration:none}
+@media (max-width:400px){body{padding:8px}.stage{aspect-ratio:16/11}.msg{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="head"><span class="t">Ask the radar</span><span class="s" id="through">—</span></div>
+    <div class="stage">
+      <video id="video" autoplay playsinline></video>
+      <div class="disc" id="disc"><i id="disc-core"></i></div>
+      <div class="status"><span class="dot pulse" id="live"></span><span id="status">ready</span></div>
+    </div>
+    <div class="caption">AI presenter · risk information, not investment advice</div>
+    <div class="start" id="start">
+      <p>A computer-generated presenter that answers only from the radar's published numbers.
+         Nothing plays until you start — no autoplay, no sound without your click.</p>
+      <button id="btn-start">Start session</button>
+    </div>
+    <div id="session" style="display:none">
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="controls">
+        <button class="talk" id="btn-talk" aria-pressed="false" title="hold to talk">🎙 talk</button>
+        <input type="text" id="q" placeholder="Type a question — e.g. what is the siren?" autocomplete="off">
+        <button id="btn-send">Ask</button>
+      </div>
+      <div class="privacy">Conversations are logged and reviewed weekly by a human to keep the
+        presenter honest; transcripts are used for nothing else. <a href="/docs" target="_blank">API docs</a></div>
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+/* Local-first face: without a vendor key the presenter is the regime-coloured disc + browser TTS —
+   fully real-time, zero external services. With FXRADAR_AVATAR_VENDOR=anam|heygen the session token
+   endpoint returns vendor credentials and the vendor SDK attaches its WebRTC stream to <video>
+   (adapter below; the SDK script is added at deploy time, never in this repo). */
+const $=id=>document.getElementById(id);
+const state={token:null,session:null,speaking:false,greeted:false};
+const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
+function setStatus(s){$("status").textContent=s;}
+function chipify(text){
+  return text.replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/\d+(?:\.\d+)?/g,m=>'<span class="chip">'+m+"</span>");
+}
+function addMsg(role,text,meta){
+  const d=document.createElement("div");d.className="msg "+role;
+  d.innerHTML=chipify(text)+(meta?'<div class="meta">'+meta+"</div>":"");
+  $("log").appendChild(d);$("log").scrollTop=$("log").scrollHeight;
+}
+function speak(text){
+  return new Promise(res=>{
+    if(!("speechSynthesis" in window)){setStatus("listening");res();return;}
+    const u=new SpeechSynthesisUtterance(text.replace(/[—·]/g,","));
+    u.rate=1.02;
+    let settled=false;
+    const done=()=>{if(settled)return;settled=true;state.speaking=false;setStatus("listening");res();};
+    u.onend=done;u.onerror=done;
+    state.speaking=true;setStatus("speaking");speechSynthesis.speak(u);
+    setTimeout(done,1500+65*text.length);  // belt and braces: never let a TTS stall lock the input
+  });
+}
+async function api(path,opts){
+  const r=await fetch(path,opts);
+  if(!r.ok){throw new Error((await r.json().catch(()=>({}))).error||("HTTP "+r.status));}
+  return r.json();
+}
+async function startSession(){
+  $("btn-start").disabled=true;setStatus("connecting");
+  try{
+    const tok=await api("/avatar/session-token",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({vendor:null})});
+    state.token=tok.token;state.session=tok.session_id||String(Date.now());
+    if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
+      await window.FXAvatarVendor.attach(tok,$("video"));$("video").style.display="block";$("disc").style.display="none";
+    }
+    const g=await api("/avatar/greeting");
+    $("through").textContent="data through "+g.data_through;
+    $("start").style.display="none";$("session").style.display="block";
+    addMsg("avatar",g.text,'template · <span class="ok">gate pass</span>');
+    await speak(g.text);state.greeted=true;
+  }catch(e){setStatus("unavailable");addToStart(e.message);}
+}
+function addToStart(msg){
+  const p=document.createElement("p");
+  p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
+  p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
+}
+async function ask(question){
+  if(!question.trim()||state.speaking)return;
+  addMsg("user",question);$("q").value="";setStatus("thinking");
+  const t0=performance.now();
+  try{
+    const r=await api("/avatar/brain",{method:"POST",
+      headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
+      body:JSON.stringify({session_id:state.session,messages:[{role:"user",content:question}]})});
+    const ms=Math.round(performance.now()-t0);
+    const gate=r.gate==="pass"?'<span class="ok">gate pass</span>':'<span class="ref">'+r.gate+"</span>";
+    addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
+    await speak(r.text);
+  }catch(e){setStatus("error");addMsg("avatar","The brain endpoint is not reachable: "+e.message);}
+}
+$("btn-start").onclick=startSession;
+$("btn-send").onclick=()=>ask($("q").value);
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")ask($("q").value);});
+/* press-to-talk via the browser recognizer where it exists; the text input is the always-there path */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){
+  const rec=new SR();rec.lang="en-US";rec.interimResults=false;
+  let holding=false;
+  const down=()=>{if(state.speaking)return;holding=true;$("btn-talk").setAttribute("aria-pressed","true");setStatus("listening");rec.start();};
+  const up=()=>{if(!holding)return;holding=false;$("btn-talk").setAttribute("aria-pressed","false");try{rec.stop();}catch(_){}};
+  $("btn-talk").addEventListener("mousedown",down);$("btn-talk").addEventListener("touchstart",down);
+  $("btn-talk").addEventListener("mouseup",up);$("btn-talk").addEventListener("mouseleave",up);$("btn-talk").addEventListener("touchend",up);
+  rec.onresult=e=>{const q=e.results[0][0].transcript;ask(q);};
+  rec.onerror=()=>{setStatus("ready");};
+}else{$("btn-talk").style.display="none";}
+/* the disc wears today's lead regime colour once the greeting arrives */
+fetch("/avatar/greeting").then(r=>r.ok?r.json():null).then(g=>{
+  if(!g)return;
+  const m=(g.text.match(/is (calm|trend|chop|crisis)/)||[])[1];
+  if(m)$("disc-core").style.background=REGIME_COLORS[m];
+}).catch(()=>{});
+</script>
+</body>
+</html>

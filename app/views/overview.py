@@ -199,9 +199,16 @@ if trace:
     )
 
 # --------------------------------------------------------------------------------------
-# signature 2: the trust strip (never below the fold)
+# signature 2: the trust strip (never below the fold) + the one restrained presenter chip
 # --------------------------------------------------------------------------------------
 ui.trust_strip(DATA_DIR)
+if (config.ROOT / "data" / "avatar_context.json").exists() and not time_machine:
+    st.markdown(
+        f'<div style="margin:-6px 0 10px 0"><span class="fx-pill" style="font-size:0.7rem;padding:3px 10px;'
+        f'color:{ui.ACCENT};background:{ui.alpha(ui.ACCENT, 0.1)};border:1px solid {ui.alpha(ui.ACCENT, 0.3)}">'
+        "Ask the radar · AI presenter — see Briefing</span></div>",
+        unsafe_allow_html=True,
+    )
 
 # --------------------------------------------------------------------------------------
 # the three decisions: next scheduled storm · treasury light · interval coverage

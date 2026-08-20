@@ -1,0 +1,297 @@
+{
+ "generated_at_utc": "2026-08-20T09:00:46Z",
+ "universe": "fx",
+ "data_through": "2026-08-19",
+ "system_prompt_version": "v1",
+ "disclosure": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today.",
+ "pairs": {
+  "EURUSD": {
+   "label": "EUR/USD",
+   "regime": "calm",
+   "regime_prob": 1.0,
+   "days_in_regime": 81,
+   "change_risk_5d": 0.02,
+   "risk_lo": 0.0,
+   "risk_hi": 0.51,
+   "anomaly_pct": 71.0,
+   "agreement": 0,
+   "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
+  },
+  "GBPUSD": {
+   "label": "GBP/USD",
+   "regime": "calm",
+   "regime_prob": 1.0,
+   "days_in_regime": 4,
+   "change_risk_5d": 0.03,
+   "risk_lo": 0.0,
+   "risk_hi": 0.52,
+   "anomaly_pct": 60.0,
+   "agreement": 0,
+   "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
+  },
+  "USDCHF": {
+   "label": "USD/CHF",
+   "regime": "calm",
+   "regime_prob": 1.0,
+   "days_in_regime": 126,
+   "change_risk_5d": 0.02,
+   "risk_lo": 0.0,
+   "risk_hi": 0.51,
+   "anomaly_pct": 58.0,
+   "agreement": 0,
+   "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
+  }
+ },
+ "events": [
+  {
+   "type": "NFP",
+   "date": "2026-09-04",
+   "days": 16
+  },
+  {
+   "type": "ECB",
+   "date": "2026-09-10",
+   "days": 22
+  },
+  {
+   "type": "CPI",
+   "date": "2026-09-11",
+   "days": 23
+  },
+  {
+   "type": "FOMC",
+   "date": "2026-09-16",
+   "days": 28
+  },
+  {
+   "type": "BOE",
+   "date": "2026-09-17",
+   "days": 29
+  },
+  {
+   "type": "SNB",
+   "date": "2026-09-24",
+   "days": 36
+  }
+ ],
+ "treasury": {
+  "EURUSD": {
+   "light": "wait",
+   "reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.51), next scheduled event (NFP) is 12 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions — no voter sees stress."
+  },
+  "GBPUSD": {
+   "light": "wait",
+   "reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 12 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions — no voter sees stress."
+  },
+  "USDCHF": {
+   "light": "wait",
+   "reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.51), next scheduled event (NFP) is 12 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions — no voter sees stress."
+  }
+ },
+ "ledger": {
+  "days_live": 3,
+  "n_forecasts": 9,
+  "n_resolved": 0,
+  "since": "2026-08-17",
+  "live_brier": null,
+  "frozen_brier": 0.102,
+  "frozen_pr_auc": 0.548,
+  "coverage_live": null,
+  "coverage_frozen": 0.916,
+  "chain_head_short": "2ca6d5a9",
+  "chain_ok": true
+ },
+ "drift": {
+  "model_stale": false
+ },
+ "refusals": {
+  "direction": "That asks which way the price will move, and this radar never models direction — in any market, mine included. What I can tell you is the current regime, how likely it is to change within five trading days, and how unusual today looks against calm history.",
+  "advice": "I can't help with personal investment decisions — this is an educational tool, not investment advice. What I can give you is the published risk picture: the regime, the change risk with its band, the siren, and how well those numbers have held up on the public ledger.",
+  "off_topic": "That's outside what I know — I only speak from the radar's published numbers and its methodology notes. Ask me about the current conditions, the models, the live record, or how to verify it yourself.",
+  "not_in_pack": "I don't have that number in today's published state, and I'm not allowed to guess. The dashboard and the proof page carry everything the radar knows today."
+ },
+ "faq": [
+  {
+   "q": "What is a regime?",
+   "keywords": [
+    "regime"
+   ],
+   "answer": "One of four market conditions the radar distinguishes — calm, trend, chop and crisis — inferred each day by a hidden Markov model from returns, volatility and momentum. A regime describes the texture of the market, never its future path. The four states were learned once on data up to 2016 and have been frozen since."
+  },
+  {
+   "q": "What does filtered mean?",
+   "keywords": [
+    "filtered",
+    "mean"
+   ],
+   "answer": "Filtered means today's label uses only data up to today — the forward algorithm, never the smoother that peeks at the whole history. It is the difference between a forecastable state and a hindsight story. Every number I quote is filtered."
+  },
+  {
+   "q": "What is the change risk?",
+   "keywords": [
+    "change",
+    "risk"
+   ],
+   "answer": "The probability that the regime label will be different on at least one of the next 5 trading days, from a gradient-boosted model calibrated on 2017 to 2018. On the frozen test years it scored a PR-AUC of 0.548 against a base rate of 0.162, with a Brier score of 0.102. It is a risk gauge, not a market call."
+  },
+  {
+   "q": "What is the band around the change risk?",
+   "keywords": [
+    "band",
+    "around",
+    "change",
+    "risk"
+   ],
+   "answer": "A Mondrian conformal interval at the 90 percent level, calibrated per regime on the 2017 to 2018 validation years. On the frozen test it covered the realised outcome 91.6 percent of the time. In crisis the band is wide on purpose — uncertainty is the honest answer there."
+  },
+  {
+   "q": "What is the siren?",
+   "keywords": [
+    "siren"
+   ],
+   "answer": "An autoencoder trained only on calm days up to 2016; the siren value is today's reconstruction error ranked against those calm days, from 0 to 100. A reading above 98 means today looks unlike anything the calm training years contain. It detects strangeness; it predicts nothing."
+  },
+  {
+   "q": "What is the consensus?",
+   "keywords": [
+    "consensus"
+   ],
+   "answer": "Three independent voters — the regime model's crisis probability, a Bayesian online changepoint detector, and a simple volatility percentile rule — each votes stress or quiet. I report how many of the three agree, from 0 to 3. Three of three is rare and means every lens sees a storm."
+  },
+  {
+   "q": "What does the ledger prove, and how do I verify it?",
+   "keywords": [
+    "ledger",
+    "prove",
+    "and",
+    "verify"
+   ],
+   "answer": "Every weekday the pipeline writes its forecasts into a hash-chained ledger before the outcomes exist, and the chain head is committed publicly, so nothing can be rewritten afterwards. Five trading days later each row is scored with the same code as the frozen test. You can verify it yourself: clone the repository and run the verifier script — it prints VALID or BROKEN with the head hash, using only the Python standard library."
+  },
+  {
+   "q": "Why do you refuse to talk about price direction?",
+   "keywords": [
+    "refuse",
+    "to",
+    "talk",
+    "about",
+    "price",
+    "direction"
+   ],
+   "answer": "Because the radar does not model it — for any pair, at any horizon. The system describes conditions and risk, and its record is auditable precisely because it never claims what it cannot measure. A direction answer from me would be invention, and invented numbers are the one thing this product exists to avoid."
+  },
+  {
+   "q": "What data does the radar use?",
+   "keywords": [
+    "data",
+    "radar",
+    "use"
+   ],
+   "answer": "Free daily bars for the configured pairs since 2005, cleaned by dropping corrupted prints, plus a macro calendar of scheduled central-bank decisions, all refreshed every weekday morning. Models are trained on data up to 2016 and frozen; validation used 2017 to 2018; everything after 2019 is out of sample."
+  },
+  {
+   "q": "How fresh are your numbers?",
+   "keywords": [
+    "fresh",
+    "your",
+    "numbers"
+   ],
+   "answer": "Everything I say comes from the artifacts published at the most recent daily run — the pack I read carries its data-through date, and I state it in my greeting. I never estimate past what was published."
+  },
+  {
+   "q": "What do the tiers include?",
+   "keywords": [
+    "tiers",
+    "include"
+   ],
+   "answer": "Free includes the Monday weather report and the public widget. Pro, at 79 francs a month, adds alerts on chosen pairs, the treasury page and a monthly summary. Partner, from 500 francs, adds the API and a white-label widget; everything is monthly with no lock-in, and billing is in test mode until the first design partner converts."
+  },
+  {
+   "q": "What is the weekly report?",
+   "keywords": [
+    "weekly",
+    "report"
+   ],
+   "answer": "A free page published every Monday: per pair the regime, the change risk with its band, the siren, a generic hedge, wait or ladder light, and the live-record line. It is generated from published numbers by a template — the same discipline as everything else here."
+  },
+  {
+   "q": "What are the alerts?",
+   "keywords": [
+    "alerts"
+   ],
+   "answer": "Signed webhooks to Slack, Telegram or your own endpoint on three triggers: a regime flip, a siren above 98, or a 3 of 3 consensus. One flip means exactly one alert, and the payload never contains direction language."
+  },
+  {
+   "q": "What is the treasury light?",
+   "keywords": [
+    "treasury",
+    "light"
+   ],
+   "answer": "A deterministic rule table on published numbers: hedge in crisis or when risk is high and the band wide, wait when calm and quiet, ladder otherwise. It is the same public fact for every viewer — never personalised, never advice."
+  }
+ ],
+ "knowledge_pack": "docs/avatar_knowledge.md",
+ "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-08-19 close, EUR/USD is calm — change risk 0.02, band 0.00 to 0.51, siren 71 of 100. Elsewhere: GBP/USD calm, USD/CHF calm. The forward test is on day 3, every forecast hash-chained before its outcome. Ask me anything about the radar.",
+ "allowed_numbers": [
+  "0",
+  "0.02",
+  "0.03",
+  "0.1",
+  "0.102",
+  "0.162",
+  "0.5",
+  "0.51",
+  "0.52",
+  "0.548",
+  "0.55",
+  "0.9",
+  "0.916",
+  "0.92",
+  "1",
+  "10",
+  "10.2",
+  "100",
+  "11",
+  "12",
+  "126",
+  "16",
+  "17",
+  "19",
+  "2",
+  "20",
+  "2005",
+  "2016",
+  "2017",
+  "2018",
+  "2019",
+  "2026",
+  "22",
+  "23",
+  "24",
+  "28",
+  "29",
+  "3",
+  "36",
+  "4",
+  "40",
+  "46",
+  "5",
+  "500",
+  "51",
+  "52",
+  "54.8",
+  "55",
+  "58",
+  "6",
+  "60",
+  "71",
+  "79",
+  "8",
+  "81",
+  "9",
+  "90",
+  "91.6",
+  "92",
+  "98"
+ ]
+}

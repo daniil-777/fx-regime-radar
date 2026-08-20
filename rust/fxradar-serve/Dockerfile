@@ -12,6 +12,8 @@ RUN cargo build --release --bin fxradar-serve --bin selftest --bin keys
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libgomp1 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+# the versioned avatar system prompt (phase 35); the binary also carries a compiled-in fallback
+COPY prompts /app/prompts
 COPY --from=builder /build/target/release/fxradar-serve /build/target/release/selftest /build/target/release/keys /usr/local/bin/
 # onnxruntime dylibs are copied next to the binaries by ort's copy-dylibs feature at build time
 COPY --from=builder /build/target/release/*.so* /usr/local/lib/ 2>/dev/null || true

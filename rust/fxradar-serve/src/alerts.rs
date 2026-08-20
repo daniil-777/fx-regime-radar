@@ -27,6 +27,13 @@ pub const TRIGGERS: [&str; 3] = [TRIGGER_REGIME_FLIP, TRIGGER_ANOMALY, TRIGGER_C
 pub const ANOMALY_PCT_THRESHOLD: f64 = 98.0;
 pub const CONSENSUS_FULL: i64 = 3;
 
+/// Direction words banned from every user-facing generated text (golden rule 5). The alert lint
+/// test scans templates against this list, and the avatar output gate (phase 35) reuses it.
+pub(crate) const DIRECTION_WORDS: [&str; 14] = [
+    "rise", "fall", "up", "down", "buy", "sell", "long", "short", "target", "bullish", "bearish",
+    "rally", "drop", "crash",
+];
+
 /// Every phrase that can appear in an alert text. The lint test scans these AND rendered samples.
 pub const TEMPLATE_FRAGMENTS: [&str; 12] = [
     "FX Regime Radar · {pair} · {date}",
@@ -510,11 +517,6 @@ impl AlertEngine {
 mod tests {
     use super::*;
     use std::collections::HashMap;
-
-    pub const DIRECTION_WORDS: [&str; 14] = [
-        "rise", "fall", "up", "down", "buy", "sell", "long", "short", "target", "bullish",
-        "bearish", "rally", "drop", "crash",
-    ];
 
     fn words(s: &str) -> Vec<String> {
         s.split(|c: char| !c.is_alphanumeric())

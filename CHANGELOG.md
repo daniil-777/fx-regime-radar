@@ -2,6 +2,35 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.25.0 — phase 35: the grounded real-time presenter (2026-08-20)
+
+- MIND — `fxradar.avatar_context` (daily stage): `data/avatar_context.json` with per-pair regime /
+  change risk + band / siren / consensus, next scheduled events, treasury lights, ledger stats,
+  drift flag, the pre-gated greeting (disclosure first — EU AI Act Art. 50), the refusal texts, the
+  knowledge-pack FAQ, and `allowed_numbers` — the closed set of numeric tokens the presenter may
+  ever speak (canonical form shared with the rust gate). Parity-tested against the source
+  artifacts; every spoken template passes the rule-5 lint at build time (the pack refuses to exist
+  otherwise — tested).
+- KNOWLEDGE — `docs/avatar_knowledge.md` v1: methodology FAQ, product FAQ, glossary, refusal map;
+  all answers are spoken templates, lint-checked.
+- MOUTH — rust `/avatar/brain` (BYO-LLM endpoint): topic guard → answer (Haiku ≤220 tokens with the
+  versioned system prompt `prompts/avatar_system_v1.txt`, or the keyless FAQ matcher) → direction
+  lint → numeric grounding (question-echoed numbers allowed) → one corrective regeneration → the
+  `not_in_pack` refusal. `GET /avatar/greeting`; `POST /avatar/session-token` (API-key gated,
+  vendors anam/heygen/local, short-lived session tokens, monthly session/minute cost caps, dev
+  flag); transcripts to sqlite with gate + latency; Prometheus avatar_* metrics; utoipa docs;
+  feature flag `FXRADAR_AVATAR` off by default. Startup gate untouched.
+- FACE — `/avatar` widget from the design tokens (tested ⊆ tokens.json): vendor video over WebRTC
+  when configured, else the regime-coloured presenter disc + browser TTS/ASR — real-time, keyless;
+  press-to-talk AND text input; permanent disclosure caption; every spoken number renders as a mono
+  chip (the receipt); explicit user gesture before any audio; states as text + the one live-dot
+  pulse. Streamlit **Briefing** page hosts it (empty state when not deployed); one restrained chip
+  on the Overview. Async sibling `scripts/render_briefing.py` (independent flag, script always
+  lint-gated, MP4 human-reviewed; keyless it stops at the reviewed script).
+- Policy in `docs/AVATAR.md`: likeness = licensed stock or consented scan only (reference recorded
+  before any vendor face), transcripts privacy + weekly human review, latency budget, no presenter
+  on the Proof page, no autoplay, no engagement mechanics.
+
 ## v2.24.0 — phase 32: a choice of models (2026-08-19)
 
 - App page **Model lab** (Analysis): segmented control over the three regime lenses + market

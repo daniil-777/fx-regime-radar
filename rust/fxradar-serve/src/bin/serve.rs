@@ -41,6 +41,32 @@ struct Args {
     /// Alert engine poll interval in seconds (0 disables the alert engine)
     #[arg(long, env = "FXRADAR_ALERT_POLL_SECS", default_value_t = 300)]
     alert_poll_secs: u64,
+    /// Avatar feature flag: "on" | "off" (phase 35). Off → every /avatar/* route answers 503.
+    #[arg(long, env = "FXRADAR_AVATAR", default_value = "off")]
+    avatar: String,
+    /// Static vendor token for POST /avatar/brain and /avatar/heartbeat (never logged)
+    #[arg(long, env = "FXRADAR_AVATAR_BRAIN_TOKEN", hide_env_values = true)]
+    avatar_brain_token: Option<String>,
+    /// Default avatar vendor: local | anam | heygen
+    #[arg(long, env = "FXRADAR_AVATAR_VENDOR", default_value = "local")]
+    avatar_vendor: String,
+    /// Monthly avatar session cap (cost control)
+    #[arg(long, env = "FXRADAR_AVATAR_MAX_SESSIONS_MONTH", default_value_t = 300)]
+    avatar_max_sessions_month: i64,
+    /// Monthly avatar minutes cap (cost control)
+    #[arg(
+        long,
+        env = "FXRADAR_AVATAR_MAX_MINUTES_MONTH",
+        default_value_t = 600.0
+    )]
+    avatar_max_minutes_month: f64,
+    /// Versioned avatar system prompt file
+    #[arg(
+        long,
+        env = "FXRADAR_AVATAR_SYSTEM_PROMPT",
+        default_value = "prompts/avatar_system_v1.txt"
+    )]
+    avatar_system_prompt: PathBuf,
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -127,6 +153,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     // touch the metrics recorder so /metrics renders even before the first request
     let _ = fxradar_serve::metrics::handle();
+    // ---- phase 35: avatar layer (flag off by default; every /avatar/* route answers 503) -----
+    let env_opt = |k: &str| std::env::var(k).ok().filter(|s| !s.trim().is_empty());
+    let avatar_dev = std::env::var("FXRADAR_AVATAR_DEV").as_deref() == Ok("1");
+    if avatar_dev {
+        warn!("FXRADAR_AVATAR_DEV=1: /avatar/session-token waives the API key for the LOCAL vendor. DEV ONLY — never set this in production.");
+    }
+    let avatar_cfg = fxradar_serve::avatar::AvatarCfg {
+        enabled: args.avatar.trim().eq_ignore_ascii_case("on"),
+        brain_token: args
+            .avatar_brain_token
+            .clone()
+            .filter(|s| !s.trim().is_empty()),
+        vendor_default: args.avatar_vendor.clone(),
+        max_sessions_month: args.avatar_max_sessions_month,
+        max_minutes_month: args.avatar_max_minutes_month,
+        anthropic_key: env_opt("ANTHROPIC_API_KEY"),
+        anam_key: env_opt("ANAM_API_KEY"),
+        heygen_key: env_opt("HEYGEN_API_KEY"),
+        system_prompt_path: args.avatar_system_prompt.clone(),
+        dev: avatar_dev,
+        test_hook: cfg!(debug_assertions)
+            || std::env::var("FXRADAR_AVATAR_TEST").as_deref() == Ok("1"),
+    };
+    if avatar_cfg.enabled {
+        info!(
+            vendor = %avatar_cfg.vendor_default,
+            llm = avatar_cfg.anthropic_key.is_some(),
+            "avatar enabled (brain gated by direction lint + numeric grounding)"
+        );
+    }
     let state = AppState::new(
         Some(engine),
         store.clone(),
@@ -134,7 +190,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         status,
         args.rate_limit_per_min,
         stripe_secret,
-    );
+    )
+    .with_avatar(avatar_cfg);
     if args.alert_poll_secs > 0 {
         let engine = AlertEngine::new(
             store,

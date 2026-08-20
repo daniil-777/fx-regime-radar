@@ -30,6 +30,7 @@ pages = {
         st.Page(str(VIEWS / "treasury.py"), title="Treasury"),
         st.Page(str(VIEWS / "storms.py"), title="Storms"),
         st.Page(str(VIEWS / "proof.py"), title="Proof"),
+        st.Page(str(VIEWS / "briefing.py"), title="Briefing"),
     ],
     "Analysis": [
         st.Page(str(VIEWS / "advisor.py"), title="Advisor"),
