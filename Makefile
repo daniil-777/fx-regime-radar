@@ -5,7 +5,7 @@ VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate model-lab treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate avatar model-lab treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -62,6 +62,11 @@ cb-features:      ## lexicon-score data/cb/ -> data/cb_features.parquet + event 
 
 cb-gate:          ## print the Stage-2 gate with the real live counts (never scores when closed)
 	$(PYTHON) -m fxradar.cb_llm
+
+avatar:           ## start the Rust service with the AI presenter ON (dev mode: no API key needed) → http://localhost:8080/avatar
+	cd rust/fxradar-serve && cargo build --release --bin fxradar-serve
+	@echo "presenter → http://localhost:8080/avatar  (Briefing page finds it automatically; Ctrl-C stops)"
+	FXRADAR_AVATAR=on FXRADAR_AVATAR_DEV=1 ./rust/fxradar-serve/target/release/fxradar-serve --bundle models/bundle_v1.4.0 --data-dir data --bind 127.0.0.1:8080
 
 model-lab:        ## race every regime model (hmm/jump/gmm) + forecaster engine (xgb/histgb/logistic) -> reports/model_lab.md
 	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.model_lab

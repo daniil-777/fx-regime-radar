@@ -15,7 +15,24 @@ import ui  # noqa: E402
 from fxradar.config import DISCLAIMER  # noqa: E402
 
 ui.sidebar(DISCLAIMER)
-AVATAR_URL = os.environ.get("FXRADAR_AVATAR_URL", "")
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _local_presenter() -> str:
+    """Dev convenience: if no FXRADAR_AVATAR_URL is set, look for a presenter on localhost:8080
+    (`make avatar` starts one). A 0.3 s probe, cached 30 s — the page still only embeds."""
+    import urllib.request
+
+    try:
+        with urllib.request.urlopen("http://localhost:8080/avatar/greeting", timeout=0.3) as r:
+            if r.status == 200:
+                return "http://localhost:8080/avatar"
+    except Exception:  # noqa: BLE001 — any failure just means "not running"
+        pass
+    return ""
+
+
+AVATAR_URL = os.environ.get("FXRADAR_AVATAR_URL", "") or _local_presenter()
 
 st.markdown(
     '<div class="fx-header"><div><span class="fx-wordmark">Briefing</span>'
@@ -48,8 +65,9 @@ else:
     ui.state(
         "The presenter is not connected in this deployment.",
         "The widget is served by the Rust service and is off by default (feature flag).",
-        "Run the service with FXRADAR_AVATAR=on and set FXRADAR_AVATAR_URL "
-        "(e.g. https://<host>/avatar) for this page to embed it. Setup: docs/AVATAR.md.",
+        "Locally: run `make avatar` in a second terminal and reload this page — it finds the "
+        "presenter on localhost automatically. Deployed: set FXRADAR_AVATAR=on on the service and "
+        "FXRADAR_AVATAR_URL (e.g. https://<host>/avatar) here. Setup: docs/AVATAR.md.",
     )
 
 ui.footer(
