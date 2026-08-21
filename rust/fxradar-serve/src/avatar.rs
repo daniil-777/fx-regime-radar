@@ -699,7 +699,18 @@ pub fn faq_best<'a>(faq: &'a [FaqEntry], question: &str) -> Option<&'a FaqEntry>
             .iter()
             .filter(|k| q.contains(&k.to_lowercase()))
             .count();
-        let need = if e.keywords.len() <= 2 { 1 } else { 2 };
+        // A single keyword hit is enough for "what is a regime?" and far too little for "what's the
+        // Sharpe ratio on the USD/CHF regime overlay this year" — which matched on the word
+        // "regime" and came back with the definition of a regime. Longer questions are more
+        // specific, so they must match more of the entry to earn it.
+        let q_words = q.split_whitespace().count();
+        let need = if q_words > 6 {
+            2
+        } else if e.keywords.len() <= 2 {
+            1
+        } else {
+            2
+        };
         if hits < need {
             continue;
         }
@@ -814,12 +825,50 @@ pub fn market_lookup<'a>(
 /// Verbatim-from-pack market answer (mirrors the greeting's proven phrasing): every number is a
 /// pack value, so the grounding gate passes by construction; the direction lint is off for
 /// template content and no fixed word here is a direction word anyway.
+/// Is the question actually ASKING for a market's current state, rather than merely mentioning a
+/// currency on the way to something else?
+fn state_cue_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(
+            r"\b(how (is|are|does|do|s)|hows|what (is|are|about)|whats|look|looks|looking|doing|today|right now|currently|current|regime|condition|conditions|state of|situation|siren|read on|tell me about|status)\b",
+        )
+        .expect("static regex")
+    })
+}
+
+/// Vocabulary that means the question wants something the radar does not publish (a price level, a
+/// correlation, a Sharpe ratio, a future value, a date we have no row for). A market mention inside
+/// such a question is context, not the question.
+fn out_of_scope_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(
+            r"\b(sharpe|correlat\w*|trading at|spot|level|levels|printing|outside|multiply|percentage|rank|allocate|split|expect\w*|year.?end|next (month|week|quarter)|tomorrow|estimate|ballpark|approximat\w*|sunday|saturday|forecast\w*)\b",
+        )
+        .expect("static regex")
+    })
+}
+
 /// As [`market_lookup`], but also returns the pair CODE, so the answer board can show that exact
 /// market's card instead of re-deriving the market from the question a second time.
+///
+/// The gate matters more than the lookup. Matching on a currency word alone made this branch
+/// hijack every question that happened to name a market — "what is the Sharpe ratio", "give me
+/// Sunday's numbers", "is the change risk still 0.87" all came back with today's condition read.
+/// Nothing was fabricated, but answering a question nobody asked reads as evasion, and it is worse
+/// for trust than an honest "I don't have that".
 pub fn market_lookup_pair<'a>(
     pack: &'a Pack,
     q_lower: &str,
 ) -> Option<(&'a MarketUniverse, &'a MarketPair, String)> {
+    if out_of_scope_re().is_match(q_lower) {
+        return None;
+    }
+    let words = q_lower.split_whitespace().count();
+    if words > 3 && !state_cue_re().is_match(q_lower) {
+        return None; // "btc?" is a state question; a long sentence has to say so
+    }
     let (uni, blk) = market_lookup(pack, q_lower)?;
     let code = uni
         .pairs
@@ -1466,8 +1515,19 @@ pub async fn brain(
                             source = "visual";
                         }
                         None => {
-                            m::avatar_refusal("off_topic");
-                            let text = pack.refusals.off_topic.clone();
+                            let asked_for_a_number = out_of_scope_re().is_match(&q_lower);
+                            m::avatar_refusal(if asked_for_a_number {
+                                "not_in_pack"
+                            } else {
+                                "off_topic"
+                            });
+                            let text = if asked_for_a_number {
+                                // "I don't have that number and won't guess" is the truthful answer
+                                // to a request for a metric this system does not publish.
+                                pack.refusals.not_in_pack.clone()
+                            } else {
+                                pack.refusals.off_topic.clone()
+                            };
                             return Ok(finish(
                                 &st,
                                 &req.session_id,
@@ -1893,6 +1953,19 @@ mod tests {
         assert!(advice_intent_re().is_match("help with position sizing"));
         assert!(advice_intent_re().is_match("where do i put my stop-loss"));
         assert!(!advice_intent_re().is_match("what is the siren?"));
+    }
+
+    #[test]
+    fn market_lookup_gate_rejects_questions_that_only_mention_a_market() {
+        // asking about the market
+        assert!(state_cue_re().is_match("how is the yen today"));
+        assert!(state_cue_re().is_match("what about the euro"));
+        // merely naming one on the way to something we do not publish
+        assert!(out_of_scope_re().is_match("what is the sharpe ratio on the usd/chf overlay"));
+        assert!(out_of_scope_re().is_match("where is eur/usd trading at right now"));
+        assert!(out_of_scope_re().is_match("give me sunday's numbers for eur/usd"));
+        assert!(out_of_scope_re().is_match("how correlated is eur/usd to gold"));
+        assert!(!out_of_scope_re().is_match("how is bitcoin today"));
     }
 
     #[test]
