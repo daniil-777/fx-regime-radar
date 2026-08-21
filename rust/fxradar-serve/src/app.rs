@@ -501,7 +501,10 @@ pub async fn widget_js() -> Response {
 pub async fn cards_js() -> Response {
     (
         [
-            (header::CONTENT_TYPE, "application/javascript; charset=utf-8"),
+            (
+                header::CONTENT_TYPE,
+                "application/javascript; charset=utf-8",
+            ),
             (header::CACHE_CONTROL, "public, max-age=300"),
         ],
         CARDS_JS,

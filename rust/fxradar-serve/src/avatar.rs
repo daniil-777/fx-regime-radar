@@ -250,7 +250,10 @@ struct PackFile {
 fn compact_markets(markets: &BTreeMap<String, MarketUniverse>) -> String {
     let mut out = String::new();
     for (name, uni) in markets {
-        out.push_str(&format!("{} ({}, through {}):\n", name, uni.label, uni.data_through));
+        out.push_str(&format!(
+            "{} ({}, through {}):\n",
+            name, uni.label, uni.data_through
+        ));
         for (pair, p) in &uni.pairs {
             out.push_str(&format!(
                 "  {pair} {} risk {} band {} to {} siren {} consensus {}/3\n",
@@ -258,8 +261,12 @@ fn compact_markets(markets: &BTreeMap<String, MarketUniverse>) -> String {
                 fmt_opt(p.change_risk_5d),
                 fmt_opt(p.risk_lo),
                 fmt_opt(p.risk_hi),
-                p.anomaly_pct.map(|v| format!("{v:.0}")).unwrap_or_else(|| "-".into()),
-                p.agreement.map(|v| v.to_string()).unwrap_or_else(|| "-".into()),
+                p.anomaly_pct
+                    .map(|v| format!("{v:.0}"))
+                    .unwrap_or_else(|| "-".into()),
+                p.agreement
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "-".into()),
             ));
         }
     }

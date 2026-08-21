@@ -2,6 +2,39 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.30.1 — six bugs found and fixed in the avatar and registry code (2026-08-21)
+
+A deliberate hunt through the code written over the last two days. Every bug was reproduced before
+it was fixed, and left a regression test behind.
+
+- **A question asked while she was answering was echoed and then thrown away.** `ask()` guarded on
+  `state.thinking` and returned early — but only AFTER the transcript had shown the user's words, so
+  it read as being ignored rather than busy. Reproduced end to end (two rapid turns produced two
+  questions and one answer); the newest turn is now queued and asked the moment the current one
+  lands, with the status line saying so. The same repro now yields two answers.
+- **The vendor session slot leaked whenever her audio failed.** The silent-audio fallback set
+  `state.vendorClient = null`, which is the only handle `pagehide` has for `stopStreaming()` — so
+  such a session never released Anam's single live slot and the NEXT session failed with a
+  concurrency error. This is the failure that kept surfacing as "the photoreal face won't start".
+  The handle is kept now and a `vendorMute` flag routes the voice instead.
+- **Board composition let three cards share one primitive.** The "no repeated primitive unless
+  primary + explain" rule was checked pairwise, so a chain of three stat_blocks passed as long as
+  one was an explainer — exactly the noise the rule exists to prevent. Now grouped and checked whole.
+- **~1,180 tokens of every LLM call were wasted.** The full `markets` block (23 markets of verbose
+  JSON) rode into the CONTEXT of every brain call, although market questions are answered
+  deterministically before the model is reached. It is stripped from the JSON now and re-injected as
+  one line per market: the context block drops from 2,656 to 1,477 tokens (**44% smaller**) with
+  every number still quotable. The grounding gate is untouched — `allowed_numbers` is built by the
+  Python pipeline from the complete pack.
+- **The TTS hash map grew forever.** Per-session hashes were capped at eight, but the map of
+  sessions was never evicted — a slow leak in a service meant to run for months. Bounded to 512
+  sessions, oldest evicted first.
+- **A missing card argument reported itself as a data problem.** `resolve()` raised "binding path
+  not found: pack.pairs.{pair}.regime", sending the reader after a broken artifact instead of a
+  missing argument. It names the argument now.
+- A stale speaking clock could also overwrite the status line of a newer turn; turns are numbered.
+- 323 python + 57 rust tests green; ruff, black, rustfmt, clippy and `make lint-ui` clean.
+
 ## v2.30.0 — phase 38: eight primitives and the fifty-card registry (2026-08-21)
 
 Built on the greenfield branch of the phase brief: phase 36 does not exist yet, so the primitive

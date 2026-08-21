@@ -26,7 +26,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from fxradar import config, universes, narrate
+from fxradar import config, narrate, universes
 
 log = logging.getLogger(__name__)
 
@@ -185,7 +185,9 @@ def parse_faq(md_text: str) -> list[dict]:
     return out
 
 
-def build_greeting(pairs: dict, ledger: dict, data_through: str, universe, n_markets: int = 0) -> str:
+def build_greeting(
+    pairs: dict, ledger: dict, data_through: str, universe, n_markets: int = 0
+) -> str:
     """Deterministic, gated first words of every session — today's real numbers, then the offer."""
     markets_txt = (
         f" I also track the G10, emerging and crypto boards — {n_markets} markets in all."

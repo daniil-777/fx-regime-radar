@@ -921,11 +921,26 @@ async fn markets_are_compacted_out_of_the_json_context() {
         "the JSON context still carries the markets block"
     );
     let compact = &pack.markets_compact;
-    for token in ["EURUSD", "BTC-USD", "calm", "chop", "Crypto majors", "2026-08-17"] {
-        assert!(compact.contains(token), "compact markets lost {token}: {compact}");
+    for token in [
+        "EURUSD",
+        "BTC-USD",
+        "calm",
+        "chop",
+        "Crypto majors",
+        "2026-08-17",
+    ] {
+        assert!(
+            compact.contains(token),
+            "compact markets lost {token}: {compact}"
+        );
     }
     // the compact rendering must be dramatically smaller than the JSON it replaces
-    let as_json = serde_json::to_string(&serde_json::json!({"markets": {"fx": {"pairs": {}}}})).unwrap();
-    assert!(compact.len() < 4000, "compact markets is not compact: {} bytes", compact.len());
+    let as_json =
+        serde_json::to_string(&serde_json::json!({"markets": {"fx": {"pairs": {}}}})).unwrap();
+    assert!(
+        compact.len() < 4000,
+        "compact markets is not compact: {} bytes",
+        compact.len()
+    );
     assert!(!as_json.is_empty());
 }
