@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-08-21T17:50:26Z",
+ "generated_at_utc": "2026-08-21T18:54:41Z",
  "registry_version": "3.0.0",
  "data_through": "2026-08-20",
  "cards": {
@@ -13471,10 +13471,6 @@
      {
       "value": "4",
       "label": "days live"
-     },
-     {
-      "value": "\u2014",
-      "label": "live Brier"
      },
      {
       "value": "0.102",

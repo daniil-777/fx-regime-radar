@@ -2,6 +2,34 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.32.0 — the presenter gets a full-page conversation (2026-08-21)
+
+One page, two layouts — not a second UI. Embedded in the Briefing iframe the compact card is exactly
+what it was; opened in a browser window at 1024px or wider, the same DOM becomes a two-column
+workspace. No JavaScript changed, so nothing that already worked could break: the mic state machine,
+the board rendering and the gates are untouched.
+
+- **Left column**: the presenter held steady at full height, framed for a talking head
+  (`object-position: center 22%` — centre-cropping a tall column was cutting her chin off), with the
+  live status and the non-dismissible disclosure beneath her.
+- **Right column**: the conversation, set at a comfortable ~800px measure that stays centred at any
+  window width, with the user's questions as right-aligned bubbles and her answers as plain text —
+  the shape a reader expects from a chat, not a card stack.
+- **Composer**: one rounded field holding the voice control, the input and Ask, pinned below the
+  transcript, focused automatically when the session opens. The voice pill collapses to its icon and
+  level meter, and shows its label only while listening.
+- **Cards get room**: answer boards lay out two-up in the wide column, so a trace and a diagram sit
+  side by side instead of stacking in a narrow strip.
+- Three details found by looking at the render rather than the code: an answer's cards inherited the
+  width of the sentence above them (shrink-to-fit), so a short caption produced narrow cards; the
+  primary card repeated the spoken answer verbatim as its own caption (now suppressed, while still
+  feeding the ARIA label); and the scoreboard printed an em dash where the live Brier does not exist
+  yet, which reads as a broken template rather than an honest gap — that stat is now omitted until
+  there is a number to show.
+- The Briefing page links through to the full-screen conversation.
+- 323 python + 60 rust tests green; ruff, black, clippy and `make lint-ui` clean; verified at 1512px
+  and 390px with no console errors and no horizontal scroll.
+
 ## v2.31.2 — the test document, and what writing it found (2026-08-21)
 
 - `docs/TEST_QUESTIONS.md` and `docs/test-questions.html`: **108 questions put to the running

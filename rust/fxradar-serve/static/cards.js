@@ -240,8 +240,9 @@ export function renderCard(spec) {
 
   fig.appendChild(RENDERERS[primitive](spec.data || {}));
 
-  const cap = el("figcaption", "fxc-caption", text.figcaption);
-  fig.appendChild(cap);
+  // When the caption is already the spoken answer directly above the card, printing it again is
+  // noise. It still feeds the ARIA label, so a screen reader loses nothing.
+  if (!spec.caption_hidden) fig.appendChild(el("figcaption", "fxc-caption", text.figcaption));
 
   const btn = el("button", "fxc-export", spec.export_label || "Copy");
   btn.type = "button";

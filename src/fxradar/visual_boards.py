@@ -399,24 +399,19 @@ def _scoreboard(args: dict, ctx: dict) -> dict | None:
     led = ctx["pack"].get("ledger") or {}
     if not led:
         return None
+    # An em dash in a big numeral slot reads as a broken template. A score that does not exist yet
+    # is better left out — the sub-line already says how short the record is.
+    stats = [{"value": str(led.get("days_live", 0)), "label": "days live"}]
+    if led.get("live_brier") is not None:
+        stats.append({"value": f"{led['live_brier']:.3f}", "label": "live Brier"})
+    if led.get("frozen_brier") is not None:
+        stats.append({"value": f"{led['frozen_brier']:.3f}", "label": "frozen Brier"})
     return {
-        "stats": [
-            {"value": str(led.get("days_live", 0)), "label": "days live"},
-            {
-                "value": (
-                    f"{led.get('live_brier'):.3f}" if led.get("live_brier") is not None else "—"
-                ),
-                "label": "live Brier",
-            },
-            {
-                "value": (
-                    f"{led.get('frozen_brier'):.3f}" if led.get("frozen_brier") is not None else "—"
-                ),
-                "label": "frozen Brier",
-            },
-        ],
-        "subline": f"chain head {led.get('chain_head_short', '—')} · "
-        f"{led.get('n_forecasts', 0)} forecasts sealed before their outcomes",
+        "stats": stats,
+        "subline": (
+            f"chain head {led.get('chain_head_short', '—')} · "
+            f"{led.get('n_forecasts', 0)} forecasts sealed before their outcomes"
+        ),
     }
 
 

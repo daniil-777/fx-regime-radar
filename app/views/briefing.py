@@ -65,7 +65,9 @@ if AVATAR_URL:
     st.markdown(
         f'<div class="fx-dim" style="font-size:0.74rem">Served from <span class="fx-num">{AVATAR_URL}</span> '
         "over WebRTC; the microphone streams only while the voice conversation is on. Voice needs "
-        "desktop Chrome or Edge — or open the presenter in its own tab.</div>",
+        f'desktop Chrome or Edge. <a href="{AVATAR_URL}" target="_blank" rel="noopener">Open the '
+        "full-screen conversation ↗</a> — the same presenter, with the whole window for answers "
+        "and cards.</div>",
         unsafe_allow_html=True,
     )
 else:
