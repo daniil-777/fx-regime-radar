@@ -379,13 +379,21 @@ def resolve(card: Card, args: dict[str, Any], bundle: dict) -> dict[str, Any]:
     return out
 
 
+class _Blanks(dict):
+    """Any placeholder the caller did not supply renders as an em dash.
+
+    Returning the raw template on a KeyError — the previous behaviour — shipped captions reading
+    "{pair} since yesterday: {word}" to real users, and nothing failed loudly enough to notice.
+    """
+
+    def __missing__(self, key: str) -> str:
+        return "—"
+
+
 def caption_for(card: Card, values: dict[str, Any], locale: str = "en") -> str:
     tmpl = card.caption.get(locale) or card.caption.get("en") or ""
-    safe = {k: ("—" if v is None else v) for k, v in values.items()}
-    try:
-        return tmpl.format(**safe)
-    except KeyError:
-        return tmpl
+    safe = _Blanks({k: ("—" if v is None else v) for k, v in values.items()})
+    return tmpl.format_map(safe)
 
 
 # ---------------------------------------------------------------------------------------------

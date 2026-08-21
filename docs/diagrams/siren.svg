@@ -1,0 +1,14 @@
+<svg viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg" role="img">
+  <g fill="none" stroke="currentColor" stroke-width="1.2">
+    <rect x="6" y="34" width="66" height="30" rx="6"/>
+    <rect x="102" y="34" width="76" height="30" rx="6"/>
+    <rect x="208" y="34" width="84" height="30" rx="6"/>
+    <path d="M72 49h30M178 49h30"/><path d="M96 45l6 4-6 4M202 45l6 4-6 4"/>
+  </g>
+  <g font-size="9" text-anchor="middle" fill="currentColor">
+    <text x="39" y="52">today's bars</text>
+    <text x="140" y="46">autoencoder</text><text x="140" y="58">(calm days only)</text>
+    <text x="250" y="46">reconstruction error</text><text x="250" y="58">ranked 0–100</text>
+    <text x="150" y="88" font-size="8.5">trained only on calm days up to 2016 — a high siren means today is unlike anything it learned</text>
+  </g>
+</svg>

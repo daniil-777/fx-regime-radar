@@ -944,3 +944,124 @@ async fn markets_are_compacted_out_of_the_json_context() {
     );
     assert!(!as_json.is_empty());
 }
+
+// ---------------------------------------------------------------------------------------------
+// phase 36 — answer boards
+// ---------------------------------------------------------------------------------------------
+
+fn repo_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .expect("repo root")
+        .to_path_buf()
+}
+
+/// The wall (rule 11) means selection is implemented twice: once in `fxradar.visuals` for the
+/// research side, once in `visuals.rs` for the serving side. Two implementations of one ranking is
+/// exactly how silent drift starts, so the Python side exports its top-1 for every golden question
+/// and this test holds the Rust side to it — the same contract the model bundle has with its
+/// golden vectors.
+#[test]
+fn retrieval_agrees_with_python() {
+    let root = repo_root();
+    let index_path = root.join("data/visual_index.json");
+    let golden_path = root.join("tests/golden_retrieval.json");
+    if !index_path.exists() || !golden_path.exists() {
+        eprintln!("visual artifacts absent (run `make visuals`); skipping");
+        return;
+    }
+    let index = fxradar_serve::visuals::load_index(&index_path).expect("index loads");
+    let golden: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&golden_path).unwrap()).unwrap();
+    let pairs = golden["pairs"].as_array().expect("pairs");
+    let (mut agree, mut total, mut misses) = (0usize, 0usize, Vec::new());
+    for row in pairs {
+        let (q, want) = (row["q"].as_str().unwrap(), row["top"].as_str().unwrap());
+        let ranked = fxradar_serve::visuals::rank(&index, q);
+        let got = ranked.first().map(|(id, _)| id.as_str()).unwrap_or("");
+        total += 1;
+        if got == want {
+            agree += 1;
+        } else {
+            misses.push(format!("{q:?}: python={want} rust={got}"));
+        }
+    }
+    let ratio = agree as f64 / total.max(1) as f64;
+    println!(
+        "rust/python top-1 agreement: {agree}/{total} = {:.1}%",
+        ratio * 100.0
+    );
+    for m in misses.iter().take(5) {
+        println!("  {m}");
+    }
+    assert!(
+        ratio >= 0.95,
+        "the two retrievers have drifted apart: {:.1}% agreement\n{}",
+        ratio * 100.0,
+        misses.join("\n")
+    );
+}
+
+/// A card offered to the browser must carry data this service read from the artifact. The check is
+/// cheap and the failure it prevents is not: a card with no data renders as a confident empty box.
+#[test]
+fn boards_never_offer_an_unresolved_card() {
+    let root = repo_root();
+    let boards_path = root.join("data/visual_boards.json");
+    if !boards_path.exists() {
+        eprintln!("visual boards absent; skipping");
+        return;
+    }
+    let boards = fxradar_serve::visuals::load_boards(&boards_path).expect("boards load");
+    assert!(!boards.cards.is_empty(), "no cards were resolved at all");
+    for (key, spec) in &boards.cards {
+        assert!(!spec.data.is_null(), "{key} carries no data");
+        assert!(!spec.caption.trim().is_empty(), "{key} has no caption");
+        assert!(
+            !spec.caption.contains('{'),
+            "{key} caption has an unresolved placeholder: {}",
+            spec.caption
+        );
+        assert!(
+            fxradar_serve::visuals::PRIMITIVES_ALLOWED.contains(&spec.primitive.as_str()),
+            "{key} names an unknown primitive {}",
+            spec.primitive
+        );
+    }
+}
+
+/// A direction question gets the evidence card and NOTHING else — never a price-shaped picture.
+/// The text lint cannot read chart geometry, so the protection has to live in what we offer.
+#[test]
+fn direction_questions_get_only_the_evidence_card() {
+    let root = repo_root();
+    let (ip, bp) = (
+        root.join("data/visual_index.json"),
+        root.join("data/visual_boards.json"),
+    );
+    if !ip.exists() || !bp.exists() {
+        eprintln!("visual artifacts absent; skipping");
+        return;
+    }
+    let index = fxradar_serve::visuals::load_index(&ip).unwrap();
+    let boards = fxradar_serve::visuals::load_boards(&bp).unwrap();
+    for q in [
+        "will EURUSD rise tomorrow",
+        "where is the franc heading",
+        "give me a price target for sterling",
+    ] {
+        let cards = fxradar_serve::visuals::select_board(
+            &index,
+            &boards,
+            q,
+            Some("direction_evidence_card"),
+        );
+        assert_eq!(cards[0].component, "direction_evidence_card", "{q}");
+        assert!(
+            !cards.iter().any(|c| c.primitive == "trace_band"),
+            "{q} was offered a chart: {:?}",
+            cards.iter().map(|c| &c.component).collect::<Vec<_>>()
+        );
+    }
+}

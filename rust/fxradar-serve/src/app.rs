@@ -81,6 +81,13 @@ impl Latencies {
     }
 }
 
+/// mtime-stamped cache of the two answer-board artifacts (phase 36).
+pub struct VisualCache {
+    pub index_stamp: (std::time::SystemTime, u64),
+    pub boards_stamp: (std::time::SystemTime, u64),
+    pub loaded: Arc<(crate::visuals::VisualIndex, crate::visuals::VisualBoards)>,
+}
+
 #[derive(Clone)]
 pub struct AppState {
     /// `None` only in tests that exercise the service layer without a bundle.
@@ -106,6 +113,9 @@ pub struct AppState {
     /// without bound for the life of the process.
     pub(crate) tts_order: Arc<Mutex<std::collections::VecDeque<String>>>,
     decision_cache: Arc<Mutex<Option<avatar::DecisionCache>>>,
+    /// Phase 36: the resolved answer boards and their retrieval index, both written by the daily
+    /// pipeline (rule 8) and read here as data (rule 11 — no Python at runtime).
+    visual_cache: Arc<Mutex<Option<VisualCache>>>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
 }
@@ -156,6 +166,7 @@ impl AppState {
             tts_hashes: Arc::new(Mutex::new(HashMap::new())),
             tts_order: Arc::new(Mutex::new(std::collections::VecDeque::new())),
             decision_cache: Arc::new(Mutex::new(None)),
+            visual_cache: Arc::new(Mutex::new(None)),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
     }
@@ -189,6 +200,43 @@ impl AppState {
             });
         }
         Ok(table)
+    }
+
+    /// The answer-board artifacts, reloaded together on mtime change. Missing files are NOT an
+    /// error: a deployment without them simply answers in words, which is the phase-35 behaviour.
+    pub fn visuals(
+        &self,
+    ) -> Option<Arc<(crate::visuals::VisualIndex, crate::visuals::VisualBoards)>> {
+        let index_path = self.data_dir.join("visual_index.json");
+        let boards_path = self.data_dir.join("visual_boards.json");
+        let stamp = |p: &std::path::Path| {
+            std::fs::metadata(p)
+                .ok()
+                .map(|m| (m.modified().unwrap_or(std::time::UNIX_EPOCH), m.len()))
+        };
+        let (si, sb) = (stamp(&index_path)?, stamp(&boards_path)?);
+        if let Ok(guard) = self.visual_cache.lock() {
+            if let Some(c) = guard.as_ref() {
+                if c.index_stamp == si && c.boards_stamp == sb {
+                    return Some(Arc::clone(&c.loaded));
+                }
+            }
+        }
+        let index = crate::visuals::load_index(&index_path)
+            .map_err(|e| tracing::warn!(error = %e, "visual index unusable; answering in words"))
+            .ok()?;
+        let boards = crate::visuals::load_boards(&boards_path)
+            .map_err(|e| tracing::warn!(error = %e, "visual boards unusable; answering in words"))
+            .ok()?;
+        let loaded = Arc::new((index, boards));
+        if let Ok(mut guard) = self.visual_cache.lock() {
+            *guard = Some(VisualCache {
+                index_stamp: si,
+                boards_stamp: sb,
+                loaded: Arc::clone(&loaded),
+            });
+        }
+        Some(loaded)
     }
 
     /// The avatar context pack, reloaded from `<data_dir>/avatar_context.json` on mtime change

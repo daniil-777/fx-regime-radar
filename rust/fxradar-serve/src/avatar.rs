@@ -595,12 +595,25 @@ fn direction_intent_re() -> &'static Regex {
     })
 }
 
+/// Does the question actually concern covering an exposure?
+fn hedging_intent_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(
+            r"\b(hedge|hedging|cover|covering|coverage of|exposure|receivable|payable|invoice|tranche|ladder|forward|unhedged|protect)\b",
+        )
+        .expect("static regex")
+    })
+}
+
 fn advice_intent_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
         // "position siz\w*" so "position sizing"/"position size" both match the intent guard.
+        // "should i" alone was far too greedy: "why should I trust you" routed a TRUST question
+        // into the hedging decision engine. The verb after it is what makes it an advice request.
         Regex::new(
-            r"\b(should i|buy|sell|hedge my|stop.?loss|position siz\w*|invest|portfolio|advice|what would you do)\b",
+            r"\b(should i (buy|sell|hedge|cover|invest|allocate|go long|go short|lock|ladder|wait|act|do (anything|something|it))|buy|sell|hedge my|stop.?loss|position siz\w*|invest|portfolio|advice|what would you do)\b",
         )
         .expect("static regex")
     })
@@ -801,6 +814,21 @@ pub fn market_lookup<'a>(
 /// Verbatim-from-pack market answer (mirrors the greeting's proven phrasing): every number is a
 /// pack value, so the grounding gate passes by construction; the direction lint is off for
 /// template content and no fixed word here is a direction word anyway.
+/// As [`market_lookup`], but also returns the pair CODE, so the answer board can show that exact
+/// market's card instead of re-deriving the market from the question a second time.
+pub fn market_lookup_pair<'a>(
+    pack: &'a Pack,
+    q_lower: &str,
+) -> Option<(&'a MarketUniverse, &'a MarketPair, String)> {
+    let (uni, blk) = market_lookup(pack, q_lower)?;
+    let code = uni
+        .pairs
+        .iter()
+        .find(|(_, p)| std::ptr::eq(*p, blk))
+        .map(|(code, _)| code.clone())?;
+    Some((uni, blk, code))
+}
+
 pub fn market_answer(uni: &MarketUniverse, pair: &MarketPair) -> String {
     let mut head = format!(
         "As of the {} close, {} on the {} board reads {}",
@@ -1096,6 +1124,10 @@ pub struct BrainResponse {
     /// Canonical numbers cited in `text` (the widget renders them as receipts).
     pub numbers: Vec<String>,
     pub latency_ms: u64,
+    /// Phase 36: the answer board — at most two cards, each already resolved by the pipeline from
+    /// published artifacts. Empty is a first-class answer: many questions deserve no picture.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub board: Vec<crate::visuals::CardSpec>,
 }
 
 #[derive(Deserialize, Default, ToSchema)]
@@ -1132,6 +1164,72 @@ fn load_pack_or_503(st: &AppState) -> Result<std::sync::Arc<Pack>, ApiError> {
 
 /// Build the final response: metrics, transcript row (after the response is decided; sqlite is
 /// microseconds and never blocks generation), receipts.
+/// The caption of the best-matching card, when the match is strong enough to speak.
+///
+/// A higher bar than the board's own threshold: a card can be worth SHOWING beside an answer while
+/// being too weak to BE the answer. None keeps the refusal path intact for genuinely off-topic
+/// questions, so "tell me a joke" still gets the branded refusal rather than a chart.
+fn visual_answer(st: &AppState, question: &str) -> Option<String> {
+    let loaded = st.visuals()?;
+    let (index, boards) = (&loaded.0, &loaded.1);
+    let ranked = crate::visuals::rank(index, question);
+    let (top_id, top_score) = ranked.first()?;
+    // The same confidence rule the board uses: strong outright, or clearly ahead of the field.
+    if !crate::visuals::is_confident(&ranked) || index.catch_alls.iter().any(|c| c == top_id) {
+        return None;
+    }
+    let _ = top_score;
+    let cards = crate::visuals::select_board(index, boards, question, None);
+    let first = cards.first()?;
+    if first.caption.trim().is_empty() {
+        return None;
+    }
+    Some(first.caption.clone())
+}
+
+/// Which board, if any, belongs beside this answer.
+///
+/// Three rules, in order of importance:
+///   1. a DIRECTION question gets exactly one card — the direction-evidence card — and never a
+///      price chart. An extended or suggestive line answers "which way" in pixels, which the text
+///      lint cannot see; the safest implementation is to not offer the picture at all.
+///   2. a blocked or fabricated answer gets NO board: if the words were not safe to say, the
+///      picture beside them is not safe to show either.
+///   3. otherwise the board is selected from the resolved artifact, and is empty when nothing
+///      scores well — most questions deserve no picture.
+fn select_board_for(
+    st: &AppState,
+    question: &str,
+    source: &str,
+    gate_label: &str,
+    forced_card: Option<&str>,
+) -> Vec<crate::visuals::CardSpec> {
+    if gate_label == "blocked" || gate_label == "refused:off_topic" {
+        return Vec::new();
+    }
+    let Some(loaded) = st.visuals() else {
+        return Vec::new();
+    };
+    let (index, boards) = (&loaded.0, &loaded.1);
+    let forced = if gate_label == "refused:direction" {
+        Some("direction_evidence_card")
+    } else if gate_label == "refused:advice" {
+        Some("ask_your_bank_card")
+    } else {
+        forced_card
+    };
+    let mut cards = crate::visuals::select_board(index, boards, question, forced);
+    if forced.is_some() {
+        cards.truncate(1); // a refusal is not an invitation to browse
+    }
+    if !crate::visuals::board_is_grounded(&cards) {
+        warn!("board dropped: a card carried no resolved data");
+        return Vec::new();
+    }
+    let _ = source;
+    cards
+}
+
 fn finish(
     st: &AppState,
     session_id: &str,
@@ -1140,6 +1238,20 @@ fn finish(
     source: &str,
     gate_label: &str,
     t0: Instant,
+) -> Json<BrainResponse> {
+    finish_with(st, session_id, question, text, source, gate_label, t0, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn finish_with(
+    st: &AppState,
+    session_id: &str,
+    question: &str,
+    text: String,
+    source: &str,
+    gate_label: &str,
+    t0: Instant,
+    forced_card: Option<&str>,
 ) -> Json<BrainResponse> {
     let latency_ms = t0.elapsed().as_millis() as u64;
     m::avatar_request(source);
@@ -1156,12 +1268,19 @@ fn finish(
     ) {
         warn!(error = %e, "avatar transcript write failed");
     }
+    let board = select_board_for(st, question, source, gate_label, forced_card);
+    if board.is_empty() {
+        m::visual_null_board();
+    } else {
+        m::visual_render(&board[0].component);
+    }
     Json(BrainResponse {
         text,
         source: source.into(),
         gate: gate_label.into(),
         numbers,
         latency_ms,
+        board,
     })
 }
 
@@ -1258,7 +1377,11 @@ pub async fn brain(
         ));
     }
     if advice_intent_re().is_match(&q_lower) {
-        if st.avatar.advice {
+        // The decision engine sizes INSURANCE against an exposure. "Should I buy dollars" is a
+        // directional trade request wearing an advice costume: it names no exposure to protect, so
+        // answering it with a hedge ratio would dress a market call as risk management. Those go to
+        // the escalation card instead.
+        if st.avatar.advice && hedging_intent_re().is_match(&q_lower) {
             if let Some(resp) = decision_advice(
                 &st,
                 &pack,
@@ -1295,6 +1418,7 @@ pub async fn brain(
     let mut source: &str;
     let mut candidate: String;
     let mut can_regen = false;
+    let mut forced_card: Option<String> = None;
     // The system prompt (file + CONTEXT + KNOWLEDGE) is only needed on the LLM path.
     let system = if st.avatar.anthropic_key.is_some() && !use_test_hook {
         build_system(&st, &pack)
@@ -1321,29 +1445,40 @@ pub async fn brain(
                 source = "llm";
                 can_regen = true;
             }
-            None => match market_lookup(&pack, &q_lower) {
-                Some((uni, blk)) => {
+            None => match market_lookup_pair(&pack, &q_lower) {
+                Some((uni, blk, pair)) => {
                     candidate = market_answer(uni, blk);
                     source = "template";
+                    forced_card = Some(format!("condition_card|pair={pair}"));
                 }
                 None => match faq_best(&pack.faq, &question) {
                     Some(entry) => {
                         candidate = entry.answer.clone();
                         source = "template";
                     }
-                    None => {
-                        m::avatar_refusal("off_topic");
-                        let text = pack.refusals.off_topic.clone();
-                        return Ok(finish(
-                            &st,
-                            &req.session_id,
-                            &question,
-                            text,
-                            "refusal",
-                            "refused:off_topic",
-                            t0,
-                        ));
-                    }
+                    // The board rescues the answer. A resolved card's caption is a sentence the
+                    // PIPELINE wrote from published numbers, so it is grounded by construction and
+                    // faces the same gates as any other answer. Refusing a question we can clearly
+                    // illustrate was never the honest outcome — it was just the easy one.
+                    None => match visual_answer(&st, &question) {
+                        Some(caption) => {
+                            candidate = caption;
+                            source = "visual";
+                        }
+                        None => {
+                            m::avatar_refusal("off_topic");
+                            let text = pack.refusals.off_topic.clone();
+                            return Ok(finish(
+                                &st,
+                                &req.session_id,
+                                &question,
+                                text,
+                                "refusal",
+                                "refused:off_topic",
+                                t0,
+                            ));
+                        }
+                    },
                 },
             },
         }
@@ -1387,7 +1522,7 @@ pub async fn brain(
             }
         }
     };
-    Ok(finish(
+    Ok(finish_with(
         &st,
         &req.session_id,
         &question,
@@ -1395,6 +1530,7 @@ pub async fn brain(
         source,
         gate_label,
         t0,
+        forced_card.as_deref(),
     ))
 }
 
@@ -1749,6 +1885,11 @@ mod tests {
         assert!(direction_intent_re().is_match("which way is the franc going"));
         assert!(!direction_intent_re().is_match("what is the current regime?"));
         assert!(advice_intent_re().is_match("should i buy dollars?"));
+        assert!(advice_intent_re().is_match("should i hedge my exposure"));
+        // regression: a trust question must not be answered with hedging advice
+        assert!(!advice_intent_re().is_match("why should i trust you"));
+        assert!(!advice_intent_re().is_match("should i believe your record"));
+        assert!(!advice_intent_re().is_match("why should i care about the siren"));
         assert!(advice_intent_re().is_match("help with position sizing"));
         assert!(advice_intent_re().is_match("where do i put my stop-loss"));
         assert!(!advice_intent_re().is_match("what is the siren?"));

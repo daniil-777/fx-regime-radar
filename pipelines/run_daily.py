@@ -45,6 +45,7 @@ from fxradar import (
     replay,
     siren,
     treasury,
+    visual_boards,
 )
 from fxradar import hmm_model as hm
 
@@ -291,6 +292,9 @@ register(
 register(
     "decision", fx_only(decision.stage)
 )  # phase 36: deterministic hedging decision table → decision_table.json
+register(
+    "visuals", fx_only(visual_boards.stage)
+)  # phase 36: resolve every card the artifacts can fill → visual_boards.json + visual_index.json
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

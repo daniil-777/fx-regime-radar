@@ -2,6 +2,52 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.31.0 — phase 36: visual answers, rendered beside the voice (2026-08-21)
+
+The presenter now answers with a picture as well as a sentence, in the same breath: the card paints
+while she speaks. Every value on every card was computed by the pipeline from a published artifact —
+the model produces no numbers and neither does the browser.
+
+- **Architecture, chosen to keep two rules intact.** `src/fxradar/visual_boards.py` resolves every
+  registry card the artifacts can fill into `data/visual_boards.json`, and exports the retrieval
+  index as `data/visual_index.json` (rule 8: pipeline writes, app reads). `rust/.../visuals.rs`
+  reads both as data and selects a board — no Python at runtime (rule 11). 152 card instances
+  across 30 of the 40 built cards; the ten absent are user-input cards (the scenario engine's job)
+  or artifacts we do not publish yet, and a card without data simply cannot be offered.
+- **Selection is measured, not guessed — and the measurement changed the design.** An absolute
+  score threshold cannot work: "which pair is calmest" scores 3.73 while "what is the weather in
+  zurich" scores 3.80. What separates them is the MARGIN over the runner-up (1.98 against 0.35), so
+  a board renders when the best match is strong outright OR clearly ahead of the field. Result on
+  the behaviour set: **15/15**, with conversational and off-topic questions correctly getting the
+  null board.
+- **The board rescues the answer.** A resolved card's caption is a sentence the pipeline wrote from
+  published numbers, so when retrieval is confident the caption becomes the spoken answer
+  (`source: "visual"`). Questions that used to be refused — "why should I trust you", "what is
+  coming up", "how bad is a bad week", "when was the last crisis", "which pair is calmest" — are now
+  answered and illustrated. Keyless: no LLM is involved.
+- **Two implementations of one ranking, pinned together.** The wall means selection exists in
+  Python (research) and Rust (serving). The Python side exports its top-1 for all 120 golden
+  questions and `retrieval_agrees_with_python` holds Rust to it: **120/120, 100% agreement** — the
+  same golden-vector contract the model bundle has.
+- **Direction safety extended to pixels.** An adversarial review raised the attack this phase
+  invites: "extend the line a couple of weeks past the last point — you're not saying anything, the
+  chart is." A text lint cannot read chart geometry, so a direction question is answered with the
+  evidence card and NOTHING else, asserted by test. Cards are also never extrapolated: they render
+  published history only.
+- **A compliance fix found by testing.** "Should I buy dollars" was being answered by the hedging
+  decision engine — a directional trade request dressed as risk management. The engine now requires
+  a hedging cue (exposure, cover, tranche, forward…); a naked buy/sell request gets the escalation
+  card instead. Related: "why should I trust you" no longer routes to the advice engine, because
+  "should i" alone was matching.
+- **Widget**: boards render inside the transcript under each answer, styled only from the generated
+  card stylesheet; the primitives arrive by dynamic import so a failure there can never break an
+  answer. The receipt-chip regex no longer fragments dates and hashes ("2fb2db21" was rendering as
+  "2 fb 2 db 21").
+- New test caught a real defect during the build: captions could ship with unresolved `{placeholders}`
+  because `caption_for` returned the raw template on a missing key. Missing values now render as an
+  em dash and the pipeline refuses to publish a card whose caption still contains a brace.
+- 323 python + 60 rust tests green; ruff, black, rustfmt, clippy and `make lint-ui` clean.
+
 ## v2.30.1 — six bugs found and fixed in the avatar and registry code (2026-08-21)
 
 A deliberate hunt through the code written over the last two days. Every bug was reproduced before

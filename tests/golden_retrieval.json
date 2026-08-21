@@ -1,0 +1,485 @@
+{
+ "note": "Python top-1 per golden question; the Rust selector must agree (see retrieval_agrees_with_python). Regenerate after registry or retriever changes.",
+ "pairs": [
+  {
+   "q": "where do we stand on euro dollar",
+   "top": "condition_card"
+  },
+  {
+   "q": "summarise today for EURUSD",
+   "top": "siren_gauge"
+  },
+  {
+   "q": "what kind of market is it this morning",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "are your three detectors lined up",
+   "top": "consensus_dots"
+  },
+  {
+   "q": "how many of the voters see trouble",
+   "top": "consensus_dots"
+  },
+  {
+   "q": "is there disagreement between your signals",
+   "top": "consensus_dots"
+  },
+  {
+   "q": "how much confidence sits behind the calm label",
+   "top": "regime_probability_bars"
+  },
+  {
+   "q": "break the state down by likelihood",
+   "top": "pair_compare_table"
+  },
+  {
+   "q": "odds on each state",
+   "top": "regime_probability_bars"
+  },
+  {
+   "q": "is anything odd about this session",
+   "top": "what_changed_card"
+  },
+  {
+   "q": "rate today's strangeness",
+   "top": "condition_card"
+  },
+  {
+   "q": "does today stand out against quiet history",
+   "top": "storm_compare_card"
+  },
+  {
+   "q": "rank the three markets by quiet",
+   "top": "pair_compare_table"
+  },
+  {
+   "q": "put the currencies side by side",
+   "top": "pair_compare_table"
+  },
+  {
+   "q": "which one is behaving best",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "are the fitted models past their shelf life",
+   "top": "metric_table"
+  },
+  {
+   "q": "any degradation in the pipeline",
+   "top": "drift_status"
+  },
+  {
+   "q": "is anything rotting under the hood",
+   "top": "drift_status"
+  },
+  {
+   "q": "draw the change risk for the last quarter",
+   "top": "risk_trace"
+  },
+  {
+   "q": "chart how the risk evolved",
+   "top": "risk_trace"
+  },
+  {
+   "q": "has the five day risk drifted up lately",
+   "top": "risk_trace"
+  },
+  {
+   "q": "paint the states across the past year",
+   "top": "regime_timeline_ribbon"
+  },
+  {
+   "q": "how many sessions has this state persisted",
+   "top": "regime_timeline_ribbon"
+  },
+  {
+   "q": "band the history by state",
+   "top": "regime_timeline_ribbon"
+  },
+  {
+   "q": "give me the dates of previous stress episodes",
+   "top": "regime_history_table"
+  },
+  {
+   "q": "tabulate earlier regimes with their spans",
+   "top": "regime_history_table"
+  },
+  {
+   "q": "list prior crisis windows",
+   "top": "regime_history_table"
+  },
+  {
+   "q": "set this against four weeks back",
+   "top": "storm_compare_card"
+  },
+  {
+   "q": "is the picture worse than a month ago",
+   "top": "period_compare_card"
+  },
+  {
+   "q": "contrast now with the prior quarter",
+   "top": "period_compare_card"
+  },
+  {
+   "q": "plot realised vol",
+   "top": "vol_trace"
+  },
+  {
+   "q": "has price movement widened recently",
+   "top": "vol_trace"
+  },
+  {
+   "q": "show the swing size over ninety days",
+   "top": "regime_timeline_ribbon"
+  },
+  {
+   "q": "anything move overnight",
+   "top": "what_changed_card"
+  },
+  {
+   "q": "delta versus the previous session",
+   "top": "what_changed_card"
+  },
+  {
+   "q": "brief me on what shifted since the last close",
+   "top": "what_changed_card"
+  },
+  {
+   "q": "what stance does the table suggest",
+   "top": "treasury_light"
+  },
+  {
+   "q": "is this a covering week",
+   "top": "treasury_light"
+  },
+  {
+   "q": "what does your rule table put out today",
+   "top": "treasury_light"
+  },
+  {
+   "q": "quantify a rough five days",
+   "top": "var_es_bars"
+  },
+  {
+   "q": "what is the tail loss for a week",
+   "top": "treasury_light"
+  },
+  {
+   "q": "how deep can a normal drawdown go in seven days",
+   "top": "var_es_bars"
+  },
+  {
+   "q": "I am carrying four hundred thousand francs, size it",
+   "top": "faq_card"
+  },
+  {
+   "q": "apply that to a two million position",
+   "top": "exposure_calculator"
+  },
+  {
+   "q": "run the numbers on my book",
+   "top": "metric_table"
+  },
+  {
+   "q": "suppose it slides two percent",
+   "top": "scenario_ladder"
+  },
+  {
+   "q": "price a four percent shift for me",
+   "top": "scenario_ladder"
+  },
+  {
+   "q": "if the rate lurched, what then",
+   "top": "scenario_ladder"
+  },
+  {
+   "q": "decompose that loss for me",
+   "top": "exposure_calculator"
+  },
+  {
+   "q": "where exactly would the money go",
+   "top": "impact_waterfall"
+  },
+  {
+   "q": "split the impact into parts",
+   "top": "impact_waterfall"
+  },
+  {
+   "q": "how many times has a two percent day occurred",
+   "top": "move_frequency_bars"
+  },
+  {
+   "q": "is a shift that large ordinary",
+   "top": "move_frequency_bars"
+  },
+  {
+   "q": "count the historical occurrences",
+   "top": "scenario_ladder"
+  },
+  {
+   "q": "put forwards next to laddering",
+   "top": "hedge_compare_table"
+  },
+  {
+   "q": "weigh the structures against each other",
+   "top": "hedge_compare_table"
+  },
+  {
+   "q": "which mechanical approach covers most",
+   "top": "hedge_compare_table"
+  },
+  {
+   "q": "what is the penalty for postponing to december",
+   "top": "treasury_light"
+  },
+  {
+   "q": "does delay get expensive",
+   "top": "cost_of_waiting_curve"
+  },
+  {
+   "q": "chart the price of patience",
+   "top": "cost_of_waiting_curve"
+  },
+  {
+   "q": "how has your live record held up",
+   "top": "scoreboard_card"
+  },
+  {
+   "q": "convince me with your numbers",
+   "top": "metric_table"
+  },
+  {
+   "q": "what is the Brier since you went live",
+   "top": "scoreboard_card"
+  },
+  {
+   "q": "do the intervals actually contain the outcome",
+   "top": "coverage_plot"
+  },
+  {
+   "q": "chart the realised interval coverage",
+   "top": "coverage_plot"
+  },
+  {
+   "q": "are the ninety percent bands truthful",
+   "top": "coverage_plot"
+  },
+  {
+   "q": "pull one sealed entry for me",
+   "top": "ledger_row_receipt"
+  },
+  {
+   "q": "let me see a single recorded forecast",
+   "top": "ledger_row_receipt"
+  },
+  {
+   "q": "show a raw row from the chain",
+   "top": "ledger_row_receipt"
+  },
+  {
+   "q": "walk me through auditing the hash chain",
+   "top": "chain_verify_card"
+  },
+  {
+   "q": "how would an outsider confirm nothing was rewritten",
+   "top": "chain_verify_card"
+  },
+  {
+   "q": "what do I run to check the seal",
+   "top": "chain_verify_card"
+  },
+  {
+   "q": "is euro dollar going higher next week",
+   "top": "event_countdown_strip"
+  },
+  {
+   "q": "will the franc strengthen",
+   "top": "direction_evidence_card"
+  },
+  {
+   "q": "give me your price target",
+   "top": "direction_evidence_card"
+  },
+  {
+   "q": "anything on the diary soon",
+   "top": "event_countdown_strip"
+  },
+  {
+   "q": "how many days to the next policy meeting",
+   "top": "event_countdown_strip"
+  },
+  {
+   "q": "what scheduled risk is ahead",
+   "top": "event_countdown_strip"
+  },
+  {
+   "q": "what pushed today's reading up",
+   "top": "feature_driver_bars"
+  },
+  {
+   "q": "which inputs dominate the score",
+   "top": "feature_driver_bars"
+  },
+  {
+   "q": "attribute the current risk",
+   "top": "feature_driver_bars"
+  },
+  {
+   "q": "how do bonds and stocks look alongside this",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "give me the multi asset backdrop",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "what else is moving out there",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "how did conditions behave around past policy decisions",
+   "top": "event_study_card"
+  },
+  {
+   "q": "typical pattern on inflation prints",
+   "top": "event_study_card"
+  },
+  {
+   "q": "history around national bank days",
+   "top": "event_study_card"
+  },
+  {
+   "q": "take me back to the pandemic shock",
+   "top": "storm_replay_mini"
+  },
+  {
+   "q": "replay an old episode of stress",
+   "top": "storm_replay_mini"
+  },
+  {
+   "q": "how did the two thousand eight period unfold",
+   "top": "storm_replay_mini"
+  },
+  {
+   "q": "run it forward session by session",
+   "top": "what_changed_card"
+  },
+  {
+   "q": "start the playback",
+   "top": "regime_history_table"
+  },
+  {
+   "q": "let me watch the episode unfold",
+   "top": "storm_replay_mini"
+  },
+  {
+   "q": "does the present resemble that earlier episode",
+   "top": "storm_compare_card"
+  },
+  {
+   "q": "line today up against the banking wobble",
+   "top": "storm_compare_card"
+  },
+  {
+   "q": "how similar is now to that crisis",
+   "top": "storm_compare_card"
+  },
+  {
+   "q": "play me monday's summary",
+   "top": "weekly_briefing_clip"
+  },
+  {
+   "q": "the recorded briefing for this week",
+   "top": "weekly_briefing_clip"
+  },
+  {
+   "q": "is there a video roundup",
+   "top": "consensus_dots"
+  },
+  {
+   "q": "I want to forward this to finance",
+   "top": "snapshot_export_card"
+  },
+  {
+   "q": "make this shareable",
+   "top": "snapshot_export_card"
+  },
+  {
+   "q": "can I take this away as an image",
+   "top": "snapshot_export_card"
+  },
+  {
+   "q": "draw me the mechanism behind the anomaly score",
+   "top": "siren_gauge"
+  },
+  {
+   "q": "picture how the states are inferred",
+   "top": "cross_asset_card"
+  },
+  {
+   "q": "diagram the daily process",
+   "top": "explainer_diagram"
+  },
+  {
+   "q": "define chop for me",
+   "top": "glossary_card"
+  },
+  {
+   "q": "what exactly counts as filtered",
+   "top": "glossary_card"
+  },
+  {
+   "q": "meaning of the word band here",
+   "top": "coverage_plot"
+  },
+  {
+   "q": "trace the change risk back to raw data",
+   "top": "methodology_flow"
+  },
+  {
+   "q": "which steps produce the published siren",
+   "top": "pair_compare_table"
+  },
+  {
+   "q": "how is the light derived",
+   "top": "explainer_diagram"
+  },
+  {
+   "q": "what does the paid tier include",
+   "top": "glossary_card"
+  },
+  {
+   "q": "tell me about the alerting options",
+   "top": "faq_card"
+  },
+  {
+   "q": "what happens to my data",
+   "top": "metric_table"
+  },
+  {
+   "q": "tell me what to do with my savings",
+   "top": "ask_your_bank_card"
+  },
+  {
+   "q": "advise me on my position",
+   "top": "exposure_calculator"
+  },
+  {
+   "q": "what trade should I put on",
+   "top": "ask_your_bank_card"
+  },
+  {
+   "q": "just give me the raw figures",
+   "top": "metric_table"
+  },
+  {
+   "q": "dump the published values",
+   "top": "metric_table"
+  },
+  {
+   "q": "list every number you have for today",
+   "top": "siren_gauge"
+  }
+ ]
+}

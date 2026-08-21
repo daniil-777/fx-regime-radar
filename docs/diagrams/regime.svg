@@ -1,0 +1,14 @@
+<svg viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg" role="img">
+  <g fill="none" stroke="currentColor" stroke-width="1.2">
+    <rect x="6" y="34" width="62" height="30" rx="6"/>
+    <rect x="98" y="34" width="84" height="30" rx="6"/>
+    <rect x="212" y="34" width="80" height="30" rx="6"/>
+    <path d="M68 49h30M182 49h30"/><path d="M92 45l6 4-6 4M206 45l6 4-6 4"/>
+  </g>
+  <g font-size="9" text-anchor="middle" fill="currentColor">
+    <text x="37" y="52">returns, vol,</text><text x="37" y="62" font-size="8">momentum</text>
+    <text x="140" y="46">hidden Markov model</text><text x="140" y="58">(filtered, causal)</text>
+    <text x="252" y="46">calm · trend</text><text x="252" y="58">chop · crisis</text>
+    <text x="150" y="90" font-size="8.5">filtered means today's label uses only data up to today — never the smoother that peeks ahead</text>
+  </g>
+</svg>

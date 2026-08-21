@@ -90,6 +90,19 @@ pub fn avatar_refusal(kind: &str) {
     metrics::counter!("avatar_refusals_total", "kind" => kind.to_string()).increment(1);
 }
 
+// ---- answer boards (phase 36/38) --------------------------------------------------------------
+
+/// Which card was rendered as the primary of a board.
+pub fn visual_render(component: &str) {
+    metrics::counter!("visual_render_total", "component" => component.to_string()).increment(1);
+}
+
+/// A question was answered with no board at all — the null board is a first-class outcome, and
+/// watching its rate is how you notice the registry going blind.
+pub fn visual_null_board() {
+    metrics::counter!("visual_null_board_total").increment(1);
+}
+
 /// gate ∈ {"direction", "grounding"}
 pub fn avatar_lint_rejection(gate: &str) {
     metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);

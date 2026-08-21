@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ask the radar — AI presenter</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/widget-tokens.css">
 <style>
 /* palette = design/tokens.json verbatim (tested against it); no other colours exist on this page */
 :root{
@@ -49,6 +50,9 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
 .msg{max-width:92%;padding:8px 12px;border-radius:10px;font-size:14px}
 .msg.user{align-self:flex-end;background:var(--nimbus);border:1px solid var(--line);color:var(--tx2)}
 .msg.avatar{align-self:flex-start;background:var(--nimbus);border:1px solid var(--line)}
+.msg .board{margin-top:9px;display:grid;gap:8px;max-width:100%}
+.msg .board .fxc{background:var(--nimbus);border-color:var(--line)}
+.msg.avatar{max-width:100%}
 .msg .meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px}
 .msg .meta .ok{color:var(--calm)} .msg .meta .ref{color:var(--chop)}
 .chip{font-family:var(--mono);font-variant-numeric:tabular-nums;background:var(--front);
@@ -203,18 +207,43 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
 const $=id=>document.getElementById(id);
 const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,advice:false,vendorClient:null};
 const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
+/* The eight primitives arrive as a module; everything else here stays a classic script so the
+   voice state machine keeps its globals. A board that fails to load must never break an answer:
+   the words are the product, the picture is support. */
+let CARDS=null;
+const cardsReady=import("/cards.js").then(m=>{CARDS=m.default||m;}).catch(e=>{
+  console.warn("card primitives unavailable; answering in words only:",e);});
+async function renderBoard(host,board){
+  if(!board||!board.length)return;
+  await cardsReady;
+  if(!CARDS||!CARDS.renderCard)return;
+  const wrap=document.createElement("div");wrap.className="board";
+  for(const c of board){
+    try{
+      wrap.appendChild(CARDS.renderCard({
+        component:c.component,primitive:c.primitive,title:(c.title||c.component).replace(/_/g," "),
+        caption:c.caption,label:c.label||c.component,asof:c.asof,stale:!!c.stale,
+        args:c.args,data:c.data}));
+    }catch(e){console.warn("card failed to render:",c.component,e);}
+  }
+  if(wrap.children.length){host.appendChild(wrap);
+    $("log").scrollTop=$("log").scrollHeight;}
+}
 function setStatus(s){
   $("status").textContent=s==="speaking"?"speaking \u2014 click to skip":s;
   $("status").style.cursor=s==="speaking"?"pointer":"";
 }
 function chipify(text){
   return text.replace(/&/g,"&amp;").replace(/</g,"&lt;")
-    .replace(/\d+(?:\.\d+)?/g,m=>'<span class="chip">'+m+"</span>");
+    // A receipt chip marks a NUMBER she quoted. Dates and hashes are identifiers, not measurements:
+    // chipping them turned "2026-08-20" into three receipts and a chain head into "2 fb 2 db 21".
+    .replace(/(?<![\w.\-])\d+(?:\.\d+)?(?![\w\-])/g,m=>'<span class="chip">'+m+"</span>");
 }
 function addMsg(role,text,meta){
   const d=document.createElement("div");d.className="msg "+role;
   d.innerHTML=chipify(text)+(meta?'<div class="meta">'+meta+"</div>":"");
   $("log").appendChild(d);$("log").scrollTop=$("log").scrollHeight;
+  return d;
 }
 function browserSpeak(text){
   return new Promise(res=>{
@@ -434,7 +463,8 @@ async function ask(question,fromVendor){
     const gate=r.gate==="pass"?src+'<span class="ok">gate pass</span>'
       :r.gate&&r.gate.startsWith("open:")?'<span class="ref">'+r.gate+' — number not in today\'s pack</span>'
       :'<span class="ref">'+r.gate+"</span>";
-    addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
+    const node=addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
+    renderBoard(node,r.board);   // not awaited: she starts speaking while the cards paint
     state.thinking=false;
     if(!drainPending())await speak(r.text);   // a queued turn outranks finishing this answer
   }catch(e){state.thinking=false;setStatus("error");

@@ -22,6 +22,7 @@ pub mod state_store;
 pub mod store;
 pub mod stripe;
 pub mod treasury;
+pub mod visuals;
 
 pub use bundle::Bundle;
 pub use error::EngineError;
