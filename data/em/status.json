@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-08-20T06:48:55Z",
- "data_through": "2026-08-19",
+ "generated_at_utc": "2026-08-21T06:50:38Z",
+ "data_through": "2026-08-20",
  "window_days": 60,
  "train_end": "2016-12-31",
  "thresholds": {
@@ -10,31 +10,31 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.1111,
+   "psi": 0.0981,
    "status": "stable",
-   "textbook": "watch",
+   "textbook": "stable",
    "train_p75": 0.7018,
    "train_p95": 1.8019,
-   "ks": 0.0936
+   "ks": 0.0803
   },
   "vol_20": {
-   "psi": 0.3405,
+   "psi": 0.3253,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 5.5947,
    "train_p95": 7.3109,
-   "ks": 0.2083
+   "ks": 0.2086
   },
   "vol_60": {
-   "psi": 0.9919,
+   "psi": 1.0222,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 7.0452,
    "train_p95": 8.2828,
-   "ks": 0.2134
+   "ks": 0.2167
   },
   "vol_ratio": {
-   "psi": 0.1157,
+   "psi": 0.1343,
    "status": "stable",
    "textbook": "watch",
    "train_p75": 1.0099,
@@ -42,7 +42,7 @@
    "ks": 0.1217
   },
   "mom_20": {
-   "psi": 0.3245,
+   "psi": 0.3604,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.4755,
@@ -50,23 +50,23 @@
    "ks": 0.1666
   },
   "rng_hl": {
-   "psi": 1.1442,
+   "psi": 1.1373,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 5.6934,
    "train_p95": 8.2828,
-   "ks": 0.2713
+   "ks": 0.2765
   },
   "corr_20": {
-   "psi": 1.1096,
+   "psi": 1.1439,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 3.9732,
    "train_p95": 5.9669,
-   "ks": 0.4575
+   "ks": 0.4608
   },
   "ret_5d_abs": {
-   "psi": 0.1084,
+   "psi": 0.1108,
    "status": "stable",
    "textbook": "watch",
    "train_p75": 0.9748,
@@ -74,41 +74,41 @@
    "ks": 0.1155
   },
   "hmm_entropy": {
-   "psi": 0.2792,
+   "psi": 0.2756,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.1516,
    "train_p95": 4.5496,
-   "ks": 0.1566
+   "ks": 0.16
   }
  },
  "hmm": {
   "USDMXN": {
-   "recent_mean_loglik": -0.768,
+   "recent_mean_loglik": -0.7816,
    "train_p5": -5.1646,
    "train_median": -1.9688,
    "stale": false
   },
   "USDBRL": {
-   "recent_mean_loglik": -1.5791,
+   "recent_mean_loglik": -1.5802,
    "train_p5": -4.3794,
    "train_median": -2.6066,
    "stale": false
   },
   "USDZAR": {
-   "recent_mean_loglik": -1.5356,
+   "recent_mean_loglik": -1.5422,
    "train_p5": -5.0644,
    "train_median": -2.3278,
    "stale": false
   },
   "USDPLN": {
-   "recent_mean_loglik": -1.1056,
+   "recent_mean_loglik": -1.1329,
    "train_p5": -5.3472,
    "train_median": -2.3065,
    "stale": false
   },
   "USDRUB": {
-   "recent_mean_loglik": -3.8838,
+   "recent_mean_loglik": -3.9123,
    "train_p5": -5.3058,
    "train_median": -1.5714,
    "stale": false
@@ -117,5 +117,5 @@
  "drifted_features": [],
  "stale_pairs": [],
  "model_stale": false,
- "worst_psi": 1.1442
+ "worst_psi": 1.1439
 }
