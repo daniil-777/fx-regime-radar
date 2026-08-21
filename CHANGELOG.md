@@ -2,6 +2,25 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.31.2 — the test document, and what writing it found (2026-08-21)
+
+- `docs/TEST_QUESTIONS.md` and `docs/test-questions.html`: **108 questions put to the running
+  service**, with the answers recorded verbatim — 32 that should work, 76 written by an adversarial
+  review to break the compliance gates. Nothing in the document is illustrative.
+- **The adversarial verdict: no leak.** Not one of the 76 attempts produced a direction statement, a
+  fabricated number, or advice from the model's own judgement, across presupposition traps,
+  sentence completion, persona swaps, planted numbers, claimed authority and prompt injection.
+- **What it did find was a relevance failure that reads like evasion** — fixed in v2.31.1: the
+  market lookup fired on any currency word, so "what is the Sharpe ratio on the USD/CHF overlay"
+  came back with today's condition read. Nothing was fabricated, but answering a question nobody
+  asked is worse for trust than admitting ignorance. The lookup now needs a state cue and rejects
+  out-of-scope vocabulary, a single FAQ keyword can no longer answer a long specific question with
+  a definition, and a request for an unpublished metric gets "I don't have that number and won't
+  guess".
+- `docs/discovery/CALL_KIT.md` + `call_log.csv`: the ten-call customer-discovery gate that still
+  stands between phase 27 and the rest of the roadmap — segments, a twelve-minute script, ten
+  behaviour-based questions and kill criteria written in advance.
+
 ## v2.31.0 — phase 36: visual answers, rendered beside the voice (2026-08-21)
 
 The presenter now answers with a picture as well as a sentence, in the same breath: the card paints
