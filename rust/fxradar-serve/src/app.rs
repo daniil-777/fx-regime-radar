@@ -33,6 +33,12 @@ use utoipa_swagger_ui::SwaggerUi;
 
 pub const DISCLAIMER: &str = "Educational tool. Not investment advice.";
 pub const WIDGET_JS: &str = include_str!("../static/widget.js");
+/// Phase 38: the eight render primitives and their generated stylesheet. Served as static assets
+/// so the answer boards of phase 36 can import them; both are cacheable (they change per release,
+/// not per request) unlike /avatar, which is the application itself.
+pub const CARDS_JS: &str = include_str!("../static/cards.js");
+pub const WIDGET_TOKENS_CSS: &str = include_str!("../static/widget-tokens.css");
+pub const CARDS_DEMO_HTML: &str = include_str!("../static/cards-demo.html");
 pub const WIDGET_HTML: &str = include_str!("../static/widget.html");
 const MAX_WEBHOOKS_PER_KEY: usize = 10;
 
@@ -486,6 +492,38 @@ pub async fn widget_js() -> Response {
         .into_response()
 }
 
+#[utoipa::path(get, path = "/cards.js", tag = "public",
+    responses((status = 200, description = "the eight render primitives (ES module)", body = String)))]
+pub async fn cards_js() -> Response {
+    (
+        [
+            (header::CONTENT_TYPE, "application/javascript; charset=utf-8"),
+            (header::CACHE_CONTROL, "public, max-age=300"),
+        ],
+        CARDS_JS,
+    )
+        .into_response()
+}
+
+#[utoipa::path(get, path = "/widget-tokens.css", tag = "public",
+    responses((status = 200, description = "generated card stylesheet", body = String)))]
+pub async fn widget_tokens_css() -> Response {
+    (
+        [
+            (header::CONTENT_TYPE, "text/css; charset=utf-8"),
+            (header::CACHE_CONTROL, "public, max-age=300"),
+        ],
+        WIDGET_TOKENS_CSS,
+    )
+        .into_response()
+}
+
+#[utoipa::path(get, path = "/cards", tag = "public",
+    responses((status = 200, description = "primitive gallery: normal, skeleton and stale states")))]
+pub async fn cards_demo() -> Html<&'static str> {
+    Html(CARDS_DEMO_HTML)
+}
+
 /// Demo page embedding the widget three times.
 #[utoipa::path(get, path = "/widget", tag = "public",
     responses((status = 200, description = "text/html", body = String)))]
@@ -860,7 +898,8 @@ served by the Rust engine from the frozen model bundle. Public routes need no ke
 take `X-API-Key` (tier pro or partner). Educational tool. Not investment advice.",
         license(name = "MIT")
     ),
-    paths(health, regimes, metrics_handler, widget_js, widget_demo, score, treasury_handler,
+    paths(health, regimes, metrics_handler, widget_js, widget_demo, cards_js, widget_tokens_css,
+        cards_demo, score, treasury_handler,
           webhooks_create, webhooks_list, webhooks_delete, stripe_webhook,
           avatar::brain, avatar::greeting, avatar::session_token, avatar::heartbeat, avatar::tts),
     components(schemas(ApiErrorBody, ScoreRequest, ScoreResponse, ScoredRowJson, PairWindow,
@@ -887,6 +926,9 @@ pub fn build_router(state: AppState) -> Router {
         .route("/metrics", get(metrics_handler))
         .route("/widget.js", get(widget_js))
         .route("/widget", get(widget_demo))
+        .route("/cards.js", get(cards_js))
+        .route("/widget-tokens.css", get(widget_tokens_css))
+        .route("/cards", get(cards_demo))
         .route("/api/stripe/webhook", post(stripe_webhook));
     let keyed = Router::new()
         .route("/api/score", post(score))

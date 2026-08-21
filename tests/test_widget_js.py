@@ -21,6 +21,7 @@ PAGES = [
     ROOT / "rust/fxradar-serve/static/widget.html",
 ]
 SCRIPTS = [ROOT / "rust/fxradar-serve/static/widget.js"]
+MODULES = [ROOT / "rust/fxradar-serve/static/cards.js"]  # ES modules: checked with a .mjs copy
 
 
 def _inline_js(html_path: Path) -> str:
@@ -64,3 +65,15 @@ def test_avatar_widget_defines_its_voice_contract() -> None:
         "maxAlternatives",
     ):
         assert symbol in js, f"the widget lost {symbol!r} — voice conversation depends on it"
+
+
+@pytest.mark.parametrize("path", [p for p in MODULES if p.exists()], ids=lambda p: p.name)
+def test_es_modules_parse(path: Path, tmp_path: Path) -> None:
+    """cards.js is an ES module; `node --check` needs the .mjs extension to parse `export`."""
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node not installed")
+    target = tmp_path / f"{path.stem}.mjs"
+    target.write_text(path.read_text())
+    proc = subprocess.run([node, "--check", str(target)], capture_output=True, text=True)
+    assert proc.returncode == 0, f"{path.name} does not parse:\n{proc.stderr}"

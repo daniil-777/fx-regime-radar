@@ -1,0 +1,82 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Render primitives — FX Regime Radar</title>
+<link rel="stylesheet" href="/widget-tokens.css">
+<style>
+  body{background:var(--fx-nimbus);color:var(--fx-text);font-family:var(--fx-ui);margin:0;padding:20px}
+  h1{font-family:var(--fx-display);font-size:19px;font-weight:500;margin:0 0 4px}
+  p.lead{color:var(--fx-text-secondary);font-size:12.5px;margin:0 0 18px;max-width:70ch}
+  h2{font-family:var(--fx-display);font-size:13px;font-weight:500;color:var(--fx-text-secondary);
+     margin:22px 0 8px;text-transform:lowercase;letter-spacing:.04em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+</style>
+<h1>The eight render primitives</h1>
+<p class="lead">Fifty cards, eight renderers. Every card in the registry is one of these plus
+server-resolved data — no card carries bespoke render code. Each row shows the normal, skeleton and
+stale states; heights are fixed per primitive so a board never reflows while it resolves.</p>
+<div id="out"></div>
+<script type="module">
+import { renderCard, renderSkeleton, PRIMITIVE_NAMES } from "/cards.js";
+
+const DATA = {
+  stat_block: {stats:[{value:"calm",label:"regime",tone:"calm"},{value:"0.02",label:"change risk"},
+                      {value:"71",label:"siren"}], subline:"band 0.00 to 0.51"},
+  bar_row: {rows:[{label:"vol_20",value:0.42,highlight:true,display:"0.42"},
+                  {label:"vol_ratio",value:0.31,display:"0.31"},
+                  {label:"mom_20",value:0.18,display:"0.18"},
+                  {label:"rng_hl",value:0.09,display:"0.09"}]},
+  trace_band: {points:Array.from({length:60},(_,i)=>{const v=0.2+0.12*Math.sin(i/7);
+                 return {v, lo:v-0.09, hi:v+0.09};}), subline:"90 days · conformal band"},
+  ribbon: {segments:[{tone:"calm",weight:8},{tone:"chop",weight:3},{tone:"crisis",weight:1},
+                     {tone:"calm",weight:6}],
+           legend:[{label:"calm"},{label:"chop"},{label:"crisis"}]},
+  table: {columns:["market","regime","risk","siren"],
+          rows:[["EUR/USD","calm","0.02","71"],["USD/CHF","calm","0.05","44"],
+                ["GBP/USD","calm","0.03","38"]]},
+  dot_row: {items:[{label:"crisis prob",tone:"calm"},{label:"BOCPD",tone:"calm"},
+                   {label:"vol rule",tone:"chop",sub:"1/3"}]},
+  media_frame: {empty:"No clip recorded for this week."},
+  diagram_frame: {svg:`<svg viewBox="0 0 240 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="30" width="52" height="30" rx="6" fill="none" stroke="currentColor"/>
+      <rect x="94" y="30" width="52" height="30" rx="6" fill="none" stroke="currentColor"/>
+      <rect x="182" y="30" width="52" height="30" rx="6" fill="none" stroke="currentColor"/>
+      <path d="M58 45h36M146 45h36" stroke="currentColor" fill="none"/>
+      <text x="32" y="49" font-size="9" text-anchor="middle" fill="currentColor">bars</text>
+      <text x="120" y="49" font-size="9" text-anchor="middle" fill="currentColor">features</text>
+      <text x="208" y="49" font-size="9" text-anchor="middle" fill="currentColor">regime</text>
+    </svg>`},
+};
+const CAPTION = {
+  stat_block:"EUR/USD · calm · change risk 0.02 (band 0.00 to 0.51) · siren 71",
+  bar_row:"What contributed most to today's change risk",
+  trace_band:"EUR/USD change risk over 90 days, with its conformal band",
+  ribbon:"EUR/USD regimes over 1 year · day 12 of the current one",
+  table:"Today across the markets: regime, change risk and siren side by side",
+  dot_row:"Stress consensus for EUR/USD: 1 of 3 voters",
+  media_frame:"The briefing published for week 2026-W34",
+  diagram_frame:"How the regime is inferred, end to end",
+};
+const out = document.getElementById("out");
+for (const p of PRIMITIVE_NAMES) {
+  const h = document.createElement("h2"); h.textContent = p; out.appendChild(h);
+  const grid = document.createElement("div"); grid.className = "grid";
+  grid.appendChild(renderCard({component:p, primitive:p, data:DATA[p], caption:CAPTION[p],
+                               asof:"2026-08-21", title:p}));
+  grid.appendChild(renderSkeleton(p));
+  grid.appendChild(renderCard({component:p, primitive:p, data:DATA[p], caption:CAPTION[p],
+                               asof:"2026-08-14", stale:true, title:p}));
+  out.appendChild(grid);
+}
+const h = document.createElement("h2");
+h.textContent = "a board: three cards, three families, three primitives";
+out.appendChild(h);
+const board = document.createElement("div"); board.className = "fxc-board";
+board.appendChild(renderCard({component:"condition_card", primitive:"stat_block", title:"condition",
+  data:DATA.stat_block, caption:CAPTION.stat_block, asof:"2026-08-21"}));
+board.appendChild(renderCard({component:"risk_trace", primitive:"trace_band", title:"risk trace",
+  data:DATA.trace_band, caption:CAPTION.trace_band, asof:"2026-08-21"}));
+board.appendChild(renderCard({component:"event_countdown_strip", primitive:"dot_row",
+  title:"events ahead", data:DATA.dot_row, caption:"Scheduled events ahead, nearest first",
+  asof:"2026-08-21"}));
+out.appendChild(board);
+</script>

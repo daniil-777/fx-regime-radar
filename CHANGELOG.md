@@ -2,6 +2,55 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.30.0 — phase 38: eight primitives and the fifty-card registry (2026-08-21)
+
+Built on the greenfield branch of the phase brief: phase 36 does not exist yet, so the primitive
+layer is built FIRST and 36's cards will sit on it — no bespoke cards to refactor later. The
+visual-regression proof is therefore not applicable (there are no pre-existing cards to preserve);
+the equivalent guarantee is that no card may carry render code at all.
+
+- **Eight renderers, fifty cards.** `rust/fxradar-serve/static/cards.js` implements `stat_block`,
+  `bar_row`, `trace_band`, `ribbon`, `table`, `dot_row`, `media_frame`, `diagram_frame` — each with
+  a fixed height band (boards never reflow), a skeleton state, an as-of stamp, a stale badge, an
+  export hook, and `buildText()`: ONE resolved string that produces the caption, the figcaption and
+  the ARIA label, so the spoken, written and screen-reader versions cannot diverge. Charts are
+  inline SVG — no plotting library is needed at all. Styled only from the generated
+  `widget-tokens.css` (`scripts/gen_widget_css.py`, wired into `make tokens`); zero hex literals.
+  Naming deviation: the brief says widget.js, but that is the phase-24 partner embed and renaming
+  it would break live embeds.
+- **Registry schema v3, all fifty entries** (`config/visual_registry.yaml`): status, tier, family,
+  primitive, question_intents in EN/DE/FR, args (enums and key references — a test proves no
+  numeric type exists anywhere, so the model cannot send a value), dotted bindings, disambiguation
+  rivals + tie-break, caption/ARIA templates, when_not, owner_artifact. Forty built, ten planned.
+  Catalog discrepancy recorded rather than papered over: REGISTRY-50's summary line says 20/18/12,
+  its per-card table says 20/20/10; the table is the data and the test pins it.
+- **Retrieval, and the flat-prompt guarantee** (`src/fxradar/visuals.py`): the model sees six
+  candidates plus the two catch-alls — never fifty. Ranking is deterministic and dependency-free
+  (IDF word overlap + character n-grams) with two layers that close the vocabulary gap: spoken pair
+  names become codes ("euro dollar" → EURUSD) and a domain thesaurus maps user words onto registry
+  words. Measured: **recall@6 = 100%** over 120 unseen paraphrases (100% in all seven families),
+  up from 80% for naive word overlap. Slice size at 24 entries vs 50: **489 vs 511 tokens (+4.5%)**
+  — the candidate count is capped at eight either way, so doubling the registry does not grow the
+  prompt.
+- **Planned entries are documentation, enforced three ways**: excluded from the index, refused by
+  the resolver, and rejected by board validation — with a golden family asserting the ten planned
+  ids never surface.
+- **Contract test per entry**: every built card resolves against a sample bundle, so a binding that
+  drifts fails CI instead of a customer's question. Board rules (≤3 cards, distinct families for
+  support, no repeated primitive unless primary+explain) and the locale-bearing cache key ship with
+  tests.
+- **Golden set: 152 questions** (`tests/golden_visuals.yaml`) across selection, adversarial,
+  no-visual, stale-context, planted-number and planned-blocked families — every question a
+  paraphrase that is NOT in the index, with a test that fails if one leaks, because a golden set
+  quoting the index measures nothing. Selection accuracy and coverage are phase 36's gates: they
+  need the model in the loop, which does not exist yet, and are deliberately not claimed here.
+- **Growth workflow** (`docs/registry_growth.md` + `reports/visual_gap_log.md`): a planned card is
+  promoted only after the same unmet intent appears in 5 distinct sessions across two weeks —
+  golden questions first, status flip last, then recall@6 must still hold at 98%.
+- Gallery at `/cards` with all eight primitives in normal, skeleton and stale states plus a
+  three-family board; screenshots at 1280px and 375px. The JS syntax gate now covers ES modules.
+- 321 python (+19) + 56 rust tests green; ruff, black, clippy and `make lint-ui` clean.
+
 ## v2.29.0 — speech that waits for you to finish, and hears accents (2026-08-20)
 
 - One turn, one question. The recogniser fires a "final" result at every pause, so a multi-sentence

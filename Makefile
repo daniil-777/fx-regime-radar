@@ -107,8 +107,9 @@ lint-ui:          ## phase 31: no hex colour literal outside design/tokens.json 
 	  echo "lint-ui: hex literal found — use fxradar.tokens / app.ui tokens (design/tokens.json is the only source)"; exit 1; \
 	else echo "lint-ui: ok — no hex literals outside design/tokens.json"; fi
 
-tokens:           ## regenerate .streamlit/config.toml, design/tokens.css and rust static tokens from design/tokens.json
+tokens:           ## regenerate .streamlit/config.toml, design/tokens.css, widget-tokens.css and rust static tokens from design/tokens.json
 	$(PYTHON) scripts/gen_tokens.py
+	$(PYTHON) scripts/gen_widget_css.py
 
 fmt:              ## auto-format and auto-fix imports
 	$(BIN)/ruff check --fix .

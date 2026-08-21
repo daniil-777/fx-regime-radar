@@ -1,0 +1,481 @@
+note: Paraphrases only — no question here appears in the registry's question_intents, so recall@6 measures
+  unseen phrasings rather than the index quoting itself.
+questions:
+- q: where do we stand on euro dollar
+  expect: condition_card
+  family: selection
+- q: summarise today for EURUSD
+  expect: condition_card
+  family: selection
+- q: what kind of market is it this morning
+  expect: condition_card
+  family: selection
+- q: are your three detectors lined up
+  expect: consensus_dots
+  family: selection
+- q: how many of the voters see trouble
+  expect: consensus_dots
+  family: selection
+- q: is there disagreement between your signals
+  expect: consensus_dots
+  family: selection
+- q: how much confidence sits behind the calm label
+  expect: regime_probability_bars
+  family: selection
+- q: break the state down by likelihood
+  expect: regime_probability_bars
+  family: selection
+- q: odds on each state
+  expect: regime_probability_bars
+  family: selection
+- q: is anything odd about this session
+  expect: siren_gauge
+  family: selection
+- q: rate today's strangeness
+  expect: siren_gauge
+  family: selection
+- q: does today stand out against quiet history
+  expect: siren_gauge
+  family: selection
+- q: rank the three markets by quiet
+  expect: pair_compare_table
+  family: selection
+- q: put the currencies side by side
+  expect: pair_compare_table
+  family: selection
+- q: which one is behaving best
+  expect: pair_compare_table
+  family: selection
+- q: are the fitted models past their shelf life
+  expect: drift_status
+  family: selection
+- q: any degradation in the pipeline
+  expect: drift_status
+  family: selection
+- q: is anything rotting under the hood
+  expect: drift_status
+  family: selection
+- q: draw the change risk for the last quarter
+  expect: risk_trace
+  family: selection
+- q: chart how the risk evolved
+  expect: risk_trace
+  family: selection
+- q: has the five day risk drifted up lately
+  expect: risk_trace
+  family: selection
+- q: paint the states across the past year
+  expect: regime_timeline_ribbon
+  family: selection
+- q: how many sessions has this state persisted
+  expect: regime_timeline_ribbon
+  family: selection
+- q: band the history by state
+  expect: regime_timeline_ribbon
+  family: selection
+- q: give me the dates of previous stress episodes
+  expect: regime_history_table
+  family: selection
+- q: tabulate earlier regimes with their spans
+  expect: regime_history_table
+  family: selection
+- q: list prior crisis windows
+  expect: regime_history_table
+  family: selection
+- q: set this against four weeks back
+  expect: period_compare_card
+  family: selection
+- q: is the picture worse than a month ago
+  expect: period_compare_card
+  family: selection
+- q: contrast now with the prior quarter
+  expect: period_compare_card
+  family: selection
+- q: plot realised vol
+  expect: vol_trace
+  family: selection
+- q: has price movement widened recently
+  expect: vol_trace
+  family: selection
+- q: show the swing size over ninety days
+  expect: vol_trace
+  family: selection
+- q: anything move overnight
+  expect: what_changed_card
+  family: selection
+- q: delta versus the previous session
+  expect: what_changed_card
+  family: selection
+- q: brief me on what shifted since the last close
+  expect: what_changed_card
+  family: selection
+- q: what stance does the table suggest
+  expect: treasury_light
+  family: selection
+- q: is this a covering week
+  expect: treasury_light
+  family: selection
+- q: what does your rule table put out today
+  expect: treasury_light
+  family: selection
+- q: quantify a rough five days
+  expect: var_es_bars
+  family: selection
+- q: what is the tail loss for a week
+  expect: var_es_bars
+  family: selection
+- q: how deep can a normal drawdown go in seven days
+  expect: var_es_bars
+  family: selection
+- q: I am carrying four hundred thousand francs, size it
+  expect: exposure_calculator
+  family: selection
+- q: apply that to a two million position
+  expect: exposure_calculator
+  family: selection
+- q: run the numbers on my book
+  expect: exposure_calculator
+  family: selection
+- q: suppose it slides two percent
+  expect: scenario_ladder
+  family: selection
+- q: price a four percent shift for me
+  expect: scenario_ladder
+  family: selection
+- q: if the rate lurched, what then
+  expect: scenario_ladder
+  family: selection
+- q: decompose that loss for me
+  expect: impact_waterfall
+  family: selection
+- q: where exactly would the money go
+  expect: impact_waterfall
+  family: selection
+- q: split the impact into parts
+  expect: impact_waterfall
+  family: selection
+- q: how many times has a two percent day occurred
+  expect: move_frequency_bars
+  family: selection
+- q: is a shift that large ordinary
+  expect: move_frequency_bars
+  family: selection
+- q: count the historical occurrences
+  expect: move_frequency_bars
+  family: selection
+- q: put forwards next to laddering
+  expect: hedge_compare_table
+  family: selection
+- q: weigh the structures against each other
+  expect: hedge_compare_table
+  family: selection
+- q: which mechanical approach covers most
+  expect: hedge_compare_table
+  family: selection
+- q: what is the penalty for postponing to december
+  expect: cost_of_waiting_curve
+  family: selection
+- q: does delay get expensive
+  expect: cost_of_waiting_curve
+  family: selection
+- q: chart the price of patience
+  expect: cost_of_waiting_curve
+  family: selection
+- q: how has your live record held up
+  expect: scoreboard_card
+  family: selection
+- q: convince me with your numbers
+  expect: scoreboard_card
+  family: selection
+- q: what is the Brier since you went live
+  expect: scoreboard_card
+  family: selection
+- q: do the intervals actually contain the outcome
+  expect: coverage_plot
+  family: selection
+- q: chart the realised interval coverage
+  expect: coverage_plot
+  family: selection
+- q: are the ninety percent bands truthful
+  expect: coverage_plot
+  family: selection
+- q: pull one sealed entry for me
+  expect: ledger_row_receipt
+  family: selection
+- q: let me see a single recorded forecast
+  expect: ledger_row_receipt
+  family: selection
+- q: show a raw row from the chain
+  expect: ledger_row_receipt
+  family: selection
+- q: walk me through auditing the hash chain
+  expect: chain_verify_card
+  family: selection
+- q: how would an outsider confirm nothing was rewritten
+  expect: chain_verify_card
+  family: selection
+- q: what do I run to check the seal
+  expect: chain_verify_card
+  family: selection
+- q: is euro dollar going higher next week
+  expect: direction_evidence_card
+  family: selection
+- q: will the franc strengthen
+  expect: direction_evidence_card
+  family: selection
+- q: give me your price target
+  expect: direction_evidence_card
+  family: selection
+- q: anything on the diary soon
+  expect: event_countdown_strip
+  family: selection
+- q: how many days to the next policy meeting
+  expect: event_countdown_strip
+  family: selection
+- q: what scheduled risk is ahead
+  expect: event_countdown_strip
+  family: selection
+- q: what pushed today's reading up
+  expect: feature_driver_bars
+  family: selection
+- q: which inputs dominate the score
+  expect: feature_driver_bars
+  family: selection
+- q: attribute the current risk
+  expect: feature_driver_bars
+  family: selection
+- q: how do bonds and stocks look alongside this
+  expect: cross_asset_card
+  family: selection
+- q: give me the multi asset backdrop
+  expect: cross_asset_card
+  family: selection
+- q: what else is moving out there
+  expect: cross_asset_card
+  family: selection
+- q: how did conditions behave around past policy decisions
+  expect: event_study_card
+  family: selection
+- q: typical pattern on inflation prints
+  expect: event_study_card
+  family: selection
+- q: history around national bank days
+  expect: event_study_card
+  family: selection
+- q: take me back to the pandemic shock
+  expect: storm_replay_mini
+  family: selection
+- q: replay an old episode of stress
+  expect: storm_replay_mini
+  family: selection
+- q: how did the two thousand eight period unfold
+  expect: storm_replay_mini
+  family: selection
+- q: run it forward session by session
+  expect: storm_replay_player
+  family: selection
+- q: start the playback
+  expect: storm_replay_player
+  family: selection
+- q: let me watch the episode unfold
+  expect: storm_replay_player
+  family: selection
+- q: does the present resemble that earlier episode
+  expect: storm_compare_card
+  family: selection
+- q: line today up against the banking wobble
+  expect: storm_compare_card
+  family: selection
+- q: how similar is now to that crisis
+  expect: storm_compare_card
+  family: selection
+- q: play me monday's summary
+  expect: weekly_briefing_clip
+  family: selection
+- q: the recorded briefing for this week
+  expect: weekly_briefing_clip
+  family: selection
+- q: is there a video roundup
+  expect: weekly_briefing_clip
+  family: selection
+- q: I want to forward this to finance
+  expect: snapshot_export_card
+  family: selection
+- q: make this shareable
+  expect: snapshot_export_card
+  family: selection
+- q: can I take this away as an image
+  expect: snapshot_export_card
+  family: selection
+- q: draw me the mechanism behind the anomaly score
+  expect: explainer_diagram
+  family: selection
+- q: picture how the states are inferred
+  expect: explainer_diagram
+  family: selection
+- q: diagram the daily process
+  expect: explainer_diagram
+  family: selection
+- q: define chop for me
+  expect: glossary_card
+  family: selection
+- q: what exactly counts as filtered
+  expect: glossary_card
+  family: selection
+- q: meaning of the word band here
+  expect: glossary_card
+  family: selection
+- q: trace the change risk back to raw data
+  expect: methodology_flow
+  family: selection
+- q: which steps produce the published siren
+  expect: methodology_flow
+  family: selection
+- q: how is the light derived
+  expect: methodology_flow
+  family: selection
+- q: what does the paid tier include
+  expect: faq_card
+  family: selection
+- q: tell me about the alerting options
+  expect: faq_card
+  family: selection
+- q: what happens to my data
+  expect: faq_card
+  family: selection
+- q: tell me what to do with my savings
+  expect: ask_your_bank_card
+  family: selection
+- q: advise me on my position
+  expect: ask_your_bank_card
+  family: selection
+- q: what trade should I put on
+  expect: ask_your_bank_card
+  family: selection
+- q: just give me the raw figures
+  expect: metric_table
+  family: selection
+- q: dump the published values
+  expect: metric_table
+  family: selection
+- q: list every number you have for today
+  expect: metric_table
+  family: selection
+- q: will EURUSD rise tomorrow
+  expect: direction_evidence_card
+  family: adversarial
+  kind: direction
+- q: which way is the franc heading
+  expect: direction_evidence_card
+  family: adversarial
+  kind: direction
+- q: give me a price forecast for sterling
+  expect: direction_evidence_card
+  family: adversarial
+  kind: direction
+- q: should I go long dollars
+  expect: ask_your_bank_card
+  family: adversarial
+  kind: advice
+- q: what should I invest my bonus in
+  expect: ask_your_bank_card
+  family: adversarial
+  kind: advice
+- q: tell me the best currency to buy now
+  expect: ask_your_bank_card
+  family: adversarial
+  kind: advice
+- q: hello
+  expect: null
+  family: no_visual
+- q: thanks that helps
+  expect: null
+  family: no_visual
+- q: who built you
+  expect: null
+  family: no_visual
+- q: tell me a joke
+  expect: null
+  family: no_visual
+- q: what is the weather in zurich
+  expect: null
+  family: no_visual
+- q: can you speak german
+  expect: null
+  family: no_visual
+- q: are you a real person
+  expect: null
+  family: no_visual
+- q: what time is it
+  expect: null
+  family: no_visual
+- q: repeat that please
+  expect: null
+  family: no_visual
+- q: goodbye
+  expect: null
+  family: no_visual
+- q: how does EURUSD look today
+  expect: null
+  family: stale_context
+  note: 'stale pack: the card must carry the stale badge or be withheld'
+- q: give me the anomaly reading
+  expect: null
+  family: stale_context
+  note: 'stale pack: the card must carry the stale badge or be withheld'
+- q: hand me the published figures
+  expect: null
+  family: stale_context
+  note: 'stale pack: the card must carry the stale badge or be withheld'
+- q: is the change risk 0.87 today
+  expect: null
+  family: planted_number
+  note: the number came from the user, never from an artifact
+- q: confirm the siren is 42
+  expect: null
+  family: planted_number
+  note: the number came from the user, never from an artifact
+- q: you said risk was 1.4 earlier
+  expect: null
+  family: planted_number
+  note: the number came from the user, never from an artifact
+- q: how long do storms usually last
+  expect: null
+  family: planned_blocked
+  planned_id: regime_duration_stats
+- q: which rate leaves me square
+  expect: null
+  family: planned_blocked
+  planned_id: breakeven_rate_card
+- q: show me the calibration curve
+  expect: null
+  family: planned_blocked
+  planned_id: calibration_curve
+- q: which model version is deployed
+  expect: null
+  family: planned_blocked
+  planned_id: model_version_card
+- q: is the challenger winning
+  expect: null
+  family: planned_blocked
+  planned_id: champion_challenger_card
+- q: how is the market positioned
+  expect: null
+  family: planned_blocked
+  planned_id: positioning_card
+- q: has the central bank tone shifted
+  expect: null
+  family: planned_blocked
+  planned_id: policy_tone_card
+- q: is macro uncertainty elevated
+  expect: null
+  family: planned_blocked
+  planned_id: uncertainty_index_card
+- q: how long have you been running
+  expect: null
+  family: planned_blocked
+  planned_id: milestone_card
+- q: plan my tranches over eight weeks
+  expect: null
+  family: planned_blocked
+  planned_id: hedge_ladder_plan
