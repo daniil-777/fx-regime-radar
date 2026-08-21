@@ -210,6 +210,8 @@ pub struct Pack {
     pub context_json: String,
     /// Every universe the radar computes (fx/g10/em/crypto), for the deterministic market lookup.
     pub markets: BTreeMap<String, MarketUniverse>,
+    /// The same markets as one line each, for the LLM context block.
+    pub markets_compact: String,
 }
 
 /// mtime-keyed cache entry held in [`AppState`].
@@ -240,6 +242,34 @@ struct PackFile {
 }
 
 /// Load and parse the context pack. Errors are strings so the caller can map them to 503.
+/// One line per market instead of a JSON object each. The full `markets` block is ~1,600 tokens of
+/// a ~5,100-token pack and rides into EVERY LLM call, even though market questions are answered
+/// deterministically before the model is reached. The compact form keeps every number available for
+/// the rare cross-market question at roughly a fifth of the cost. The grounding gate is unaffected:
+/// `allowed_numbers` is computed by the Python build from the complete pack, not from this text.
+fn compact_markets(markets: &BTreeMap<String, MarketUniverse>) -> String {
+    let mut out = String::new();
+    for (name, uni) in markets {
+        out.push_str(&format!("{} ({}, through {}):\n", name, uni.label, uni.data_through));
+        for (pair, p) in &uni.pairs {
+            out.push_str(&format!(
+                "  {pair} {} risk {} band {} to {} siren {} consensus {}/3\n",
+                p.regime,
+                fmt_opt(p.change_risk_5d),
+                fmt_opt(p.risk_lo),
+                fmt_opt(p.risk_hi),
+                p.anomaly_pct.map(|v| format!("{v:.0}")).unwrap_or_else(|| "-".into()),
+                p.agreement.map(|v| v.to_string()).unwrap_or_else(|| "-".into()),
+            ));
+        }
+    }
+    out
+}
+
+fn fmt_opt(v: Option<f64>) -> String {
+    v.map(|x| format!("{x:.2}")).unwrap_or_else(|| "-".into())
+}
+
 pub fn load_pack(path: &Path) -> Result<Pack, String> {
     let raw = std::fs::read_to_string(path)
         .map_err(|e| format!("avatar context unreadable ({}): {e}", path.display()))?;
@@ -250,6 +280,7 @@ pub fn load_pack(path: &Path) -> Result<Pack, String> {
     if let Some(obj) = v.as_object_mut() {
         obj.remove("allowed_numbers");
         obj.remove("faq");
+        obj.remove("markets"); // re-injected compactly by build_system (see compact_markets)
     }
     Ok(Pack {
         data_through: pf.data_through,
@@ -260,6 +291,7 @@ pub fn load_pack(path: &Path) -> Result<Pack, String> {
         allowed: pf.allowed_numbers.into_iter().collect(),
         knowledge_rel: pf.knowledge_pack,
         context_json: v.to_string(),
+        markets_compact: compact_markets(&pf.markets),
         markets: pf.markets,
     })
 }
@@ -806,12 +838,37 @@ fn sha256_hex(text: &str) -> String {
 
 /// Remember a gated brain answer's hash so /avatar/tts will only ever speak it (last 8 per
 /// session, in-memory — restarting the service simply requires re-asking).
+/// Sessions tracked for the TTS hash gate. Each entry is tiny, but the map was never evicted —
+/// a service running for months accumulated one entry per session forever. Insertion order is
+/// preserved by the tracking vector, so eviction drops the oldest sessions first.
+const MAX_TTS_SESSIONS: usize = 512;
+
 fn remember_tts_text(st: &AppState, session_id: &str, text: &str) {
     if let Ok(mut map) = st.tts_hashes.lock() {
         let q = map.entry(session_id.to_string()).or_default();
         q.push_back(sha256_hex(text));
         while q.len() > 8 {
             q.pop_front();
+        }
+        if map.len() > MAX_TTS_SESSIONS {
+            if let Ok(mut order) = st.tts_order.lock() {
+                if !order.iter().any(|s| s == session_id) {
+                    order.push_back(session_id.to_string());
+                }
+                while map.len() > MAX_TTS_SESSIONS {
+                    match order.pop_front() {
+                        Some(oldest) if oldest != session_id => {
+                            map.remove(&oldest);
+                        }
+                        Some(_) => {}
+                        None => break,
+                    }
+                }
+            }
+        } else if let Ok(mut order) = st.tts_order.lock() {
+            if !order.iter().any(|s| s == session_id) {
+                order.push_back(session_id.to_string());
+            }
         }
     }
 }
@@ -947,8 +1004,8 @@ fn build_system(st: &AppState, pack: &Pack) -> String {
         String::new()
     });
     format!(
-        "{head}\n\nCONTEXT:\n{}\nKNOWLEDGE:\n{knowledge}",
-        pack.context_json
+        "{head}\n\nCONTEXT:\n{}\nMARKETS (one line each; every number here is quotable):\n{}\nKNOWLEDGE:\n{knowledge}",
+        pack.context_json, pack.markets_compact
     )
 }
 
@@ -1737,6 +1794,7 @@ mod tests {
             allowed: HashSet::new(),
             knowledge_rel: String::new(),
             context_json: String::new(),
+            markets_compact: compact_markets(&markets),
             markets,
         };
         // currency word, bare leg, compact code, and slash form all resolve

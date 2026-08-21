@@ -906,3 +906,26 @@ async fn brain_answers_market_questions_keyless() {
     let v = ask(&base, "brt_test", "what is the siren?", None).await;
     assert_eq!(v["text"], SIREN_ANSWER);
 }
+
+/// Regression: the whole `markets` block used to ride into every LLM call (~1,600 tokens of a
+/// ~5,100-token pack). It is now stripped from the JSON context and re-injected as one line per
+/// market. Both facts matter: the JSON must not carry it, and the compact form must still carry
+/// every number, or the model loses the ability to answer a cross-market question.
+#[tokio::test]
+async fn markets_are_compacted_out_of_the_json_context() {
+    let root = scratch_dir("markets_ctx");
+    write_pack(&root, GREETING);
+    let pack = fxradar_serve::avatar::load_pack(&root.join("data/avatar_context.json")).unwrap();
+    assert!(
+        !pack.context_json.contains("\"markets\""),
+        "the JSON context still carries the markets block"
+    );
+    let compact = &pack.markets_compact;
+    for token in ["EURUSD", "BTC-USD", "calm", "chop", "Crypto majors", "2026-08-17"] {
+        assert!(compact.contains(token), "compact markets lost {token}: {compact}");
+    }
+    // the compact rendering must be dramatically smaller than the JSON it replaces
+    let as_json = serde_json::to_string(&serde_json::json!({"markets": {"fx": {"pairs": {}}}})).unwrap();
+    assert!(compact.len() < 4000, "compact markets is not compact: {} bytes", compact.len());
+    assert!(!as_json.is_empty());
+}

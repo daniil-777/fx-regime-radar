@@ -102,6 +102,9 @@ pub struct AppState {
     avatar_pack_cache: Arc<Mutex<Option<avatar::PackCache>>>,
     /// sha256 of gated brain answers per session (last 8) — /avatar/tts only speaks these.
     pub(crate) tts_hashes: Arc<Mutex<HashMap<String, std::collections::VecDeque<String>>>>,
+    /// Session ids in first-seen order, so the TTS map can evict the oldest instead of growing
+    /// without bound for the life of the process.
+    pub(crate) tts_order: Arc<Mutex<std::collections::VecDeque<String>>>,
     decision_cache: Arc<Mutex<Option<avatar::DecisionCache>>>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
@@ -151,6 +154,7 @@ impl AppState {
             regimes_cache: Arc::new(Mutex::new(None)),
             avatar_pack_cache: Arc::new(Mutex::new(None)),
             tts_hashes: Arc::new(Mutex::new(HashMap::new())),
+            tts_order: Arc::new(Mutex::new(std::collections::VecDeque::new())),
             decision_cache: Arc::new(Mutex::new(None)),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }

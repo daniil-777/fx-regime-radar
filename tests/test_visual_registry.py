@@ -388,6 +388,22 @@ def test_board_rules(reg: V.Registry) -> None:
     V.validate_board([c["condition_card"], c["glossary_card"]])  # primary + explain is allowed
 
 
+def test_board_rejects_a_chain_of_three_sharing_one_primitive(reg: V.Registry) -> None:
+    """Regression: the rule was checked pairwise, so three stat_blocks passed as long as one was
+    an explainer. Only a PAIR (primary + explain) may repeat a primitive."""
+    c = reg.cards
+    with pytest.raises(V.RegistryError, match="share the primitive"):
+        V.validate_board([c["condition_card"], c["glossary_card"], c["treasury_light"]])
+    V.validate_board([c["condition_card"], c["glossary_card"]])  # the allowed pair still passes
+
+
+def test_missing_argument_names_itself(reg: V.Registry) -> None:
+    """Regression: a missing arg surfaced as 'binding path not found: pack.pairs.{pair}.regime',
+    which sends the reader looking for a data problem instead of a call-site problem."""
+    with pytest.raises(V.RegistryError, match=r"needs argument\(s\) \['pair'\]"):
+        V.resolve(reg.cards["condition_card"], {}, _sample_bundle())
+
+
 def test_cache_key_includes_locale_and_versions() -> None:
     k1 = V.cache_key("3.0.0", "ctx1", "condition_card", {"pair": "EURUSD"}, "en")
     k2 = V.cache_key("3.0.0", "ctx1", "condition_card", {"pair": "EURUSD"}, "de")

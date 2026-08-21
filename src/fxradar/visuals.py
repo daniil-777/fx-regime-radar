@@ -365,10 +365,17 @@ def resolve(card: Card, args: dict[str, Any], bundle: dict) -> dict[str, Any]:
         if spec.get("type") == "enum" and name in args:
             if str(args[name]) not in [str(v) for v in spec.get("values", [])]:
                 raise RegistryError(f"{card.id}: {name}={args[name]!r} is not an allowed value")
+    supplied = {k: str(v) for k, v in (args or {}).items()}
     out: dict[str, Any] = {}
     for key, template in card.bindings.items():
-        path = template.format(**{k: str(v) for k, v in args.items()}) if args else template
-        out[key] = _dig(bundle, path)
+        needed = set(re.findall(r"\{(\w+)\}", template))
+        missing = needed - set(supplied)
+        if missing:
+            raise RegistryError(
+                f"{card.id}: binding {key!r} needs argument(s) {sorted(missing)} — "
+                f"got {sorted(supplied) or 'none'}"
+            )
+        out[key] = _dig(bundle, template.format(**supplied) if needed else template)
     return out
 
 
@@ -399,14 +406,21 @@ def validate_board(cards: list[Card]) -> None:
             raise RegistryError(
                 f"support card {c.id} shares the family {c.family!r} with the primary {primary.id}"
             )
-    seen: dict[str, Card] = {}
+    by_primitive: dict[str, list[Card]] = {}
     for c in cards:
-        prev = seen.get(c.primitive)
-        if prev is not None and "explain" not in (prev.family, c.family):
+        by_primitive.setdefault(c.primitive, []).append(c)
+    for primitive, group in by_primitive.items():
+        if len(group) == 1:
+            continue
+        # The allowed exception is a PAIR whose roles differ: one primary plus one explainer. A
+        # chain of three sharing a primitive is the visual noise this rule exists to prevent, and
+        # a pairwise check let it through.
+        explainers = [c for c in group if c.family == "explain"]
+        if len(group) > 2 or len(explainers) != 1:
             raise RegistryError(
-                f"{c.id} and {prev.id} share the primitive {c.primitive!r} with the same role"
+                f"{len(group)} cards share the primitive {primitive!r} "
+                f"({', '.join(c.id for c in group)}); only primary + explain may repeat one"
             )
-        seen[c.primitive] = c
 
 
 def cache_key(

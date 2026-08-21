@@ -250,13 +250,15 @@ function interruptSpeech(){  // barge-in: the user always outranks the presenter
   state.speaking=false;setStatus("listening");
 }
 async function speak(text){
-  if(state.vendorClient){  // the photoreal face speaks with the vendor's own voice
+  if(state.vendorClient&&!state.vendorMute){  // the photoreal face speaks with the vendor's own voice
     try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);
       // talk() resolves when the command is SENT; she speaks after. Hold the speaking state on an
       // estimated clock so "click to skip" is offered while she talks; interruptSpeech() ends it early.
       const est=Math.min(2000+55*text.length,60000),t0=performance.now();
+      const turn=++state.speakTurn;
       await new Promise(r=>{const iv=setInterval(()=>{
-        if(!state.speaking||performance.now()-t0>est){clearInterval(iv);r();}},150);});
+        if(!state.speaking||state.speakTurn!==turn||performance.now()-t0>est){clearInterval(iv);r();}},150);});
+      if(state.speakTurn!==turn)return;   // a newer turn owns the status line now
       state.speaking=false;setStatus("listening");return;}
     catch(e){console.warn("vendor talk failed, falling back to audio:",e);state.speaking=false;}
   }
@@ -346,7 +348,10 @@ async function startSession(){
     if(state.vendorReady)await state.vendorReady;  // talk() before the WebRTC session is ready is lost
     if(state.audioReady&&!(await state.audioReady)){
       addMsg("avatar","Her voice track never arrived, so I will speak through this browser instead. The answers are identical \u2014 only the voice changes.");
-      try{state.vendorClient=null;}catch(_){}  // fall back to an audible path rather than mime silently
+      // Fall back to an audible path — but keep the handle: it is the only way to release the
+      // vendor's single live session on pagehide. Nulling it here leaked the slot, and the next
+      // session then failed to start at all.
+      state.vendorMute=true;
     }
     await speak(g.text);state.greeted=true;
   }catch(e){setStatus("unavailable");addToStart(e.message);}
@@ -405,7 +410,16 @@ function routeHeard(text){  // two ears, one mouth: vendor ASR and browser recog
 }
 async function askVendor(question){return ask(question,true);}  // barge-in: ask() interrupts her itself
 async function ask(question,fromVendor){
-  if(!question.trim()||state.thinking)return;
+  if(!question.trim())return;
+  if(state.thinking){
+    // Speaking while she is still answering used to put your words in the transcript and then
+    // drop them — the guard returned before the request was ever made. Hold the newest turn and
+    // ask it the moment the current one lands (newest wins: older speech is stale by then).
+    state.pending={question,fromVendor};
+    if(!fromVendor){addMsg("user",question);}
+    setStatus("queued — answering the previous question first");
+    return;
+  }
   if(state.speaking||state.vendorClient)interruptSpeech();
   state.thinking=true;
   if(!fromVendor){addMsg("user",question);}
@@ -422,9 +436,17 @@ async function ask(question,fromVendor){
       :'<span class="ref">'+r.gate+"</span>";
     addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
     state.thinking=false;
-    await speak(r.text);
+    if(!drainPending())await speak(r.text);   // a queued turn outranks finishing this answer
   }catch(e){state.thinking=false;setStatus("error");
-    addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");}
+    addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");
+    drainPending();}
+}
+function drainPending(){
+  const next=state.pending;
+  if(!next)return false;
+  state.pending=null;
+  ask(next.question,true);   // already echoed when it was queued
+  return true;
 }
 $("btn-start").onclick=startSession;
 $("btn-send").onclick=()=>ask($("q").value);
@@ -563,7 +585,7 @@ function toggleConversation(on){
     startLevelMeter();micDiagnostic();}
   else{stopLevelMeter();clearTimeout(state.micTimer);clearTimeout(state.silenceTimer);
     if(turnText())flushTurn();}  // stopping mid-thought asks the question rather than losing it
-  if(state.vendorClient){setVendorMic(on);
+  if(state.vendorClient&&!state.vendorMute){setVendorMic(on);
     // the vendor transcribes NOTHING in BYO-brain mode (llmId CUSTOMER_CLIENT_V1): its ASR is off
     // by design so our gated brain is the only voice. Browser recognition is therefore the ear.
     if(on){startLocalConversation(true);}
