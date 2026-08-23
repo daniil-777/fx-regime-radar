@@ -595,6 +595,24 @@ fn direction_intent_re() -> &'static Regex {
     })
 }
 
+/// Does the question name published DATA (as opposed to asking what a term means)? Used to stop a
+/// glossary entry from standing in for a historical reading it cannot provide.
+fn mentions_data(q: &str) -> bool {
+    const WORDS: [&str; 10] = [
+        "risk",
+        "siren",
+        "regime",
+        "band",
+        "consensus",
+        "volatility",
+        "vol",
+        "crisis",
+        "calm",
+        "chop",
+    ];
+    WORDS.iter().any(|w| q.contains(w))
+}
+
 /// Does the question actually concern covering an exposure?
 fn hedging_intent_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
@@ -1490,6 +1508,32 @@ pub async fn brain(
         ));
     }
 
+    // (a2) THE ARCHIVE, before anything that reads today's state.
+    //
+    // An audit of twenty-two ordinary financial questions found eighteen returning `gate pass`
+    // while only six answered what was asked: "how many crisis days this year" came back with a
+    // picture of today. The grounding gate held throughout — nothing was fabricated — which is
+    // precisely why this needed its own fix. A confident non-answer is invisible to every metric
+    // that counts gates, and worse for the user than a refusal, because they cannot tell.
+    // The archive is consulted for EVERY question, not only historical-looking ones: "which market
+    // has the highest siren" is about today and still needs two lookups chained. It returns None
+    // unless a shape matches, so the cost of asking is a few string comparisons.
+    let historical = crate::archive::looks_historical(&q_lower);
+    if let Some(archive) = st.archive() {
+        if let Some(found) = crate::archive::answer(&archive, &q_lower) {
+            m::archive_answer(found.shape);
+            return Ok(finish(
+                &st,
+                &req.session_id,
+                &question,
+                found.text,
+                "archive",
+                "pass",
+                t0,
+            ));
+        }
+    }
+
     // (b) candidate answer.
     let use_test_hook = req.test_force_text.is_some()
         && (st.avatar.test_hook || std::env::var("FXRADAR_AVATAR_TEST").as_deref() == Ok("1"));
@@ -1536,6 +1580,28 @@ pub async fn brain(
                     forced_card = Some(format!("condition_card|pair={pair}"));
                 }
                 None => match faq_best(&pack.faq, &effective) {
+                    // A definition is not an answer to "what was the change risk a month ago". If
+                    // the question is about the PAST and names data, and the archive could not
+                    // serve it, the FAQ must not paper over the gap with a glossary entry.
+                    Some(_) if historical && mentions_data(&q_lower) => {
+                        m::avatar_refusal("archive_miss");
+                        let text = concat!(
+                            "That asks about the past, and I could not read it from the archive. ",
+                            "I hold daily history for the three majors, monthly counts for every ",
+                            "market, typical regime durations, named episodes, and a comparison ",
+                            "against a month ago."
+                        )
+                        .to_string();
+                        return Ok(finish(
+                            &st,
+                            &req.session_id,
+                            &question,
+                            text,
+                            "refusal",
+                            "refused:not_in_archive",
+                            t0,
+                        ));
+                    }
                     Some(entry) => {
                         candidate = entry.answer.clone();
                         source = "template";
@@ -1544,6 +1610,28 @@ pub async fn brain(
                     // PIPELINE wrote from published numbers, so it is grounded by construction and
                     // faces the same gates as any other answer. Refusing a question we can clearly
                     // illustrate was never the honest outcome — it was just the easy one.
+                    // A card about today is the wrong answer to a question about the past. Saying
+                    // so costs a turn; answering it costs the user's ability to trust any answer.
+                    None if historical => {
+                        m::avatar_refusal("archive_miss");
+                        let text = concat!(
+                            "I can read today's state, count the markets by regime, look up a date ",
+                            "for the three majors, quote how long a regime usually lasts, summarise a ",
+                            "named episode, and compare today against a month ago. That particular ",
+                            "historical question is outside what I hold — the dashboard's Storms and ",
+                            "Proof pages go deeper."
+                        )
+                            .to_string();
+                        return Ok(finish(
+                            &st,
+                            &req.session_id,
+                            &question,
+                            text,
+                            "refusal",
+                            "refused:not_in_archive",
+                            t0,
+                        ));
+                    }
                     None => match visual_answer(&st, &effective) {
                         Some(caption) => {
                             candidate = caption;

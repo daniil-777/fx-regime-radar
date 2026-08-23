@@ -9,6 +9,7 @@
 
 pub mod alerts;
 pub mod app;
+pub mod archive;
 pub mod avatar;
 pub mod bundle;
 pub mod error;

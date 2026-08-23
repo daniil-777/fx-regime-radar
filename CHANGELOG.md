@@ -2,6 +2,61 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.35.0 — the archive room, and an audit that earned it (2026-08-23)
+
+An audit put twenty-two ordinary financial questions to the assistant. Eighteen returned `gate pass`
+and only about six answered what was asked. Nothing was fabricated — the grounding gate held
+throughout — which is exactly why it mattered: **a confident non-answer is invisible to every metric
+that counts gates, and worse for the user than a refusal, because they cannot tell.**
+
+What the audit found, with evidence:
+- "What was the regime on 15 January 2015?" → `band: —`, a malformed caption served as an answer.
+- "How many crisis days has EUR/USD had this year?" → a picture of today.
+- "Is risk higher than a month ago?" → a chart, with no comparison performed.
+- Three answers were served with a bare em dash where a value belonged.
+- `answer_packs()` — 279 packs built in phase 40 — **was never called**: dead code I shipped.
+- The rollup cube was never queried by anything.
+
+**The archive room** (`src/fxradar/archive.py` → `data/archive.json`, `rust/.../archive.rs`) answers
+eleven closed shapes: count markets by regime today, look up a date, count days in a regime over a
+month or year, quote a typical duration, read an event window, compare against a month ago, summarise
+a named episode, read a value in the past, rank across markets, average across markets, and ledger
+totals. It is a closed set on purpose — **when a question falls outside it, the system says so**
+rather than reaching for the adjacent number.
+
+Result on the same twenty-two questions: **13 answered from the archive with real figures, 4 honest
+refusals, 0 malformed**. On the golden set, no regression and no compliance leak, with routing up in
+six families — multi-turn 24%→62%, out-of-scope 25%→50%, aggregation 25%→42%, ledger 57%→71%,
+comparative 47%→59%, causal 45%→55%.
+
+Five bugs found while building it, each by a test written for the purpose:
+- **The extremes shape answered an easier question.** "The worst *week* this year" got today's
+  ranking, and "which state is GBPUSD most likely in" got "USD/CHF has the highest risk". Ranking now
+  requires a genuinely cross-market question and no unappliable filter.
+- **An episode matched on one generic word**: `credit_suisse_2023` fired on a French question about
+  Swiss corporate taxation, because "suisse" appeared in it.
+- **A capability that removed an answer.** "How many forecasts have you sealed?" began with "how
+  many", so it routed to the archive and got refused — a question the old path answered. Historical
+  detection is now two-tier, and there is a regression test named after the lesson.
+- **Card captions were blocked as ungrounded.** `allowed_numbers` was built from the context pack
+  alone and had never seen the numbers in resolved card captions — which this pipeline computes from
+  published artifacts. A whole class of good answers was being refused with "I don't have that
+  number and won't guess", about numbers we ourselves had computed.
+- **The eval reported a COMPLIANCE LEAK that was not one**: the banned word "rise" matched inside
+  "summarise". The product's lint had always been word-boundary aware; the harness's check had
+  drifted. A false alarm on the most serious metric costs an investigation the first time and gets
+  ignored the second.
+- Three broken captions fixed at their source: `treasury_light` rendered "the light is — — —",
+  `glossary_card` rendered "siren: —", and `storm_replay_mini` led with an em dash — all because
+  their providers never published the values their caption templates asked for.
+
+Deliberate re-baseline, per `docs/eval_process.md`: the snapshot now carries `archive.json`,
+`answer_packs.json` and `rollups.parquet`, because it claims to freeze everything the assistant
+reads. Two golden expectations were updated with the reason written into the item — both were
+questions the system could not previously answer and now answers exactly.
+
+- 358 python + 71 rust (+14) tests green; ruff, black, clippy, `make lint-ui` clean.
+
 ## v2.34.0 — phase 40: precomputed answers, the cube, the classifier, conversation state (2026-08-23)
 
 The market moves once a day, so the answers are now built once a day — and the two things a

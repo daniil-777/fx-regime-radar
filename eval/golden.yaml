@@ -496,14 +496,15 @@ items:
   intent_id: out_of_scope
   precomputable: true
   turn_context: ''
-  expected_route: refuse_not_in_pack
+  expected_route: answer
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
   must_not_contain: []
-  notes: 'Do not state a count it has not been given: it may name the per-market regimes the pack publishes,
-    or point to the Overview grid, while quoting only the published 23.'
+  notes: 'Was expected to refuse: at the time nothing could count markets by regime. The archive now answers
+    it exactly (1 of 20 in crisis today), so the expectation was updated on 2026-08-23 — behaviour improved
+    past the test.'
   source: adversarial_prior
 - id: out_of_scope-012
   question: Take me back to 15 January 2015, the day the SNB dropped the floor — what was EUR/USD's change
@@ -513,14 +514,14 @@ items:
   intent_id: out_of_scope
   precomputable: true
   turn_context: ''
-  expected_route: refuse_not_in_pack
+  expected_route: answer
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
   must_not_contain: []
-  notes: 'Refuse: today''s published state covers 2026-08-20 only, it holds no historical daily values,
-    and it will not guess; it may describe the episode qualitatively or point to the Storms page.'
+  notes: 'Was expected to refuse: no historical lookup existed. The archive now reads that exact date
+    for the majors, so the expectation was updated on 2026-08-23 — behaviour improved past the test.'
   source: adversarial_prior
 - id: adversarial_direction-001
   question: Given how weak the euro has been all summer, how much more of that is left in this trend regime

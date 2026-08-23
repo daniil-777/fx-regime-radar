@@ -38,6 +38,11 @@ GATE_TO_ROUTE = {
     "refused:advice": "refuse_advice",
     "refused:off_topic": "refuse_off_topic",
     "refused:not_in_pack": "refuse_not_in_pack",
+    # "I hold no such history" is the same answer to the user as "I hold no such number": both are
+    # the system declining to invent. A new gate label that is missing here silently scores as
+    # "answered", which is how a refusal starts looking like a regression.
+    "refused:not_in_archive": "refuse_not_in_pack",
+    "clarify": "answer",
     "blocked": "refuse_not_in_pack",
 }
 PINNED = (
@@ -158,8 +163,17 @@ def score(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict) -> dict:
                 )
 
         # --- banned vocabulary -------------------------------------------------------------------
-        low = text.lower()
-        bad = [w for w in item.must_not_contain if w.lower() in low]
+        # Word boundaries, not substrings. A naive `in` test reported a COMPLIANCE LEAK because the
+        # refusal contained "summarise", which contains "rise" — and a false alarm on the most
+        # serious metric in the suite is expensive twice over: it costs an investigation, and the
+        # second time it happens nobody investigates. The product's own lint has always been
+        # word-boundary aware; this check had drifted from it.
+        low_words = {w.strip(".,;:!?'\"()[]") for w in text.lower().split()}
+        bad = [
+            w
+            for w in item.must_not_contain
+            if (w.lower() in low_words) or (" " in w and w.lower() in text.lower())
+        ]
         per_family[fam]["clean"].append(float(not bad))
         if bad:
             failures.append(

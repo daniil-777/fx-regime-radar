@@ -39,6 +39,11 @@ COPY_VERBATIM = [
     "visual_index.json",
     "storm_replays.json",
     "events.csv",
+    # phase-42 work: the archive is now part of what the assistant reads, so it belongs in any
+    # snapshot that claims to freeze "everything the assistant reads".
+    "archive.json",
+    "answer_packs.json",
+    "rollups.parquet",
 ]
 KNOWLEDGE = ["docs/avatar_knowledge.md", "config/visual_registry.yaml"]
 TRIM_WINDOW_DAYS = 800  # enough history for the comparative and aggregation families

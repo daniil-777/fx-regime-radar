@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-08-21T18:54:41Z",
+ "generated_at_utc": "2026-08-23T09:56:06Z",
  "registry_version": "3.0.0",
  "data_through": "2026-08-20",
  "cards": {
@@ -104,38 +104,7 @@
    "args": {
     "pair": "USDCAD"
    },
-   "caption": "USD/CAD \u00b7 calm \u00b7 change risk 0.01 (band 0.00 to 0.61) \u00b7 siren 19",
-   "label": "condition card",
-   "asof": "2026-08-20",
-   "data": {
-    "stats": [
-     {
-      "value": "calm",
-      "label": "regime",
-      "tone": "calm",
-      "mono": false
-     },
-     {
-      "value": "0.01",
-      "label": "change risk"
-     },
-     {
-      "value": "19",
-      "label": "siren"
-     }
-    ],
-    "subline": "band 0.00 to 0.61 \u00b7 day 125 of this regime"
-   }
-  },
-  "condition_card|pair=AUDUSD": {
-   "component": "condition_card",
-   "primitive": "stat_block",
-   "family": "state",
-   "title": "condition card",
-   "args": {
-    "pair": "AUDUSD"
-   },
-   "caption": "AUD/USD \u00b7 calm \u00b7 change risk 0.02 (band 0.00 to 0.61) \u00b7 siren 29",
+   "caption": "USD/CAD \u00b7 calm \u00b7 change risk 0.02 (band 0.00 to 0.61) \u00b7 siren 54",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -151,11 +120,42 @@
       "label": "change risk"
      },
      {
-      "value": "29",
+      "value": "54",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.61 \u00b7 day 71 of this regime"
+    "subline": "band 0.00 to 0.61 \u00b7 day 126 of this regime"
+   }
+  },
+  "condition_card|pair=AUDUSD": {
+   "component": "condition_card",
+   "primitive": "stat_block",
+   "family": "state",
+   "title": "condition card",
+   "args": {
+    "pair": "AUDUSD"
+   },
+   "caption": "AUD/USD \u00b7 calm \u00b7 change risk 0.02 (band 0.00 to 0.62) \u00b7 siren 3",
+   "label": "condition card",
+   "asof": "2026-08-20",
+   "data": {
+    "stats": [
+     {
+      "value": "calm",
+      "label": "regime",
+      "tone": "calm",
+      "mono": false
+     },
+     {
+      "value": "0.02",
+      "label": "change risk"
+     },
+     {
+      "value": "3",
+      "label": "siren"
+     }
+    ],
+    "subline": "band 0.00 to 0.62 \u00b7 day 72 of this regime"
    }
   },
   "condition_card|pair=NZDUSD": {
@@ -166,7 +166,7 @@
    "args": {
     "pair": "NZDUSD"
    },
-   "caption": "NZD/USD \u00b7 calm \u00b7 change risk 0.04 (band 0.00 to 0.64) \u00b7 siren 62",
+   "caption": "NZD/USD \u00b7 calm \u00b7 change risk 0.05 (band 0.00 to 0.64) \u00b7 siren 52",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -178,15 +178,15 @@
       "mono": false
      },
      {
-      "value": "0.04",
+      "value": "0.05",
       "label": "change risk"
      },
      {
-      "value": "62",
+      "value": "52",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.64 \u00b7 day 37 of this regime"
+    "subline": "band 0.00 to 0.64 \u00b7 day 38 of this regime"
    }
   },
   "condition_card|pair=EURJPY": {
@@ -197,7 +197,7 @@
    "args": {
     "pair": "EURJPY"
    },
-   "caption": "EUR/JPY \u00b7 chop \u00b7 change risk 0.13 (band 0.00 to 0.86) \u00b7 siren 90",
+   "caption": "EUR/JPY \u00b7 chop \u00b7 change risk 0.13 (band 0.00 to 0.86) \u00b7 siren 89",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -213,11 +213,11 @@
       "label": "change risk"
      },
      {
-      "value": "90",
+      "value": "89",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.86 \u00b7 day 13 of this regime"
+    "subline": "band 0.00 to 0.86 \u00b7 day 14 of this regime"
    }
   },
   "condition_card|pair=EURGBP": {
@@ -228,7 +228,7 @@
    "args": {
     "pair": "EURGBP"
    },
-   "caption": "EUR/GBP \u00b7 calm \u00b7 change risk 0.24 (band 0.00 to 0.83) \u00b7 siren 80",
+   "caption": "EUR/GBP \u00b7 calm \u00b7 change risk 0.21 (band 0.00 to 0.81) \u00b7 siren 65",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -240,15 +240,15 @@
       "mono": false
      },
      {
-      "value": "0.24",
+      "value": "0.21",
       "label": "change risk"
      },
      {
-      "value": "80",
+      "value": "65",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.83 \u00b7 day 326 of this regime"
+    "subline": "band 0.00 to 0.81 \u00b7 day 327 of this regime"
    }
   },
   "condition_card|pair=USDJPY": {
@@ -259,7 +259,7 @@
    "args": {
     "pair": "USDJPY"
    },
-   "caption": "USD/JPY \u00b7 chop \u00b7 change risk 0.13 (band 0.00 to 0.86) \u00b7 siren 93",
+   "caption": "USD/JPY \u00b7 chop \u00b7 change risk 0.24 (band 0.00 to 0.96) \u00b7 siren 81",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -271,15 +271,15 @@
       "mono": false
      },
      {
-      "value": "0.13",
+      "value": "0.24",
       "label": "change risk"
      },
      {
-      "value": "93",
+      "value": "81",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.86 \u00b7 day 14 of this regime"
+    "subline": "band 0.00 to 0.96 \u00b7 day 15 of this regime"
    }
   },
   "condition_card|pair=USDSEK": {
@@ -290,7 +290,7 @@
    "args": {
     "pair": "USDSEK"
    },
-   "caption": "USD/SEK \u00b7 calm \u00b7 change risk 0.04 (band 0.00 to 0.63) \u00b7 siren 70",
+   "caption": "USD/SEK \u00b7 calm \u00b7 change risk 0.09 (band 0.00 to 0.69) \u00b7 siren 72",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -302,15 +302,15 @@
       "mono": false
      },
      {
-      "value": "0.04",
+      "value": "0.09",
       "label": "change risk"
      },
      {
-      "value": "70",
+      "value": "72",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.63 \u00b7 day 72 of this regime"
+    "subline": "band 0.00 to 0.69 \u00b7 day 73 of this regime"
    }
   },
   "condition_card|pair=USDPLN": {
@@ -321,7 +321,7 @@
    "args": {
     "pair": "USDPLN"
    },
-   "caption": "USD/PLN \u00b7 calm \u00b7 change risk 0.01 (band 0.00 to 0.63) \u00b7 siren 69",
+   "caption": "USD/PLN \u00b7 calm \u00b7 change risk 0.02 (band 0.00 to 0.64) \u00b7 siren 78",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -333,15 +333,15 @@
       "mono": false
      },
      {
-      "value": "0.01",
+      "value": "0.02",
       "label": "change risk"
      },
      {
-      "value": "69",
+      "value": "78",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.63 \u00b7 day 87 of this regime"
+    "subline": "band 0.00 to 0.64 \u00b7 day 88 of this regime"
    }
   },
   "condition_card|pair=USDMXN": {
@@ -352,7 +352,7 @@
    "args": {
     "pair": "USDMXN"
    },
-   "caption": "USD/MXN \u00b7 calm \u00b7 change risk 0.01 (band 0.00 to 0.62) \u00b7 siren 70",
+   "caption": "USD/MXN \u00b7 calm \u00b7 change risk 0.01 (band 0.00 to 0.62) \u00b7 siren 79",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -368,11 +368,11 @@
       "label": "change risk"
      },
      {
-      "value": "70",
+      "value": "79",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.62 \u00b7 day 21 of this regime"
+    "subline": "band 0.00 to 0.62 \u00b7 day 22 of this regime"
    }
   },
   "condition_card|pair=USDRUB": {
@@ -383,7 +383,7 @@
    "args": {
     "pair": "USDRUB"
    },
-   "caption": "USD/RUB \u00b7 crisis \u00b7 change risk 0.21 (band 0.00 to 1.00) \u00b7 siren 100",
+   "caption": "USD/RUB \u00b7 crisis \u00b7 change risk 0.16 (band 0.00 to 1.00) \u00b7 siren 100",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -395,7 +395,7 @@
       "mono": false
      },
      {
-      "value": "0.21",
+      "value": "0.16",
       "label": "change risk"
      },
      {
@@ -403,7 +403,7 @@
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 1.00 \u00b7 day 8 of this regime"
+    "subline": "band 0.00 to 1.00 \u00b7 day 9 of this regime"
    }
   },
   "condition_card|pair=USDBRL": {
@@ -414,7 +414,7 @@
    "args": {
     "pair": "USDBRL"
    },
-   "caption": "USD/BRL \u00b7 calm \u00b7 change risk 0.10 (band 0.00 to 0.72) \u00b7 siren 35",
+   "caption": "USD/BRL \u00b7 calm \u00b7 change risk 0.07 (band 0.00 to 0.69) \u00b7 siren 89",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -426,15 +426,15 @@
       "mono": false
      },
      {
-      "value": "0.10",
+      "value": "0.07",
       "label": "change risk"
      },
      {
-      "value": "35",
+      "value": "89",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.72 \u00b7 day 32 of this regime"
+    "subline": "band 0.00 to 0.69 \u00b7 day 33 of this regime"
    }
   },
   "condition_card|pair=USDZAR": {
@@ -445,7 +445,7 @@
    "args": {
     "pair": "USDZAR"
    },
-   "caption": "USD/ZAR \u00b7 chop \u00b7 change risk 0.76 (band 0.04 to 1.00) \u00b7 siren 89",
+   "caption": "USD/ZAR \u00b7 chop \u00b7 change risk 0.60 (band 0.00 to 1.00) \u00b7 siren 93",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -457,15 +457,15 @@
       "mono": false
      },
      {
-      "value": "0.76",
+      "value": "0.60",
       "label": "change risk"
      },
      {
-      "value": "89",
+      "value": "93",
       "label": "siren"
      }
     ],
-    "subline": "band 0.04 to 1.00 \u00b7 day 19 of this regime"
+    "subline": "band 0.00 to 1.00 \u00b7 day 20 of this regime"
    }
   },
   "condition_card|pair=ETH-USD": {
@@ -476,27 +476,27 @@
    "args": {
     "pair": "ETH-USD"
    },
-   "caption": "ETH/USD \u00b7 calm \u00b7 change risk 0.35 (band 0.00 to 0.99) \u00b7 siren 50",
+   "caption": "ETH/USD \u00b7 trend \u00b7 change risk 0.29 (band 0.00 to 1.00) \u00b7 siren 100",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "calm",
+      "value": "trend",
       "label": "regime",
-      "tone": "calm",
+      "tone": "trend",
       "mono": false
      },
      {
-      "value": "0.35",
+      "value": "0.29",
       "label": "change risk"
      },
      {
-      "value": "50",
+      "value": "100",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.99 \u00b7 day 72 of this regime"
+    "subline": "band 0.00 to 1.00 \u00b7 day 1 of this regime"
    }
   },
   "condition_card|pair=BNB-USD": {
@@ -507,7 +507,7 @@
    "args": {
     "pair": "BNB-USD"
    },
-   "caption": "BNB/USD \u00b7 calm \u00b7 change risk 0.17 (band 0.00 to 0.81) \u00b7 siren 80",
+   "caption": "BNB/USD \u00b7 calm \u00b7 change risk 0.12 (band 0.00 to 0.76) \u00b7 siren 65",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -519,15 +519,15 @@
       "mono": false
      },
      {
-      "value": "0.17",
+      "value": "0.12",
       "label": "change risk"
      },
      {
-      "value": "80",
+      "value": "65",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.81 \u00b7 day 177 of this regime"
+    "subline": "band 0.00 to 0.76 \u00b7 day 178 of this regime"
    }
   },
   "condition_card|pair=BTC-USD": {
@@ -538,27 +538,27 @@
    "args": {
     "pair": "BTC-USD"
    },
-   "caption": "BTC/USD \u00b7 calm \u00b7 change risk 0.20 (band 0.00 to 0.83) \u00b7 siren 55",
+   "caption": "BTC/USD \u00b7 trend \u00b7 change risk 0.40 (band 0.00 to 1.00) \u00b7 siren 97",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "calm",
+      "value": "trend",
       "label": "regime",
-      "tone": "calm",
+      "tone": "trend",
       "mono": false
      },
      {
-      "value": "0.20",
+      "value": "0.40",
       "label": "change risk"
      },
      {
-      "value": "55",
+      "value": "97",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.83 \u00b7 day 57 of this regime"
+    "subline": "band 0.00 to 1.00 \u00b7 day 1 of this regime"
    }
   },
   "condition_card|pair=ADA-USD": {
@@ -569,7 +569,7 @@
    "args": {
     "pair": "ADA-USD"
    },
-   "caption": "ADA/USD \u00b7 calm \u00b7 change risk 0.16 (band 0.00 to 0.80) \u00b7 siren 97",
+   "caption": "ADA/USD \u00b7 calm \u00b7 change risk 0.32 (band 0.00 to 0.96) \u00b7 siren 64",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -581,15 +581,15 @@
       "mono": false
      },
      {
-      "value": "0.16",
+      "value": "0.32",
       "label": "change risk"
      },
      {
-      "value": "97",
+      "value": "64",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 0.80 \u00b7 day 55 of this regime"
+    "subline": "band 0.00 to 0.96 \u00b7 day 56 of this regime"
    }
   },
   "condition_card|pair=XRP-USD": {
@@ -600,7 +600,7 @@
    "args": {
     "pair": "XRP-USD"
    },
-   "caption": "XRP/USD \u00b7 calm \u00b7 change risk 0.47 (band 0.00 to 1.00) \u00b7 siren 69",
+   "caption": "XRP/USD \u00b7 calm \u00b7 change risk 0.47 (band 0.00 to 1.00) \u00b7 siren 97",
    "label": "condition card",
    "asof": "2026-08-20",
    "data": {
@@ -616,11 +616,11 @@
       "label": "change risk"
      },
      {
-      "value": "69",
+      "value": "97",
       "label": "siren"
      }
     ],
-    "subline": "band 0.00 to 1.00 \u00b7 day 174 of this regime"
+    "subline": "band 0.00 to 1.00 \u00b7 day 175 of this regime"
    }
   },
   "consensus_dots|pair=EURUSD": {
@@ -922,13 +922,13 @@
    "args": {
     "pair": "USDCAD"
    },
-   "caption": "Siren for USD/CAD: 19 of 100",
+   "caption": "Siren for USD/CAD: 54 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "19",
+      "value": "54",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -944,13 +944,13 @@
    "args": {
     "pair": "AUDUSD"
    },
-   "caption": "Siren for AUD/USD: 29 of 100",
+   "caption": "Siren for AUD/USD: 3 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "29",
+      "value": "3",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -966,13 +966,13 @@
    "args": {
     "pair": "NZDUSD"
    },
-   "caption": "Siren for NZD/USD: 62 of 100",
+   "caption": "Siren for NZD/USD: 52 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "62",
+      "value": "52",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -988,15 +988,15 @@
    "args": {
     "pair": "EURJPY"
    },
-   "caption": "Siren for EUR/JPY: 90 of 100",
+   "caption": "Siren for EUR/JPY: 89 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "90",
+      "value": "89",
       "label": "siren percentile",
-      "tone": "chop"
+      "tone": "calm"
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
@@ -1010,13 +1010,13 @@
    "args": {
     "pair": "EURGBP"
    },
-   "caption": "Siren for EUR/GBP: 80 of 100",
+   "caption": "Siren for EUR/GBP: 65 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "80",
+      "value": "65",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1032,15 +1032,15 @@
    "args": {
     "pair": "USDJPY"
    },
-   "caption": "Siren for USD/JPY: 93 of 100",
+   "caption": "Siren for USD/JPY: 81 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "93",
+      "value": "81",
       "label": "siren percentile",
-      "tone": "chop"
+      "tone": "calm"
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
@@ -1054,13 +1054,13 @@
    "args": {
     "pair": "USDSEK"
    },
-   "caption": "Siren for USD/SEK: 70 of 100",
+   "caption": "Siren for USD/SEK: 72 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "70",
+      "value": "72",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1076,13 +1076,13 @@
    "args": {
     "pair": "USDPLN"
    },
-   "caption": "Siren for USD/PLN: 69 of 100",
+   "caption": "Siren for USD/PLN: 78 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "69",
+      "value": "78",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1098,13 +1098,13 @@
    "args": {
     "pair": "USDMXN"
    },
-   "caption": "Siren for USD/MXN: 70 of 100",
+   "caption": "Siren for USD/MXN: 79 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "70",
+      "value": "79",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1142,13 +1142,13 @@
    "args": {
     "pair": "USDBRL"
    },
-   "caption": "Siren for USD/BRL: 35 of 100",
+   "caption": "Siren for USD/BRL: 89 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "35",
+      "value": "89",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1164,15 +1164,15 @@
    "args": {
     "pair": "USDZAR"
    },
-   "caption": "Siren for USD/ZAR: 89 of 100",
+   "caption": "Siren for USD/ZAR: 93 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "89",
+      "value": "93",
       "label": "siren percentile",
-      "tone": "calm"
+      "tone": "chop"
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
@@ -1186,15 +1186,15 @@
    "args": {
     "pair": "ETH-USD"
    },
-   "caption": "Siren for ETH/USD: 50 of 100",
+   "caption": "Siren for ETH/USD: 100 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "50",
+      "value": "100",
       "label": "siren percentile",
-      "tone": "calm"
+      "tone": "crisis"
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
@@ -1208,13 +1208,13 @@
    "args": {
     "pair": "BNB-USD"
    },
-   "caption": "Siren for BNB/USD: 80 of 100",
+   "caption": "Siren for BNB/USD: 65 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "80",
+      "value": "65",
       "label": "siren percentile",
       "tone": "calm"
      }
@@ -1230,29 +1230,7 @@
    "args": {
     "pair": "BTC-USD"
    },
-   "caption": "Siren for BTC/USD: 55 of 100",
-   "label": "siren gauge",
-   "asof": "2026-08-20",
-   "data": {
-    "stats": [
-     {
-      "value": "55",
-      "label": "siren percentile",
-      "tone": "calm"
-     }
-    ],
-    "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
-  },
-  "siren_gauge|pair=ADA-USD": {
-   "component": "siren_gauge",
-   "primitive": "stat_block",
-   "family": "state",
-   "title": "siren gauge",
-   "args": {
-    "pair": "ADA-USD"
-   },
-   "caption": "Siren for ADA/USD: 97 of 100",
+   "caption": "Siren for BTC/USD: 97 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
@@ -1266,6 +1244,28 @@
     "subline": "above 98 means today looks unlike anything in the calm training years"
    }
   },
+  "siren_gauge|pair=ADA-USD": {
+   "component": "siren_gauge",
+   "primitive": "stat_block",
+   "family": "state",
+   "title": "siren gauge",
+   "args": {
+    "pair": "ADA-USD"
+   },
+   "caption": "Siren for ADA/USD: 64 of 100",
+   "label": "siren gauge",
+   "asof": "2026-08-20",
+   "data": {
+    "stats": [
+     {
+      "value": "64",
+      "label": "siren percentile",
+      "tone": "calm"
+     }
+    ],
+    "subline": "above 98 means today looks unlike anything in the calm training years"
+   }
+  },
   "siren_gauge|pair=XRP-USD": {
    "component": "siren_gauge",
    "primitive": "stat_block",
@@ -1274,15 +1274,15 @@
    "args": {
     "pair": "XRP-USD"
    },
-   "caption": "Siren for XRP/USD: 69 of 100",
+   "caption": "Siren for XRP/USD: 97 of 100",
    "label": "siren gauge",
    "asof": "2026-08-20",
    "data": {
     "stats": [
      {
-      "value": "69",
+      "value": "97",
       "label": "siren percentile",
-      "tone": "calm"
+      "tone": "chop"
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
@@ -12205,7 +12205,7 @@
    "args": {
     "pair": "EURUSD"
    },
-   "caption": "EUR/USD: the light is \u2014 \u2014 \u2014",
+   "caption": "EUR/USD: the light is wait \u2014 Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
    "label": "treasury light",
    "asof": "2026-08-20",
    "data": {
@@ -12228,7 +12228,7 @@
    "args": {
     "pair": "USDCHF"
    },
-   "caption": "USD/CHF: the light is \u2014 \u2014 \u2014",
+   "caption": "USD/CHF: the light is ladder \u2014 Neither clear-cut: change risk 62% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 2/3: 2/3 agree: conditions are shifting \u2014 two voters see stress.",
    "label": "treasury light",
    "asof": "2026-08-20",
    "data": {
@@ -12251,7 +12251,7 @@
    "args": {
     "pair": "GBPUSD"
    },
-   "caption": "GBP/USD: the light is \u2014 \u2014 \u2014",
+   "caption": "GBP/USD: the light is wait \u2014 Calm regime, change risk 5% is below the train-era 40th percentile (9%), the interval on it is narrow (0.54), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "label": "treasury light",
    "asof": "2026-08-20",
    "data": {
@@ -13486,7 +13486,7 @@
    "family": "trust",
    "title": "coverage plot",
    "args": {},
-   "caption": "Conformal coverage over time \u00b7 live not scored yet against the 0.9 target",
+   "caption": "Conformal coverage over time \u00b7 live not scored yet against the 0.9 nominal level",
    "label": "coverage plot",
    "asof": "2026-08-20",
    "data": {
@@ -13508,7 +13508,7 @@
       "d": "trend"
      }
     ],
-    "subline": "coverage per regime against the 90% target \u00b7 overall 91.6%"
+    "subline": "coverage per regime against the 90% nominal level \u00b7 overall 91.6%"
    }
   },
   "ledger_row_receipt": {
@@ -13758,7 +13758,7 @@
    "family": "story",
    "title": "storm replay mini",
    "args": {},
-   "caption": "\u2014: how the regimes moved through the episode",
+   "caption": "COVID \u2014 February to April 2020: how the regimes moved through the episode",
    "label": "storm replay mini",
    "asof": "2026-08-20",
    "data": {
@@ -13843,7 +13843,7 @@
    "args": {
     "term": "siren"
    },
-   "caption": "siren: \u2014",
+   "caption": "siren: anomaly percentile against calm history, 0 to 100.",
    "label": "glossary card",
    "asof": "2026-08-20",
    "data": {
@@ -13865,7 +13865,7 @@
    "args": {
     "term": "band"
    },
-   "caption": "band: \u2014",
+   "caption": "band: the 90 percent conformal interval around it.",
    "label": "glossary card",
    "asof": "2026-08-20",
    "data": {
@@ -13887,7 +13887,7 @@
    "args": {
     "term": "consensus"
    },
-   "caption": "consensus: \u2014",
+   "caption": "consensus: stress votes from three independent detectors, 0 to 3.",
    "label": "glossary card",
    "asof": "2026-08-20",
    "data": {
@@ -13909,7 +13909,7 @@
    "args": {
     "term": "filtered"
    },
-   "caption": "filtered: \u2014",
+   "caption": "filtered: computed from data up to today only.",
    "label": "glossary card",
    "asof": "2026-08-20",
    "data": {
@@ -13931,7 +13931,7 @@
    "args": {
     "term": "ledger"
    },
-   "caption": "ledger: \u2014",
+   "caption": "ledger: the append-only, hash-chained record of forecasts written before outcomes.",
    "label": "glossary card",
    "asof": "2026-08-20",
    "data": {

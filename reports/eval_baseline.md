@@ -1,6 +1,6 @@
 # Evaluation baseline
 
-_Generated 2026-08-23 08:42Z from `eval/snapshot/2026-08-23`. Scored over recorded outputs — hermetic, no network._
+_Generated 2026-08-23 10:11Z from `eval/snapshot/2026-08-23`. Scored over recorded outputs — hermetic, no network._
 
 ## Pinned versions
 
@@ -15,8 +15,8 @@ A change to any field below invalidates comparison: re-baseline before reading a
 | gate_rules_version | `phase-38` |
 | registry_version | `3.0.0` |
 | snapshot | `2026-08-23` |
-| snapshot_hash | `3883db356d9db921` |
-| git_sha | `3c88ba5` |
+| snapshot_hash | `53dc226c0f7aaf3c` |
+| git_sha | `cd7a8fa` |
 | seed | `0 (deterministic: no sampling in the scored path)` |
 
 **280 golden items**, 280 with recorded outputs (100%). 101 computed gold values across 84 items.
@@ -25,20 +25,20 @@ A change to any field below invalidates comparison: re-baseline before reading a
 
 | family | n | recall@6 | MRR | routing | no banned words | numeric | selection | coverage | provenance |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `today_state` | 86 | 95% | 0.79 | 62% | 100% | 44% | 33% | 45% | 100% |
+| `today_state` | 86 | 95% | 0.79 | 60% | 100% | 47% | 33% | 45% | 100% |
 | `knowledge_methodology` | 20 | 74% | 0.45 | 60% | 100% | — | 16% | 50% | 100% |
-| `multi_hop` | 16 | 69% | 0.47 | 38% | 94% | — | 8% | 44% | 100% |
-| `ledger_historical` | 21 | 89% | 0.84 | 57% | 100% | 33% | 42% | 52% | 100% |
-| `aggregation` | 12 | 36% | 0.27 | 25% | 100% | 0% | 0% | 25% | 100% |
-| `comparative_temporal` | 17 | 81% | 0.66 | 47% | 100% | 0% | 31% | 47% | 100% |
-| `causal_explanatory` | 11 | 64% | 0.59 | 45% | 100% | 29% | 27% | 45% | 100% |
+| `multi_hop` | 16 | 69% | 0.47 | 38% | 100% | — | 8% | 50% | 100% |
+| `ledger_historical` | 21 | 89% | 0.84 | 71% | 100% | 33% | 58% | 67% | 100% |
+| `aggregation` | 12 | 36% | 0.27 | 42% | 100% | 0% | 0% | 25% | 100% |
+| `comparative_temporal` | 17 | 81% | 0.66 | 59% | 100% | 20% | 31% | 47% | 100% |
+| `causal_explanatory` | 11 | 64% | 0.59 | 55% | 100% | 29% | 27% | 45% | 100% |
 | `product_faq` | 11 | 67% | 0.42 | 36% | 100% | — | 22% | 36% | 100% |
-| `multi_turn_followup` | 21 | 74% | 0.41 | 24% | 100% | 13% | 5% | 24% | 100% |
+| `multi_turn_followup` | 21 | 74% | 0.41 | 62% | 100% | 13% | 5% | 24% | 100% |
 | `no_visual_expected` | 17 | — | — | 29% | 100% | — | — | 100% | — |
 | `adversarial_direction` | 12 | 58% | 0.37 | 8% | 100% | — | 25% | 100% | 100% |
 | `adversarial_advice` | 10 | 60% | 0.38 | 10% | 100% | — | 20% | 100% | 100% |
 | `adversarial_injection` | 10 | 80% | 0.46 | 40% | 100% | — | 30% | 40% | 100% |
-| `out_of_scope` | 8 | — | — | 25% | 100% | — | — | 25% | 100% |
+| `out_of_scope` | 8 | — | — | 50% | 100% | — | — | 25% | 100% |
 | `stale_context` | 5 | 100% | 0.75 | 40% | 100% | — | 50% | 60% | 100% |
 | `planted_number` | 3 | 100% | 1.00 | 33% | 100% | — | 100% | 67% | 100% |
 
@@ -46,9 +46,9 @@ A change to any field below invalidates comparison: re-baseline before reading a
 
 | locale | n | recall@6 | routing | numeric |
 |---|---:|---:|---:|---:|
-| en | 200 | 85% | 51% | 43% |
-| de | 49 | 60% | 29% | 12% |
-| fr | 31 | 68% | 26% | 6% |
+| en | 200 | 85% | 55% | 47% |
+| de | 49 | 60% | 39% | 12% |
+| fr | 31 | 68% | 42% | 6% |
 
 ## Compliance families — 100% required
 
@@ -62,7 +62,7 @@ A leak is a compliance failure; an unnamed refusal is a quality failure that rea
 | `adversarial_direction` | 8% | 100% | **FAIL (quality): answered instead of refusing** |
 | `adversarial_advice` | 10% | 100% | **FAIL (quality): answered instead of refusing** |
 | `adversarial_injection` | 40% | 100% | **FAIL (quality): answered instead of refusing** |
-| `out_of_scope` | 25% | 100% | **FAIL (quality): answered instead of refusing** |
+| `out_of_scope` | 50% | 100% | **FAIL (quality): answered instead of refusing** |
 
 ## Latency
 
@@ -71,7 +71,7 @@ A leak is a compliance failure; an unnamed refusal is a quality failure that rea
 | p50 | 1 |
 | p95 | 2 |
 | p99 | 2 |
-| max | 2 |
+| max | 10 |
 
 _Server-side answer latency only, keyless path. Cost is CHF 0 per answer in this configuration: no model call is made. Both figures move once a key is configured, which is itself a pinned-field change requiring a re-baseline._
 
@@ -83,12 +83,11 @@ Not run. The judge metric is bounded to phrasing and relevance and requires a se
 
 | cause | count |
 |---|---:|
-| routing | 156 |
-| generation/missing data | 72 |
+| routing | 139 |
+| generation/missing data | 70 |
 | selection | 54 |
 | retrieval | 47 |
 | reference resolution | 13 |
-| gate | 1 |
 
 ### The ten worst
 

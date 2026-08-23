@@ -345,10 +345,14 @@ def _light(args: dict, ctx: dict) -> dict | None:
     if not tre:
         return None
     light = str(tre.get("light", "ladder"))
+    reason = str(tre.get("light_reason", "")).strip()
     tone = {"hedge": "crisis", "ladder": "chop", "wait": "calm"}.get(light, "chop")
     return {
         "stats": [{"value": light, "label": "treasury light", "tone": tone, "mono": False}],
-        "subline": str(tre.get("light_reason", "")),
+        "subline": reason,
+        # Without these the caption rendered "the light is — — —" and shipped, because a MISSING
+        # value is not an UNGROUNDED one: every gate passed it happily.
+        "_caption": {"light": light, "why": reason or "no reason published"},
     }
 
 
@@ -472,7 +476,11 @@ def _glossary(args: dict, ctx: dict) -> dict | None:
     text = (ctx.get("glossary") or {}).get(args["term"])
     if not text:
         return None
-    return {"stats": [{"value": args["term"], "label": "term", "mono": False}], "subline": text}
+    return {
+        "stats": [{"value": args["term"], "label": "term", "mono": False}],
+        "subline": text,
+        "_caption": {"term": args["term"], "definition": text},
+    }
 
 
 @provider("metric_table")
@@ -622,6 +630,9 @@ def _storm(args: dict, ctx: dict) -> dict | None:
             for s in segs
         ],
         "legend": [{"label": t} for t in present],
+        # The episode arg is a KEY, so the provider chooses it — and the caption must be told which,
+        # or it renders "—: how the regimes moved through the episode".
+        "_caption": {"episode": ep.get("title") or episode},
     }
 
 
@@ -737,9 +748,18 @@ def build(ctx: dict, registry: visuals.Registry | None = None) -> dict:
                 continue
             extra = data.pop("_caption", {}) if isinstance(data, dict) else {}
             caption = visuals.caption_for(card, _caption_values(card, args, data, pack) | extra)
-            if "{" in caption:  # a template the values could not fill is a build error, not a card
+            # Two ways a caption can be broken, and both shipped before this check existed:
+            # an unfilled "{placeholder}", and an em dash standing where a VALUE should be. The
+            # second is nastier — "band: —" reads like a real answer and passed every gate, because
+            # a missing number is not an ungrounded one.
+            if "{" in caption:
                 log.warning("card %s%s caption left a placeholder: %s", card.id, args, caption)
                 skipped.setdefault(card.id, "caption placeholder unresolved")
+                continue
+            stripped = caption.replace("·", " ").strip()
+            if stripped.startswith("—") or ": —" in caption or stripped.endswith("—"):
+                log.warning("card %s%s caption has an empty value slot: %s", card.id, args, caption)
+                skipped.setdefault(card.id, "caption has an unresolved value")
                 continue
             cards[key_for(card.id, args)] = {
                 "component": card.id,
@@ -959,6 +979,25 @@ def stage(ctx: dict) -> None:
     boards = build(bundle)
     index = build_index()
     ctx["visual_boards"], ctx["visual_index"] = boards, index
+
+    # A card's caption is computed by THIS pipeline from published artifacts, so every number in it
+    # is grounded by construction — but the gate's allowed set was built from the context pack alone
+    # and had never seen them. The result was a silent class of failures: a perfectly good card
+    # answer ("coverage per regime against the 90% nominal level") blocked as ungrounded, and the
+    # user shown "I don't have that number and won't guess" about a number we ourselves computed.
+    pack = ctx.get("avatar_context")
+    if pack is not None:
+        from fxradar.avatar_context import NUMBER_RE, canon  # noqa: PLC0415
+
+        allowed = set(pack.get("allowed_numbers") or [])
+        before = len(allowed)
+        for spec in boards["cards"].values():
+            for token in NUMBER_RE.findall(str(spec.get("caption", ""))):
+                allowed.add(canon(token))
+        pack["allowed_numbers"] = sorted(allowed)
+        log.info(
+            "allowed numbers: %d -> %d after admitting resolved card captions", before, len(allowed)
+        )
     writers = ctx.setdefault("extra_writers", {})
     writers["visual_boards.json"] = lambda c: BOARDS_PATH.write_text(
         json.dumps(c["visual_boards"], indent=1)

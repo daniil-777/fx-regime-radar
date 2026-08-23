@@ -28,6 +28,7 @@ from fxradar import (
     advisor,
     answer_packs,
     arcade,
+    archive,
     avatar_context,
     bocpd,
     cb_features,
@@ -303,6 +304,9 @@ register(
 register(
     "rollups", fx_only(rollups.stage)
 )  # phase 40: the aggregation cube the archive queries first
+register(
+    "archive", fx_only(archive.stage)
+)  # the archive room: history and aggregates the serving side answers from
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

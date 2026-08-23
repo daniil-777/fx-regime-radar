@@ -125,6 +125,11 @@ pub fn answer_latency(path: &str, seconds: f64) {
     metrics::histogram!("answer_latency_seconds", "path" => path.to_string()).record(seconds);
 }
 
+/// Which archive shape answered — so an unanswerable shape shows up as a gap, not as silence.
+pub fn archive_answer(shape: &str) {
+    metrics::counter!("archive_answer_total", "shape" => shape.to_string()).increment(1);
+}
+
 /// gate ∈ {"direction", "grounding"}
 pub fn avatar_lint_rejection(gate: &str) {
     metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);

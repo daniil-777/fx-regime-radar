@@ -893,9 +893,9 @@ cards:
     - scoreboard_card
     rule: coverage only when the word is bands or coverage
   caption:
-    en: Conformal coverage over time · live {live} against the 0.9 target
+    en: Conformal coverage over time · live {live} against the 0.9 nominal level
   aria:
-    en: Coverage plot, live coverage {live} against the target
+    en: Coverage plot, live coverage {live} against the nominal level
   when_not: user asked about accuracy generally
   owner_artifact: data/avatar_context.json
 - id: ledger_row_receipt

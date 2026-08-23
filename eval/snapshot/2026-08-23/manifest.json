@@ -1,6 +1,8 @@
 {
- "config/visual_registry.yaml": "123c54b0bf923e437b5789459f3356f34feab6d32da18e6fe4abf0bc1ff1e3f4",
- "data/avatar_context.json": "d087dd2c5802fe00e21a5f1124caf976e30b3b0d5951b466287e7d87c74ec92b",
+ "config/visual_registry.yaml": "ff64b14da78a36553c25dafff5fb99fefdb1c2abe9fc91f6fa09c399a432eafa",
+ "data/answer_packs.json": "a5fe73a2a01796572962e4340c72ba756b8bb289f0cca39684e3799a184b76a0",
+ "data/archive.json": "ca436542c379eb109b0c0bb8b905315449a7d8413910f67161e5532d5d74204c",
+ "data/avatar_context.json": "6904f79e20f2763c0f8ae33c9cccd03ec3ed3b8b975b47af3e0fce8a13b6d363",
  "data/conformal_coverage.json": "7b0809e0de7ec0c45057ac08bfd1bc698db5b064354b2ca5dd4ecae6863882c4",
  "data/decision_table.json": "0b3b2822ebc4c6651102ba2d371f6c8a05c27230a91e55d9b67419a325b9c6ab",
  "data/events.csv": "bf7efba3a725d9a2db7c7f064bf09e1d5b41a442f3234d2ea4194a99ffc4e382",
@@ -8,10 +10,11 @@
  "data/ledger.parquet": "3e617c3bd2b5d16af71223fa98d503bf1b7ea7ea2a8d5a0fed889401fa2c2464",
  "data/live_record.json": "57c2b60afde9760898801c4992adf28a00a80c0ba70739e27696439718cb56cc",
  "data/regimes.parquet": "7e8c9090313c8ab6a31ea0f1b040f98a41cf2e97d76ecc04fd2bbe60c4760107",
+ "data/rollups.parquet": "11a519cf4f57b193d9faee0688d7d7dd90c4388aec8baa532c7d0fbc52caddde",
  "data/status.json": "2efca55eb93c762e5fd78187630a2ea9e37244a3cdb548a45b27915904b82c37",
  "data/storm_replays.json": "8ca211abb1642c15956af6ba8170d9830441efb47bd7fbe63d74050adf22a2d9",
  "data/treasury_risk.json": "892a7b051354b3b1dbd7e205178efc6672fcb8ee974c8391abebe057ede47ffc",
- "data/visual_boards.json": "921ce2ff6a7a4af16851931b8dac1bb2f0c1394c5183828533cd6caf09eafb9d",
- "data/visual_index.json": "3bfc5c5b120af64eec2394ae1a505c6aeaca25220645347aa342e05e2cdf9843",
+ "data/visual_boards.json": "ebd1ee0131afd6b05023783d4f1e998714e3e430b92b12f64fd23c79bf1d8fbe",
+ "data/visual_index.json": "df42fdd917a33358ab04de047f3ac1b406b4c724a80589a46f8cde1ef272bf34",
  "docs/avatar_knowledge.md": "9ae9ec62a76eb0f6bf72a25cd0c8d81a3609e2b6fdb24384af09bf57ba506f21"
 }

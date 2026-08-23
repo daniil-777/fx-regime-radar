@@ -83,6 +83,7 @@ impl Latencies {
 
 /// mtime-stamped cache of the nightly answer packs (phase 40).
 type PacksCache = (std::time::SystemTime, u64, Arc<crate::packs::AnswerPacks>);
+type ArchiveCache = (std::time::SystemTime, u64, Arc<crate::archive::Archive>);
 
 /// mtime-stamped cache of the two answer-board artifacts (phase 36).
 pub struct VisualCache {
@@ -122,6 +123,7 @@ pub struct AppState {
     /// Phase 40: nightly answer packs, and the small per-session state that reference resolution
     /// needs. Both are read-mostly; the packs reload on mtime like every other artifact.
     packs_cache: Arc<Mutex<Option<PacksCache>>>,
+    archive_cache: Arc<Mutex<Option<ArchiveCache>>>,
     pub(crate) conversations: Arc<crate::packs::ConversationStore>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
@@ -175,6 +177,7 @@ impl AppState {
             decision_cache: Arc::new(Mutex::new(None)),
             visual_cache: Arc::new(Mutex::new(None)),
             packs_cache: Arc::new(Mutex::new(None)),
+            archive_cache: Arc::new(Mutex::new(None)),
             conversations: Arc::new(crate::packs::ConversationStore::default()),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
@@ -267,6 +270,31 @@ impl AppState {
                 .ok()?,
         );
         if let Ok(mut guard) = self.packs_cache.lock() {
+            *guard = Some((stamp.0, stamp.1, Arc::clone(&loaded)));
+        }
+        Some(loaded)
+    }
+
+    /// The archive: history and aggregates the serving side may answer from. Absent means the
+    /// system simply cannot answer historical questions — which it must then SAY, rather than
+    /// answering with something about today.
+    pub fn archive(&self) -> Option<Arc<crate::archive::Archive>> {
+        let path = self.data_dir.join("archive.json");
+        let meta = std::fs::metadata(&path).ok()?;
+        let stamp = (meta.modified().unwrap_or(std::time::UNIX_EPOCH), meta.len());
+        if let Ok(guard) = self.archive_cache.lock() {
+            if let Some((m, l, a)) = guard.as_ref() {
+                if (*m, *l) == stamp {
+                    return Some(Arc::clone(a));
+                }
+            }
+        }
+        let loaded = Arc::new(
+            crate::archive::load(&path)
+                .map_err(|e| tracing::warn!(error = %e, "archive unusable"))
+                .ok()?,
+        );
+        if let Ok(mut guard) = self.archive_cache.lock() {
             *guard = Some((stamp.0, stamp.1, Arc::clone(&loaded)));
         }
         Some(loaded)
