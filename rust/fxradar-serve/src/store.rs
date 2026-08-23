@@ -143,6 +143,17 @@ pub fn iso_from_unix(secs: u64) -> String {
     )
 }
 
+/// One row of the operator-access audit trail (phase 43). `key_hash` is a truncated hash, never a
+/// usable credential: the trail must say who looked without becoming somewhere a working key sits.
+#[derive(Debug, Clone)]
+pub struct OpsAuditRow {
+    pub ts: String,
+    pub action: String,
+    pub trace_id: String,
+    pub key_hash: String,
+    pub detail: String,
+}
+
 /// Thread-safe handle over one SQLite connection (operations are microseconds; a mutex is enough).
 #[derive(Clone)]
 pub struct Store {
@@ -186,6 +197,14 @@ CREATE TABLE IF NOT EXISTS avatar_transcripts (
   source     TEXT NOT NULL,
   gate       TEXT NOT NULL,
   latency_ms INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ops_audit (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts         TEXT NOT NULL,
+  action     TEXT NOT NULL,
+  trace_id   TEXT NOT NULL DEFAULT '',
+  key_hash   TEXT NOT NULL DEFAULT '',
+  detail     TEXT NOT NULL DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS avatar_usage (
   month      TEXT PRIMARY KEY,
@@ -425,6 +444,50 @@ impl Store {
                 params![now_iso(), session_id, question, answer, source, gate, latency_ms],
             )?;
             Ok(c.last_insert_rowid())
+        })
+    }
+
+    /// Record one operator's access to an internal surface (phase 43).
+    ///
+    /// The operator surface shows every user's questions and every internal decision, so who looked
+    /// and when is itself a fact worth keeping. The key is stored hashed: the audit trail must
+    /// identify the holder without becoming a place where a working credential sits in plaintext.
+    pub fn add_ops_audit(
+        &self,
+        action: &str,
+        trace_id: &str,
+        key_hash: &str,
+        detail: &str,
+    ) -> StoreResult<i64> {
+        self.with(|c| {
+            c.execute(
+                "INSERT INTO ops_audit (ts, action, trace_id, key_hash, detail)
+                 VALUES (?1, ?2, ?3, ?4, ?5)",
+                params![now_iso(), action, trace_id, key_hash, detail],
+            )?;
+            Ok(c.last_insert_rowid())
+        })
+    }
+
+    /// Newest audit rows first.
+    pub fn recent_ops_audit(&self, limit: i64) -> StoreResult<Vec<OpsAuditRow>> {
+        self.with(|c| {
+            let mut st = c.prepare(
+                "SELECT ts, action, trace_id, key_hash, detail FROM ops_audit
+                 ORDER BY id DESC LIMIT ?1",
+            )?;
+            let rows = st
+                .query_map(params![limit], |r| {
+                    Ok(OpsAuditRow {
+                        ts: r.get(0)?,
+                        action: r.get(1)?,
+                        trace_id: r.get(2)?,
+                        key_hash: r.get(3)?,
+                        detail: r.get(4)?,
+                    })
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(rows)
         })
     }
 

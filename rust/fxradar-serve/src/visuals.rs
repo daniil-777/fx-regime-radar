@@ -132,6 +132,12 @@ pub struct CardSpec {
     #[serde(default)]
     #[schema(value_type = Object)]
     pub data: serde_json::Value,
+    /// Where every value on this card came from. Part of the answer payload, never a side channel:
+    /// a precomputed answer must carry the same receipts as a live one, or the fast path quietly
+    /// becomes the unaccountable one.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[schema(value_type = Vec<Object>)]
+    pub provenance: Vec<serde_json::Value>,
     #[serde(default)]
     pub stale: bool,
 }

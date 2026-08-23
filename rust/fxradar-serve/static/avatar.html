@@ -51,6 +51,30 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
 .msg.user{align-self:flex-end;background:var(--nimbus);border:1px solid var(--line);color:var(--tx2)}
 .msg.avatar{align-self:flex-start;background:var(--nimbus);border:1px solid var(--line)}
 .msg .board{margin-top:9px;display:grid;gap:8px;max-width:100%}
+/* the source strip: quiet by default, legible on purpose. Absence of chips means no data was
+   used — a refusal — never "we didn't bother", so a refusal renders none and an answer always
+   renders at least one. */
+.msg .sources{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.src{font-family:var(--mono);font-size:10.5px;color:var(--tx2);background:var(--nimbus);
+  border:1px solid var(--line);border-radius:5px;padding:2px 8px;cursor:pointer;
+  min-height:24px;display:inline-flex;align-items:center;gap:6px}
+.src:hover,.src:focus-visible{border-color:var(--beacon);color:var(--beacon)}
+.src:focus-visible{outline:2px solid var(--beacon);outline-offset:2px}
+.src .when{color:var(--tx3)}
+.src.keep{border-style:dashed;color:var(--tx2)}
+.src.keep:hover{color:var(--beacon);border-color:var(--beacon)}
+.src-sheet{position:fixed;inset:auto 0 0 0;background:var(--front);border-top:1px solid var(--line);
+  padding:18px 20px 22px;z-index:40;max-height:70vh;overflow:auto}
+.src-sheet h4{margin:0 0 8px;font-family:var(--disp);font-size:14px;font-weight:500}
+.src-sheet dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:12.5px}
+.src-sheet dt{color:var(--tx3);font-family:var(--mono);font-size:11px}
+.src-sheet dd{margin:0;color:var(--tx1)}
+.src-sheet .close{position:absolute;top:12px;right:16px}
+@media (min-width:1024px){.src-sheet{inset:auto auto 16px 50%;transform:translateX(-50%);
+  width:min(560px,92vw);border:1px solid var(--line);border-radius:12px}}
+/* the ONE permitted process visualisation: appears only after 400 ms, stays at least 500 ms */
+.waitline{display:flex;align-items:center;gap:8px;color:var(--tx2);font-size:13.5px;
+  padding:2px 0 0 2px}
 .msg .board .fxc{background:var(--nimbus);border-color:var(--line)}
 .msg.avatar{max-width:100%}
 .msg .meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px}
@@ -269,6 +293,122 @@ const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",
 let CARDS=null;
 const cardsReady=import("/cards.js").then(m=>{CARDS=m.default||m;}).catch(e=>{
   console.warn("card primitives unavailable; answering in words only:",e);});
+/* The wait line. Two rules make the difference between a calm interface and a twitchy one: it must
+   not appear before 400 ms (most answers arrive first, and a flash of "working" reads as slowness
+   that did not happen), and once shown it must stay at least 500 ms (a line that appears and
+   vanishes in 80 ms is noise). It names a DESTINATION in human words, never a mechanism, never a
+   timing, and it never reports a failure — degradation is absorbed silently on purpose. */
+const WAIT_LINES = {
+  en: {archive:"counting past days", ledger:"checking the sealed ledger",
+       knowledge:"reading the methodology", default:"looking that up"},
+  de: {archive:"zähle vergangene Tage", ledger:"prüfe das versiegelte Register",
+       knowledge:"lese die Methodik", default:"schaue nach"},
+  fr: {archive:"je compte les jours passés", ledger:"je consulte le registre scellé",
+       knowledge:"je lis la méthodologie", default:"je vérifie"},
+};
+/* Counting how the interface is actually used, so "nobody opens this, delete it" can be a finding
+   rather than an opinion. Fire-and-forget: a failed counter must never disturb an answer. */
+function beacon(event,ms){
+  try{
+    fetch("/avatar/ui-event",{method:"POST",headers:{
+      "Content-Type":"application/json","X-Avatar-Token":state.token||""},
+      body:JSON.stringify({session_id:state.sessionId||"",event:event,ms:ms})}).catch(()=>{});
+  }catch(_){}
+}
+const WAIT_THRESHOLD_MS=400, WAIT_MINIMUM_MS=500;
+function startWaitLine(kind){
+  let node=null, shownAt=0;
+  const timer=setTimeout(()=>{
+    node=document.createElement("div");
+    node.className="waitline";
+    node.setAttribute("aria-live","polite");
+    const dot=document.createElement("span");dot.className="dot pulse";
+    const table=WAIT_LINES[(state.locale||"en")]||WAIT_LINES.en;
+    node.appendChild(dot);
+    node.appendChild(document.createTextNode(table[kind]||table.default));
+    $("log").appendChild(node);$("log").scrollTop=$("log").scrollHeight;
+    shownAt=performance.now();
+  },WAIT_THRESHOLD_MS);
+  return ()=>{
+    clearTimeout(timer);
+    if(!node)return;                                   // never appeared: nothing to remove
+    const held=performance.now()-shownAt;
+    const wait=Math.max(0,WAIT_MINIMUM_MS-held);       // no flicker, ever
+    beacon("wait_line_shown",held+wait);
+    setTimeout(()=>{try{node.remove();}catch(_){}} ,wait);
+  };
+}
+
+/* Source chips. Provenance, not process: where the number came from, never how it was fetched. */
+function renderSources(host,board){
+  const records=[];
+  for(const card of board||[]){
+    for(const rec of (card.provenance||[])){
+      if(rec && rec.display_label) records.push(rec);
+    }
+  }
+  if(!records.length)return;
+  const strip=document.createElement("div");strip.className="sources";
+  const shown=records.slice(0,4);
+  shown.forEach(rec=>{
+    const chip=document.createElement("button");
+    chip.type="button";chip.className="src";
+    chip.setAttribute("aria-label",`source: ${rec.display_label}${rec.as_of?", as of "+rec.as_of:""}`);
+    chip.appendChild(document.createTextNode(rec.display_label));
+    if(rec.as_of){const w=document.createElement("span");w.className="when";w.textContent=rec.as_of;chip.appendChild(w);}
+    chip.onclick=()=>{beacon("source_chip_click");openSource(rec);};
+    strip.appendChild(chip);
+  });
+  if(records.length>shown.length){
+    const more=document.createElement("span");more.className="src";
+    more.textContent=`${records.length-shown.length} more`;
+    strip.appendChild(more);
+  }
+  // The receipt: the same answer as a one-page document a person can print, keep, or hand to a
+  // client. A chat window is not a record; this is.
+  const keep=document.createElement("button");
+  keep.type="button";keep.className="src keep";
+  keep.textContent=RECEIPT_LABEL[state.locale||"en"]||RECEIPT_LABEL.en;
+  keep.onclick=()=>openReceipt(host,records);
+  strip.appendChild(keep);
+  host.appendChild(strip);
+}
+const RECEIPT_LABEL={en:"Save a receipt",de:"Beleg sichern",fr:"Conserver un reçu"};
+function openReceipt(host,records){
+  const q=host.dataset.question||"", a=host.dataset.answer||"";
+  fetch("/avatar/receipt",{method:"POST",headers:{
+    "Content-Type":"application/json","X-Avatar-Token":state.token||""},
+    body:JSON.stringify({session_id:state.sessionId||"",question:q,answer:a,
+                         provenance:records})})
+    .then(r=>r.ok?r.text():Promise.reject(r.status))
+    .then(html=>{
+      const w=window.open("","_blank");
+      if(!w)return;                                   // pop-up blocked: fail quietly, not loudly
+      w.document.write(html);w.document.close();
+    })
+    .catch(()=>{});
+}
+function openSource(rec){
+  beacon("source_detail_open");
+  document.querySelectorAll(".src-sheet").forEach(n=>n.remove());
+  const sheet=document.createElement("div");
+  sheet.className="src-sheet";sheet.setAttribute("role","dialog");
+  sheet.setAttribute("aria-label","where this number came from");
+  const rows=[["source",rec.display_label],["as of",rec.as_of||"—"],
+              ["kind",({artifact_cell:"a published value",ledger_row:"a sealed forecast row",
+                        document_chunk:"the methodology notes",
+                        scenario_output:"a computed scenario",
+                        user_utterance:"your own words"})[rec.kind]||rec.kind]];
+  if(rec.versions&&rec.versions.context)rows.push(["data through",rec.versions.context]);
+  sheet.innerHTML='<h4>Where this came from</h4><dl>'+
+    rows.map(([k,v])=>`<dt>${k}</dt><dd>${String(v).replace(/</g,"&lt;")}</dd>`).join("")+'</dl>';
+  const close=document.createElement("button");close.className="close";close.textContent="Close";
+  close.onclick=()=>sheet.remove();
+  sheet.appendChild(close);
+  document.body.appendChild(sheet);
+  close.focus();
+}
+
 function sameSentence(a,b){
   const n=t=>(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
   return n(a)===n(b);
@@ -516,10 +656,13 @@ async function ask(question,fromVendor){
   if(!fromVendor){addMsg("user",question);}
   $("q").value="";setStatus("thinking");
   const t0=performance.now();
+  const stopWait=startWaitLine(/\b(how many|compare|since|last (year|month)|during|20\d\d)\b/i
+    .test(question)?"archive":"default");
   try{
     const r=await api("/avatar/brain",{method:"POST",
       headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
       body:JSON.stringify({session_id:state.session,messages:[{role:"user",content:question}]})});
+    stopWait();
     const ms=Math.round(performance.now()-t0);
     const src=r.source==="decision"?'<span class="chip">decision engine</span> ':"";
     const gate=r.gate==="pass"?src+'<span class="ok">gate pass</span>'
@@ -527,9 +670,11 @@ async function ask(question,fromVendor){
       :'<span class="ref">'+r.gate+"</span>";
     const node=addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
     renderBoard(node,r.board,r.text);  // not awaited: she starts speaking while the cards paint
+    node.dataset.question=q;node.dataset.answer=r.text||"";
+    renderSources(node,r.board);       // provenance travels with the answer, not in a side channel
     state.thinking=false;
     if(!drainPending())await speak(r.text);   // a queued turn outranks finishing this answer
-  }catch(e){state.thinking=false;setStatus("error");
+  }catch(e){stopWait();state.thinking=false;setStatus("error");
     addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");
     drainPending();}
 }

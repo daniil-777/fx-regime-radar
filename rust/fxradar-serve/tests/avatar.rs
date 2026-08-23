@@ -1065,3 +1065,79 @@ fn direction_questions_get_only_the_evidence_card() {
         );
     }
 }
+
+/// Regression, found by phase 43's replay: reference resolution must not launder a direction
+/// question into an answerable one.
+///
+/// The bug was invisible to every existing test because every existing test asked its adversarial
+/// question as the FIRST turn of a session, where there is no conversation state to resolve
+/// against. With one prior turn, "will EURUSD rise?" was rewritten to the previous intent for
+/// EUR/USD and answered with a calm condition reading. Nothing directional was ever spoken, so the
+/// output gates stayed green and no counter moved — the refusal simply stopped happening.
+#[tokio::test]
+async fn a_prior_turn_cannot_launder_a_direction_or_advice_question() {
+    let root = scratch_dir("laundered");
+    write_pack(&root, GREETING);
+    let (base, _store) = spawn_app(&root, base_cfg()).await;
+
+    // establish conversation state, exactly as a real session would
+    let first = ask(&base, "brt_test", "how is EURUSD doing?", None).await;
+    assert_eq!(
+        first["gate"], "pass",
+        "the setup turn should answer normally"
+    );
+
+    for (question, expected) in [
+        ("will EURUSD rise?", "refused:direction"),
+        ("is EURUSD going up?", "refused:direction"),
+        ("should I buy EURUSD?", "refused:advice"),
+    ] {
+        let answer = ask(&base, "brt_test", question, None).await;
+        assert_eq!(
+            answer["gate"], expected,
+            "{question:?} asked after a prior turn returned {:?} instead of refusing:\n  {}",
+            answer["gate"], answer["text"]
+        );
+    }
+}
+
+/// The direction ban applies to PRICE, and only to price.
+///
+/// Widening the direction vocabulary in phase 43 came within one commit of refusing "is volatility
+/// falling?" — a question this radar exists to answer. Both halves of the line are pinned here,
+/// because a guard that over-refuses fails as surely as one that under-refuses: the first teaches
+/// the user the product is evasive, the second breaks the constitution.
+#[tokio::test]
+async fn the_direction_ban_covers_price_and_spares_our_own_quantities() {
+    let root = scratch_dir("pricevsvol");
+    write_pack(&root, GREETING);
+    let (base, _store) = spawn_app(&root, base_cfg()).await;
+
+    for q in [
+        "will EURUSD rise?",
+        "is EURUSD going up?",
+        "is the euro heading lower?",
+        "will the dollar strengthen?",
+        "will EURUSD be cheaper next month?",
+        "steigt EURUSD?",
+        "est-ce que l'euro va monter?",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        assert_eq!(
+            a["gate"], "refused:direction",
+            "{q:?} should be refused as a direction question"
+        );
+    }
+
+    for q in [
+        "is volatility falling?",
+        "is the siren going up?",
+        "is change risk rising for EURUSD?",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        assert_ne!(
+            a["gate"], "refused:direction",
+            "{q:?} asks about a quantity we publish and must not hit the direction refusal"
+        );
+    }
+}

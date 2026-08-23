@@ -49,11 +49,17 @@ def test_no_pack_exists_for_a_user_supplied_quantity(built: dict) -> None:
 
 
 def test_every_pack_carries_provenance(built: dict) -> None:
+    """Phase 43: the record is validated against the schema, not spot-checked.
+
+    An ad-hoc check passes a record that is missing the versions block, and a receipt without a
+    versions block cannot be read years later under the rules that produced it — which is the one
+    thing a receipt exists to survive.
+    """
     for key, pack in built["packs"].items():
         assert pack["provenance"], f"{key}: no provenance record"
         for record in pack["provenance"]:
-            assert record.get("artifact"), f"{key}: provenance without an artifact"
-            assert record.get("as_of"), f"{key}: provenance without an as-of date"
+            problems = AP.validate_provenance(record)
+            assert not problems, f"{key}: {'; '.join(problems)}"
 
 
 def test_gates_ran_at_build_time(built: dict) -> None:

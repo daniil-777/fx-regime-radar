@@ -2,6 +2,110 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.38.0 — phase 43: provenance ui + operator trace (2026-08-23)
+
+**Two surfaces with opposite philosophies, and a defect found by building the second one.** The
+customer surface shows almost nothing about how an answer was produced and everything about where
+its numbers came from; the operator surface shows all of it. Conflating them is the failure this
+phase exists to prevent — an engineer reads a step log as evidence of care, a customer reads it as
+evidence that something is slow and broken.
+
+### The finding: the refusal that stopped happening
+
+Building replay surfaced the most serious defect in the project so far. **`adversarial_direction`
+was at 8% and `adversarial_advice` at 10%** — not leak rates (`no banned words` was 100% throughout,
+before and after; the output gates always held) but the rate at which the system *named the
+refusal*. The other nine in ten received a fluent, on-topic, entirely non-directional answer to a
+question they had not asked. A refusal teaches the user where the boundary is; a confident
+non-answer teaches them there is none, and it is invisible to every metric that counts gate blocks.
+
+Two causes, both fixed:
+
+- **Laundering by reference resolution.** "Will EURUSD rise?" was refused correctly as the first
+  turn of a session and **answered** as the second: phase 40's resolver saw a pair name, treated the
+  utterance as elliptical, and rewrote it to the previous intent — discarding the words that made it
+  a direction question before the guard could see them. Every existing test asked its adversarial
+  question first in a session, so the suite was green while the guarantee did not hold in any real
+  conversation. The guards now test the raw utterance as well as the resolved one, since resolution
+  can only ever remove those words and never add them.
+- **Costumes.** Real questions do not contain the keyword. `src/guard.rs` adds twenty named framing
+  rules — embedded premise, sentence completion, persona shift, proxy inference, chart
+  extrapolation, attractiveness ranking, price distribution, authority override, capital allocation,
+  position sizing, adjudication, binary demand, attributed recommendation, and more — each
+  separately tested and each reporting its own name into the trace and into
+  `adversarial_framing_total{rule}`. Named rules rather than a classifier: this sits on top of the
+  one guarantee the project cannot get wrong, and its failures have to be inspectable.
+
+**Result, on the held-out golden set: 8% → 100% and 10% → 100%**, with no other family moving a
+single point and English routing up 74% → 84%. The rules were authored from general adversarial
+shapes and tested on phrasings written for the tests; no golden question was used to write a rule.
+The direction vocabulary was widened and then deliberately narrowed again — "is volatility falling?"
+and "is the siren going up?" must still be answered, and a guard that refuses the product's own
+subject matter fails in the way nobody reports. Full write-up in `reports/adversarial_framing.md`.
+
+### Provenance as a first-class record
+
+- Versioned, serialisable provenance on every value that reaches speech, a card or an export:
+  `kind`, `locator`, `as_of`, `retrieved_at`, `source_tier`, `display_label`, and a `versions` block
+  (context, registry, prompt, gate rules, model, voice) so a receipt kept for years can still be read
+  under the rules that produced it.
+- `validate_provenance()` replaces the ad-hoc spot check, and the board build now **blocks a card
+  whose record is invalid** rather than shipping a receipt with a blank source column.
+- Provenance travels inside the answer payload, including in precomputed packs — never a side
+  channel.
+
+### The customer surface
+
+- **The source strip**: quiet mono chips carrying the human-worded label and date, at most four then
+  "n more", each opening a detail sheet. Absence of chips means no data was used.
+- **The wait line**: slow lane only, after a 400 ms threshold, held a minimum 500 ms so it cannot
+  flash. One transition, reusing the existing pulse. It never reports a failure — degradation is
+  silent by design.
+- **The answer receipt** (`src/receipt.rs`): a printable one-page document with the answer, every
+  value's full provenance row, the versions in force, the AI-presenter disclosure, the standing
+  disclaimer and the chain head with instructions to verify it independently. Palette derived from
+  `design/tokens.json` (the light variant now exports to the Rust static tokens). Issued only for
+  text the gates actually produced — a document carrying this system's name may not certify
+  something it never said.
+- **Banned-vocabulary lint** (`scripts/lint_vocabulary.py`, wired into `make lint-ui`): no machinery
+  word may reach a customer surface in any locale. 753 strings checked. Bare "index" was
+  deliberately *not* banned — a macro uncertainty index is a thing a treasurer says, and a lint that
+  cries wolf on domain vocabulary gets switched off within a week.
+
+### The operator surface
+
+- `/ops/trace/{id}` with seven panels (timeline with the deadline line, router with the deciding
+  stage and precedence conflicts, resolution with the echo, slips, gates, provenance map, prompt
+  economics), plus `/ops/traces`, `/json`, `/receipt` and `/ops/audit`. Operator key required; every
+  access audited with the key stored hashed; **absent from the OpenAPI document and 401 for everyone
+  when no key is configured** — a surface whose entire content is internal fails shut.
+- **Deterministic replay** re-runs a recorded turn through the live chain and diffs it. It stops
+  where the model begins, because a replay that pretended to reproduce a sampled generation would be
+  a green tick with no meaning. `tests/ops_trace.rs` asserts replay and the live handler agree —
+  which is how both the gate-skipping bug and the direction-laundering bug were found.
+- **Promote to golden** turns a real turn into an `eval/golden.yaml` item with gold values taken
+  from the provenance map, never from the spoken text — copying the answer in would enshrine today's
+  output as tomorrow's expectation. This closes the loop from production failure to regression test
+  and is worth more than any panel.
+- Traces live in memory only, bounded by capacity and a retention window, with the session id
+  hashed: the retention window is the whole deletion story rather than a promise about a cleanup job.
+
+### Separation, enforced
+
+`tests/separation.rs` asserts no operator string, timing, trace component or `/ops/` reference
+appears in the customer bundle, and that `BrainResponse` exposes no trace id. The failure this
+guards against is gradual and reasonable-looking at every step.
+
+### Also
+
+- Two golden expectations corrected where `expected_route` contradicted the item's own `notes`
+  (`adversarial_advice-011`, `-012`); recorded in the report rather than quietly.
+- Trace ids use a counter rather than a bare nanosecond clock — a collision would have shown one
+  operator another turn's trace.
+- The two archive-miss texts became shared constants: two copies would have shown up as a phantom
+  divergence on every replay of a historical question.
+- `make lint-ui`, `make test` (358 passed), and the full Rust suite green.
+
 ## v2.37.0 — phase 42: the discipline, not the agent (2026-08-23)
 
 **The open-ended search agent was not built, and that is the phase's own instruction.** Phase 42

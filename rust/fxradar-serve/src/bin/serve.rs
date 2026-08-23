@@ -220,7 +220,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.rate_limit_per_min,
         stripe_secret,
     )
-    .with_avatar(avatar_cfg);
+    .with_avatar(avatar_cfg)
+    .with_traces(fxradar_serve::trace::TraceCfg {
+        retention_secs: std::env::var("FXRADAR_OPS_RETENTION_SECS")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(3 * 3600),
+        capacity: std::env::var("FXRADAR_OPS_TRACE_CAPACITY")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(500),
+        // Unset → /ops/* is 401 for everyone. A surface that shows every user's question and every
+        // internal decision must fail shut when nobody configured it.
+        operator_key: std::env::var("FXRADAR_OPS_KEY")
+            .ok()
+            .filter(|k| !k.is_empty()),
+    });
     if args.alert_poll_secs > 0 {
         let engine = AlertEngine::new(
             store,

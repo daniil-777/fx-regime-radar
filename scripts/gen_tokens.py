@@ -45,6 +45,10 @@ def main() -> None:
                     "surface": tk.TOKENS["surface"],
                     "text": tk.TOKENS["text"],
                     "accent": tk.TOKENS["accent"],
+                    # The light palette travels too: the answer receipt is a printed document, and
+                    # a document printed in the app's night colours wastes a cartridge and reads as
+                    # a screenshot rather than a record.
+                    "light": tk.TOKENS["light"],
                 },
                 indent=1,
             )

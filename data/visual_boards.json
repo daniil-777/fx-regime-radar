@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-08-23T10:40:00Z",
+ "generated_at_utc": "2026-08-23T11:08:51Z",
  "registry_version": "3.0.0",
  "data_through": "2026-08-20",
  "cards": {
@@ -32,7 +32,33 @@
      }
     ],
     "subline": "band 0.00 to 0.52 \u00b7 day 82 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=GBPUSD": {
    "component": "condition_card",
@@ -63,7 +89,33 @@
      }
     ],
     "subline": "band 0.00 to 0.54 \u00b7 day 5 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDCHF": {
    "component": "condition_card",
@@ -94,7 +146,33 @@
      }
     ],
     "subline": "band 0.13 to 1.00 \u00b7 day 127 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDCAD": {
    "component": "condition_card",
@@ -125,7 +203,33 @@
      }
     ],
     "subline": "band 0.00 to 0.61 \u00b7 day 126 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDCAD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=AUDUSD": {
    "component": "condition_card",
@@ -156,7 +260,33 @@
      }
     ],
     "subline": "band 0.00 to 0.62 \u00b7 day 72 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "AUDUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=NZDUSD": {
    "component": "condition_card",
@@ -187,7 +317,33 @@
      }
     ],
     "subline": "band 0.00 to 0.64 \u00b7 day 38 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "NZDUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=EURJPY": {
    "component": "condition_card",
@@ -218,7 +374,33 @@
      }
     ],
     "subline": "band 0.00 to 0.86 \u00b7 day 14 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "EURJPY"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=EURGBP": {
    "component": "condition_card",
@@ -249,7 +431,33 @@
      }
     ],
     "subline": "band 0.00 to 0.81 \u00b7 day 327 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "EURGBP"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDJPY": {
    "component": "condition_card",
@@ -280,7 +488,33 @@
      }
     ],
     "subline": "band 0.00 to 0.96 \u00b7 day 15 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDJPY"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDSEK": {
    "component": "condition_card",
@@ -311,7 +545,33 @@
      }
     ],
     "subline": "band 0.00 to 0.69 \u00b7 day 73 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDSEK"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDPLN": {
    "component": "condition_card",
@@ -342,7 +602,33 @@
      }
     ],
     "subline": "band 0.00 to 0.64 \u00b7 day 88 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDPLN"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDMXN": {
    "component": "condition_card",
@@ -373,7 +659,33 @@
      }
     ],
     "subline": "band 0.00 to 0.62 \u00b7 day 22 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDMXN"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDRUB": {
    "component": "condition_card",
@@ -404,7 +716,33 @@
      }
     ],
     "subline": "band 0.00 to 1.00 \u00b7 day 9 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDRUB"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDBRL": {
    "component": "condition_card",
@@ -435,7 +773,33 @@
      }
     ],
     "subline": "band 0.00 to 0.69 \u00b7 day 33 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDBRL"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=USDZAR": {
    "component": "condition_card",
@@ -466,7 +830,33 @@
      }
     ],
     "subline": "band 0.00 to 1.00 \u00b7 day 20 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "USDZAR"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=ETH-USD": {
    "component": "condition_card",
@@ -497,7 +887,33 @@
      }
     ],
     "subline": "band 0.00 to 1.00 \u00b7 day 1 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "ETH-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=BNB-USD": {
    "component": "condition_card",
@@ -528,7 +944,33 @@
      }
     ],
     "subline": "band 0.00 to 0.76 \u00b7 day 178 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "BNB-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=BTC-USD": {
    "component": "condition_card",
@@ -559,7 +1001,33 @@
      }
     ],
     "subline": "band 0.00 to 1.00 \u00b7 day 1 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "BTC-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=ADA-USD": {
    "component": "condition_card",
@@ -590,7 +1058,33 @@
      }
     ],
     "subline": "band 0.00 to 0.96 \u00b7 day 56 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "ADA-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "condition_card|pair=XRP-USD": {
    "component": "condition_card",
@@ -621,7 +1115,33 @@
      }
     ],
     "subline": "band 0.00 to 1.00 \u00b7 day 175 of this regime"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "condition_card",
+      "args": {
+       "pair": "XRP-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "consensus_dots|pair=EURUSD": {
    "component": "consensus_dots",
@@ -652,7 +1172,33 @@
       "sub": "quiet"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "consensus_dots",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's stress consensus",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "consensus_dots|pair=USDCHF": {
    "component": "consensus_dots",
@@ -683,7 +1229,33 @@
       "sub": "stress"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "consensus_dots",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's stress consensus",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "consensus_dots|pair=GBPUSD": {
    "component": "consensus_dots",
@@ -714,7 +1286,33 @@
       "sub": "quiet"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "consensus_dots",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's stress consensus",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_probability_bars|pair=EURUSD": {
    "component": "regime_probability_bars",
@@ -758,7 +1356,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_probability_bars",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's regime probabilities",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_probability_bars|pair=USDCHF": {
    "component": "regime_probability_bars",
@@ -802,7 +1426,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_probability_bars",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's regime probabilities",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_probability_bars|pair=GBPUSD": {
    "component": "regime_probability_bars",
@@ -846,7 +1496,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_probability_bars",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's regime probabilities",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=EURUSD": {
    "component": "siren_gauge",
@@ -868,7 +1544,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=GBPUSD": {
    "component": "siren_gauge",
@@ -890,7 +1592,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDCHF": {
    "component": "siren_gauge",
@@ -912,7 +1640,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDCAD": {
    "component": "siren_gauge",
@@ -934,7 +1688,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDCAD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=AUDUSD": {
    "component": "siren_gauge",
@@ -956,7 +1736,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "AUDUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=NZDUSD": {
    "component": "siren_gauge",
@@ -978,7 +1784,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "NZDUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=EURJPY": {
    "component": "siren_gauge",
@@ -1000,7 +1832,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "EURJPY"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=EURGBP": {
    "component": "siren_gauge",
@@ -1022,7 +1880,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "EURGBP"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDJPY": {
    "component": "siren_gauge",
@@ -1044,7 +1928,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDJPY"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDSEK": {
    "component": "siren_gauge",
@@ -1066,7 +1976,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDSEK"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDPLN": {
    "component": "siren_gauge",
@@ -1088,7 +2024,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDPLN"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDMXN": {
    "component": "siren_gauge",
@@ -1110,7 +2072,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDMXN"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDRUB": {
    "component": "siren_gauge",
@@ -1132,7 +2120,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDRUB"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDBRL": {
    "component": "siren_gauge",
@@ -1154,7 +2168,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDBRL"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=USDZAR": {
    "component": "siren_gauge",
@@ -1176,7 +2216,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "USDZAR"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=ETH-USD": {
    "component": "siren_gauge",
@@ -1198,7 +2264,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "ETH-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=BNB-USD": {
    "component": "siren_gauge",
@@ -1220,7 +2312,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "BNB-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=BTC-USD": {
    "component": "siren_gauge",
@@ -1242,7 +2360,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "BTC-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=ADA-USD": {
    "component": "siren_gauge",
@@ -1264,7 +2408,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "ADA-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "siren_gauge|pair=XRP-USD": {
    "component": "siren_gauge",
@@ -1286,7 +2456,33 @@
      }
     ],
     "subline": "above 98 means today looks unlike anything in the calm training years"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "siren_gauge",
+      "args": {
+       "pair": "XRP-USD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's anomaly reading",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "pair_compare_table": {
    "component": "pair_compare_table",
@@ -1324,7 +2520,31 @@
       "100"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "pair_compare_table",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state across markets",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "drift_status": {
    "component": "drift_status",
@@ -1349,7 +2569,31 @@
      }
     ],
     "subline": "every feature is inside its training distribution"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "drift_status",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the model health record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=EURUSD,window=30d": {
    "component": "risk_trace",
@@ -1547,7 +2791,34 @@
      }
     ],
     "subline": "30d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=EURUSD,window=90d": {
    "component": "risk_trace",
@@ -2105,7 +3376,34 @@
      }
     ],
     "subline": "90d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=EURUSD,window=1y": {
    "component": "risk_trace",
@@ -2633,7 +3931,34 @@
      }
     ],
     "subline": "1y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=EURUSD,window=5y": {
    "component": "risk_trace",
@@ -3197,7 +4522,34 @@
      }
     ],
     "subline": "5y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=USDCHF,window=30d": {
    "component": "risk_trace",
@@ -3395,7 +4747,34 @@
      }
     ],
     "subline": "30d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=USDCHF,window=90d": {
    "component": "risk_trace",
@@ -3953,7 +5332,34 @@
      }
     ],
     "subline": "90d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=USDCHF,window=1y": {
    "component": "risk_trace",
@@ -4481,7 +5887,34 @@
      }
     ],
     "subline": "1y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=USDCHF,window=5y": {
    "component": "risk_trace",
@@ -5045,7 +6478,34 @@
      }
     ],
     "subline": "5y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=GBPUSD,window=30d": {
    "component": "risk_trace",
@@ -5243,7 +6703,34 @@
      }
     ],
     "subline": "30d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=GBPUSD,window=90d": {
    "component": "risk_trace",
@@ -5801,7 +7288,34 @@
      }
     ],
     "subline": "90d \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=GBPUSD,window=1y": {
    "component": "risk_trace",
@@ -6329,7 +7843,34 @@
      }
     ],
     "subline": "1y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "risk_trace|pair=GBPUSD,window=5y": {
    "component": "risk_trace",
@@ -6893,7 +8434,34 @@
      }
     ],
     "subline": "5y \u00b7 shaded band is the 90% conformal interval"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "risk_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published change-risk history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=EURUSD,window=30d": {
    "component": "regime_timeline_ribbon",
@@ -6920,7 +8488,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "EURUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=EURUSD,window=90d": {
    "component": "regime_timeline_ribbon",
@@ -6955,7 +8550,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "EURUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=EURUSD,window=1y": {
    "component": "regime_timeline_ribbon",
@@ -7020,7 +8642,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "EURUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=EURUSD,window=5y": {
    "component": "regime_timeline_ribbon",
@@ -7346,7 +8995,34 @@
       "label": "crisis"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "EURUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=USDCHF,window=30d": {
    "component": "regime_timeline_ribbon",
@@ -7373,7 +9049,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "USDCHF",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=USDCHF,window=90d": {
    "component": "regime_timeline_ribbon",
@@ -7400,7 +9103,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "USDCHF",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=USDCHF,window=1y": {
    "component": "regime_timeline_ribbon",
@@ -7440,7 +9170,34 @@
       "label": "trend"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "USDCHF",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=USDCHF,window=5y": {
    "component": "regime_timeline_ribbon",
@@ -7593,7 +9350,34 @@
       "label": "chop"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "USDCHF",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=GBPUSD,window=30d": {
    "component": "regime_timeline_ribbon",
@@ -7633,7 +9417,34 @@
       "label": "chop"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=GBPUSD,window=90d": {
    "component": "regime_timeline_ribbon",
@@ -7706,7 +9517,34 @@
       "label": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=GBPUSD,window=1y": {
    "component": "regime_timeline_ribbon",
@@ -7809,7 +9647,34 @@
       "label": "trend"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_timeline_ribbon|pair=GBPUSD,window=5y": {
    "component": "regime_timeline_ribbon",
@@ -8160,7 +10025,34 @@
       "label": "crisis"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_timeline_ribbon",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_history_table|pair=EURUSD": {
    "component": "regime_history_table",
@@ -8218,7 +10110,33 @@
       "16"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_history_table",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime episode record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_history_table|pair=USDCHF": {
    "component": "regime_history_table",
@@ -8276,7 +10194,33 @@
       "21"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_history_table",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime episode record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "regime_history_table|pair=GBPUSD": {
    "component": "regime_history_table",
@@ -8334,7 +10278,33 @@
       "7"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "regime_history_table",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime episode record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=EURUSD,window=30d": {
    "component": "vol_trace",
@@ -8472,7 +10442,34 @@
      }
     ],
     "subline": "30d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=EURUSD,window=90d": {
    "component": "vol_trace",
@@ -8850,7 +10847,34 @@
      }
     ],
     "subline": "90d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=EURUSD,window=1y": {
    "component": "vol_trace",
@@ -9208,7 +11232,34 @@
      }
     ],
     "subline": "1y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:50Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=EURUSD,window=5y": {
    "component": "vol_trace",
@@ -9590,7 +11641,34 @@
      }
     ],
     "subline": "5y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "EURUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=USDCHF,window=30d": {
    "component": "vol_trace",
@@ -9728,7 +11806,34 @@
      }
     ],
     "subline": "30d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=USDCHF,window=90d": {
    "component": "vol_trace",
@@ -10106,7 +12211,34 @@
      }
     ],
     "subline": "90d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=USDCHF,window=1y": {
    "component": "vol_trace",
@@ -10464,7 +12596,34 @@
      }
     ],
     "subline": "1y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=USDCHF,window=5y": {
    "component": "vol_trace",
@@ -10846,7 +13005,34 @@
      }
     ],
     "subline": "5y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "USDCHF",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=GBPUSD,window=30d": {
    "component": "vol_trace",
@@ -10984,7 +13170,34 @@
      }
     ],
     "subline": "30d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "30d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=GBPUSD,window=90d": {
    "component": "vol_trace",
@@ -11362,7 +13575,34 @@
      }
     ],
     "subline": "90d \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "90d"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=GBPUSD,window=1y": {
    "component": "vol_trace",
@@ -11720,7 +13960,34 @@
      }
     ],
     "subline": "1y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "1y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "vol_trace|pair=GBPUSD,window=5y": {
    "component": "vol_trace",
@@ -12102,7 +14369,34 @@
      }
     ],
     "subline": "5y \u00b7 20-day realised volatility"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "vol_trace",
+      "args": {
+       "pair": "GBPUSD",
+       "window": "5y"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the published volatility history",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "what_changed_card|pair=EURUSD": {
    "component": "what_changed_card",
@@ -12133,7 +14427,33 @@
      }
     ],
     "subline": "same regime as yesterday (calm)"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "what_changed_card",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "what_changed_card|pair=USDCHF": {
    "component": "what_changed_card",
@@ -12164,7 +14484,33 @@
      }
     ],
     "subline": "same regime as yesterday (calm)"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "what_changed_card",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "what_changed_card|pair=GBPUSD": {
    "component": "what_changed_card",
@@ -12195,7 +14541,33 @@
      }
     ],
     "subline": "same regime as yesterday (calm)"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "what_changed_card",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published state",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "treasury_light|pair=EURUSD": {
    "component": "treasury_light",
@@ -12218,7 +14590,33 @@
      }
     ],
     "subline": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "treasury_light",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the treasury rule table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "treasury_light|pair=USDCHF": {
    "component": "treasury_light",
@@ -12241,7 +14639,33 @@
      }
     ],
     "subline": "Neither clear-cut: change risk 62% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 2/3: 2/3 agree: conditions are shifting \u2014 two voters see stress."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "treasury_light",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the treasury rule table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "treasury_light|pair=GBPUSD": {
    "component": "treasury_light",
@@ -12264,7 +14688,33 @@
      }
     ],
     "subline": "Calm regime, change risk 5% is below the train-era 40th percentile (9%), the interval on it is narrow (0.54), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "treasury_light",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the treasury rule table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_99,pair=EURUSD": {
    "component": "var_es_bars",
@@ -12309,7 +14759,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "EURUSD",
+       "metric": "var_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_95,pair=EURUSD": {
    "component": "var_es_bars",
@@ -12354,7 +14831,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "EURUSD",
+       "metric": "var_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_99,pair=EURUSD": {
    "component": "var_es_bars",
@@ -12399,7 +14903,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "EURUSD",
+       "metric": "es_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_95,pair=EURUSD": {
    "component": "var_es_bars",
@@ -12444,7 +14975,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "EURUSD",
+       "metric": "es_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_99,pair=USDCHF": {
    "component": "var_es_bars",
@@ -12489,7 +15047,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "USDCHF",
+       "metric": "var_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_95,pair=USDCHF": {
    "component": "var_es_bars",
@@ -12534,7 +15119,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "USDCHF",
+       "metric": "var_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_99,pair=USDCHF": {
    "component": "var_es_bars",
@@ -12579,7 +15191,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "USDCHF",
+       "metric": "es_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_95,pair=USDCHF": {
    "component": "var_es_bars",
@@ -12624,7 +15263,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "USDCHF",
+       "metric": "es_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_99,pair=GBPUSD": {
    "component": "var_es_bars",
@@ -12669,7 +15335,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "metric": "var_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=var_95,pair=GBPUSD": {
    "component": "var_es_bars",
@@ -12714,7 +15407,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "metric": "var_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_99,pair=GBPUSD": {
    "component": "var_es_bars",
@@ -12759,7 +15479,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "metric": "es_99"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "var_es_bars|metric=es_95,pair=GBPUSD": {
    "component": "var_es_bars",
@@ -12804,7 +15551,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "var_es_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "metric": "es_95"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=EURUSD,size_band=1pct": {
    "component": "move_frequency_bars",
@@ -12833,7 +15607,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "EURUSD",
+       "size_band": "1pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=EURUSD,size_band=2pct": {
    "component": "move_frequency_bars",
@@ -12862,7 +15663,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "EURUSD",
+       "size_band": "2pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=EURUSD,size_band=3pct": {
    "component": "move_frequency_bars",
@@ -12891,7 +15719,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "EURUSD",
+       "size_band": "3pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=EURUSD,size_band=5pct": {
    "component": "move_frequency_bars",
@@ -12920,7 +15775,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "EURUSD",
+       "size_band": "5pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=USDCHF,size_band=1pct": {
    "component": "move_frequency_bars",
@@ -12949,7 +15831,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "USDCHF",
+       "size_band": "1pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=USDCHF,size_band=2pct": {
    "component": "move_frequency_bars",
@@ -12978,7 +15887,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "USDCHF",
+       "size_band": "2pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=USDCHF,size_band=3pct": {
    "component": "move_frequency_bars",
@@ -13007,7 +15943,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "USDCHF",
+       "size_band": "3pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=USDCHF,size_band=5pct": {
    "component": "move_frequency_bars",
@@ -13036,7 +15999,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "USDCHF",
+       "size_band": "5pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=GBPUSD,size_band=1pct": {
    "component": "move_frequency_bars",
@@ -13065,7 +16055,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "size_band": "1pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=GBPUSD,size_band=2pct": {
    "component": "move_frequency_bars",
@@ -13094,7 +16111,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "size_band": "2pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=GBPUSD,size_band=3pct": {
    "component": "move_frequency_bars",
@@ -13123,7 +16167,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "size_band": "3pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "move_frequency_bars|pair=GBPUSD,size_band=5pct": {
    "component": "move_frequency_bars",
@@ -13152,7 +16223,34 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "move_frequency_bars",
+      "args": {
+       "pair": "GBPUSD",
+       "size_band": "5pct"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the historical return record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "hedge_compare_table|pair=EURUSD": {
    "component": "hedge_compare_table",
@@ -13188,7 +16286,33 @@
       "2.68%"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "hedge_compare_table",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the hedging decision table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "hedge_compare_table|pair=USDCHF": {
    "component": "hedge_compare_table",
@@ -13224,7 +16348,33 @@
       "7.59%"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "hedge_compare_table",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the hedging decision table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "hedge_compare_table|pair=GBPUSD": {
    "component": "hedge_compare_table",
@@ -13260,7 +16410,33 @@
       "3.53%"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "hedge_compare_table",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the hedging decision table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "cost_of_waiting_curve|pair=EURUSD": {
    "component": "cost_of_waiting_curve",
@@ -13325,7 +16501,33 @@
      }
     ],
     "subline": "expected shortfall of the uncovered exposure, square-root-of-time scaled"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "cost_of_waiting_curve",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "cost_of_waiting_curve|pair=USDCHF": {
    "component": "cost_of_waiting_curve",
@@ -13390,7 +16592,33 @@
      }
     ],
     "subline": "expected shortfall of the uncovered exposure, square-root-of-time scaled"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "cost_of_waiting_curve",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "cost_of_waiting_curve|pair=GBPUSD": {
    "component": "cost_of_waiting_curve",
@@ -13455,7 +16683,33 @@
      }
     ],
     "subline": "expected shortfall of the uncovered exposure, square-root-of-time scaled"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "cost_of_waiting_curve",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the regime-conditional risk table",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "scoreboard_card": {
    "component": "scoreboard_card",
@@ -13478,7 +16732,31 @@
      }
     ],
     "subline": "chain head 2fb2db21 \u00b7 12 forecasts sealed before their outcomes"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "ledger_row",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "scoreboard_card",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the sealed forecast ledger",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "coverage_plot": {
    "component": "coverage_plot",
@@ -13509,7 +16787,31 @@
      }
     ],
     "subline": "coverage per regime against the 90% nominal level \u00b7 overall 91.6%"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "ledger_row",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "coverage_plot",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the conformal coverage record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ledger_row_receipt": {
    "component": "ledger_row_receipt",
@@ -13555,7 +16857,31 @@
       "2fb2db21fa7ceb96b1958d85"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "ledger_row",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ledger_row_receipt",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "a sealed ledger row",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "chain_verify_card": {
    "component": "chain_verify_card",
@@ -13580,7 +16906,31 @@
      }
     ],
     "subline": "head 2fb2db21 \u2014 clone the repository and run the verifier yourself; it uses the standard library only"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "ledger_row",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "chain_verify_card",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the ledger's hash chain",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "direction_evidence_card": {
    "component": "direction_evidence_card",
@@ -13604,7 +16954,31 @@
      }
     ],
     "subline": "this system models conditions and risk; it has never modelled which way a price moves, which is why its record can be audited at all"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "direction_evidence_card",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the system's own design record",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "event_countdown_strip": {
    "component": "event_countdown_strip",
@@ -13648,7 +17022,31 @@
       "tone": "calm"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "event_countdown_strip",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the economic calendar",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "feature_driver_bars|pair=EURUSD": {
    "component": "feature_driver_bars",
@@ -13682,7 +17080,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "feature_driver_bars",
+      "args": {
+       "pair": "EURUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's model drivers",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "feature_driver_bars|pair=USDCHF": {
    "component": "feature_driver_bars",
@@ -13716,7 +17140,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "feature_driver_bars",
+      "args": {
+       "pair": "USDCHF"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's model drivers",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "feature_driver_bars|pair=GBPUSD": {
    "component": "feature_driver_bars",
@@ -13750,7 +17200,33 @@
       "highlight": false
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "feature_driver_bars",
+      "args": {
+       "pair": "GBPUSD"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's model drivers",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "storm_replay_mini": {
    "component": "storm_replay_mini",
@@ -13803,7 +17279,31 @@
       "label": "trend"
      }
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "storm_replay_mini",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "a recorded market episode",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "explainer_diagram|diagram=siren": {
    "component": "explainer_diagram",
@@ -13818,7 +17318,33 @@
    "asof": "2026-08-20",
    "data": {
     "svg": "<svg viewBox=\"0 0 300 110\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\">\n  <g fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\">\n    <rect x=\"6\" y=\"34\" width=\"66\" height=\"30\" rx=\"6\"/>\n    <rect x=\"102\" y=\"34\" width=\"76\" height=\"30\" rx=\"6\"/>\n    <rect x=\"208\" y=\"34\" width=\"84\" height=\"30\" rx=\"6\"/>\n    <path d=\"M72 49h30M178 49h30\"/><path d=\"M96 45l6 4-6 4M202 45l6 4-6 4\"/>\n  </g>\n  <g font-size=\"9\" text-anchor=\"middle\" fill=\"currentColor\">\n    <text x=\"39\" y=\"52\">today's bars</text>\n    <text x=\"140\" y=\"46\">autoencoder</text><text x=\"140\" y=\"58\">(calm days only)</text>\n    <text x=\"250\" y=\"46\">reconstruction error</text><text x=\"250\" y=\"58\">ranked 0\u2013100</text>\n    <text x=\"150\" y=\"88\" font-size=\"8.5\">trained only on calm days up to 2016 \u2014 a high siren means today is unlike anything it learned</text>\n  </g>\n</svg>\n"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "explainer_diagram",
+      "args": {
+       "diagram": "siren"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "explainer_diagram|diagram=regime": {
    "component": "explainer_diagram",
@@ -13833,7 +17359,33 @@
    "asof": "2026-08-20",
    "data": {
     "svg": "<svg viewBox=\"0 0 300 110\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\">\n  <g fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\">\n    <rect x=\"6\" y=\"34\" width=\"62\" height=\"30\" rx=\"6\"/>\n    <rect x=\"98\" y=\"34\" width=\"84\" height=\"30\" rx=\"6\"/>\n    <rect x=\"212\" y=\"34\" width=\"80\" height=\"30\" rx=\"6\"/>\n    <path d=\"M68 49h30M182 49h30\"/><path d=\"M92 45l6 4-6 4M206 45l6 4-6 4\"/>\n  </g>\n  <g font-size=\"9\" text-anchor=\"middle\" fill=\"currentColor\">\n    <text x=\"37\" y=\"52\">returns, vol,</text><text x=\"37\" y=\"62\" font-size=\"8\">momentum</text>\n    <text x=\"140\" y=\"46\">hidden Markov model</text><text x=\"140\" y=\"58\">(filtered, causal)</text>\n    <text x=\"252\" y=\"46\">calm \u00b7 trend</text><text x=\"252\" y=\"58\">chop \u00b7 crisis</text>\n    <text x=\"150\" y=\"90\" font-size=\"8.5\">filtered means today's label uses only data up to today \u2014 never the smoother that peeks ahead</text>\n  </g>\n</svg>\n"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "explainer_diagram",
+      "args": {
+       "diagram": "regime"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "glossary_card|term=siren": {
    "component": "glossary_card",
@@ -13855,7 +17407,33 @@
      }
     ],
     "subline": "anomaly percentile against calm history, 0 to 100."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "glossary_card",
+      "args": {
+       "term": "siren"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "glossary_card|term=band": {
    "component": "glossary_card",
@@ -13877,7 +17455,33 @@
      }
     ],
     "subline": "the 90 percent conformal interval around it."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "glossary_card",
+      "args": {
+       "term": "band"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "glossary_card|term=consensus": {
    "component": "glossary_card",
@@ -13899,7 +17503,33 @@
      }
     ],
     "subline": "stress votes from three independent detectors, 0 to 3."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "glossary_card",
+      "args": {
+       "term": "consensus"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "glossary_card|term=filtered": {
    "component": "glossary_card",
@@ -13921,7 +17551,33 @@
      }
     ],
     "subline": "computed from data up to today only."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "glossary_card",
+      "args": {
+       "term": "filtered"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "glossary_card|term=ledger": {
    "component": "glossary_card",
@@ -13943,7 +17599,33 @@
      }
     ],
     "subline": "the append-only, hash-chained record of forecasts written before outcomes."
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "glossary_card",
+      "args": {
+       "term": "ledger"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "methodology_flow|metric=change_risk": {
    "component": "methodology_flow",
@@ -13958,7 +17640,33 @@
    "asof": "2026-08-20",
    "data": {
     "svg": "<svg viewBox=\"0 0 320 110\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\">\n  <g fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.1\">\n    <rect x=\"4\" y=\"36\" width=\"54\" height=\"26\" rx=\"5\"/><rect x=\"76\" y=\"36\" width=\"60\" height=\"26\" rx=\"5\"/>\n    <rect x=\"154\" y=\"36\" width=\"66\" height=\"26\" rx=\"5\"/><rect x=\"238\" y=\"36\" width=\"78\" height=\"26\" rx=\"5\"/>\n    <path d=\"M58 49h18M136 49h18M220 49h18\"/>\n  </g>\n  <g font-size=\"8.5\" text-anchor=\"middle\" fill=\"currentColor\">\n    <text x=\"31\" y=\"52\">daily bars</text><text x=\"106\" y=\"52\">features</text>\n    <text x=\"187\" y=\"46\">gradient</text><text x=\"187\" y=\"57\">boosting</text>\n    <text x=\"277\" y=\"46\">calibration +</text><text x=\"277\" y=\"57\">conformal band</text>\n    <text x=\"160\" y=\"88\" font-size=\"8\">trained \u22642016 \u00b7 calibrated 2017\u201318 \u00b7 scored once on 2019+ and frozen</text>\n  </g>\n</svg>\n"
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "methodology_flow",
+      "args": {
+       "metric": "change_risk"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the methodology notes",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "faq_card|topic=pricing": {
    "component": "faq_card",
@@ -13982,7 +17690,33 @@
       "Free includes the Monday weather report and the public widget. Pro, at 79 francs a month, adds alerts on chosen pairs, the treasury page and a monthly summary. "
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "faq_card",
+      "args": {
+       "topic": "pricing"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the product documentation",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "faq_card|topic=tiers": {
    "component": "faq_card",
@@ -14006,7 +17740,33 @@
       "Free includes the Monday weather report and the public widget. Pro, at 79 francs a month, adds alerts on chosen pairs, the treasury page and a monthly summary. "
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "faq_card",
+      "args": {
+       "topic": "tiers"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the product documentation",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "faq_card|topic=alerts": {
    "component": "faq_card",
@@ -14034,7 +17794,33 @@
       "Signed webhooks to Slack, Telegram or your own endpoint on three triggers: a regime flip, a siren above 98, or a 3 of 3 consensus. One flip means exactly one al"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "faq_card",
+      "args": {
+       "topic": "alerts"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the product documentation",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "faq_card|topic=api": {
    "component": "faq_card",
@@ -14058,7 +17844,33 @@
       "Free includes the Monday weather report and the public widget. Pro, at 79 francs a month, adds alerts on chosen pairs, the treasury page and a monthly summary. "
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "faq_card",
+      "args": {
+       "topic": "api"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the product documentation",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "faq_card|topic=data": {
    "component": "faq_card",
@@ -14094,7 +17906,33 @@
       "Everything I say comes from the artifacts published at the most recent daily run \u2014 the pack I read carries its data-through date, and I state it in my greeting."
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "faq_card",
+      "args": {
+       "topic": "data"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "the product documentation",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ask_your_bank_card|topic=forward": {
    "component": "ask_your_bank_card",
@@ -14125,7 +17963,33 @@
       "What credit line does this consume, and at what cost?"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ask_your_bank_card",
+      "args": {
+       "topic": "forward"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "questions for your bank",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ask_your_bank_card|topic=option": {
    "component": "ask_your_bank_card",
@@ -14153,7 +18017,33 @@
       "What structures do you offer with no upfront premium, and what do I give up?"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ask_your_bank_card",
+      "args": {
+       "topic": "option"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "questions for your bank",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ask_your_bank_card|topic=spread": {
    "component": "ask_your_bank_card",
@@ -14181,7 +18071,33 @@
       "What volume would earn a better tier?"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ask_your_bank_card",
+      "args": {
+       "topic": "spread"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "questions for your bank",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ask_your_bank_card|topic=ladder": {
    "component": "ask_your_bank_card",
@@ -14209,7 +18125,33 @@
       "How would you evidence best execution across the tranches?"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ask_your_bank_card",
+      "args": {
+       "topic": "ladder"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "questions for your bank",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "ask_your_bank_card|topic=policy": {
    "component": "ask_your_bank_card",
@@ -14237,7 +18179,33 @@
       "How is hedge effectiveness documented for the auditor?"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "document_chunk",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "ask_your_bank_card",
+      "args": {
+       "topic": "policy"
+      }
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "questions for your bank",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   },
   "metric_table": {
    "component": "metric_table",
@@ -14291,7 +18259,31 @@
       "100"
      ]
     ]
-   }
+   },
+   "provenance": [
+    {
+     "provenance_version": "1.0.0",
+     "kind": "artifact_cell",
+     "locator": {
+      "artifact": "data/visual_boards.json",
+      "component": "metric_table",
+      "args": {}
+     },
+     "as_of": "2026-08-20",
+     "retrieved_at": "2026-08-23T11:08:51Z",
+     "source_tier": "published_artifact",
+     "display_label": "today's published values",
+     "versions": {
+      "context": "2026-08-20",
+      "registry": "3.0.0",
+      "prompt": "v2",
+      "gate_rules": "phase-38",
+      "model": "keyless-templates@n/a",
+      "voice": "browser-default",
+      "provenance": "1.0.0"
+     }
+    }
+   ]
   }
  },
  "default_args": {

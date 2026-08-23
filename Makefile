@@ -108,6 +108,7 @@ lint-ui:          ## phase 31: no hex colour literal outside design/tokens.json 
 	@if grep -rnE "#[0-9A-Fa-f]{6}\b" app src scripts pipelines --include='*.py' ; then \
 	  echo "lint-ui: hex literal found — use fxradar.tokens / app.ui tokens (design/tokens.json is the only source)"; exit 1; \
 	else echo "lint-ui: ok — no hex literals outside design/tokens.json"; fi
+	@$(PYTHON) scripts/lint_vocabulary.py
 
 eval-snapshot:    ## freeze today's artifacts into eval/snapshot/<date> (only when re-baselining)
 	$(PYTHON) eval/build_snapshot.py

@@ -212,6 +212,9 @@ pub struct Pack {
     pub markets: BTreeMap<String, MarketUniverse>,
     /// The same markets as one line each, for the LLM context block.
     pub markets_compact: String,
+    /// Short chain head of the sealed ledger, so a receipt can tell the reader what to verify
+    /// against. Empty when the pack predates the ledger.
+    pub chain_head: String,
 }
 
 /// mtime-keyed cache entry held in [`AppState`].
@@ -239,6 +242,14 @@ struct PackFile {
     knowledge_pack: String,
     #[serde(default)]
     markets: BTreeMap<String, MarketUniverse>,
+    #[serde(default)]
+    ledger: LedgerBlock,
+}
+
+#[derive(Deserialize, Default)]
+struct LedgerBlock {
+    #[serde(default)]
+    chain_head_short: String,
 }
 
 /// Load and parse the context pack. Errors are strings so the caller can map them to 503.
@@ -300,6 +311,7 @@ pub fn load_pack(path: &Path) -> Result<Pack, String> {
         context_json: v.to_string(),
         markets_compact: compact_markets(&pf.markets),
         markets: pf.markets,
+        chain_head: pf.ledger.chain_head_short,
     })
 }
 
@@ -588,9 +600,60 @@ fn num_re() -> &'static Regex {
 fn direction_intent_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(
-            r"\b(rise|fall|go up|go down|drop|rally|bullish|bearish|target|forecast the (?:rate|price)|which way|higher or lower|appreciate|depreciate|strengthen|weaken)\b",
-        )
+        // Widened in phase 43. The phase-41 report measured this as the product's largest remaining
+        // quality gap: direction questions were refused (nothing directional was ever spoken) but
+        // only one in twelve got the branded direction refusal — the rest got a tangential answer
+        // or the generic off-topic line, which reads as evasion rather than as a principle.
+        // Continuous and progressive forms, the German and French equivalents, and the ordinary
+        // ways a treasurer phrases it are all direction questions and all now say so.
+        //
+        // Written with concat! rather than one long raw string: a raw string cannot be wrapped with
+        // a backslash continuation, and doing so silently inserts a literal newline into the
+        // pattern, which quietly disables every alternative after the break.
+        Regex::new(concat!(
+            r"\b(rise|rises|rising|risen|fall|falls|falling|fallen|",
+            r"go up|goes up|going up|go down|goes down|going down|",
+            r"head(?:ed|ing)? (?:up|down|higher|lower)|",
+            r"mov(?:e|es|ing) (?:up|down|higher|lower)|",
+            r"drop|drops|dropping|rally|rallies|bullish|bearish|",
+            r"target|price target|forecast the (?:rate|price)|predict the (?:rate|price)|",
+            r"which way|higher or lower|up or down|",
+            r"appreciate|depreciate|strengthen|strengthens|strengthening|",
+            r"weaken|weakens|weakening|worth more|worth less|cheaper|more expensive|",
+            r"steigen|steigt|f(?:ä|ae)llt|st(?:ä|ae)rker|schw(?:ä|ae)cher|",
+            r"monter|baisser|va-t-il monter)\b",
+        ))
+        .expect("static regex")
+    })
+}
+
+/// Does the question ask which way a PRICE will go?
+///
+/// The movement words alone are not enough. "Is volatility falling?", "is the siren going up?" and
+/// "is change risk rising?" all contain them and are all questions this radar exists to answer —
+/// they ask about quantities we publish, not about a rate. Refusing those would be a different
+/// failure from the one the direction ban prevents, and an equally bad one: a product that refuses
+/// its own subject matter teaches the user it cannot help.
+///
+/// So: a movement word makes a question directional only when it is NOT about one of the published
+/// non-price quantities.
+fn asks_price_direction(q: &str) -> bool {
+    if !direction_intent_re().is_match(q) {
+        return false;
+    }
+    !non_price_subject_re().is_match(q)
+}
+
+/// The quantities this radar publishes, which may rise and fall freely in conversation.
+fn non_price_subject_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(concat!(
+            r"\b(volatilit(?:y|ä|ae|e)\w*|vola|vol|risk|risiko|risque|",
+            r"siren|sirene|sir(?:è|e)ne|anomaly|anomalie|regime\w*|r(?:é|e)gime|",
+            r"uncertainty|unsicherheit|incertitude|entropy|entropie|",
+            r"consensus|konsens|drawdown|brier|coverage|turnover)\b",
+        ))
         .expect("static regex")
     })
 }
@@ -1415,6 +1478,32 @@ fn finish_with(
     } else {
         m::visual_render(&board[0].component);
     }
+    // Close the trace. Provenance travels from the board, so the operator's provenance map and the
+    // customer's source strip are two renderings of one record rather than two descriptions of it.
+    let provenance: Vec<serde_json::Value> =
+        board.iter().flat_map(|c| c.provenance.clone()).collect();
+    crate::trace::provenance(&provenance);
+    // What the receipt needs in order to be regenerable from the trace alone. Without these the
+    // operator could see the answer but not reissue the document, which is the half of the promise
+    // that actually matters to somebody handling a client dispute.
+    if let Ok(pk) = st.avatar_pack() {
+        let mut v = std::collections::BTreeMap::new();
+        v.insert("context".to_string(), pk.data_through.clone());
+        v.insert("chain_head".to_string(), pk.chain_head.clone());
+        v.insert("disclosure".to_string(), pk.disclosure.clone());
+        crate::trace::versions(v);
+    }
+    if let Some(turn) = crate::trace::finish(
+        question,
+        &text,
+        source,
+        gate_label,
+        latency_ms,
+        board.iter().map(|c| c.component.clone()).collect(),
+        numbers.clone(),
+    ) {
+        st.traces.put(turn);
+    }
     Json(BrainResponse {
         text,
         source: source.into(),
@@ -1476,6 +1565,150 @@ fn decision_advice(
     }
 }
 
+/// The two archive-miss answers, defined once because both the live handler and the replay must
+/// produce the identical text — a refusal that differs between them would show up as a phantom
+/// divergence every time someone replayed a historical question.
+const ARCHIVE_MISS_SHORT: &str = concat!(
+    "That asks about the past, and I could not read it from the archive. ",
+    "I hold daily history for the three majors, monthly counts for every ",
+    "market, typical regime durations, named episodes, and a comparison ",
+    "against a month ago."
+);
+const ARCHIVE_MISS_LONG: &str = concat!(
+    "I can read today's state, count the markets by regime, look up a date ",
+    "for the three majors, quote how long a regime usually lasts, summarise a ",
+    "named episode, and compare today against a month ago. That particular ",
+    "historical question is outside what I hold — the dashboard's Storms and ",
+    "Proof pages go deeper."
+);
+
+/// What a replayed turn produced (phase 43).
+pub struct ReplayOutcome {
+    pub route: String,
+    pub text: String,
+    pub board: Vec<String>,
+}
+
+/// Re-run the DETERMINISTIC part of the routing chain for a recorded question.
+///
+/// Replay exists so that "it answered the wrong thing yesterday" becomes a case someone can run.
+/// It covers the stages where routing bugs actually live — the topic guards, the archive, the
+/// market lookup, the FAQ, the packs and board selection — and deliberately stops where the model
+/// begins, because a replay that pretended to reproduce a sampled generation would be a green tick
+/// with no meaning behind it.
+///
+/// It mutates nothing: no transcript row, no conversation state, no metrics. An operator
+/// investigating this morning's turn must not thereby change this afternoon's.
+///
+/// The obvious risk is drift — this chain and `brain`'s could disagree after a future edit, and a
+/// replay that silently diverges from the real thing is worse than none. `tests/replay_agrees.rs`
+/// holds them together by asserting both produce the same route for the same questions.
+pub fn replay_deterministic(st: &AppState, question: &str) -> ReplayOutcome {
+    // (route, gate label, text, forced card) — the same four values the live handler carries to
+    // `finish_with`, so the board can be selected by the same function rather than by a second
+    // implementation that will drift.
+    struct Step {
+        route: &'static str,
+        gate_label: &'static str,
+        text: String,
+        forced_card: Option<String>,
+    }
+    let step = |route: &'static str, gate_label: &'static str, text: String| Step {
+        route,
+        gate_label,
+        text,
+        forced_card: None,
+    };
+
+    let Ok(pack) = st.avatar_pack() else {
+        return ReplayOutcome {
+            route: "unavailable".into(),
+            text: String::new(),
+            board: Vec::new(),
+        };
+    };
+    let q_lower = question.to_lowercase();
+    let question_numbers: HashSet<String> = extract_numbers(question).into_iter().collect();
+    let refuse = |kind: &'static str, text: String| step("refusal", kind, text);
+    // The gates are part of the answer, not a wrapper around it: a turn blocked for a number
+    // outside the pack must replay as blocked, or the one bug most worth reproducing is the one
+    // bug replay cannot see.
+    let check = |st_: Step| -> Step {
+        if st_.route == "refusal" {
+            return st_;
+        }
+        match gate(
+            &st_.text,
+            &pack.allowed,
+            &question_numbers,
+            st_.route != "template",
+        ) {
+            Ok(()) => st_,
+            Err(_) => refuse("blocked", pack.refusals.not_in_pack.clone()),
+        }
+    };
+
+    let historical = crate::archive::looks_historical(&q_lower);
+    let framing = crate::guard::detect(&q_lower);
+    let decided: Step = if asks_price_direction(&q_lower)
+        || framing.is_some_and(|f| f.is_direction())
+    {
+        refuse("refused:direction", pack.refusals.direction.clone())
+    } else if advice_intent_re().is_match(&q_lower) || framing.is_some() {
+        refuse("refused:advice", pack.refusals.advice.clone())
+    } else if let Some(found) = st
+        .archive()
+        .and_then(|a| crate::archive::answer(&a, &q_lower))
+    {
+        step("archive", "pass", found.text)
+    } else if let Some((uni, blk, pair)) = market_lookup_pair(&pack, &q_lower) {
+        check(Step {
+            route: "template",
+            gate_label: "pass",
+            text: market_answer(uni, blk),
+            forced_card: Some(format!("condition_card|pair={pair}")),
+        })
+    } else {
+        match faq_best(&pack.faq, question) {
+            Some(_) if asserts_a_figure(&q_lower) => {
+                refuse("refused:not_in_pack", pack.refusals.not_in_pack.clone())
+            }
+            Some(_) if historical && mentions_data(&q_lower) => {
+                refuse("refused:not_in_archive", ARCHIVE_MISS_SHORT.to_string())
+            }
+            Some(entry) => check(step("template", "pass", entry.answer.clone())),
+            None if historical => refuse("refused:not_in_archive", ARCHIVE_MISS_LONG.to_string()),
+            None => {
+                if let Some((speech, board, _stale)) = pack_answer(st, question, "en", false) {
+                    let route = if board.is_empty() { "visual" } else { "pack" };
+                    check(step(route, "pass", speech))
+                } else if let Some(text) = visual_answer(st, question) {
+                    check(step("visual", "pass", text))
+                } else if out_of_scope_re().is_match(&q_lower) {
+                    refuse("refused:off_topic", pack.refusals.not_in_pack.clone())
+                } else {
+                    refuse("refused:off_topic", pack.refusals.off_topic.clone())
+                }
+            }
+        }
+    };
+
+    // The board is chosen by the same selector the live path uses. Reproducing the words but not
+    // the pictures would leave the most visible half of an answer outside the replay.
+    let board = select_board_for(
+        st,
+        question,
+        decided.route,
+        decided.gate_label,
+        decided.forced_card.as_deref(),
+    );
+    ReplayOutcome {
+        route: decided.route.into(),
+        text: decided.text,
+        board: board.into_iter().map(|c| c.component).collect(),
+    }
+}
+
 /// BYO-LLM brain endpoint: topic guard → generate (LLM, or keyless FAQ fallback) → direction
 /// lint → numeric grounding → one corrective regeneration → refusal. Auth: X-Avatar-Token
 /// (static vendor token or a live session token).
@@ -1489,6 +1722,23 @@ pub async fn brain(
     State(st): State<AppState>,
     headers: HeaderMap,
     Json(req): Json<BrainRequest>,
+) -> Result<Json<BrainResponse>, ApiError> {
+    // Every turn runs inside a recorder, so `trace::stage(...)` works at any depth below here
+    // without being threaded through a handler that already routes through fifteen exits. The
+    // trace id stays server-side: the customer response carries no operator identifier.
+    let session = req.session_id.clone();
+    crate::trace::scope(
+        crate::trace::new_trace_id(),
+        &session,
+        brain_inner(st, headers, req),
+    )
+    .await
+}
+
+async fn brain_inner(
+    st: AppState,
+    headers: HeaderMap,
+    req: BrainRequest,
 ) -> Result<Json<BrainResponse>, ApiError> {
     let t0 = Instant::now();
     brain_auth(&st, &headers)?;
@@ -1504,7 +1754,9 @@ pub async fn brain(
     // "and USDCHF?" is not a question until it has been expanded. Classifying or looking it up
     // before resolution classifies the wrong utterance.
     let prior = st.conversations.get(&req.session_id);
+    let t_resolve = crate::trace::elapsed_ms();
     let resolution = crate::packs::resolve(&question, prior.as_ref());
+    crate::trace::stage("reference resolution", t_resolve);
     let (effective, echo, period) = match &resolution {
         crate::packs::Resolution::Verbatim => {
             m::reference_resolution("verbatim");
@@ -1536,11 +1788,58 @@ pub async fn brain(
         }
     };
     let q_lower = effective.to_lowercase();
+    // THE GUARDS SEE WHAT THE USER SAID, not only what resolution made of it.
+    //
+    // Reference resolution runs first by design — "and USDCHF?" is not a question until it has been
+    // expanded. But an utterance that merely CONTAINS a pair name can look elliptical to the
+    // resolver, which then rewrites it to the previous intent and throws the rest of the sentence
+    // away. "Will EURUSD rise?" became "EUR/USD, same reading" the moment a session had one prior
+    // turn: refused correctly on turn one, answered with a condition reading on turn two. The gates
+    // on the OUTPUT still held — nothing directional was ever spoken — which is exactly why this
+    // survived: no counter moved, and the answer looked helpful.
+    //
+    // Resolution can only ever REMOVE the words that make a question directional; it can never add
+    // them. So the topic guard tests both forms and refuses if either one asks for direction or
+    // advice. Refusing a question the user did not quite ask is a small cost; answering a direction
+    // question because a rewrite hid it is the failure this project exists not to have.
+    let raw_lower = question.to_lowercase();
+    // Two layers. The keyword guard catches the plain forms ("will EURUSD rise?"); the framing
+    // detector catches the costumes — premise smuggling, persona shift, completion, extrapolation,
+    // authority claims. Both run on the raw utterance as well as the resolved one.
+    let framing = crate::guard::detect(&raw_lower).or_else(|| crate::guard::detect(&q_lower));
+    let asks_direction = asks_price_direction(&q_lower)
+        || asks_price_direction(&raw_lower)
+        || framing.is_some_and(|f| f.is_direction());
+    let asks_advice = advice_intent_re().is_match(&q_lower)
+        || advice_intent_re().is_match(&raw_lower)
+        || framing.is_some_and(|f| !f.is_direction());
+    crate::trace::resolution(
+        &question,
+        &prior
+            .as_ref()
+            .map(|p| {
+                format!(
+                    "{} · {}",
+                    p.last_intent.as_deref().unwrap_or("—"),
+                    p.last_pair.as_deref().unwrap_or("—")
+                )
+            })
+            .unwrap_or_default(),
+        &effective,
+        &echo,
+    );
     let question_numbers: HashSet<String> = extract_numbers(&question).into_iter().collect();
 
     // (a) topic guard — direction/advice intent short-circuits to the pack's branded refusal.
-    if direction_intent_re().is_match(&q_lower) {
+    if asks_direction {
         m::avatar_refusal("direction");
+        // The framing rule is the more informative label whenever one fired, even if a plain
+        // keyword also matched: "persona shift" tells an operator what to tune, "direction
+        // keyword" tells them only that something matched.
+        let why = framing.map(|f| f.rule()).unwrap_or("direction keyword");
+        m::framing_detected(why);
+        crate::trace::route("refusal", "topic guard: direction");
+        crate::trace::gate("topic_guard", "fail", why);
         let text = pack.refusals.direction.clone();
         return Ok(finish(
             &st,
@@ -1552,12 +1851,14 @@ pub async fn brain(
             t0,
         ));
     }
-    if advice_intent_re().is_match(&q_lower) {
+    if asks_advice {
         // The decision engine sizes INSURANCE against an exposure. "Should I buy dollars" is a
         // directional trade request wearing an advice costume: it names no exposure to protect, so
         // answering it with a hedge ratio would dress a market call as risk management. Those go to
         // the escalation card instead.
-        if st.avatar.advice && hedging_intent_re().is_match(&q_lower) {
+        if st.avatar.advice
+            && (hedging_intent_re().is_match(&q_lower) || hedging_intent_re().is_match(&raw_lower))
+        {
             if let Some(resp) = decision_advice(
                 &st,
                 &pack,
@@ -1570,6 +1871,10 @@ pub async fn brain(
             }
         }
         m::avatar_refusal("advice");
+        let why = framing.map(|f| f.rule()).unwrap_or("advice keyword");
+        m::framing_detected(why);
+        crate::trace::route("refusal", "topic guard: advice");
+        crate::trace::gate("topic_guard", "fail", why);
         let text = pack.refusals.advice.clone();
         return Ok(finish(
             &st,
@@ -1598,18 +1903,29 @@ pub async fn brain(
     // count or a comparison asks for something no pack can hold, however confident the match. When
     // both fire it is worth counting — if that climbs, one of them is wrong, and the counter is how
     // anybody would notice.
+    let t_route = crate::trace::elapsed_ms();
     let pre_router = crate::slip::pre_router_wants_archive(&q_lower);
     if pre_router {
         if let Some(loaded) = st.visuals() {
             if let Some((matched, sim)) = crate::visuals::phrase_similarity(&loaded.0, &effective) {
                 if sim >= crate::visuals::SPEAK_SIMILARITY && !matched.is_empty() {
                     m::router_precedence_conflict();
+                    crate::trace::precedence_conflict();
                 }
             }
         }
     }
     if let Some(archive) = st.archive() {
         if let Some(found) = crate::archive::answer(&archive, &q_lower) {
+            crate::trace::stage("archive lookup", t_route);
+            crate::trace::route(
+                "archive",
+                if pre_router {
+                    "pre-router pattern"
+                } else {
+                    "archive shape match"
+                },
+            );
             m::archive_answer(found.shape);
             m::router_lane(
                 crate::slip::Lane::Archive.as_str(),
@@ -1704,13 +2020,7 @@ pub async fn brain(
                     }
                     Some(_) if historical && mentions_data(&q_lower) => {
                         m::avatar_refusal("archive_miss");
-                        let text = concat!(
-                            "That asks about the past, and I could not read it from the archive. ",
-                            "I hold daily history for the three majors, monthly counts for every ",
-                            "market, typical regime durations, named episodes, and a comparison ",
-                            "against a month ago."
-                        )
-                        .to_string();
+                        let text = ARCHIVE_MISS_SHORT.to_string();
                         return Ok(finish(
                             &st,
                             &req.session_id,
@@ -1733,14 +2043,7 @@ pub async fn brain(
                     // so costs a turn; answering it costs the user's ability to trust any answer.
                     None if historical => {
                         m::avatar_refusal("archive_miss");
-                        let text = concat!(
-                            "I can read today's state, count the markets by regime, look up a date ",
-                            "for the three majors, quote how long a regime usually lasts, summarise a ",
-                            "named episode, and compare today against a month ago. That particular ",
-                            "historical question is outside what I hold — the dashboard's Storms and ",
-                            "Proof pages go deeper."
-                        )
-                            .to_string();
+                        let text = ARCHIVE_MISS_LONG.to_string();
                         return Ok(finish(
                             &st,
                             &req.session_id,
@@ -1806,8 +2109,16 @@ pub async fn brain(
             &question_numbers,
             source != "template",
         ) {
-            Ok(()) => break if regenerated { "regenerated" } else { "pass" },
+            Ok(()) => {
+                crate::trace::gate(
+                    "direction lint + numeric grounding",
+                    if regenerated { "regenerated" } else { "pass" },
+                    "",
+                );
+                break if regenerated { "regenerated" } else { "pass" };
+            }
             Err(reason) => {
+                crate::trace::gate("direction lint + numeric grounding", "fail", reason);
                 m::avatar_lint_rejection(reason);
                 if reason == "grounding" && st.avatar.open {
                     // Open mode: general-knowledge numbers may flow — annotate, never block.
@@ -1829,6 +2140,7 @@ pub async fn brain(
                     }
                 }
                 m::avatar_refusal("not_in_pack");
+                crate::trace::route("refusal", "gate blocked the candidate");
                 candidate = pack.refusals.not_in_pack.clone();
                 source = "refusal";
                 break "blocked";
@@ -2127,6 +2439,103 @@ pub async fn heartbeat(
     ))
 }
 
+#[derive(Deserialize, ToSchema)]
+pub struct UiEventRequest {
+    #[serde(default)]
+    pub session_id: String,
+    /// A name from a fixed list. Free text is rejected rather than recorded: a metric label the
+    /// client can choose is an unbounded cardinality bug and a place for user content to leak into
+    /// a monitoring system that was never designed to hold any.
+    pub event: String,
+    /// Milliseconds, for the wait-line duration only. Ignored elsewhere.
+    #[serde(default)]
+    pub ms: Option<f64>,
+}
+
+/// Counters for our own interface (phase 43, requirement G).
+///
+/// We measure the models constantly and the UI not at all, which is how a detail sheet nobody opens
+/// survives for two years. These counters exist so that decision can be made from evidence — and so
+/// that "delete it" stays a real option.
+pub async fn ui_event(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<UiEventRequest>,
+) -> Result<Json<Value>, ApiError> {
+    brain_auth(&st, &headers)?;
+    match req.event.as_str() {
+        "wait_line_shown" => {
+            m::wait_line_shown();
+            if let Some(ms) = req
+                .ms
+                .filter(|v| v.is_finite() && *v >= 0.0 && *v < 120_000.0)
+            {
+                m::wait_line_duration(ms);
+            }
+        }
+        "source_chip_click" => m::source_chip_click(),
+        "source_detail_open" => m::source_detail_open(),
+        "resolution_corrected" => m::resolution_corrected(),
+        _ => {
+            return Err(ApiError(
+                StatusCode::BAD_REQUEST,
+                "unknown event name".into(),
+            ))
+        }
+    }
+    Ok(Json(json!({"ok": true})))
+}
+
+#[derive(Deserialize, ToSchema)]
+pub struct ReceiptRequest {
+    #[serde(default)]
+    pub session_id: String,
+    pub question: String,
+    /// Must be an answer the gated brain actually produced in this session.
+    pub answer: String,
+    #[serde(default)]
+    pub provenance: Vec<Value>,
+}
+
+/// A printable receipt for an answer the user is looking at.
+///
+/// Gated like `/avatar/tts`, and for the same reason: a document headed "Answer receipt" carrying
+/// this system's disclosures is a claim about what this system said. If arbitrary text could be
+/// posted here, the receipt would certify whatever the poster wanted it to, which is the opposite
+/// of what it exists to do.
+pub async fn receipt(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<ReceiptRequest>,
+) -> Result<Response, ApiError> {
+    brain_auth(&st, &headers)?;
+    if !tts_text_known(&st, &req.session_id, &req.answer) {
+        return Err(ApiError(
+            StatusCode::FORBIDDEN,
+            "a receipt may only be issued for an answer this service produced".into(),
+        ));
+    }
+    let pack = load_pack_or_503(&st)?;
+    // The identifier is derived from the ANSWER, never from the session: the same answer yields the
+    // same receipt id for everyone, and no receipt can be traced back to a person by its filename.
+    let answer_id = crate::receipt::answer_id(&req.answer);
+    m::receipt_export();
+    let payload = crate::receipt::ReceiptPayload {
+        answer_id,
+        question: req.question,
+        answer: req.answer,
+        provenance: req.provenance,
+        data_through: pack.data_through.clone(),
+        chain_head: pack.chain_head.clone(),
+        disclosure: pack.disclosure.clone(),
+    };
+    Ok((
+        [(axum::http::header::CONTENT_TYPE, "text/html; charset=utf-8")],
+        crate::receipt::render(&payload),
+    )
+        .into_response())
+}
+
 /// Realistic voice for a gated answer (ElevenLabs Flash). Order matters: token auth → answer
 /// hash check (403 for any text our gates did not produce — TTS can never be used to voice
 /// arbitrary text) → monthly character cap (429) → vendor key (404 → the widget falls back to
@@ -2334,6 +2743,7 @@ mod tests {
             allowed: HashSet::new(),
             knowledge_rel: String::new(),
             context_json: String::new(),
+            chain_head: String::new(),
             markets_compact: compact_markets(&markets),
             markets,
         };

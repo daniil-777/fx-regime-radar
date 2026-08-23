@@ -131,6 +131,8 @@ pub struct AppState {
     pub(crate) conversations: Arc<crate::packs::ConversationStore>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
+    /// Phase 43: recent turns, for the operator trace view. In memory, bounded, never on disk.
+    pub traces: crate::trace::TraceStore,
 }
 
 /// Newest-row-per-pair view of regimes.parquet, re-read only when the file changes (the pipeline
@@ -185,7 +187,14 @@ impl AppState {
             warm: Arc::new(Mutex::new(None)),
             conversations: Arc::new(crate::packs::ConversationStore::default()),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
+            traces: crate::trace::TraceStore::new(crate::trace::TraceCfg::default()),
         }
+    }
+
+    /// Attach the trace configuration (operator key, retention window).
+    pub fn with_traces(mut self, cfg: crate::trace::TraceCfg) -> AppState {
+        self.traces = crate::trace::TraceStore::new(cfg);
+        self
     }
 
     /// Attach the avatar configuration (builder-style, so `new`'s signature stays stable).
@@ -1122,14 +1131,37 @@ pub fn build_router(state: AppState) -> Router {
         .route("/avatar/session-token", post(avatar::session_token))
         .route("/avatar/heartbeat", post(avatar::heartbeat))
         .route("/avatar/tts", post(avatar::tts))
+        .route("/avatar/receipt", post(avatar::receipt))
+        .route("/avatar/ui-event", post(avatar::ui_event))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             avatar::require_enabled,
         ));
+    // The operator surface (phase 43). Every route checks the operator key in-handler and writes
+    // an audit row; none of them appears in the OpenAPI document, because that document is what a
+    // customer integration reads and `/ops/*` is not part of the product.
+    let ops_routes = Router::new()
+        .route("/ops/traces", get(crate::ops::traces_index))
+        .route("/ops/audit", get(crate::ops::audit_log))
+        .route("/ops/trace/{trace_id}", get(crate::ops::trace_view))
+        .route("/ops/trace/{trace_id}/json", get(crate::ops::trace_json))
+        .route(
+            "/ops/trace/{trace_id}/receipt",
+            get(crate::ops::trace_receipt),
+        )
+        .route(
+            "/ops/trace/{trace_id}/replay",
+            post(crate::ops::trace_replay),
+        )
+        .route(
+            "/ops/trace/{trace_id}/promote",
+            post(crate::ops::trace_promote),
+        );
     Router::new()
         .merge(public)
         .merge(keyed)
         .merge(avatar_routes)
+        .merge(ops_routes)
         .merge(SwaggerUi::new("/docs").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .layer(middleware::from_fn(track_metrics))
         .layer(TraceLayer::new_for_http())

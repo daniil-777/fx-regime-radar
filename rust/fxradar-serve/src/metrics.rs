@@ -187,3 +187,53 @@ pub fn avatar_tts_chars(n: u64) {
 pub fn avatar_minutes(minutes: f64) {
     metrics::gauge!("avatar_minutes_total").increment(minutes);
 }
+
+// --- phase 43: the provenance UI and the operator surface ------------------------------------
+// These measure our own interface the way the rest of the file measures the models. If nobody
+// opens a source chip in three months, the detail sheet is decoration and should be simplified;
+// that conclusion is only available to someone who counted.
+
+/// The wait line appeared (slow lane, past the 400 ms threshold).
+pub fn wait_line_shown() {
+    metrics::counter!("wait_line_shown_total").increment(1);
+}
+
+pub fn wait_line_duration(ms: f64) {
+    metrics::histogram!("wait_line_duration_ms").record(ms);
+}
+
+pub fn source_chip_click() {
+    metrics::counter!("source_chip_click_total").increment(1);
+}
+
+pub fn source_detail_open() {
+    metrics::counter!("source_detail_open_total").increment(1);
+}
+
+pub fn receipt_export() {
+    metrics::counter!("receipt_export_total").increment(1);
+}
+
+pub fn trace_view_open() {
+    metrics::counter!("trace_view_open_total").increment(1);
+}
+
+pub fn trace_replay() {
+    metrics::counter!("trace_replay_total").increment(1);
+}
+
+pub fn golden_promoted() {
+    metrics::counter!("golden_promoted_total").increment(1);
+}
+
+/// The user rejected an echoed interpretation. The single best signal that reference resolution
+/// needs work: every other measure of resolution quality is our own opinion of it.
+pub fn resolution_corrected() {
+    metrics::counter!("resolution_corrected_total").increment(1);
+}
+
+/// Which adversarial framing fired, so the rule set can be tuned from evidence rather than from
+/// the last complaint anyone remembers.
+pub fn framing_detected(rule: &str) {
+    metrics::counter!("adversarial_framing_total", "rule" => rule.to_string()).increment(1);
+}

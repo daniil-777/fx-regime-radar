@@ -774,6 +774,28 @@ def build(ctx: dict, registry: visuals.Registry | None = None) -> dict:
                 log.warning("card %s%s caption has an empty value slot: %s", card.id, args, caption)
                 skipped.setdefault(card.id, "caption has an unresolved value")
                 continue
+            from fxradar.answer_packs import (  # noqa: PLC0415
+                provenance_for,
+                validate_provenance,
+            )
+
+            records = provenance_for(
+                {"component": card.id, "args": args, "asof": pack.get("data_through")},
+                {
+                    "data_through": pack.get("data_through"),
+                    "registry_version": reg.version,
+                    "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                },
+            )
+            # Rule: a value without a valid provenance record may not render or be spoken. Blocking
+            # here means the failure surfaces in a nightly build, where somebody can fix it, rather
+            # than as a receipt whose source column is blank in front of a client.
+            problems = [pb for rec in records for pb in validate_provenance(rec)]
+            if problems:
+                log.warning("card %s%s has invalid provenance: %s", card.id, args, problems[0])
+                skipped.setdefault(card.id, f"invalid provenance ({problems[0]})")
+                continue
+
             cards[key_for(card.id, args)] = {
                 "component": card.id,
                 "primitive": card.primitive,
@@ -784,6 +806,9 @@ def build(ctx: dict, registry: visuals.Registry | None = None) -> dict:
                 "label": card.id.replace("_", " "),
                 "asof": pack.get("data_through"),
                 "data": data,
+                # The receipt travels WITH the value, so the browser never has to ask a second
+                # question to find out whether a number is real.
+                "provenance": records,
             }
     # A card counts as unavailable only when NO argument combination resolved; a glossary with five
     # of ten terms is a working card, not a broken one.
@@ -865,21 +890,26 @@ def build_index(registry: visuals.Registry | None = None) -> dict:
             # phrasing does separate them: at 0.60 it is 100% precise on the golden set.
             "phrases": [visuals._normalise(x) for x in phrases],
             "text": norm,
-            "tokens": dict(bag),
+            # Sorted, so a rebuild produces byte-identical output. An artifact whose key order
+            # drifts makes every regeneration show a diff, which trains everyone to skim past the
+            # diff that matters — and phase 41 asks CI to assert that a rebuild reproduces the
+            # committed manifest.
+            "tokens": {k: bag[k] for k in sorted(bag)},
             "total": sum(bag.values()),
             "family": card.family,
             "tier": card.tier,
             "rivals": (card.disambiguation or {}).get("rivals") or [],
         }
-    df: dict[str, int] = {}
+    counts: dict[str, int] = {}
     for d in docs.values():
         for tok in d["tokens"]:
-            df[tok] = df.get(tok, 0) + 1
+            counts[tok] = counts.get(tok, 0) + 1
+    df = {k: counts[k] for k in sorted(counts)}
     return {
         "registry_version": reg.version,
         "n_docs": len(docs),
         "df": df,
-        "docs": docs,
+        "docs": {k: docs[k] for k in sorted(docs)},
         "catch_alls": list(visuals.CATCH_ALLS),
         "top_k": visuals.TOP_K,
         "expansion": {k: sorted(v) for k, v in visuals._EXPANSION.items()},

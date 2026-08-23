@@ -178,17 +178,154 @@ def cache_key(
     return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
 
+PROVENANCE_VERSION = "1.0.0"
+
+# Human wording, never an internal identifier. A receipt read in three years must say where a number
+# came from in words its reader recognises — "today's published state", not a filename.
+DISPLAY_LABELS = {
+    "condition_card": "today's published state",
+    "siren_gauge": "today's anomaly reading",
+    "consensus_dots": "today's stress consensus",
+    "regime_probability_bars": "today's regime probabilities",
+    "risk_trace": "the published change-risk history",
+    "vol_trace": "the published volatility history",
+    "regime_timeline_ribbon": "the regime history",
+    "regime_history_table": "the regime episode record",
+    "what_changed_card": "today's published state",
+    "drift_status": "the model health record",
+    "scoreboard_card": "the sealed forecast ledger",
+    "ledger_row_receipt": "a sealed ledger row",
+    "chain_verify_card": "the ledger's hash chain",
+    "coverage_plot": "the conformal coverage record",
+    "direction_evidence_card": "the system's own design record",
+    "treasury_light": "the treasury rule table",
+    "var_es_bars": "the regime-conditional risk table",
+    "cost_of_waiting_curve": "the regime-conditional risk table",
+    "hedge_compare_table": "the hedging decision table",
+    "move_frequency_bars": "the historical return record",
+    "event_countdown_strip": "the economic calendar",
+    "feature_driver_bars": "today's model drivers",
+    "glossary_card": "the methodology notes",
+    "explainer_diagram": "the methodology notes",
+    "methodology_flow": "the methodology notes",
+    "faq_card": "the product documentation",
+    "ask_your_bank_card": "questions for your bank",
+    "storm_replay_mini": "a recorded market episode",
+    "pair_compare_table": "today's published state across markets",
+    "metric_table": "today's published values",
+}
+LEDGER_CARDS = {"ledger_row_receipt", "chain_verify_card", "scoreboard_card", "coverage_plot"}
+DOCUMENT_CARDS = {
+    "glossary_card",
+    "explainer_diagram",
+    "methodology_flow",
+    "faq_card",
+    "ask_your_bank_card",
+}
+
+
+# The provenance schema, as a thing that can be checked rather than a shape everyone remembers.
+# Phase 43 requirement A2: the gate validates against this, so a record that would be unreadable
+# years from now fails the nightly build instead of reaching a customer's receipt.
+PROVENANCE_KINDS = {
+    "artifact_cell",
+    "cube_cell",
+    "ledger_row",
+    "document_chunk",
+    "scenario_output",
+    "user_utterance",
+}
+# The locator answers "which exact value", and what that means differs per kind. A ledger row needs
+# its chain hash or the receipt cannot be verified; an artifact cell needs the file it came from.
+REQUIRED_LOCATOR_KEYS = {
+    "artifact_cell": ("artifact",),
+    "cube_cell": ("rollup",),
+    "ledger_row": ("artifact",),
+    "document_chunk": ("artifact",),
+    "scenario_output": ("calculation",),
+    "user_utterance": ("matched",),
+}
+REQUIRED_VERSIONS = ("context", "registry", "prompt", "gate_rules", "model", "voice")
+
+
+def validate_provenance(record: dict) -> list[str]:
+    """Every way this record fails the schema, or an empty list.
+
+    Returns all problems rather than the first, because a build that reports one missing field per
+    run costs a rebuild per field.
+    """
+    problems: list[str] = []
+    if record.get("provenance_version") != PROVENANCE_VERSION:
+        problems.append(
+            f"provenance_version is {record.get('provenance_version')!r}, expected "
+            f"{PROVENANCE_VERSION!r}"
+        )
+    kind = record.get("kind")
+    if kind not in PROVENANCE_KINDS:
+        problems.append(f"kind {kind!r} is not one of {sorted(PROVENANCE_KINDS)}")
+    locator = record.get("locator")
+    if not isinstance(locator, dict) or not locator:
+        problems.append("locator is missing or empty")
+    elif kind in REQUIRED_LOCATOR_KEYS:
+        for key in REQUIRED_LOCATOR_KEYS[kind]:
+            if not locator.get(key):
+                problems.append(f"locator for {kind} needs {key!r}")
+    for field in ("as_of", "retrieved_at", "source_tier", "display_label"):
+        if not record.get(field):
+            problems.append(f"{field} is missing")
+    label = str(record.get("display_label") or "")
+    # The label is spoken and printed. An internal identifier here would put a column name on a
+    # customer's receipt, which is the vocabulary rule this phase enforces everywhere else.
+    if "_" in label or label.endswith(".json") or label.endswith(".parquet"):
+        problems.append(f"display_label {label!r} reads as an internal identifier")
+    versions = record.get("versions")
+    if not isinstance(versions, dict):
+        problems.append("versions block is missing")
+    else:
+        for field in REQUIRED_VERSIONS:
+            if not versions.get(field):
+                problems.append(f"versions.{field} is missing")
+    return problems
+
+
 def provenance_for(card: dict, boards: dict) -> list[dict]:
-    """One record per value the pack speaks or renders: what it is, and where it came from."""
-    args = card.get("args") or {}
+    """A versioned, serialisable receipt for every value that reaches speech, a card or an export.
+
+    Provenance is worth more to a customer than process, and process worth more to an engineer than
+    provenance — that asymmetry is the whole design of this phase. Nobody outside this repository
+    cares which room answered or how long it took; everybody cares whether the number is real and
+    what it was true of. The `versions` block is what lets a receipt kept for years still be read
+    under the rules that produced it.
+    """
+    component = str(card.get("component", ""))
+    if component in LEDGER_CARDS:
+        kind = "ledger_row"
+    elif component in DOCUMENT_CARDS:
+        kind = "document_chunk"
+    else:
+        kind = "artifact_cell"
     return [
         {
-            "kind": "card_value",
-            "component": card.get("component"),
-            "args": args,
-            "artifact": "data/visual_boards.json",
+            "provenance_version": PROVENANCE_VERSION,
+            "kind": kind,
+            "locator": {
+                "artifact": "data/visual_boards.json",
+                "component": component,
+                "args": card.get("args") or {},
+            },
             "as_of": card.get("asof"),
-            "context_version": boards.get("data_through"),
+            "retrieved_at": boards.get("generated_at_utc"),
+            "source_tier": "published_artifact",
+            "display_label": DISPLAY_LABELS.get(component, "the published record"),
+            "versions": {
+                "context": str(boards.get("data_through") or ""),
+                "registry": str(boards.get("registry_version", "")),
+                "prompt": PROMPT_VERSION,
+                "gate_rules": GATE_RULES_VERSION,
+                "model": f"{MODEL_ID}@{MODEL_VERSION}",
+                "voice": VOICE_ID,
+                "provenance": PROVENANCE_VERSION,
+            },
         }
     ]
 
