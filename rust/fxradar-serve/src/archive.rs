@@ -412,10 +412,45 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
                     .copied()
                     .unwrap_or(0);
                 let total: i64 = hist.years.get(&y).map(|c| c.values().sum()).unwrap_or(0);
+                // Point in time, said out loud. A count for the CURRENT year is a year-to-date
+                // figure, and calling it "during 2026" quietly implies a finished year — the kind
+                // of wrong that survives review because every number in it is correct.
+                let partial = archive.data_through.starts_with(&y);
+                if total == 0 {
+                    return Some(ArchiveAnswer {
+                        text: crate::slip::Empty::NoDataYet {
+                            begins: hist.first_date.clone(),
+                            asked: y.clone(),
+                        }
+                        .say(),
+                        shape: "regime_days_year_empty",
+                    });
+                }
+                if n == 0 {
+                    // Zero is a finding, not an error. Reporting it as a failure would tell the
+                    // user something false about the market.
+                    return Some(ArchiveAnswer {
+                        text: crate::slip::Empty::GenuinelyZero {
+                            what: format!(
+                                "{} had no {regime} days {}{y}",
+                                pretty(&pair),
+                                if partial { "so far in " } else { "in " }
+                            ),
+                        }
+                        .say(),
+                        shape: "regime_days_year_zero",
+                    });
+                }
                 return Some(ArchiveAnswer {
                     text: format!(
-                        "{} spent {n} of {total} trading days in {regime} during {y}.",
-                        pretty(&pair)
+                        "{} spent {n} of {total} trading days in {regime} {}{y}{}.",
+                        pretty(&pair),
+                        if partial { "so far in " } else { "during " },
+                        if partial {
+                            format!(", through {}", archive.data_through)
+                        } else {
+                            String::new()
+                        }
                     ),
                     shape: "regime_days_year",
                 });
@@ -945,6 +980,14 @@ mod tests {
         let a = answer(&archive(), "how many crisis days did usdchf have in 2015").unwrap();
         assert_eq!(a.shape, "regime_days_year");
         assert!(a.text.contains("9 of 249"), "{}", a.text);
+    }
+
+    #[test]
+    fn zero_is_reported_as_a_finding_not_an_error() {
+        let a = answer(&archive(), "how many trend days did usdchf have in 2015").unwrap();
+        assert_eq!(a.shape, "regime_days_year_zero");
+        assert!(a.text.starts_with("None:"), "{}", a.text);
+        assert!(!a.text.to_lowercase().contains("error"), "{}", a.text);
     }
 
     #[test]

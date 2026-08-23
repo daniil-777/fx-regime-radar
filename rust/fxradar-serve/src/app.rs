@@ -322,11 +322,23 @@ impl AppState {
                 }
             }
         }
-        let loaded = Arc::new(
-            crate::archive::load(&path)
-                .map_err(|e| tracing::warn!(error = %e, "archive unusable"))
-                .ok()?,
-        );
+        // The daily Action rewrites `data/` at 06:00 under a live service. Reading a file WHILE it
+        // is being written yields a plausible torn read — valid JSON, wrong contents, no error
+        // anywhere. Re-stat after loading and discard the result if the file moved underneath us:
+        // answering from yesterday for one more minute is strictly better than answering from half
+        // of each.
+        let parsed = crate::archive::load(&path)
+            .map_err(|e| tracing::warn!(error = %e, "archive unusable"))
+            .ok()?;
+        let after = std::fs::metadata(&path)
+            .ok()
+            .map(|m| (m.modified().unwrap_or(std::time::UNIX_EPOCH), m.len()));
+        if after != Some(stamp) {
+            tracing::warn!("archive changed while being read; refusing the torn snapshot");
+            crate::metrics::torn_read();
+            return None;
+        }
+        let loaded = Arc::new(parsed);
         if let Ok(mut guard) = self.archive_cache.lock() {
             *guard = Some((stamp.0, stamp.1, Arc::clone(&loaded)));
         }

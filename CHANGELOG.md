@@ -2,6 +2,46 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.37.0 — phase 42: the discipline, not the agent (2026-08-23)
+
+**The open-ended search agent was not built, and that is the phase's own instruction.** Phase 42
+opens by saying to run it only if the historical, multi-hop and aggregation families are still
+failing after phase 41. They are not — 81%, 86%, 92% and 82% — so what shipped is the discipline the
+phase specifies around the bounded archive that already answers them. An agent would have added
+planning latency and a new failure class (a plausible query over the wrong window) to a problem that
+eleven closed shapes already solve.
+
+- **Request slips** (`rust/.../slip.rs`): five rooms, every field an enum or a pattern-validated
+  string, no free text and no SQL. The reason a slip beats a query is not safety theatre — a model
+  that can write SQL can write one that RUNS and is WRONG: right syntax, wrong window, plausible
+  number, no error anywhere. A slip can only be unavailable, and unavailable is a case the server
+  answers rather than a mistake it commits.
+- **The test the first revision would have missed**, written explicitly with `"14"`, `"1e3"` and
+  `"0.68"`: a model that cannot emit the integer 14 can still emit the string "14". Every one is
+  rejected rather than coerced — while `"2015"` stays addressable, because a four-digit year is a
+  date and nothing else numeric is.
+- **The four empty kinds are now distinct answers with distinct wording**, not one shrug: *"My
+  record begins on 2005-03-28; I have nothing for 1999-05-05"*, *"that was not a trading day, so I
+  read the day before"*, *"I hold that at a coarser grain than the question needs"*, and — the one
+  that matters most — **zero as a finding**: *"None: EUR/USD had no crisis days so far in 2026."*
+  Reporting that as an error would tell the user something false about the market.
+- **Point in time, said out loud.** A count for the current year is a year-to-date figure; calling
+  it "during 2026" quietly implies a finished year. It now reads "so far in 2026, through
+  2026-08-20" — the kind of wrong that survives review because every number in it is correct.
+- **Torn-read guard.** The daily Action rewrites `data/` at 06:00 under a live service, and reading
+  a file mid-write yields valid JSON with wrong contents and no error anywhere. The loader re-stats
+  after reading and discards the result if the file moved: answering from yesterday for one more
+  minute beats answering from half of each. `artifact_torn_read_total`.
+- **Route precedence made explicit**: the pre-router outranks a confident intent on date-bearing
+  questions, because a pack is a snapshot of today and cannot hold a date, a count or a comparison
+  however confident the match. `router_lane_total{lane,trigger}`,
+  `router_precedence_conflict_total`, `empty_result_total{kind}`.
+- Not built, with reasons recorded: the DuckDB room and its connection pool (there is no free-text
+  query surface to protect), sub-agents and multi-round tool loops (no tool-calling loop in this
+  deployment), and runtime filler audio (no TTS key).
+- 358 python + 76 rust (+5) tests green; ruff, black, clippy, `make lint-ui` clean; no regression
+  against the recorded floors and no compliance leak.
+
 ## v2.36.0 — phase 41: hybrid retrieval, a paraphrase cache, and two rejected components (2026-08-23)
 
 The phase's real question was which components earn their place. Two did not, and both negatives are

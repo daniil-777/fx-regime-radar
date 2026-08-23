@@ -1593,9 +1593,37 @@ pub async fn brain(
     // has the highest siren" is about today and still needs two lookups chained. It returns None
     // unless a shape matches, so the cost of asking is a few string comparisons.
     let historical = crate::archive::looks_historical(&q_lower);
+    // Route precedence, explicit rather than emergent. The pre-router OUTRANKS a confident intent
+    // on date-bearing questions: a pack is a snapshot of today, so a question naming a date, a
+    // count or a comparison asks for something no pack can hold, however confident the match. When
+    // both fire it is worth counting — if that climbs, one of them is wrong, and the counter is how
+    // anybody would notice.
+    let pre_router = crate::slip::pre_router_wants_archive(&q_lower);
+    if pre_router {
+        if let Some(loaded) = st.visuals() {
+            if let Some((matched, sim)) = crate::visuals::phrase_similarity(&loaded.0, &effective) {
+                if sim >= crate::visuals::SPEAK_SIMILARITY && !matched.is_empty() {
+                    m::router_precedence_conflict();
+                }
+            }
+        }
+    }
     if let Some(archive) = st.archive() {
         if let Some(found) = crate::archive::answer(&archive, &q_lower) {
             m::archive_answer(found.shape);
+            m::router_lane(
+                crate::slip::Lane::Archive.as_str(),
+                if pre_router {
+                    "pre_router"
+                } else {
+                    "shape_match"
+                },
+            );
+            if found.shape.ends_with("_zero") {
+                m::empty_result("genuinely_zero");
+            } else if found.shape.ends_with("_empty") || found.shape.ends_with("_missing") {
+                m::empty_result("no_data_yet");
+            }
             return Ok(finish(
                 &st,
                 &req.session_id,

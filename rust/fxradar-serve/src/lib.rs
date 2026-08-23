@@ -20,6 +20,7 @@ pub mod metrics;
 pub mod packs;
 pub mod ratelimit;
 pub mod selftest;
+pub mod slip;
 pub mod state_store;
 pub mod store;
 pub mod stripe;

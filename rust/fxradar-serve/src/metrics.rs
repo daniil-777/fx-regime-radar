@@ -142,6 +142,28 @@ pub fn prompt_prefix_changed() {
     metrics::counter!("prompt_prefix_hash_changes_total").increment(1);
 }
 
+/// An artifact changed while it was being read — the daily rewrite racing a live request.
+pub fn torn_read() {
+    metrics::counter!("artifact_torn_read_total").increment(1);
+}
+
+/// The pre-router and a confident intent disagreed. If this climbs, one of them needs work.
+pub fn router_precedence_conflict() {
+    metrics::counter!("router_precedence_conflict_total").increment(1);
+}
+
+/// Which lane answered, and what decided it.
+pub fn router_lane(lane: &str, trigger: &str) {
+    metrics::counter!("router_lane_total", "lane" => lane.to_string(),
+                      "trigger" => trigger.to_string())
+    .increment(1);
+}
+
+/// How a result came back empty — the four kinds are distinct answers, worth counting apart.
+pub fn empty_result(kind: &str) {
+    metrics::counter!("empty_result_total", "kind" => kind.to_string()).increment(1);
+}
+
 /// gate ∈ {"direction", "grounding"}
 pub fn avatar_lint_rejection(gate: &str) {
     metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);
