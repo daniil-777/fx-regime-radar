@@ -110,6 +110,13 @@ lint-ui:          ## phase 31: no hex colour literal outside design/tokens.json 
 	else echo "lint-ui: ok — no hex literals outside design/tokens.json"; fi
 	@$(PYTHON) scripts/lint_vocabulary.py
 
+static:           ## phase 44: build public/ — the static customer surface
+	$(PYTHON) -m fxradar.public_state
+	$(PYTHON) scripts/build_static.py
+
+budgets:          ## phase 44: enforce the performance budgets on public/ (CI gate)
+	$(PYTHON) scripts/check_budgets.py
+
 eval-snapshot:    ## freeze today's artifacts into eval/snapshot/<date> (only when re-baselining)
 	$(PYTHON) eval/build_snapshot.py
 

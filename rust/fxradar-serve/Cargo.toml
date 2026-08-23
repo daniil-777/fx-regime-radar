@@ -34,7 +34,7 @@ ort = { version = "2.0.0-rc.13", default-features = false, features = ["std", "n
 parquet = { version = "59", default-features = false, features = ["snap"] }
 axum = "0.8"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "time", "sync"] }
-tower-http = { version = "0.6", features = ["trace"] }
+tower-http = { version = "0.6", features = ["trace", "cors"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 clap = { version = "4", features = ["derive", "env"] }

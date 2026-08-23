@@ -43,6 +43,7 @@ from fxradar import (
     forecaster,
     ledger,
     narrate,
+    public_state,
     regime_models,
     replay,
     rollups,
@@ -264,6 +265,40 @@ def stage_write(ctx: dict) -> None:
     log.info("wrote prices/features/regimes parquet + %s", STATUS_PATH.name)
 
 
+def static_site_stage(ctx: dict) -> None:
+    """Rebuild `public/` with today's reading baked into the markup.
+
+    Runs last, after `public_state` has put state.json in the context: the pages are rendered from
+    the same artifact a browser would fetch, so the baked HTML and the JSON can never disagree.
+
+    A failure here must not fail the pipeline. The models have already scored, the artifacts are
+    already written, and a broken page generator is a worse reason to lose a day's forecast than
+    almost anything else — yesterday's pages plus today's data is a recoverable morning, a missing
+    ledger row is not.
+    """
+    import subprocess  # noqa: PLC0415
+
+    def _build(c: dict) -> None:
+        try:
+            out = subprocess.run(
+                [sys.executable, str(config.ROOT / "scripts" / "build_static.py")],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                check=False,
+            )
+            if out.returncode == 0:
+                log.info("static site rebuilt")
+            else:
+                log.warning(
+                    "static site build failed (pages keep yesterday's): %s", out.stderr[-300:]
+                )
+        except Exception as exc:  # noqa: BLE001
+            log.warning("static site build did not run: %s", exc)
+
+    ctx.setdefault("extra_writers", {})["public/*.html"] = _build
+
+
 register("data", stage_data)
 register("features", stage_features)
 register("hmm", stage_hmm)
@@ -308,6 +343,12 @@ register(
     "archive", fx_only(archive.stage)
 )  # the archive room: history and aggregates the serving side answers from
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
+register(
+    "public_state", public_state.stage
+)  # phase 44: the one file the static customer surface fetches → public/state.json
+register(
+    "static_site", static_site_stage
+)  # phase 44: rebuild the five customer pages with today's numbers baked in
 
 
 # --------------------------------------------------------------------------------------

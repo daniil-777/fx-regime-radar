@@ -1103,6 +1103,35 @@ pub struct ApiDoc;
 // ---------------------------------------------------------------------------------------------
 
 /// Build the full application router (public + keyed routes, docs, metrics).
+/// CORS for the split hosting: static pages on a CDN, API on the VM.
+///
+/// `FXRADAR_SITE_ORIGIN` takes a comma-separated list of origins. Unset → no cross-origin access at
+/// all, so a misconfigured deployment fails closed rather than opening the API to the web.
+fn cors_layer() -> tower_http::cors::CorsLayer {
+    use axum::http::{header, HeaderValue, Method};
+    use tower_http::cors::CorsLayer;
+
+    let origins: Vec<HeaderValue> = std::env::var("FXRADAR_SITE_ORIGIN")
+        .unwrap_or_default()
+        .split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .filter_map(|s| HeaderValue::from_str(s).ok())
+        .collect();
+    if origins.is_empty() {
+        return CorsLayer::new();
+    }
+    CorsLayer::new()
+        .allow_origin(origins)
+        .allow_methods([Method::GET, Method::POST, Method::DELETE])
+        .allow_headers([
+            header::CONTENT_TYPE,
+            header::HeaderName::from_static("x-api-key"),
+            header::HeaderName::from_static("x-avatar-token"),
+        ])
+        .max_age(std::time::Duration::from_secs(600))
+}
+
 pub fn build_router(state: AppState) -> Router {
     let public = Router::new()
         .route("/api/health", get(health))
@@ -1163,6 +1192,12 @@ pub fn build_router(state: AppState) -> Router {
         .merge(avatar_routes)
         .merge(ops_routes)
         .merge(SwaggerUi::new("/docs").url("/api-docs/openapi.json", ApiDoc::openapi()))
+        // Phase 44: the site is on a CDN and the API is on the VM, so the browser now makes a
+        // cross-origin request and CORS becomes load-bearing rather than incidental. Restricted to
+        // the configured site origin: FXRADAR_SITE_ORIGIN. Unset means same-origin only, which is
+        // the correct default — a service that allows any origin by default is one deploy away from
+        // being someone else's backend.
+        .layer(cors_layer())
         .layer(middleware::from_fn(track_metrics))
         .layer(TraceLayer::new_for_http())
         .with_state(state)

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Proof · FX Regime Radar</title>
+<meta name="description" content="Current market regime, 5-day change risk and anomaly readings for 20 markets. Educational tool. Not investment advice.">
+<meta name="theme-color" content="#0E1420">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>:root{color-scheme:dark;
+--nimbus:#0E1420;--front:#151D2E;--line:rgba(255,255,255,0.08);--line-hex:#1F2838;
+--grid:rgba(255,255,255,0.06);
+--tx1:#E8ECF4;--tx2:#9AA6B8;--tx3:#7B89A1;
+--calm:#3ECF8E;--trend:#4DA3FF;--chop:#F5B942;--crisis:#FF5C5C;
+--beacon:#7FD1C9;
+--disp:'Space Grotesk', 'IBM Plex Sans', system-ui, sans-serif;--ui:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;--mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+--r-card:12px;--r-pill:999px;
+--sp:8px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--nimbus);color:var(--tx1);
+font:400 15px/1.55 var(--ui);
+padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 64px}
+a{color:var(--beacon);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--beacon);outline-offset:2px;border-radius:4px}
+
+/* header ------------------------------------------------------------------------------------ */
+header{position:sticky;top:0;z-index:10;background:var(--nimbus);
+border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.bar{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;
+gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--disp);font-weight:500;font-size:16px;color:var(--tx1);white-space:nowrap}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--tx2);padding:8px 12px;border-radius:var(--r-pill);font-size:14px;
+min-height:44px;display:inline-flex;align-items:center}
+nav a:hover{color:var(--tx1);text-decoration:none}
+nav a[aria-current=page]{color:var(--tx1);background:var(--front)}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--tx3);font:400 12px/1 var(--mono)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--beacon);display:inline-block}
+/* The liveness dot uses the ACCENT, never a regime colour. Regime colours carry one meaning on
+   this surface — the state of a market — and a green dot in the header that means "the build ran"
+   quietly teaches the reader that green means fine. */
+.dot.pulse{animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* the signature element ---------------------------------------------------------------------- */
+.banner{padding:40px 0 32px;border-bottom:1px solid var(--line);margin-bottom:32px}
+.eyebrow{font:400 12px/1 var(--mono);color:var(--tx3);letter-spacing:.06em;
+text-transform:uppercase;margin-bottom:14px}
+.word{font-family:var(--disp);font-weight:500;font-size:clamp(44px,9vw,76px);line-height:1;
+margin:0 0 10px;letter-spacing:-.02em}
+.gloss{color:var(--tx2);font-size:15px;margin:0 0 20px;max-width:52ch}
+.metrics{display:flex;gap:32px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;
+font-variant-numeric:tabular-nums}
+.metrics div{display:flex;flex-direction:column;gap:3px}
+.metrics dt,.mlabel{color:var(--tx3);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.mval{color:var(--tx1);font-size:19px;font-weight:500}
+.calm{color:var(--calm)}.trend{color:var(--trend)}.chop{color:var(--chop)}
+.crisis{color:var(--crisis)}
+.bg-calm{background:var(--calm)}.bg-trend{background:var(--trend)}
+.bg-chop{background:var(--chop)}.bg-crisis{background:var(--crisis)}
+
+/* cards and tables --------------------------------------------------------------------------- */
+h2{font-family:var(--disp);font-weight:500;font-size:18px;margin:40px 0 14px}
+h3{font-size:13px;font-weight:500;color:var(--tx2);margin:0 0 10px;
+letter-spacing:.05em;text-transform:uppercase}
+.card{background:var(--front);border:1px solid var(--line);border-radius:var(--r-card);
+padding:20px;animation:rise .15s ease-out}
+@keyframes rise{from{opacity:0}to{opacity:1}}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--tx3);font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+.pill{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+
+/* status ------------------------------------------------------------------------------------- */
+.badge{display:inline-block;border:1px solid var(--chop);color:var(--chop);
+border-radius:var(--r-pill);padding:3px 11px;font:400 12px/1.5 var(--mono)}
+.state{border:1px solid var(--line);border-radius:var(--r-card);padding:24px;color:var(--tx2);
+background:var(--front)}
+.state strong{display:block;color:var(--tx1);font-weight:500;margin-bottom:6px}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0;color:var(--tx3);
+font-size:13px}
+footer p{margin:0 0 6px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tx2{color:var(--tx2)}.tx3{color:var(--tx3)}
+
+@media (max-width:640px){
+  .wrap,.bar{padding-left:16px;padding-right:16px}
+  nav{width:100%;margin-left:0;overflow-x:auto;flex-wrap:nowrap}
+  .metrics{gap:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}</style>
+<!-- Fonts load without blocking the first paint: the page is readable in the system stack
+     before a webfont arrives, and swapping a face in is cheaper than delaying every word. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" onload="this.rel='stylesheet'">
+</head>
+<body>
+<header><div class="bar">
+<span class="brand">FX Regime Radar</span>
+<span class="live"><span class="dot pulse"></span>through 2026-08-20</span>
+<nav aria-label="Sections"><a href="index.html">Overview</a><a href="pairs.html">Pairs</a><a href="treasury.html">Treasury</a><a href="storms.html">Storms</a><a href="proof.html" aria-current=page>Proof</a></nav>
+</div></header>
+<main class="wrap" data-through="2026-08-20">
+<h1 class="word" style="font-size:28px;margin:32px 0 8px">The record, and how to check it</h1>
+
+<div class="state"><strong>Every forecast is written down before its outcome is known.</strong>The ledger is append-only and hash-chained: each row carries the hash of the one before it, so editing any past forecast changes every hash after it and the head no longer matches. You do not have to take our word for the record — recompute the chain from the published file and compare the head.</div>
+<h2>The record so far</h2>
+<div class="card scroll"><table><tbody><tr><td class=tx2>days live</td><td class=num>4</td></tr><tr><td class=tx2>forecasts written</td><td class=num>12</td></tr><tr><td class=tx2>resolved so far</td><td class=num>0</td></tr><tr><td class=tx2>live Brier score</td><td class=num>not yet</td></tr><tr><td class=tx2>frozen Brier (validation)</td><td class=num>0.102</td></tr><tr><td class=tx2>frozen PR-AUC</td><td class=num>0.548</td></tr><tr><td class=tx2>coverage, frozen</td><td class=num>0.916</td></tr><tr><td class=tx2>chain head</td><td class=num>2fb2db21</td></tr></tbody></table></div>
+<p class="tx3" style="font-size:13px;margin-top:14px">A live Brier score reads "not yet" until
+forecasts mature. It is not zero — zero would mean a perfect score, and nothing has resolved.</p>
+</main>
+<footer class="wrap">
+<p><strong>Educational tool. Not investment advice.</strong></p>
+<p>Regimes, change risk and anomaly scores only. This system models no price direction and gives no personal recommendation.</p>
+<p class="mono tx3">data through 2026-08-20 · built 2026-08-23T12:26:43Z · <a href="state.json">state.json</a></p>
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>

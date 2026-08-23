@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the radar — AI presenter</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/widget-tokens.css">
+<style>
+/* palette = design/tokens.json verbatim (tested against it); no other colours exist on this page */
+:root{
+  --nimbus:#0E1420; --front:#151D2E; --line:rgba(255,255,255,0.08); --grid:rgba(255,255,255,0.06);
+  --tx1:#E8ECF4; --tx2:#9AA6B8; --tx3:#7B89A1;
+  --calm:#3ECF8E; --trend:#4DA3FF; --chop:#F5B942; --crisis:#FF5C5C; --beacon:#7FD1C9;
+  --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --disp:'Space Grotesk',var(--sans);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size:15px;line-height:1.55;
+  display:flex;justify-content:center;padding:18px}
+.wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px;
+  height:100%;min-height:0}
+.card{background:var(--front);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+#session{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+.head{display:flex;align-items:baseline;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+.head .t{font-family:var(--disp);font-weight:500;letter-spacing:0.03em}
+.head .s{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+/* the face: vendor <video> when connected, else the presenter disc (regime colour, one pulse) */
+.stage{position:relative;aspect-ratio:16/10;max-height:42vh;background:var(--nimbus);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.disc{display:flex;align-items:center;justify-content:center}
+#eye-l,#eye-r{transform-box:fill-box;transform-origin:center}
+.blink #eye-l,.blink #eye-r{transform:scaleY(0.12)}
+@media (prefers-reduced-motion:reduce){#mouth{height:4px !important}.blink #eye-l,.blink #eye-r{transform:none}}
+.pulse{animation:lp 2.4s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:0.9}50%{opacity:0.35}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+.status{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:11.5px;color:var(--tx2);
+  display:flex;align-items:center;gap:7px}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--calm);display:inline-block}
+/* the non-dismissible disclosure bar */
+.caption{background:var(--nimbus);border-top:1px solid var(--line);padding:8px 16px;
+  font-family:var(--mono);font-size:11.5px;color:var(--beacon);letter-spacing:0.02em}
+/* transcript */
+.log{display:flex;flex-direction:column;gap:8px;padding:14px 16px;min-height:0;
+  flex:1 1 auto;overflow-y:auto}
+.msg{max-width:92%;padding:8px 12px;border-radius:10px;font-size:14px}
+.msg.user{align-self:flex-end;background:var(--nimbus);border:1px solid var(--line);color:var(--tx2)}
+.msg.avatar{align-self:flex-start;background:var(--nimbus);border:1px solid var(--line)}
+.msg .board{margin-top:9px;display:grid;gap:8px;max-width:100%}
+/* the source strip: quiet by default, legible on purpose. Absence of chips means no data was
+   used — a refusal — never "we didn't bother", so a refusal renders none and an answer always
+   renders at least one. */
+.msg .sources{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.src{font-family:var(--mono);font-size:10.5px;color:var(--tx2);background:var(--nimbus);
+  border:1px solid var(--line);border-radius:5px;padding:2px 8px;cursor:pointer;
+  min-height:24px;display:inline-flex;align-items:center;gap:6px}
+.src:hover,.src:focus-visible{border-color:var(--beacon);color:var(--beacon)}
+.src:focus-visible{outline:2px solid var(--beacon);outline-offset:2px}
+.src .when{color:var(--tx3)}
+.src.keep{border-style:dashed;color:var(--tx2)}
+.src.keep:hover{color:var(--beacon);border-color:var(--beacon)}
+.src-sheet{position:fixed;inset:auto 0 0 0;background:var(--front);border-top:1px solid var(--line);
+  padding:18px 20px 22px;z-index:40;max-height:70vh;overflow:auto}
+.src-sheet h4{margin:0 0 8px;font-family:var(--disp);font-size:14px;font-weight:500}
+.src-sheet dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:12.5px}
+.src-sheet dt{color:var(--tx3);font-family:var(--mono);font-size:11px}
+.src-sheet dd{margin:0;color:var(--tx1)}
+.src-sheet .close{position:absolute;top:12px;right:16px}
+@media (min-width:1024px){.src-sheet{inset:auto auto 16px 50%;transform:translateX(-50%);
+  width:min(560px,92vw);border:1px solid var(--line);border-radius:12px}}
+/* the ONE permitted process visualisation: appears only after 400 ms, stays at least 500 ms */
+.waitline{display:flex;align-items:center;gap:8px;color:var(--tx2);font-size:13.5px;
+  padding:2px 0 0 2px}
+.msg .board .fxc{background:var(--nimbus);border-color:var(--line)}
+.msg.avatar{max-width:100%}
+.msg .meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px}
+.msg .meta .ok{color:var(--calm)} .msg .meta .ref{color:var(--chop)}
+.chip{font-family:var(--mono);font-variant-numeric:tabular-nums;background:var(--front);
+  border:1px solid var(--line);border-radius:5px;padding:0 4px;color:var(--beacon);font-size:13px}
+/* controls: the voice pill is the primary action, the text row its always-there fallback */
+.controls{display:flex;flex-direction:column;gap:8px;padding:12px 16px;border-top:1px solid var(--line);
+  flex:0 0 auto;background:var(--front)}
+.row{display:flex;gap:8px}
+.talk{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:44px;
+  border-radius:999px;border:1px solid var(--line);background:var(--nimbus);color:var(--tx2);
+  font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;padding:0 18px}
+.talk:hover{border-color:var(--beacon);color:var(--beacon)}
+.talk[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon);
+  box-shadow:0 0 0 3px rgba(127,209,201,0.16)}
+/* five bars driven by the REAL input spectrum — they are a level meter, not an animation:
+   with no sound they sit flat, which is exactly the diagnostic the user needs. */
+.bars{display:flex;align-items:center;gap:3px;height:20px;flex:0 0 auto}
+.bars i{display:block;width:3px;height:3px;border-radius:2px;background:currentColor;
+  transition:height .08s linear}
+.talk .lbl{white-space:nowrap}
+input[type=text]{flex:1;background:var(--nimbus);border:1px solid var(--line);border-radius:8px;
+  color:var(--tx1);font-family:var(--sans);font-size:14px;padding:9px 12px;outline:none}
+input[type=text]:focus{border-color:var(--beacon)}
+button{background:var(--nimbus);border:1px solid var(--line);border-radius:999px;color:var(--tx1);
+  font-family:var(--sans);font-size:14px;font-weight:500;padding:9px 16px;cursor:pointer}
+button:hover{border-color:var(--beacon);color:var(--beacon)}
+button:focus-visible{outline:2px solid var(--beacon);outline-offset:2px}
+button:disabled{color:var(--tx3);cursor:default}
+button.voice{width:46px;height:46px;padding:0;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;color:var(--tx2);flex:0 0 auto}
+button.voice[aria-pressed="true"]{border-color:var(--beacon);color:var(--beacon);
+  box-shadow:0 0 0 3px rgba(127,209,201,0.18)}
+button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){button.voice[aria-pressed="true"] svg{animation:none}}
+.start{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 16px;text-align:center}
+.start p{color:var(--tx2);font-size:13.5px;max-width:400px}
+.accentrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 16px 8px 16px;
+  font-size:11px;color:var(--tx3)}
+.accentrow select{background:var(--nimbus);border:1px solid var(--line);border-radius:8px;
+  color:var(--tx2);font-family:var(--sans);font-size:11.5px;padding:4px 8px;outline:none}
+.accentrow select:focus-visible{outline:2px solid var(--beacon);outline-offset:1px}
+.accentrow .fx-hint{color:var(--tx3)}
+.privacy{font-size:11px;color:var(--tx3);padding:0 16px 12px 16px}
+.privacy a{color:var(--beacon);text-decoration:none}
+@media (max-width:400px){body{padding:8px}.stage{aspect-ratio:16/11}.msg{font-size:13.5px}}
+
+/* ------------------------------------------------------------------------------------------
+   FULL-PAGE CHAT (>= 1024px). One page, two layouts: embedded in the Briefing iframe the
+   compact card above is exactly what it was, and in a real browser window the same DOM becomes
+   a two-column workspace — the presenter held steady on the left, the conversation given the
+   whole right side. No JavaScript changes, so nothing that works today can break here.
+   ------------------------------------------------------------------------------------------ */
+@media (min-width:1024px){
+  body{padding:0;height:100vh;overflow:hidden;display:block}
+  .wrap{max-width:none;height:100vh;gap:0}
+  .card{height:100vh;border:0;border-radius:0;display:grid;
+    grid-template-columns:minmax(340px,400px) minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr) auto;
+    grid-template-areas:"head head" "stage conv" "caption conv"}
+  .head{grid-area:head;padding:14px 24px;align-items:center}
+  .head .t{font-size:16px}
+  .stage{grid-area:stage;aspect-ratio:auto;max-height:none;height:100%;
+    border-right:1px solid var(--line)}
+  /* a talking head sits high in frame: centre-cropping a tall column cut her chin off */
+  .stage video{object-position:center 22%}
+  .caption{grid-area:caption;border-right:1px solid var(--line);border-top:1px solid var(--line)}
+  #start{grid-area:conv;justify-content:center;height:100%}
+  #session{grid-area:conv;min-height:0}
+
+  /* the reading column: text centred at a comfortable measure, whatever the window width */
+  .log{padding:30px max(28px,calc(50% - 400px)) 14px;gap:22px;max-height:none}
+  .msg{font-size:15.5px;line-height:1.68}
+  .msg.user{max-width:min(76%,620px);padding:10px 15px;border-radius:16px 16px 4px 16px}
+  /* an answer owns the full reading measure: shrink-to-fit made a short caption render its cards
+     at the width of the sentence above them, which read as a layout accident */
+  .msg.avatar{max-width:100%;width:100%;background:transparent;border:0;padding:0}
+  .msg.avatar .meta{margin-top:8px}
+  .msg .board{grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-top:14px}
+
+  /* composer: one rounded field holding the voice control, the input and Ask */
+  .controls{flex-direction:row;align-items:center;gap:10px;
+    padding:14px max(28px,calc(50% - 400px)) 8px}
+  .talk{width:auto;flex:0 0 auto;padding:0 14px;height:46px}
+  .talk .lbl{display:none}
+  .talk[aria-pressed="true"] .lbl{display:inline;font-size:13px}
+  .row{flex:1;background:var(--nimbus);border:1px solid var(--line);border-radius:16px;
+    padding:5px 5px 5px 16px;gap:8px;align-items:center;min-width:0}
+  .row input[type=text]{border:0;background:transparent;padding:10px 0;font-size:15px}
+  .row input[type=text]:focus{border:0;outline:none}
+  .row:focus-within{border-color:var(--beacon)}
+  #btn-send{border-radius:12px;padding:9px 18px}
+
+  /* one quiet line under the composer instead of two paragraphs of small print */
+  .accentrow{padding:2px max(28px,calc(50% - 400px)) 0;font-size:11px}
+  .privacy{padding:4px max(28px,calc(50% - 400px)) 14px;max-width:none;font-size:10.5px;
+    line-height:1.5;opacity:.85}
+}
+/* a tall, narrow window (a docked side panel) keeps the stacked layout but uses the height */
+@media (min-width:1024px) and (max-width:1200px){
+  .card{grid-template-columns:minmax(300px,340px) minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="head"><span class="t">Ask the radar</span><span class="s" id="through">—</span></div>
+    <div class="stage">
+      <video id="video" autoplay playsinline></video>
+      <div class="disc" id="disc">
+        <!-- the keyless face: a drawn presenter in the token palette. The vendor's photoreal
+             video replaces this whole element when a face vendor is configured. -->
+        <svg id="face" viewBox="0 0 240 240" width="230" height="230" role="img" aria-label="AI presenter">
+          <defs>
+            <clipPath id="portrait"><circle cx="120" cy="120" r="112"/></clipPath>
+          </defs>
+          <circle cx="120" cy="120" r="112" fill="var(--front)"/>
+          <circle cx="120" cy="120" r="112" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+          <g clip-path="url(#portrait)">
+            <!-- shoulders -->
+            <path d="M 40 240 Q 46 168 120 168 Q 194 168 200 240 Z" fill="var(--nimbus)"/>
+            <path d="M 40 240 Q 46 168 120 168 Q 194 168 200 240" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+            <!-- collar accent -->
+            <path d="M 96 176 L 120 196 L 144 176" fill="none" stroke="var(--tx3)" stroke-width="2"/>
+            <!-- head -->
+            <circle id="head" cx="120" cy="104" r="52" fill="var(--nimbus)" stroke="var(--line)" stroke-width="1.5"/>
+            <!-- hair cap -->
+            <path d="M 68 104 A 52 52 0 0 1 172 104 L 172 96 Q 168 56 120 54 Q 72 56 68 96 Z" fill="var(--front)"/>
+            <!-- eyes (blink by squashing ry) -->
+            <ellipse id="eye-l" cx="100" cy="102" rx="6.5" ry="7" fill="var(--tx1)"/>
+            <ellipse id="eye-r" cx="140" cy="102" rx="6.5" ry="7" fill="var(--tx1)"/>
+            <circle cx="102.5" cy="99.5" r="1.8" fill="var(--front)"/>
+            <circle cx="142.5" cy="99.5" r="1.8" fill="var(--front)"/>
+            <!-- brows -->
+            <path d="M 92 88 Q 100 84 108 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 132 88 Q 140 84 148 88" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- nose hint -->
+            <path d="M 120 104 L 118 116" stroke="var(--tx3)" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <!-- mouth: height animates while speaking -->
+            <path id="smile" d="M 106 128 Q 120 136 134 128" fill="none" stroke="var(--tx1)" stroke-width="3.5" stroke-linecap="round" opacity="0.92"/>
+            <rect id="mouth" x="104" y="128" width="32" height="4" rx="2" fill="var(--tx1)" opacity="0.92" style="display:none"/>
+            <!-- headset: the presenter's tell -->
+            <path d="M 66 96 A 56 56 0 0 1 174 96" fill="none" stroke="var(--beacon)" stroke-width="3" stroke-linecap="round"/>
+            <rect x="61" y="94" width="9" height="20" rx="4.5" fill="var(--beacon)"/>
+            <rect x="170" y="94" width="9" height="20" rx="4.5" fill="var(--beacon)"/>
+            <path d="M 170 112 Q 164 132 146 136" fill="none" stroke="var(--beacon)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle id="mic" cx="143" cy="137" r="3.5" fill="var(--beacon)"/>
+          </g>
+          <!-- regime ring: wears today's lead regime colour -->
+          <circle id="ring" cx="120" cy="120" r="112" fill="none" stroke="var(--calm)" stroke-width="2.5"
+                  stroke-dasharray="52 651" stroke-linecap="round" transform="rotate(-64 120 120)" opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="status"><span class="dot pulse" id="live"></span><span id="status">ready</span></div>
+    </div>
+    <div class="caption">AI presenter · risk information, not investment advice</div>
+    <div class="start" id="start">
+      <p>A computer-generated presenter that answers only from the radar's published numbers.
+         Nothing plays until you start — no autoplay, no sound without your click. Voice conversation needs desktop Chrome or Edge.</p>
+      <button id="btn-start">Start session</button>
+    </div>
+    <div id="session" style="display:none">
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="controls">
+        <button class="talk" id="btn-voice" aria-pressed="false"
+                aria-label="start a live voice conversation">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
+            <path d="M 5.5 11 a 6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="lbl" id="talk-label">Start voice conversation</span>
+          <span class="bars" id="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        </button>
+        <div class="row">
+          <input type="text" id="q" placeholder="Or type your question" autocomplete="off">
+          <button id="btn-send">Ask</button>
+        </div>
+      </div>
+      <div class="accentrow">
+        <label for="lang">Your English</label>
+        <select id="lang" aria-label="accent the speech recogniser should expect">
+          <option value="auto">Match my browser</option>
+          <option value="en-US">United States</option>
+          <option value="en-GB">United Kingdom</option>
+          <option value="en-IN">India</option>
+          <option value="en-AU">Australia</option>
+          <option value="en-CA">Canada</option>
+          <option value="en-IE">Ireland</option>
+          <option value="en-NZ">New Zealand</option>
+          <option value="en-ZA">South Africa</option>
+          <option value="en-SG">Singapore</option>
+        </select>
+        <span class="fx-hint" id="lang-hint">Non-native speakers: United States or United Kingdom usually score best.</span>
+      </div>
+      <div class="privacy"><span id="mic-note">The microphone streams only while voice conversation is on.</span>
+        Conversations are logged and reviewed weekly by a human to keep the
+        presenter honest; transcripts are used for nothing else. <a href="/docs" target="_blank">API docs</a></div>
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+/* Local-first face: without a vendor key the presenter is the regime-coloured disc + browser TTS —
+   fully real-time, zero external services. With FXRADAR_AVATAR_VENDOR=anam|heygen the session token
+   endpoint returns vendor credentials and the vendor SDK attaches its WebRTC stream to <video>
+   (adapter below; the SDK script is added at deploy time, never in this repo). */
+const $=id=>document.getElementById(id);
+const state={token:null,session:null,speaking:false,greeted:false,tts:"browser",open:false,advice:false,vendorClient:null};
+const REGIME_COLORS={calm:"var(--calm)",trend:"var(--trend)",chop:"var(--chop)",crisis:"var(--crisis)"};
+/* The eight primitives arrive as a module; everything else here stays a classic script so the
+   voice state machine keeps its globals. A board that fails to load must never break an answer:
+   the words are the product, the picture is support. */
+let CARDS=null;
+const cardsReady=import("/cards.js").then(m=>{CARDS=m.default||m;}).catch(e=>{
+  console.warn("card primitives unavailable; answering in words only:",e);});
+/* The wait line. Two rules make the difference between a calm interface and a twitchy one: it must
+   not appear before 400 ms (most answers arrive first, and a flash of "working" reads as slowness
+   that did not happen), and once shown it must stay at least 500 ms (a line that appears and
+   vanishes in 80 ms is noise). It names a DESTINATION in human words, never a mechanism, never a
+   timing, and it never reports a failure — degradation is absorbed silently on purpose. */
+const WAIT_LINES = {
+  en: {archive:"counting past days", ledger:"checking the sealed ledger",
+       knowledge:"reading the methodology", default:"looking that up"},
+  de: {archive:"zähle vergangene Tage", ledger:"prüfe das versiegelte Register",
+       knowledge:"lese die Methodik", default:"schaue nach"},
+  fr: {archive:"je compte les jours passés", ledger:"je consulte le registre scellé",
+       knowledge:"je lis la méthodologie", default:"je vérifie"},
+};
+/* Counting how the interface is actually used, so "nobody opens this, delete it" can be a finding
+   rather than an opinion. Fire-and-forget: a failed counter must never disturb an answer. */
+function beacon(event,ms){
+  try{
+    fetch("/avatar/ui-event",{method:"POST",headers:{
+      "Content-Type":"application/json","X-Avatar-Token":state.token||""},
+      body:JSON.stringify({session_id:state.sessionId||"",event:event,ms:ms})}).catch(()=>{});
+  }catch(_){}
+}
+const WAIT_THRESHOLD_MS=400, WAIT_MINIMUM_MS=500;
+function startWaitLine(kind){
+  let node=null, shownAt=0;
+  const timer=setTimeout(()=>{
+    node=document.createElement("div");
+    node.className="waitline";
+    node.setAttribute("aria-live","polite");
+    const dot=document.createElement("span");dot.className="dot pulse";
+    const table=WAIT_LINES[(state.locale||"en")]||WAIT_LINES.en;
+    node.appendChild(dot);
+    node.appendChild(document.createTextNode(table[kind]||table.default));
+    $("log").appendChild(node);$("log").scrollTop=$("log").scrollHeight;
+    shownAt=performance.now();
+  },WAIT_THRESHOLD_MS);
+  return ()=>{
+    clearTimeout(timer);
+    if(!node)return;                                   // never appeared: nothing to remove
+    const held=performance.now()-shownAt;
+    const wait=Math.max(0,WAIT_MINIMUM_MS-held);       // no flicker, ever
+    beacon("wait_line_shown",held+wait);
+    setTimeout(()=>{try{node.remove();}catch(_){}} ,wait);
+  };
+}
+
+/* Source chips. Provenance, not process: where the number came from, never how it was fetched. */
+function renderSources(host,board){
+  const records=[];
+  for(const card of board||[]){
+    for(const rec of (card.provenance||[])){
+      if(rec && rec.display_label) records.push(rec);
+    }
+  }
+  if(!records.length)return;
+  const strip=document.createElement("div");strip.className="sources";
+  const shown=records.slice(0,4);
+  shown.forEach(rec=>{
+    const chip=document.createElement("button");
+    chip.type="button";chip.className="src";
+    chip.setAttribute("aria-label",`source: ${rec.display_label}${rec.as_of?", as of "+rec.as_of:""}`);
+    chip.appendChild(document.createTextNode(rec.display_label));
+    if(rec.as_of){const w=document.createElement("span");w.className="when";w.textContent=rec.as_of;chip.appendChild(w);}
+    chip.onclick=()=>{beacon("source_chip_click");openSource(rec);};
+    strip.appendChild(chip);
+  });
+  if(records.length>shown.length){
+    const more=document.createElement("span");more.className="src";
+    more.textContent=`${records.length-shown.length} more`;
+    strip.appendChild(more);
+  }
+  // The receipt: the same answer as a one-page document a person can print, keep, or hand to a
+  // client. A chat window is not a record; this is.
+  const keep=document.createElement("button");
+  keep.type="button";keep.className="src keep";
+  keep.textContent=RECEIPT_LABEL[state.locale||"en"]||RECEIPT_LABEL.en;
+  keep.onclick=()=>openReceipt(host,records);
+  strip.appendChild(keep);
+  host.appendChild(strip);
+}
+const RECEIPT_LABEL={en:"Save a receipt",de:"Beleg sichern",fr:"Conserver un reçu"};
+function openReceipt(host,records){
+  const q=host.dataset.question||"", a=host.dataset.answer||"";
+  fetch("/avatar/receipt",{method:"POST",headers:{
+    "Content-Type":"application/json","X-Avatar-Token":state.token||""},
+    body:JSON.stringify({session_id:state.sessionId||"",question:q,answer:a,
+                         provenance:records})})
+    .then(r=>r.ok?r.text():Promise.reject(r.status))
+    .then(html=>{
+      const w=window.open("","_blank");
+      if(!w)return;                                   // pop-up blocked: fail quietly, not loudly
+      w.document.write(html);w.document.close();
+    })
+    .catch(()=>{});
+}
+function openSource(rec){
+  beacon("source_detail_open");
+  document.querySelectorAll(".src-sheet").forEach(n=>n.remove());
+  const sheet=document.createElement("div");
+  sheet.className="src-sheet";sheet.setAttribute("role","dialog");
+  sheet.setAttribute("aria-label","where this number came from");
+  const rows=[["source",rec.display_label],["as of",rec.as_of||"—"],
+              ["kind",({artifact_cell:"a published value",ledger_row:"a sealed forecast row",
+                        document_chunk:"the methodology notes",
+                        scenario_output:"a computed scenario",
+                        user_utterance:"your own words"})[rec.kind]||rec.kind]];
+  if(rec.versions&&rec.versions.context)rows.push(["data through",rec.versions.context]);
+  sheet.innerHTML='<h4>Where this came from</h4><dl>'+
+    rows.map(([k,v])=>`<dt>${k}</dt><dd>${String(v).replace(/</g,"&lt;")}</dd>`).join("")+'</dl>';
+  const close=document.createElement("button");close.className="close";close.textContent="Close";
+  close.onclick=()=>sheet.remove();
+  sheet.appendChild(close);
+  document.body.appendChild(sheet);
+  close.focus();
+}
+
+function sameSentence(a,b){
+  const n=t=>(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  return n(a)===n(b);
+}
+async function renderBoard(host,board,answer){
+  if(!board||!board.length)return;
+  await cardsReady;
+  if(!CARDS||!CARDS.renderCard)return;
+  const wrap=document.createElement("div");wrap.className="board";
+  for(const c of board){
+    try{
+      wrap.appendChild(CARDS.renderCard({
+        component:c.component,primitive:c.primitive,title:(c.title||c.component).replace(/_/g," "),
+        caption:c.caption,label:c.label||c.component,asof:c.asof,stale:!!c.stale,
+        caption_hidden:sameSentence(c.caption,answer),
+        args:c.args,data:c.data}));
+    }catch(e){console.warn("card failed to render:",c.component,e);}
+  }
+  if(wrap.children.length){host.appendChild(wrap);
+    $("log").scrollTop=$("log").scrollHeight;}
+}
+function setStatus(s){
+  $("status").textContent=s==="speaking"?"speaking \u2014 click to skip":s;
+  $("status").style.cursor=s==="speaking"?"pointer":"";
+}
+function chipify(text){
+  return text.replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    // A receipt chip marks a NUMBER she quoted. Dates and hashes are identifiers, not measurements:
+    // chipping them turned "2026-08-20" into three receipts and a chain head into "2 fb 2 db 21".
+    .replace(/(?<![\w.\-])\d+(?:\.\d+)?(?![\w\-])/g,m=>'<span class="chip">'+m+"</span>");
+}
+function addMsg(role,text,meta){
+  const d=document.createElement("div");d.className="msg "+role;
+  d.innerHTML=chipify(text)+(meta?'<div class="meta">'+meta+"</div>":"");
+  $("log").appendChild(d);$("log").scrollTop=$("log").scrollHeight;
+  return d;
+}
+function browserSpeak(text){
+  return new Promise(res=>{
+    if(!("speechSynthesis" in window)){setStatus("listening");res();return;}
+    const u=new SpeechSynthesisUtterance(text.replace(/[—·]/g,","));
+    u.rate=1.02;
+    let settled=false;
+    const done=()=>{if(settled)return;settled=true;state.speaking=false;setStatus("listening");res();};
+    u.onend=done;u.onerror=done;
+    state.speaking=true;setStatus("speaking");speechSynthesis.speak(u);
+    setTimeout(done,1500+65*text.length);  // belt and braces: never let a TTS stall lock the input
+  });
+}
+async function elevenSpeak(text){
+  // the studio voice: the server only speaks answers OUR gates produced (hash-checked there)
+  const r=await fetch("/avatar/tts",{method:"POST",
+    headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
+    body:JSON.stringify({session_id:state.session,text})});
+  if(!r.ok)throw new Error("tts "+r.status);
+  const blob=await r.blob();
+  return new Promise(res=>{
+    const a=new Audio(URL.createObjectURL(blob));
+    state.audioEl=a;
+    const done=()=>{state.speaking=false;setStatus("listening");res();};
+    a.onended=done;a.onerror=done;a.onpause=done;
+    state.speaking=true;setStatus("speaking");a.play().catch(done);
+  });
+}
+function interruptSpeech(){  // barge-in: the user always outranks the presenter
+  try{const c=state.vendorClient;if(c&&c.interruptPersona)c.interruptPersona();}catch(_){}
+  try{if("speechSynthesis" in window)speechSynthesis.cancel();}catch(_){}
+  try{if(state.audioEl)state.audioEl.pause();}catch(_){}
+  state.speaking=false;setStatus("listening");
+}
+async function speak(text){
+  if(state.vendorClient&&!state.vendorMute){  // the photoreal face speaks with the vendor's own voice
+    try{state.speaking=true;setStatus("speaking");await state.vendorClient.talk(text);
+      // talk() resolves when the command is SENT; she speaks after. Hold the speaking state on an
+      // estimated clock so "click to skip" is offered while she talks; interruptSpeech() ends it early.
+      const est=Math.min(2000+55*text.length,60000),t0=performance.now();
+      const turn=++state.speakTurn;
+      await new Promise(r=>{const iv=setInterval(()=>{
+        if(!state.speaking||state.speakTurn!==turn||performance.now()-t0>est){clearInterval(iv);r();}},150);});
+      if(state.speakTurn!==turn)return;   // a newer turn owns the status line now
+      state.speaking=false;setStatus("listening");return;}
+    catch(e){console.warn("vendor talk failed, falling back to audio:",e);state.speaking=false;}
+  }
+  if(state.tts==="elevenlabs"){
+    try{return await elevenSpeak(text);}catch(_){/* fall back to the browser voice */}
+  }
+  return browserSpeak(text);
+}
+function soundUnlock(){  // the browser blocked audio autoplay: one explicit tap enables her voice
+  if(document.getElementById("sound-unlock"))return;
+  const b=document.createElement("button");b.id="sound-unlock";b.textContent="Enable sound";
+  b.style.cssText="margin:10px auto;display:block;background:var(--beacon);color:var(--nimbus);border:0;border-radius:8px;padding:8px 14px;font:500 14px var(--sans);cursor:pointer";
+  b.onclick=()=>{const v=$("video");v.muted=false;v.volume=1;v.play().catch(()=>{});b.remove();};
+  $("video").parentElement.appendChild(b);
+}
+async function api(path,opts){
+  const r=await fetch(path,opts);
+  if(!r.ok){throw new Error((await r.json().catch(()=>({}))).error||("HTTP "+r.status));}
+  return r.json();
+}
+async function startSession(){
+  $("btn-start").disabled=true;setStatus("connecting");
+  try{
+    const tok=await api("/avatar/session-token",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({vendor:null})});
+    // vendor sessions carry two tokens: tok.token drives the vendor's WebRTC face,
+    // tok.brain_token authenticates OUR brain/tts calls (they are different systems).
+    state.token=tok.brain_token||tok.token;state.session=tok.session_id||String(Date.now());
+    state.tts=tok.tts||"browser";state.open=!!tok.open;
+    if(tok.vendor==="anam"&&tok.token){
+      try{  // photoreal face: Anam SDK, llmId=CUSTOMER_CLIENT_V1 — the persona speaks ONLY what
+        // OUR gated brain returns via talk(); her mic transcript is routed through ask() below.
+        const mod=await import("https://esm.sh/@anam-ai/js-sdk@latest");
+        const client=(mod.createClient||mod.default?.createClient)(tok.token);
+        const Ev=mod.AnamEvent||mod.default?.AnamEvent;
+        let readyRes;state.vendorReady=new Promise(r=>{readyRes=r;setTimeout(r,8000);});
+        if(Ev&&client.addListener){  // listeners BEFORE streaming starts, or early events are lost
+          client.addListener(Ev.SESSION_READY,()=>readyRes());
+          client.addListener(Ev.CONNECTION_ESTABLISHED,()=>setTimeout(readyRes,600));
+          client.addListener(Ev.MIC_PERMISSION_DENIED,()=>{state.micDenied=true;
+            addMsg("avatar","The browser blocked the microphone for this page. Click the mic icon in the address bar, allow the microphone, then reload and start again \u2014 typing always works.");});
+          client.addListener(Ev.USER_SPEECH_STARTED,()=>{if(state.conversation){interruptSpeech();setStatus("hearing you\u2026");}});
+          client.addListener(Ev.USER_SPEECH_ENDED,()=>{if(state.conversation)setStatus("thinking");});
+          let seen=0;
+          client.addListener(Ev.MESSAGE_HISTORY_UPDATED,(messages)=>{
+            const users=(messages||[]).filter(m=>m.role==="user");
+            if(users.length>seen){seen=users.length;
+              const q=users[users.length-1].content;
+              if(q&&state.conversation){routeHeard(q);}
+            }
+          });
+        }
+        await client.streamToVideoElement("video");
+        state.vendorClient=client;
+        setVendorMic(false);  // privacy by default: her ears open only with the mic button
+        const v=$("video");v.muted=false;v.volume=1;  // her voice arrives on this element's audio track
+        state.audioReady=(async()=>{  // talk() before the audio track lands = a greeting nobody hears
+          for(let i=0;i<60;i++){
+            const n=v.srcObject?v.srcObject.getAudioTracks().length:0;
+            if(n>0)return true;
+            await new Promise(r=>setTimeout(r,200));
+          }
+          return false;
+        })();
+        v.style.display="block";$("disc").style.display="none";
+        const pl=v.play();if(pl&&pl.catch)pl.catch(()=>soundUnlock());
+      }catch(e){console.warn("anam attach failed, using the drawn face:",e);
+        // Anam reports a taken slot as "concurrency limit" and sometimes only as "unknown error";
+        // both mean the same thing on a single-session plan, so give the same recovery steps.
+        const busy=/concurrency|unknown error/i.test(String(e&&e.message||e));
+        addMsg("avatar",busy
+          ?"The photoreal studio allows one live session at a time and another is still active \u2014 close any other radar tab (or wait about a minute for the old session to expire), then reload this page and press Start again. Until then you have the drawn presenter and the browser voice."
+          :"The photoreal face could not start ("+(e&&e.message||e)+") \u2014 continuing with the drawn presenter; voice and answers still work.");
+      }
+    }else if(tok.vendor&&tok.vendor!=="local"&&window.FXAvatarVendor){
+      await window.FXAvatarVendor.attach(tok,$("video"));$("video").style.display="block";$("disc").style.display="none";
+    }
+    if(tok.advice){document.querySelector(".caption").textContent="AI presenter · decision support — software-generated, not a licensed adviser";}
+    else if(state.open){document.querySelector(".caption").textContent="AI presenter · open conversation · risk information, not investment advice";}
+    state.advice=!!tok.advice;
+    const g=await api("/avatar/greeting");
+    $("through").textContent="data through "+g.data_through;
+    $("start").style.display="none";$("session").style.display="flex";
+    setTimeout(()=>{try{$("q").focus({preventScroll:true});}catch(_){}},50);  // ready to type  // flex, not block: the inline
+    // style wins over the stylesheet, and "block" was collapsing the column that keeps the voice
+    // control on screen while the transcript grows
+    addMsg("avatar",g.text,'template · <span class="ok">gate pass</span>');
+    if(state.vendorReady)await state.vendorReady;  // talk() before the WebRTC session is ready is lost
+    if(state.audioReady&&!(await state.audioReady)){
+      addMsg("avatar","Her voice track never arrived, so I will speak through this browser instead. The answers are identical \u2014 only the voice changes.");
+      // Fall back to an audible path — but keep the handle: it is the only way to release the
+      // vendor's single live session on pagehide. Nulling it here leaked the slot, and the next
+      // session then failed to start at all.
+      state.vendorMute=true;
+    }
+    await speak(g.text);state.greeted=true;
+  }catch(e){setStatus("unavailable");addToStart(e.message);}
+}
+function addToStart(msg){
+  const p=document.createElement("p");
+  p.textContent="Could not start: "+msg+" — the presenter needs the service running with FXRADAR_AVATAR=on.";
+  p.style.color="var(--chop)";$("start").appendChild(p);$("btn-start").disabled=false;
+}
+/* Accented English gets a domain-aware second chance: the recogniser returns several
+   alternatives, and we prefer the one that mentions things this app actually talks about. Then a
+   short fixup table repairs the mishearings we see most for these terms. Both are client-side and
+   cost nothing — the gated brain still decides what may be said. */
+const VOCAB=["siren","regime","calm","trend","chop","crisis","change risk","band","conformal",
+  "ledger","brier","consensus","methodology","hedge","exposure","tolerance","forecast","anomaly",
+  "autoencoder","markov","validation","embargo","drift","coverage","radar","market","euro","dollar",
+  "yen","sterling","pound","franc","swiss","bitcoin","ethereum","ripple","cardano","ruble","rouble",
+  "peso","rand","zloty","krona","krone","aussie","kiwi","loonie","eurusd","usdjpy","gbpusd",
+  "usdchf","usdrub","btc","eth","xrp"];
+const FIXUPS=[
+  [/\b(?:sirene?|syren|siron|sarin)\b/gi,"siren"],
+  [/\bregim(?:e)?s?\b/gi,"regime"],
+  [/\bbit\s?coin\b/gi,"bitcoin"],
+  [/\bether(?:eum)?\b/gi,"ethereum"],
+  [/\be\.?\s?u\.?\s?r\.?\s?(?:slash|\/)?\s?u\.?\s?s\.?\s?d\.?\b/gi,"EURUSD"],
+  [/\bg\.?\s?b\.?\s?p\.?\s?(?:slash|\/)?\s?u\.?\s?s\.?\s?d\.?\b/gi,"GBPUSD"],
+  [/\bu\.?\s?s\.?\s?d\.?\s?(?:slash|\/)?\s?c\.?\s?h\.?\s?f\.?\b/gi,"USDCHF"],
+  [/\bswiss\s?ie\b/gi,"franc"],
+  [/\brubble|rooble\b/gi,"ruble"],
+  [/\bmethodolog(?:y|ies|ical)\b/gi,"methodology"],
+  [/\bchange\s+risks?\b/gi,"change risk"],
+  [/\bbreyer|briar|bryer\b/gi,"brier"],
+];
+function vocabScore(t){const l=(t||"").toLowerCase();let n=0;
+  for(const w of VOCAB)if(l.includes(w))n++;
+  return n;}
+function pickAlternative(res){  // highest vocabulary hit wins; ties fall back to the engine's own
+  let best=res[0]&&res[0].transcript||"",bs=vocabScore(best);        // confidence ordering
+  for(let i=1;i<res.length;i++){
+    const t=res[i]&&res[i].transcript;if(!t)continue;
+    const sc=vocabScore(t);
+    if(sc>bs){best=t;bs=sc;}
+  }
+  return best;}
+function applyFixups(t){let out=t;for(const [re,to] of FIXUPS)out=out.replace(re,to);return out;}
+function normHeard(t){return t.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
+function routeHeard(text){  // two ears, one mouth: vendor ASR and browser recognition both land
+  const n=normHeard(text);if(!n)return;  // here; whichever hears a phrase first wins, echoes drop
+  const now=performance.now();
+  if(state.lastHeard&&now-state.lastHeard.at<5000){
+    const a=state.lastHeard.text;
+    if(a===n||a.includes(n)||n.includes(a))return;
+  }
+  state.lastHeard={text:n,at:now};state.heardText=true;clearTimeout(state.micTimer);
+  addMsg("user",text);ask(text,true);
+}
+async function askVendor(question){return ask(question,true);}  // barge-in: ask() interrupts her itself
+async function ask(question,fromVendor){
+  if(!question.trim())return;
+  if(state.thinking){
+    // Speaking while she is still answering used to put your words in the transcript and then
+    // drop them — the guard returned before the request was ever made. Hold the newest turn and
+    // ask it the moment the current one lands (newest wins: older speech is stale by then).
+    state.pending={question,fromVendor};
+    if(!fromVendor){addMsg("user",question);}
+    setStatus("queued — answering the previous question first");
+    return;
+  }
+  if(state.speaking||state.vendorClient)interruptSpeech();
+  state.thinking=true;
+  if(!fromVendor){addMsg("user",question);}
+  $("q").value="";setStatus("thinking");
+  const t0=performance.now();
+  const stopWait=startWaitLine(/\b(how many|compare|since|last (year|month)|during|20\d\d)\b/i
+    .test(question)?"archive":"default");
+  try{
+    const r=await api("/avatar/brain",{method:"POST",
+      headers:{"Content-Type":"application/json","X-Avatar-Token":state.token||""},
+      body:JSON.stringify({session_id:state.session,messages:[{role:"user",content:question}]})});
+    stopWait();
+    const ms=Math.round(performance.now()-t0);
+    const src=r.source==="decision"?'<span class="chip">decision engine</span> ':"";
+    const gate=r.gate==="pass"?src+'<span class="ok">gate pass</span>'
+      :r.gate&&r.gate.startsWith("open:")?'<span class="ref">'+r.gate+' — number not in today\'s pack</span>'
+      :'<span class="ref">'+r.gate+"</span>";
+    const node=addMsg("avatar",r.text,r.source+" · "+gate+" · "+ms+" ms");
+    renderBoard(node,r.board,r.text);  // not awaited: she starts speaking while the cards paint
+    node.dataset.question=q;node.dataset.answer=r.text||"";
+    renderSources(node,r.board);       // provenance travels with the answer, not in a side channel
+    state.thinking=false;
+    if(!drainPending())await speak(r.text);   // a queued turn outranks finishing this answer
+  }catch(e){stopWait();state.thinking=false;setStatus("error");
+    addMsg("avatar","I could not reach the brain endpoint ("+e.message+"). If this session has been open a while, the 30-minute token may have expired — reload the page and start again.");
+    drainPending();}
+}
+function drainPending(){
+  const next=state.pending;
+  if(!next)return false;
+  state.pending=null;
+  ask(next.question,true);   // already echoed when it was queued
+  return true;
+}
+$("btn-start").onclick=startSession;
+$("btn-send").onclick=()=>ask($("q").value);
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")ask($("q").value);});
+/* ---- live conversation: one toggle, always user-initiated. Vendor mode: the persona's own
+   speech recognition hears the mic over WebRTC; the toggle gates whether her transcripts are
+   routed into the gated brain (and mutes the input track when the SDK exposes it). Local mode:
+   a continuous browser-recognition loop. The text input is the always-there fallback. */
+state.conversation=false;
+let localRec=null;
+function setVendorMic(on){
+  const c=state.vendorClient;
+  if(!c)return;
+  try{
+    const st=on?(c.unmuteInputAudio&&c.unmuteInputAudio()):(c.muteInputAudio&&c.muteInputAudio());
+    if(on&&st&&st.permissionState==="denied"&&!state.micDenied){state.micDenied=true;
+      addMsg("avatar","The browser has the microphone blocked for this page \u2014 allow it via the address-bar icon, then reload and start again. Typing always works.");}
+  }catch(_){/* older SDKs: routing gate below still applies */}
+}
+const SILENCE_MS=1800;      // how long you may pause mid-thought before the turn is sent
+const MAX_TURN_MS=45000;    // hard stop so a hot mic in a noisy room cannot run forever
+const MAX_TURN_CHARS=700;
+function turnText(){return (state.utt||[]).join(" ").replace(/\s+/g," ").trim();}
+function flushTurn(){          // one complete turn -> one question
+  const raw=turnText();
+  state.utt=[];state.turnStart=0;
+  clearTimeout(state.silenceTimer);
+  if(!raw)return;
+  routeHeard(applyFixups(raw));
+}
+function noteSpeech(){         // any voice activity postpones the end of the turn
+  state.lastVoiceAt=performance.now();
+  if(!state.turnStart)state.turnStart=performance.now();
+  clearTimeout(state.silenceTimer);
+  state.silenceTimer=setTimeout(()=>{
+    if(state.conversation&&turnText())flushTurn();
+  },SILENCE_MS);
+}
+function turnGuards(){         // length/duration ceilings, checked as the meter runs
+  if(!state.conversation||!turnText())return;
+  const tooLong=state.turnStart&&performance.now()-state.turnStart>MAX_TURN_MS;
+  if(tooLong||turnText().length>MAX_TURN_CHARS)flushTurn();
+}
+async function startLevelMeter(){  // proof, not decoration: the bar moves only with real input,
+  if(state.meterStream)return true;    // and only while the mic toggle is on (user-initiated).
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    state.meterStream=stream;
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    state.meterCtx=ctx;
+    const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();
+    an.fftSize=256;an.smoothingTimeConstant=0.75;src.connect(an);
+    const freq=new Uint8Array(an.frequencyBinCount),wave=new Uint8Array(an.fftSize);
+    const bars=[...document.querySelectorAll("#bars i")];
+    const BANDS=[[1,4],[4,9],[9,18],[18,36],[36,72]];  // low → high, one bar each
+    const tick=()=>{
+      if(!state.conversation){bars.forEach(b=>b.style.height="3px");return;}
+      an.getByteFrequencyData(freq);an.getByteTimeDomainData(wave);
+      let peak=0;for(let i=0;i<wave.length;i++)peak=Math.max(peak,Math.abs(wave[i]-128));
+      if(peak>6){state.heardSound=true;
+        // real audio, not the recogniser's opinion: while you are still making sound the turn
+        // stays open, so a pause between sentences never truncates the question.
+        if(turnText())noteSpeech();
+        state.lastVoiceAt=performance.now();}
+      turnGuards();
+      BANDS.forEach(([a,b],i)=>{
+        let sum=0;for(let k=a;k<b&&k<freq.length;k++)sum+=freq[k];
+        const avg=sum/(b-a);
+        bars[i].style.height=Math.max(3,Math.min(20,Math.round(avg/9)))+"px";
+      });
+      state.meterRAF=requestAnimationFrame(tick);
+    };
+    tick();
+    return true;
+  }catch(e){
+    addMsg("avatar","This browser would not give me the microphone ("+(e&&e.name||e)+"). Allow it via the address-bar icon and tap the mic again \u2014 typing always works.");
+    return false;
+  }
+}
+function stopLevelMeter(){
+  try{if(state.meterRAF)cancelAnimationFrame(state.meterRAF);}catch(_){}
+  try{state.meterStream&&state.meterStream.getTracks().forEach(t=>t.stop());}catch(_){}
+  try{state.meterCtx&&state.meterCtx.close();}catch(_){}
+  state.meterStream=null;state.meterCtx=null;
+  document.querySelectorAll("#bars i").forEach(b=>b.style.height="3px");
+}
+function micDiagnostic(){  // 12 s with the mic on and nothing recognised: say why, do not sulk
+  clearTimeout(state.micTimer);
+  state.micTimer=setTimeout(()=>{
+    if(!state.conversation||state.heardText)return;
+    const why=state.heardSound
+      ? "I can see your microphone level moving, so the microphone is fine \u2014 the speech recogniser returned nothing"
+        +(state.srError?" ("+state.srError+")":"")+". Chrome or Edge on the desktop recognise speech most reliably; Safari and Firefox often do not."
+      : "I am not seeing any level from your microphone"
+        +(state.srError?" ("+state.srError+")":"")+". Check the input device in your system sound settings, or that another app has not taken it.";
+    addMsg("avatar",why+" You can always type your question \u2014 the answers are exactly the same.");
+  },12000);
+}
+function startLocalConversation(assist){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){if(!assist)addMsg("avatar","This browser has no speech recognition — type instead, or use the photoreal vendor mode where the presenter hears you directly.");return false;}
+  localRec=new SR();localRec.lang=voiceLang();localRec.interimResults=true;
+  localRec.continuous=true;localRec.maxAlternatives=5;
+  localRec.onresult=e=>{const res=e.results[e.results.length-1];
+    if(!res)return;
+    state.heardText=true;
+    if(state.conversation&&state.speaking)interruptSpeech();  // barge-in, vendor detector or not
+    if(!res.isFinal){
+      if(state.conversation){noteSpeech();
+        const sofar=(turnText()+" "+(res[0].transcript||"")).trim();
+        setStatus("hearing: "+sofar.slice(-70));}
+      return;}
+    if(!state.conversation)return;
+    state.utt=state.utt||[];
+    state.utt.push(pickAlternative(res));      // accented speech: prefer the domain-plausible take
+    noteSpeech();                              // ...and keep the turn open for the next sentence
+    setStatus("hearing: "+turnText().slice(-70));};
+  localRec.onend=()=>{if(state.conversation){try{localRec.start();}catch(_){/* tab lost focus */}}};
+  localRec.onerror=ev=>{state.srError=ev.error;
+    if(ev.error==="not-allowed"&&!assist){toggleConversation(false);
+    addMsg("avatar","Microphone permission was denied — the text box still works.");}};
+  try{localRec.start();}catch(_){return false;}
+  return true;
+}
+function toggleConversation(on){
+  state.conversation=on;
+  $("btn-voice").setAttribute("aria-pressed",on?"true":"false");
+  $("talk-label").textContent=on?"Listening — tap to stop":"Start voice conversation";
+  $("btn-voice").setAttribute("aria-label",on?"stop the live voice conversation":"start a live voice conversation");
+  let micState="";
+  try{const st=state.vendorClient&&state.vendorClient.getInputAudioState();
+      if(st)micState=" Mic permission: "+st.permissionState+".";}catch(_){}
+  $("mic-note").textContent=on?("Live conversation — the microphone is streaming."+micState+" Tap the button to stop.")
+    :"The microphone streams only while voice conversation is on.";
+  if(on){state.heardSound=false;state.heardText=false;state.srError=null;state.utt=[];state.turnStart=0;
+    startLevelMeter();micDiagnostic();}
+  else{stopLevelMeter();clearTimeout(state.micTimer);clearTimeout(state.silenceTimer);
+    if(turnText())flushTurn();}  // stopping mid-thought asks the question rather than losing it
+  if(state.vendorClient&&!state.vendorMute){setVendorMic(on);
+    // the vendor transcribes NOTHING in BYO-brain mode (llmId CUSTOMER_CLIENT_V1): its ASR is off
+    // by design so our gated brain is the only voice. Browser recognition is therefore the ear.
+    if(on){startLocalConversation(true);}
+    else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}}
+  else if(on){if(!startLocalConversation(false))return toggleConversation(false);}
+  else if(localRec){try{localRec.stop();}catch(_){} localRec=null;}
+  setStatus(on?"listening":"ready");
+}
+function voiceLang(){
+  const v=(localStorage.getItem("fx-voice-lang")||"auto");
+  if(v!=="auto")return v;
+  const n=(navigator.language||"en-US");
+  return /^en\b/i.test(n)?n:"en-US";  // any English locale is honoured; otherwise US English
+}
+(function initLang(){
+  const sel=$("lang");if(!sel)return;
+  sel.value=localStorage.getItem("fx-voice-lang")||"auto";
+  sel.onchange=()=>{
+    localStorage.setItem("fx-voice-lang",sel.value);
+    if(state.conversation&&localRec){       // apply immediately: stop, restart on the new locale
+      try{localRec.onend=null;localRec.stop();}catch(_){}
+      localRec=null;startLocalConversation(!!state.vendorClient);
+    }
+  };
+})();
+$("btn-voice").onclick=()=>toggleConversation(!state.conversation);
+$("status").onclick=()=>{if(state.speaking)interruptSpeech();};
+/* one-session vendor plans: free the slot the moment this page goes away */
+addEventListener("pagehide",()=>{try{state.vendorClient&&state.vendorClient.stopStreaming();}catch(_){}});
+/* ---- the drawn face: blink when idle, mouth moves while speaking. This animation occupies the
+   spec's "avatar video" slot (the one moving element of the stage); prefers-reduced-motion is
+   honoured via CSS, and the whole group is replaced by the vendor's video when one is attached. */
+const face=$("face"), mouth=$("mouth"), smile=$("smile");
+const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function scheduleBlink(){
+  if(reduced||!face)return;
+  setTimeout(()=>{face.classList.add("blink");
+    setTimeout(()=>{face.classList.remove("blink");scheduleBlink();},130);},2600+Math.random()*3200);
+}
+scheduleBlink();
+let mouthTimer=null;
+function mouthLoop(){
+  if(reduced||!mouth)return;
+  if(mouthTimer)return;
+  if(smile)smile.style.display="none";
+  mouth.style.display="";
+  mouthTimer=setInterval(()=>{
+    if(!state.speaking){clearInterval(mouthTimer);mouthTimer=null;
+      mouth.style.display="none";if(smile)smile.style.display="";return;}
+    const h=4+Math.random()*11;
+    mouth.setAttribute("height",h.toFixed(1));
+    mouth.setAttribute("y",(130-h/2).toFixed(1));
+  },75);
+}
+const _speak=speak;
+speak=async function(text){mouthLoop();try{return await _speak(text);}finally{
+  if(mouth){mouth.style.display="none";}if(smile){smile.style.display="";}}};
+/* the ring + mic wear today's lead regime colour once the greeting arrives */
+fetch("/avatar/greeting").then(r=>r.ok?r.json():null).then(g=>{
+  if(!g)return;
+  const m=(g.text.match(/is (calm|trend|chop|crisis)/)||[])[1];
+  if(m&&$("ring"))$("ring").setAttribute("stroke",REGIME_COLORS[m]);
+}).catch(()=>{});
+</script>
+</body>
+</html>

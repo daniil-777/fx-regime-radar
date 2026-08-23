@@ -137,3 +137,25 @@ fn the_operator_page_lives_only_in_the_ops_module() {
         );
     }
 }
+
+/// Phase 44: the API and the site now live on different origins, so CORS is the only thing
+/// standing between "our page can call the API" and "anyone's page can". The default must be the
+/// restrictive one — an unconfigured deployment should fail closed, not open.
+#[test]
+fn cors_is_origin_restricted_and_defaults_closed() {
+    let app = read("rust/fxradar-serve/src/app.rs");
+    assert!(
+        app.contains("FXRADAR_SITE_ORIGIN"),
+        "the allowed origin is configured, not hardcoded"
+    );
+    assert!(
+        !app.contains("allow_origin(Any)") && !app.contains("permissive()"),
+        "the API must never allow any origin"
+    );
+    let start = app.find("fn cors_layer").expect("cors_layer");
+    let body = &app[start..start + 1400];
+    assert!(
+        body.contains("if origins.is_empty()") && body.contains("CorsLayer::new()"),
+        "with no origin configured the layer must grant nothing"
+    );
+}
