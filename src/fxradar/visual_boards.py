@@ -533,7 +533,20 @@ def _ledger_row(args: dict, ctx: dict) -> dict | None:
         elif isinstance(val, float):
             val = f"{val:.4f}"
         rows.append([col, str(val)[:24]])
-    return {"columns": ["field", "sealed value"], "rows": rows} if rows else None
+    # The date arg is a KEY, so the provider chooses it — and the caption must be told which, or it
+    # renders "One sealed ledger row from —", which is a broken sentence wearing a gate pass.
+    when = row["date"] if "date" in led.columns else ""
+    if hasattr(when, "strftime"):
+        when = f"{when:%Y-%m-%d}"
+    return (
+        {
+            "columns": ["field", "sealed value"],
+            "rows": rows,
+            "_caption": {"date": str(when) or "the most recent sealed row"},
+        }
+        if rows
+        else None
+    )
 
 
 @provider("regime_probability_bars")
@@ -839,16 +852,18 @@ def build_index(registry: visuals.Registry | None = None) -> dict:
     reg = registry or visuals.load_registry()
     docs = {}
     for card in reg.built():
-        text = (
-            " ".join(card.intents())
-            + " "
-            + card.id.replace("_", " ")
-            + " "
-            + " ".join(card.caption.values())
-        )
+        # The SAME document the in-process retriever uses. Anything else and the two rankers score
+        # different text, which is how agreement silently fell to 63%.
+        text = reg.document_text(card)
         norm = visuals._normalise(text)
         bag = visuals._expand(visuals._tokens(norm))
+        phrases = list(card.intents()) + reg._paraphrases().get(card.id, [])
         docs[card.id] = {
+            # The declared phrasings, normalised. Retrieval SCORE turned out to be a poor confidence
+            # signal on this corpus — wanted and unwanted questions score alike, because every
+            # question contains domain vocabulary that matches something. Similarity to an actual
+            # phrasing does separate them: at 0.60 it is 100% precise on the golden set.
+            "phrases": [visuals._normalise(x) for x in phrases],
             "text": norm,
             "tokens": dict(bag),
             "total": sum(bag.values()),

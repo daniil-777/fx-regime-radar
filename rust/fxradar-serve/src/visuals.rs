@@ -40,6 +40,32 @@ pub const STRONG_SCORE: f64 = 4.4;
 pub const MARGIN_FLOOR_SCORE: f64 = 3.0;
 pub const MIN_MARGIN: f64 = 1.5;
 
+/// Similarity to an actual declared phrasing — the confidence signal that works here.
+///
+/// Measured alternative, recorded because it cost a day: BM25 rank score does NOT separate
+/// questions worth answering from questions worth refusing. Wanted questions score 12.7 at the
+/// median, unwanted ones 4.7 — but the unwanted 90th percentile is 23.7, so no cut-off exists.
+/// Every question in this domain contains vocabulary that matches SOMETHING. Similarity to a
+/// phrasing the registry actually declares behaves completely differently: at 0.60 it made zero
+/// false positives and zero wrong-card matches on the golden set.
+pub const SPEAK_SIMILARITY: f64 = 0.60;
+pub const SHOW_SIMILARITY: f64 = 0.45;
+
+pub fn phrase_similarity(index: &VisualIndex, question: &str) -> Option<(String, f64)> {
+    let norm = normalise(question, &index.pair_aliases);
+    let q = char_ngrams(&norm, 4);
+    let mut best: Option<(String, f64)> = None;
+    for (id, doc) in &index.docs {
+        for phrase in &doc.phrases {
+            let sim = cosine(&q, &char_ngrams(phrase, 4));
+            if best.as_ref().is_none_or(|(_, b)| sim > *b) {
+                best = Some((id.clone(), sim));
+            }
+        }
+    }
+    best
+}
+
 /// Is the best match good enough to act on? Either it is strong outright, or it is decent AND
 /// clearly ahead of the alternatives.
 pub fn is_confident(ranked: &[(String, f64)]) -> bool {
@@ -54,6 +80,8 @@ pub const SUPPORT_SCORE_RATIO: f64 = 0.45;
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct IndexDoc {
+    #[serde(default)]
+    pub phrases: Vec<String>,
     #[serde(default)]
     pub text: String,
     #[serde(default)]
@@ -207,25 +235,39 @@ fn cosine(a: &HashMap<String, f64>, b: &HashMap<String, f64>) -> f64 {
     }
 }
 
-/// Rank the indexed cards for a question. Mirrors `fxradar.visuals.Registry._score` exactly.
+/// BM25 parameters, mirrored from `fxradar.visuals`. Length normalisation is the point: card
+/// documents here differ in size by a factor of three, and plain IDF overlap was rewarding the long
+/// ones for being long.
+pub const BM25_K1: f64 = 1.2;
+pub const BM25_B: f64 = 0.75;
+
+/// Rank the indexed cards for a question. Mirrors `fxradar.visuals.Registry._score` exactly, which
+/// `retrieval_agrees_with_python` pins to the golden vectors.
 pub fn rank(index: &VisualIndex, question: &str) -> Vec<(String, f64)> {
     let norm = normalise(question, &index.pair_aliases);
     let q_bag = expand(&tokens(&norm), &index.expansion);
     let q_chars = char_ngrams(&norm, 4);
     let n = index.docs.len().max(1) as f64;
+    let avgdl = if index.docs.is_empty() {
+        1.0
+    } else {
+        index.docs.values().map(|d| d.total).sum::<f64>() / index.docs.len() as f64
+    };
     let mut scored: Vec<(String, f64)> = index
         .docs
         .iter()
         .map(|(id, doc)| {
             let mut lexical = 0.0;
             for (tok, qn) in &q_bag {
-                if let Some(dn) = doc.tokens.get(tok) {
-                    let df = index.df.get(tok).copied().unwrap_or(0.0);
-                    let idf = (1.0 + n / (1.0 + df)).ln();
-                    lexical += idf * qn * (1.0 + (1.0 + dn).ln());
+                let f = doc.tokens.get(tok).copied().unwrap_or(0.0);
+                if f == 0.0 {
+                    continue;
                 }
+                let df = index.df.get(tok).copied().unwrap_or(0.0);
+                let idf = (1.0 + (n - df + 0.5) / (df + 0.5)).ln();
+                lexical += idf * qn * (f * (BM25_K1 + 1.0))
+                    / (f + BM25_K1 * (1.0 - BM25_B + BM25_B * doc.total / avgdl));
             }
-            lexical /= 1.0 + (1.0 + doc.total).ln();
             let score = lexical + 2.5 * cosine(&q_chars, &char_ngrams(&doc.text, 4));
             (id.clone(), score)
         })
@@ -327,8 +369,12 @@ pub fn select_board(
     }
     if let Some(spec) = pinned {
         chosen.push(spec.clone());
-        families.insert(spec.family.clone());
-        primitives.insert(spec.primitive.clone());
+        // A pinned card is an ANSWER TO A REFUSAL — the direction-evidence card, the escalation
+        // card. It travels alone. Raising the candidate slice to eight briefly let a price trace
+        // ride along beside "I don't model direction", which answers the question in pixels that
+        // the sentence just declined to answer in words. Enforced here rather than in the caller,
+        // because every caller would otherwise have to remember.
+        return chosen;
     }
     order.extend(ranked.iter().map(|(id, _)| id.clone()));
 

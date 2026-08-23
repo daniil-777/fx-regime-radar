@@ -124,6 +124,10 @@ pub struct AppState {
     /// needs. Both are read-mostly; the packs reload on mtime like every other artifact.
     packs_cache: Arc<Mutex<Option<PacksCache>>>,
     archive_cache: Arc<Mutex<Option<ArchiveCache>>>,
+    /// Warm-up state (phase 41). Serving a slow first request is worse than briefly refusing
+    /// traffic: a load balancer can route around "not ready", but it cannot un-send a five-second
+    /// answer to the one person evaluating the product.
+    pub(crate) warm: Arc<Mutex<Option<f64>>>,
     pub(crate) conversations: Arc<crate::packs::ConversationStore>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
@@ -178,6 +182,7 @@ impl AppState {
             visual_cache: Arc::new(Mutex::new(None)),
             packs_cache: Arc::new(Mutex::new(None)),
             archive_cache: Arc::new(Mutex::new(None)),
+            warm: Arc::new(Mutex::new(None)),
             conversations: Arc::new(crate::packs::ConversationStore::default()),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
@@ -273,6 +278,34 @@ impl AppState {
             *guard = Some((stamp.0, stamp.1, Arc::clone(&loaded)));
         }
         Some(loaded)
+    }
+
+    /// Load every artifact the answer path touches, so the first real request finds them cached.
+    ///
+    /// Returns the wall time. Until this has run, `/api/health` reports `ready: false` and
+    /// `/api/ready` returns 503 — deliberately, so an orchestrator holds traffic rather than
+    /// letting one user absorb the cold start.
+    pub fn warm_up(&self) -> f64 {
+        let t0 = std::time::Instant::now();
+        let _ = self.avatar_pack();
+        let _ = self.visuals();
+        let _ = self.answer_packs();
+        let _ = self.archive();
+        let _ = self.decision_table();
+        // One throwaway ranking primes the lazily-built structures the first question would build.
+        if let Some(loaded) = self.visuals() {
+            let _ = crate::visuals::rank(&loaded.0, "how does eurusd look today");
+        }
+        let seconds = t0.elapsed().as_secs_f64();
+        if let Ok(mut w) = self.warm.lock() {
+            *w = Some(seconds);
+        }
+        crate::metrics::warmup_seconds(seconds);
+        seconds
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.warm.lock().map(|w| w.is_some()).unwrap_or(false)
     }
 
     /// The archive: history and aggregates the serving side may answer from. Absent means the
@@ -503,6 +536,18 @@ pub async fn track_metrics(req: Request, next: Next) -> Response {
 // ---------------------------------------------------------------------------------------------
 
 /// Service health: version, bundle, self-test verdict, uptime, engine latency quantiles.
+/// Readiness, separate from liveness: the process is alive long before it can answer quickly.
+#[utoipa::path(get, path = "/api/ready", tag = "public",
+    responses((status = 200, description = "warm and serving"),
+              (status = 503, description = "still warming up — hold traffic")))]
+pub async fn ready(State(st): State<AppState>) -> Response {
+    if st.is_ready() {
+        (StatusCode::OK, "ready\n").into_response()
+    } else {
+        (StatusCode::SERVICE_UNAVAILABLE, "warming\n").into_response()
+    }
+}
+
 #[utoipa::path(get, path = "/api/health", tag = "public",
     responses((status = 200, description = "service is up; selftest.status is pass or skipped", body = Object)))]
 pub async fn health(State(st): State<AppState>) -> Json<serde_json::Value> {
@@ -513,6 +558,8 @@ pub async fn health(State(st): State<AppState>) -> Json<serde_json::Value> {
         .unwrap_or((0, None, None));
     Json(serde_json::json!({
         "service": "fxradar-serve",
+        "ready": st.is_ready(),
+        "warmup_seconds": st.warm.lock().ok().and_then(|w| *w),
         "version": env!("CARGO_PKG_VERSION"),
         "bundle_version": st.bundle_version,
         "git_commit": st.git_commit,
@@ -1038,6 +1085,7 @@ pub struct ApiDoc;
 pub fn build_router(state: AppState) -> Router {
     let public = Router::new()
         .route("/api/health", get(health))
+        .route("/api/ready", get(ready))
         .route("/api/regimes/{pair}", get(regimes))
         .route("/metrics", get(metrics_handler))
         .route("/widget.js", get(widget_js))

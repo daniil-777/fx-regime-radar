@@ -198,6 +198,11 @@ pub fn looks_historical(q_lower: &str) -> bool {
     NEEDS_SUBJECT.iter().any(|m| q_lower.contains(m)) && SUBJECT.iter().any(|w| q_lower.contains(w))
 }
 
+/// The pair a question names, exposed for the pack lookup so both use one detector.
+pub fn detect_pair_public(q: &str) -> Option<String> {
+    detect_pair(q)
+}
+
 fn detect_pair(q: &str) -> Option<String> {
     const WORDS: [(&str, &str); 14] = [
         ("eurusd", "EURUSD"),

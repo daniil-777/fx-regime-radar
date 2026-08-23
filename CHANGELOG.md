@@ -2,6 +2,55 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.36.0 — phase 41: hybrid retrieval, a paraphrase cache, and two rejected components (2026-08-23)
+
+The phase's real question was which components earn their place. Two did not, and both negatives are
+written down in `reports/retrieval_ablation.md`, because that is the part that saves the next person
+a week.
+
+- **Registry recall 81.0% → 94.5%** (EN 95.2%, DE 88.6%, **FR 100%**), measured on retrieval-eligible
+  golden items. The largest single win was not the ranking function: the registry declared eight or
+  nine English phrasings per card and only three to five German, so **the index had never seen the
+  words**. Feeding in the 900 offline paraphrases moved German 65% → 80% and French 68% → 91% before
+  any scoring change. BM25 length normalisation then took German to 88.6% — card documents differ in
+  size by a factor of three, and plain IDF overlap was rewarding the long ones for being long.
+- **Embeddings declined, not deferred.** The rule permits them below 98% recall and we are at 94.5%,
+  but the residual failures are archive-routed questions, ultra-short ellipticals that conversation
+  state resolves at serve time, and one card with no data. None is a similarity failure, so an ONNX
+  model on a CPU-only VM would buy nothing. A cross-encoder reranker was not built for the same
+  reason.
+- **The finding that changed the design: retrieval score is not confidence.** Questions worth
+  answering score 12.7 at the median; questions worth refusing score 4.7 — but their 90th percentile
+  is 23.7, so no cut-off exists. A normalised variant separated no better (0.299 vs 0.296). The cause
+  is structural: every question in this domain contains vocabulary that matches something. Similarity
+  to a phrasing the registry actually DECLARES does separate them — at 0.60 it made zero false
+  positives and zero wrong-card matches — so that is what the paraphrase cache uses.
+- **The same gate made the caption path worse**, dropping comparative-temporal routing 59% → 35%: a
+  precision gate starves a path that was carrying real traffic. Two paths now carry two thresholds,
+  both measured — precision where a wrong answer is expensive, coverage where a missed one is.
+- **The packs are finally served.** Phase 40 built 279 of them and never called `answer_packs()`;
+  the paraphrase cache now answers from them in 7–20 ms, including German and French paraphrases of
+  English-authored intents, with the follow-up speech variant when the turn is a follow-up and the
+  staleness said out loud when a pack was built under superseded rules.
+- **Warm-up with a readiness gate**: 18 ms, `/api/ready` returns 503 until artifacts are loaded and
+  one throwaway ranking has run. Serving a slow first request is worse than briefly refusing traffic
+   — a load balancer can route around "not ready"; it cannot un-send a five-second answer to the one
+  person evaluating the product.
+- Bugs found and fixed while measuring: a pack lookup that depended on **hash-map iteration order**
+  (an unnamed market answered about USD/BRL); a **direction refusal that picked up a price chart** as
+  a support card once k rose to 8 — now a pinned refusal card travels alone, enforced in the
+  selector rather than in one caller; the ledger caption shipping "one sealed ledger row from —";
+  and a planted-figure question ("change risk 0.62 — what's that as a percentage?") being answered
+  with a definition instead of a correction.
+- Two measurement corrections, both documented in place: recall excluded **force-routed cards**
+  (the guards select those; retrieval never runs for them), and it is now measured at the k the
+  system actually injects rather than at a number frozen in the metric's name.
+- **The stop condition is met.** multi_hop 38% → 81%, ledger_historical 71% → 86%, aggregation
+  42% → 92%, comparative_temporal 59% → 82% — achieved by the bounded archive of closed shapes, not
+  by an agent. The recommendation recorded in the report: **do not build the open-ended search
+  agent.** Suite failures 343 → 269.
+- 358 python + 71 rust tests green; ruff, black, clippy, `make lint-ui` clean.
+
 ## v2.35.0 — the archive room, and an audit that earned it (2026-08-23)
 
 An audit put twenty-two ordinary financial questions to the assistant. Eighteen returned `gate pass`

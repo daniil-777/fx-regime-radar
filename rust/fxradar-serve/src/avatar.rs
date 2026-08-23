@@ -595,6 +595,25 @@ fn direction_intent_re() -> &'static Regex {
     })
 }
 
+/// Is the user asserting a figure of their own — a planted number, a misremembered one, or an
+/// arithmetic request over values we never published?
+fn asserts_a_figure(q: &str) -> bool {
+    if !q.chars().any(|c| c.is_ascii_digit()) {
+        return false;
+    }
+    const CUES: [&str; 8] = [
+        "you said",
+        "you've got",
+        "you have",
+        "earlier you",
+        "is still",
+        "what's that as",
+        "multiply",
+        "as a percentage",
+    ];
+    CUES.iter().any(|c| q.contains(c))
+}
+
 /// Does the question name published DATA (as opposed to asking what a term means)? Used to stop a
 /// glossary entry from standing in for a historical reading it cannot provide.
 fn mentions_data(q: &str) -> bool {
@@ -862,7 +881,7 @@ fn out_of_scope_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
         Regex::new(
-            r"\b(sharpe|correlat\w*|trading at|spot|level|levels|printing|outside|multiply|percentage|rank|allocate|split|expect\w*|year.?end|next (month|week|quarter)|tomorrow|estimate|ballpark|approximat\w*|sunday|saturday|forecast\w*)\b",
+            r"\b(sharpe|correlat\w*|trading|spot|level|levels|printing|outside|multiply|percentage|rank|allocate|split|expect\w*|year.?end|next (month|week|quarter)|tomorrow|estimate|ballpark|approximat\w*|sunday|saturday|forecast\w*)\b",
         )
         .expect("static regex")
     })
@@ -1231,6 +1250,58 @@ fn load_pack_or_503(st: &AppState) -> Result<std::sync::Arc<Pack>, ApiError> {
 
 /// Build the final response: metrics, transcript row (after the response is decided; sqlite is
 /// microseconds and never blocks generation), receipts.
+/// Serve a precomputed answer pack, if one exists for what was asked (phase 41).
+///
+/// This is the paraphrase cache: a question the classifier never saw, matched to a card by the same
+/// confidence rule the board uses, then answered from the pack built last night — speech, board and
+/// (when synthesised) audio, with no assembly on the request.
+///
+/// Two rules keep it honest. A pack is only served when its versions still match current, or with
+/// the staleness said out loud; and a question carrying a user-supplied quantity is never mapped
+/// onto a pack, because the pack was built before that quantity existed.
+fn pack_answer(
+    st: &AppState,
+    question: &str,
+    locale: &str,
+    is_followup: bool,
+) -> Option<(String, Vec<crate::visuals::CardSpec>, bool)> {
+    if question.chars().any(|c| c.is_ascii_digit()) {
+        return None; // a stated amount, a stated move: not a precomputable question
+    }
+    let packs = st.answer_packs()?;
+    let loaded = st.visuals()?;
+    let (index, _) = (&loaded.0, &loaded.1);
+    // Similarity to a DECLARED phrasing, not rank score. Rank alone served a French question about
+    // Swiss corporate taxation with a COVID episode pack, because both contain domain vocabulary.
+    // See visuals::phrase_similarity for the measurement that ruled rank score out entirely.
+    let (matched, sim) = crate::visuals::phrase_similarity(index, question)?;
+    if sim < crate::visuals::SPEAK_SIMILARITY || index.catch_alls.iter().any(|c| c == &matched) {
+        return None;
+    }
+    let card = &matched;
+    let pair = crate::archive::detect_pair_public(&question.to_lowercase()).unwrap_or_default();
+    let pack = packs.find(card, &pair, locale)?;
+    let stale = !packs
+        .staleness(
+            st.avatar_pack()
+                .ok()
+                .map(|p| p.data_through.clone())
+                .unwrap_or_default()
+                .as_str(),
+            &index.registry_version,
+        )
+        .is_empty();
+    let speech = if is_followup && !pack.speech.followup.is_empty() {
+        pack.speech.followup.clone()
+    } else {
+        pack.speech.standalone.clone()
+    };
+    if speech.trim().is_empty() {
+        return None;
+    }
+    Some((speech, pack.board.clone(), stale))
+}
+
 /// The caption of the best-matching card, when the match is strong enough to speak.
 ///
 /// A higher bar than the board's own threshold: a card can be worth SHOWING beside an answer while
@@ -1239,13 +1310,16 @@ fn load_pack_or_503(st: &AppState) -> Result<std::sync::Arc<Pack>, ApiError> {
 fn visual_answer(st: &AppState, question: &str) -> Option<String> {
     let loaded = st.visuals()?;
     let (index, boards) = (&loaded.0, &loaded.1);
+    // Two gates were tried here and measured. The strict phrase-similarity gate (0.60) is 100%
+    // precise but covers only 17% of traffic — applied HERE it dropped comparative-temporal routing
+    // from 59% to 35%, losing far more than it saved. So the caption path keeps rank confidence,
+    // and the strict gate lives on the pack cache, where precision is the entire point of the
+    // feature. Different jobs, different thresholds, both measured rather than assumed.
     let ranked = crate::visuals::rank(index, question);
-    let (top_id, top_score) = ranked.first()?;
-    // The same confidence rule the board uses: strong outright, or clearly ahead of the field.
+    let (top_id, _) = ranked.first()?;
     if !crate::visuals::is_confident(&ranked) || index.catch_alls.iter().any(|c| c == top_id) {
         return None;
     }
-    let _ = top_score;
     let cards = crate::visuals::select_board(index, boards, question, None);
     let first = cards.first()?;
     if first.caption.trim().is_empty() {
@@ -1547,6 +1621,8 @@ pub async fn brain(
     let mut candidate: String;
     let mut can_regen = false;
     let mut forced_card: Option<String> = None;
+    let mut pack_board: Vec<crate::visuals::CardSpec> = Vec::new();
+    let mut pack_stale = false;
     // The system prompt (file + CONTEXT + KNOWLEDGE) is only needed on the LLM path.
     let system = if st.avatar.anthropic_key.is_some() && !use_test_hook {
         build_system(&st, &pack)
@@ -1583,6 +1659,21 @@ pub async fn brain(
                     // A definition is not an answer to "what was the change risk a month ago". If
                     // the question is about the PAST and names data, and the archive could not
                     // serve it, the FAQ must not paper over the gap with a glossary entry.
+                    // "Change risk 0.62 — what's that as a percentage?" asserts a number we never
+                    // published. Answering with the definition of change risk neither corrects the
+                    // premise nor answers the question; it just sounds responsive.
+                    Some(_) if asserts_a_figure(&q_lower) => {
+                        m::avatar_refusal("not_in_pack");
+                        return Ok(finish(
+                            &st,
+                            &req.session_id,
+                            &question,
+                            pack.refusals.not_in_pack.clone(),
+                            "refusal",
+                            "refused:not_in_pack",
+                            t0,
+                        ));
+                    }
                     Some(_) if historical && mentions_data(&q_lower) => {
                         m::avatar_refusal("archive_miss");
                         let text = concat!(
@@ -1632,10 +1723,21 @@ pub async fn brain(
                             t0,
                         ));
                     }
-                    None => match visual_answer(&st, &effective) {
-                        Some(caption) => {
-                            candidate = caption;
-                            source = "visual";
+                    None => match pack_answer(&st, &effective, "en", !echo.is_empty())
+                        .map(|(speech, board, stale)| {
+                            pack_board = board;
+                            pack_stale = stale;
+                            speech
+                        })
+                        .or_else(|| visual_answer(&st, &effective))
+                    {
+                        Some(text) => {
+                            candidate = text;
+                            source = if pack_board.is_empty() {
+                                "visual"
+                            } else {
+                                "pack"
+                            };
                         }
                         None => {
                             let asked_for_a_number = out_of_scope_re().is_match(&q_lower);
@@ -1705,6 +1807,16 @@ pub async fn brain(
             }
         }
     };
+    // A pack built under superseded rules may still be the best answer available at 09:00 when the
+    // 06:00 build failed — but the user is told, in the answer, not in a header they cannot see.
+    if pack_stale && gate_label == "pass" {
+        candidate = format!("{candidate} (built before today's run — figures may have moved.)");
+        m::answer_pack_stale();
+    }
+    if !pack_board.is_empty() {
+        m::answer_path("pack");
+    }
+
     // Echo the resolution in the answer, so a mis-resolution is caught in the same breath.
     //
     // With one exception that matters more than the feature: if the follow-up asked for a DIFFERENT

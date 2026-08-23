@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-08-23T09:56:06Z",
+ "generated_at_utc": "2026-08-23T10:40:00Z",
  "registry_version": "3.0.0",
  "data_through": "2026-08-20",
  "cards": {
@@ -13517,7 +13517,7 @@
    "family": "trust",
    "title": "ledger row receipt",
    "args": {},
-   "caption": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
+   "caption": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
    "label": "ledger row receipt",
    "asof": "2026-08-20",
    "data": {

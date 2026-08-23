@@ -101,14 +101,23 @@ def score(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict) -> dict:
         fix = fixtures.get(item.id)
 
         # --- retrieval, computed here: does the expected card reach the candidate slice? --------
-        if item.expected_primary_card:
+        # Force-routed cards are excluded: the direction guard and the advice guard SELECT those
+        # cards outright, so retrieval never runs for them. Scoring them as retrieval failures
+        # measured a code path that does not exist, and moved a headline number every time an
+        # unrelated ranking change nudged them in or out of a slice nobody reads.
+        FORCE_ROUTED = {"direction_evidence_card", "ask_your_bank_card"}
+        if item.expected_primary_card and item.expected_primary_card not in FORCE_ROUTED:
             query = (
                 (item.turn_context + " " + item.question) if item.turn_context else item.question
             )
             ranked = [c.id for c in reg.retrieve(query, k=len(reg.built()))]
-            r6 = H.recall_at_k(ranked, item.expected_primary_card, 6)
-            per_family[fam]["recall@6"].append(r6)
-            per_locale[loc]["recall@6"].append(r6)
+            # Measured at the k the SYSTEM actually injects, not at a number frozen in a metric
+            # name. Raising k from 6 to 8 was a deliberate, measured decision (see
+            # reports/retrieval_ablation.md); a metric that kept checking 6 would have reported a
+            # regression for a change that improved the product.
+            r6 = H.recall_at_k(ranked, item.expected_primary_card, V.TOP_K)
+            per_family[fam]["recall@k"].append(r6)
+            per_locale[loc]["recall@k"].append(r6)
             per_family[fam]["mrr"].append(H.reciprocal_rank(ranked, item.expected_primary_card))
             if item.expected_support_cards:
                 per_family[fam]["ndcg@6"].append(
@@ -292,13 +301,13 @@ def render(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict, res: dict)
     w("## By family")
     w("")
     w(
-        "| family | n | recall@6 | MRR | routing | no banned words | numeric | selection | coverage | provenance |"
+        "| family | n | recall@k | MRR | routing | no banned words | numeric | selection | coverage | provenance |"
     )
     w("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
     fmt = lambda v: "—" if v != v else f"{v:.0%}"  # noqa: E731
     for fam in fam_order:
         m = pf[fam]
-        n = len(m.get("recorded", [])) or len(m.get("recall@6", []))
+        n = len(m.get("recorded", [])) or len(m.get("recall@k", []))
         mrr = _mean(m.get("mrr", []))
         w(
             f"| `{fam}` | {n} | {fmt(_mean(m.get('recall@6', [])))} | "
@@ -310,7 +319,7 @@ def render(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict, res: dict)
     w("")
     w("## By locale")
     w("")
-    w("| locale | n | recall@6 | routing | numeric |")
+    w("| locale | n | recall@k | routing | numeric |")
     w("|---|---:|---:|---:|---:|")
     for loc in ("en", "de", "fr"):
         m = pl.get(loc, {})
@@ -453,7 +462,7 @@ def main() -> None:
         f"{fam}.{metric}": _mean(vals)
         for fam, metrics in res["per_family"].items()
         for metric, vals in metrics.items()
-        if vals and metric in ("routing", "clean", "numeric", "recall@6", "selection", "provenance")
+        if vals and metric in ("routing", "clean", "numeric", "recall@k", "selection", "provenance")
     }
     if args.write_thresholds:
         thresholds_path.write_text(

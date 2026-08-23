@@ -130,6 +130,18 @@ pub fn archive_answer(shape: &str) {
     metrics::counter!("archive_answer_total", "shape" => shape.to_string()).increment(1);
 }
 
+/// How long warm-up took. Watched because a warm-up that creeps upward is a restart that starts
+/// costing real availability.
+pub fn warmup_seconds(seconds: f64) {
+    metrics::gauge!("warmup_seconds").set(seconds);
+}
+
+/// A change in the cacheable prompt prefix. Silent cache misses are invisible except in the bill
+/// and the tail, so the hash is exported rather than assumed stable.
+pub fn prompt_prefix_changed() {
+    metrics::counter!("prompt_prefix_hash_changes_total").increment(1);
+}
+
 /// gate ∈ {"direction", "grounding"}
 pub fn avatar_lint_rejection(gate: &str) {
     metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);

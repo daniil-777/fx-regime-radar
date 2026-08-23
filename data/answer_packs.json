@@ -1,6 +1,6 @@
 {
  "manifest": {
-  "generated_at_utc": "2026-08-23T09:56:06Z",
+  "generated_at_utc": "2026-08-23T10:40:22Z",
   "context_version": "2026-08-20",
   "intent_version": "1.0.0",
   "registry_version": "3.0.0",
@@ -10,8 +10,8 @@
   "voice_id": "browser-default",
   "n_packs": 282,
   "n_blocked_by_gates": 0,
-  "total_bytes": 422560,
-  "sha256": "7ca0343e7d20dd081414e869055d460c13101f0dbb85996be1eb7471d31402d5",
+  "total_bytes": 422596,
+  "sha256": "f6d7f59e2d75ccbd1e3e89bb7123b2f685b68e230eac7d4f399d4de6fb627e67",
   "audio_baked": false,
   "audio_note": "No ELEVENLABS_API_KEY at build time, so audio was not synthesised and the pack's `audio` field is null. Serving falls back to browser speech, which is audibly worse and slower to start \u2014 this is the largest remaining latency component on the common path, and it is a configuration gap rather than a code one."
  },
@@ -24076,8 +24076,8 @@
    "pair": "",
    "locale": "en",
    "speech": {
-    "standalone": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
-    "followup": "ledger row receipt, same reading: one sealed ledger row from \u2014, exactly as written before the outcome existed"
+    "standalone": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
+    "followup": "ledger row receipt, same reading: one sealed ledger row from 2026-08-20, exactly as written before the outcome existed"
    },
    "board": [
     {
@@ -24086,7 +24086,7 @@
      "family": "trust",
      "title": "ledger row receipt",
      "args": {},
-     "caption": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
+     "caption": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
      "label": "ledger row receipt",
      "asof": "2026-08-20",
      "data": {
@@ -24146,8 +24146,8 @@
    "pair": "",
    "locale": "de",
    "speech": {
-    "standalone": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
-    "followup": "ledger row receipt, gleiches Bild: one sealed ledger row from \u2014, exactly as written before the outcome existed"
+    "standalone": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
+    "followup": "ledger row receipt, gleiches Bild: one sealed ledger row from 2026-08-20, exactly as written before the outcome existed"
    },
    "board": [
     {
@@ -24156,7 +24156,7 @@
      "family": "trust",
      "title": "ledger row receipt",
      "args": {},
-     "caption": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
+     "caption": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
      "label": "ledger row receipt",
      "asof": "2026-08-20",
      "data": {
@@ -24216,8 +24216,8 @@
    "pair": "",
    "locale": "fr",
    "speech": {
-    "standalone": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
-    "followup": "ledger row receipt, m\u00eame lecture : one sealed ledger row from \u2014, exactly as written before the outcome existed"
+    "standalone": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
+    "followup": "ledger row receipt, m\u00eame lecture : one sealed ledger row from 2026-08-20, exactly as written before the outcome existed"
    },
    "board": [
     {
@@ -24226,7 +24226,7 @@
      "family": "trust",
      "title": "ledger row receipt",
      "args": {},
-     "caption": "One sealed ledger row from \u2014, exactly as written before the outcome existed",
+     "caption": "One sealed ledger row from 2026-08-20, exactly as written before the outcome existed",
      "label": "ledger row receipt",
      "asof": "2026-08-20",
      "data": {

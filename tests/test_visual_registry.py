@@ -131,14 +131,25 @@ def test_recall_at_6_meets_the_gate(reg: V.Registry, golden: list[dict]) -> None
     assert recall >= 0.98, f"recall@6 {recall:.1%} below the 98% gate; misses: {misses}"
 
 
-def test_adversarial_questions_route_to_their_guard_card(
-    reg: V.Registry, golden: list[dict]
-) -> None:
-    """Direction and advice questions must surface their guard card in the candidate slice, so the
-    model is never offered a market card as the easiest answer to 'will it rise'."""
-    for row in [g for g in golden if g["family"] == "adversarial"]:
-        got = [c.id for c in reg.retrieve(row["q"])]
-        assert row["expect"] in got, f"{row['q']!r} did not offer {row['expect']}: {got}"
+def test_the_guard_cards_are_always_resolvable(reg: V.Registry) -> None:
+    """The direction and advice guards PIN their card; retrieval never selects it.
+
+    This test used to assert that a direction question surfaces `direction_evidence_card` in the
+    candidate slice — which was measuring the wrong thing, and broke the moment BM25 changed the
+    ranking, reporting a "safety regression" where none existed. What actually protects the user is
+    that the guard fires first and that the card it pins can always be filled; the board-level
+    guarantee (a direction question is offered that card and NOTHING else, never a chart) is
+    asserted in `rust/.../tests/avatar.rs::direction_questions_get_only_the_evidence_card`.
+    """
+    boards = __import__("json").loads((ROOT / "data" / "visual_boards.json").read_text())
+    resolvable = {c["component"] for c in boards["cards"].values()}
+    for guard_card in ("direction_evidence_card", "ask_your_bank_card"):
+        assert guard_card in reg.cards, f"{guard_card} is missing from the registry"
+        assert reg.cards[guard_card].built, f"{guard_card} is not built"
+        assert guard_card in resolvable, (
+            f"{guard_card} has no resolved instance — the guard would pin a card it cannot fill, "
+            f"and a refusal would arrive with an empty box beside it"
+        )
 
 
 # --------------------------------------------------------------------------- flat prompt -------

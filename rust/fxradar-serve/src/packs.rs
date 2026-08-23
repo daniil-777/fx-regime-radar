@@ -91,23 +91,42 @@ impl AnswerPacks {
     /// Find the pack for a card, market and locale. Falls back to the locale-free instance so a
     /// French question about a market we only built in English still gets its numbers.
     pub fn find(&self, card: &str, pair: &str, locale: &str) -> Option<&AnswerPack> {
-        let mut best: Option<&AnswerPack> = None;
+        // When the question names no market, the answer must not depend on hash-map iteration
+        // order. It did once: "wie ungewöhnlich ist heute?" came back about USD/BRL, which is not
+        // wrong so much as arbitrary — and arbitrary is worse, because it is unreproducible.
+        const LEAD: &str = "EURUSD";
+        let mut exact: Option<&AnswerPack> = None;
+        let mut lead_locale: Option<&AnswerPack> = None;
+        let mut lead_any: Option<&AnswerPack> = None;
+        let mut fallback: Option<&AnswerPack> = None;
         for pack in self.packs.values() {
             if pack.card != card {
                 continue;
             }
-            let pair_ok = pair.is_empty() || pack.pair.eq_ignore_ascii_case(pair);
-            if !pair_ok {
+            if !pair.is_empty() {
+                if !pack.pair.eq_ignore_ascii_case(pair) {
+                    continue;
+                }
+                if pack.locale == locale {
+                    return Some(pack);
+                }
+                if pack.locale == "en" && exact.is_none() {
+                    exact = Some(pack);
+                }
                 continue;
             }
-            if pack.locale == locale {
-                return Some(pack);
-            }
-            if best.is_none() && pack.locale == "en" {
-                best = Some(pack);
+            let is_lead = pack.pair.is_empty() || pack.pair.eq_ignore_ascii_case(LEAD);
+            match (is_lead, pack.locale == locale) {
+                (true, true) => return Some(pack),
+                (true, false) if pack.locale == "en" && lead_locale.is_none() => {
+                    lead_locale = Some(pack)
+                }
+                (true, false) if lead_any.is_none() => lead_any = Some(pack),
+                (false, true) if fallback.is_none() => fallback = Some(pack),
+                _ => {}
             }
         }
-        best
+        exact.or(lead_locale).or(lead_any).or(fallback)
     }
 
     /// Are these packs still governed by current rules? Returns the reasons they are not.
@@ -510,6 +529,42 @@ mod tests {
     #[test]
     fn without_state_a_bare_market_is_still_a_question() {
         assert_eq!(resolve("usdchf?", None), Resolution::Verbatim);
+    }
+
+    #[test]
+    fn an_unnamed_market_resolves_to_the_lead_pair_not_to_hash_order() {
+        let mk = |pair: &str, locale: &str| AnswerPack {
+            intent_id: "ask_siren_gauge".into(),
+            card: "siren_gauge".into(),
+            pair: pair.into(),
+            locale: locale.into(),
+            speech: PackSpeech {
+                standalone: format!("Siren for {pair}"),
+                followup: format!("{pair}, same"),
+            },
+            board: vec![],
+            audio: None,
+            cache_key: pair.to_string(),
+        };
+        let packs = AnswerPacks {
+            manifest: PackManifest::default(),
+            packs: HashMap::from([
+                ("a".to_string(), mk("USDBRL", "en")),
+                ("b".to_string(), mk("EURUSD", "en")),
+                ("c".to_string(), mk("USDZAR", "en")),
+            ]),
+        };
+        for _ in 0..25 {
+            let got = packs.find("siren_gauge", "", "en").unwrap();
+            assert_eq!(
+                got.pair, "EURUSD",
+                "an unnamed market must be deterministic"
+            );
+        }
+        assert_eq!(
+            packs.find("siren_gauge", "USDZAR", "en").unwrap().pair,
+            "USDZAR"
+        );
     }
 
     #[test]

@@ -237,9 +237,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         warn!("alert engine disabled (--alert-poll-secs 0)");
     }
+    let state_for_warmup = state.clone();
     let app = build_router(state);
     let listener = tokio::net::TcpListener::bind(args.bind).await?;
     info!(addr = %args.bind, "fxradar-serve listening (docs at /docs, metrics at /metrics)");
+    // Warm before the first request, not during it. `/api/ready` reports 503 until this
+    // finishes, so an orchestrator holds traffic rather than letting one user pay the
+    // cold start — which is exactly the user most likely to be evaluating the product.
+    let warm_seconds = state_for_warmup.warm_up();
+    tracing::info!(seconds = warm_seconds, "warm-up complete; serving");
+
     axum::serve(listener, app)
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
