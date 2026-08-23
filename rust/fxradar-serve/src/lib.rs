@@ -14,6 +14,7 @@ pub mod avatar;
 pub mod bundle;
 pub mod error;
 pub mod features;
+pub mod flags;
 pub mod guard;
 pub mod hmm;
 pub mod infer;

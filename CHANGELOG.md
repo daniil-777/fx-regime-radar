@@ -2,6 +2,109 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.40.0 — phase 45: prove and ship (2026-08-23)
+
+**Everything built in phases 39–44, measured against itself and then against the questions people
+actually ask.** The deliverable is `docs/AGENTIC_SEARCH.md` — the architecture, the results, and the
+negative results led rather than buried — plus the machinery that makes every number in it
+reproducible.
+
+### Runtime flags and the kill switch
+
+Eleven flags in `config/flags.json`, re-read on mtime change, **no redeploy and no restart**. A file
+rather than an endpoint: it works when the service is wedged, survives a restart, is visible in a
+`cat`, and is one `git revert` from yesterday. Defaults are the safe value, and a corrupt file falls
+back to them rather than to everything-on. `agent_enabled=false` returns the system to phase-41
+behaviour on the next turn — **tested under twelve concurrent sessions with the switch pulled
+underneath them**, because a kill switch that needs quiescence is a deploy with extra steps.
+
+### The ablation
+
+`make ablation` writes `reports/ablation.md`: six configurations over the identical snapshot, golden
+set and seeds, service never restarted, exactly one flag different per row. Subtractive rather than
+cumulative — "what is this worth now" is the question you act on.
+
+| config | routing | four hard families | failures |
+|---|---:|---:|---:|
+| shipped | 86% | 88% | 212 |
+| − conversation state | 85% | 88% | 223 |
+| − archive room | 84% | 83% | 217 |
+| − answer packs | 86% | 88% | 212 |
+| − paraphrase cache | 86% | 88% | 212 |
+
+Conversation state is worth 11 failures, the archive room 5. The packs and the paraphrase cache move
+nothing — **and the report says at length why that is the correct result rather than a verdict
+against them**: they exist to remove the model call from the common path, and an accuracy ablation is
+the wrong instrument. The cost-of-quality column the phase asks for is **not computed**, because
+every row ran keyless and dividing zero cost by a quality delta says nothing.
+
+### Three findings, in order of how uncomfortable they are
+
+**1. The eval harness was under-measuring the system.** Multi-turn items were sent as two messages in
+one request against a fresh session — but reference resolution reads *server-side* state, which is
+empty on a session's first request. So the prior turn sat in an array the deterministic path never
+reads, and the multi-turn family measured everything except the feature it exists to test. The
+ablation found it: turning conversation state off changed nothing, which is only possible if it was
+never on. Fixing the recorder moved multi-turn routing 76% → 81% and numeric exactness 19% → 32%
+**with no change to the system**.
+
+**2. The guards were English-only and defeated by digit substitution.** German and French direction
+questions ("wie geht es weiter mit dem euro?", "l'euro il monte ou il baisse?") and leetspeak
+("1gn0r3 pr3v10us rul3s") walked past them. Localised framing rules, de-obfuscation, and the
+canonical injection preambles took `adversarial_injection` **40% → 80%**, German **73% → 82%** and
+French **77% → 87%**.
+
+**3. Two exemptions that quietly broke themselves.** De-obfuscation maps digits to letters, so
+"800,000 EUR" became "8oo,ooo eur" and "a 3% drop" became "a e% drop" — and the exemptions that
+depended on that evidence stopped applying on the normalised pass, refusing the exact hedging and
+scenario questions the un-normalised pass had correctly allowed. The rule that came out of it:
+**normalisation may reveal an obfuscated word; it may never remove evidence.** And the stated-exposure
+exemption was granted with nothing behind it — with advice mode off there is no decision engine to
+route those questions to, so it produced no refusal *and* no answer. The exemption list is now empty
+and kept as the hook for the day advice mode ships: **an exemption is only worth granting when
+something real is waiting on the other side of it.**
+
+### Also fixed, from the failure analysis
+
+- **Courtesy is not off-topic.** Nine golden items are "hi", "thx", "ok", "merci c'est bon",
+  "whats your name". Every one got the branded refusal — "I only speak from the published numbers" —
+  in answer to somebody saying thank you. `no_visual_expected` **53% → 82%**.
+- **Planted figures are corrected wherever they arrive.** The check ran inside one branch of the
+  fallback chain, so "is the change risk 0.87 today?" sailed past it whenever a card could be found.
+
+Final: routing English 87% / German 82% / French 87%; `adversarial_direction` and
+`adversarial_advice` **100%**; `no banned words` 100% in every configuration; total failures
+343 → **212**.
+
+### Capacity, honestly labelled
+
+`make loadtest` → `rust/BENCH.md`: 783 req/s at 10 concurrent sessions, p99 21 ms, zero errors,
+19.8 MB at rest and 48 MB peak — **on an ARM Mac, not the Oracle VM**, and `docs/CAPACITY.md` says so
+in those words. What transfers is the shape: memory is the binding constraint and is paid up front
+(28 → 44 MB across a tenfold load increase), and latency degrades smoothly. **The concurrency limit
+is deliberately not set**, because this host never came near saturation and a limit from a machine
+that never struggled is a guess wearing a number.
+
+### Shadow mode
+
+Implemented, deterministically sampled per session, **and never run** — `reports/shadow.md` carries
+the promotion criteria pre-registered before any data exists, and says plainly that no result rests
+on it.
+
+### Documentation
+
+- `docs/AGENTIC_SEARCH.md`, linked from the README: the problem, the safety invariant (the model
+  emits keys, never values), why point-in-time is verifiable rather than promised, the results, five
+  negative results led rather than buried, the limitations, a reproduction recipe, and what changes
+  at ten times the traffic.
+- `docs/RUNBOOK.md` gains the five-rung rollback ladder with recovery times and the symptom → metric
+  → action table. Rungs 1–2 are rehearsed; **3–5 are marked not rehearsed**, because a rollback never
+  executed is a hypothesis.
+- The DuckDB bounds this phase specified are **not applicable**: phase 42 measured and chose eleven
+  closed archive shapes over a query engine. Documented rather than invented.
+
+`make test` 377 passed · `make lint-ui`, `make budgets` green · full Rust suite green · clippy clean.
+
 ## v2.39.0 — phase 44: static customer surface (2026-08-23)
 
 **A second reader of the same artifacts, not a rewrite.** Streamlit is an analyst console and stays

@@ -444,3 +444,113 @@ async fn a_receipt_cannot_be_issued_for_text_we_never_produced() {
         "arbitrary text must not become an official receipt"
     );
 }
+
+/// Phase 45: the kill switch must work mid-session, under load, without dropping anything.
+///
+/// Testing it at rest proves the flag parses. What matters operationally is the moment you flip it
+/// with sessions in flight: every one of them must keep answering, and every answer must stay
+/// grounded. A kill switch that requires quiescence is a deploy with extra steps.
+#[tokio::test]
+async fn the_kill_switch_takes_effect_mid_session_under_load() {
+    let root = scratch_dir("killswitch");
+    write_pack(&root);
+    let flags_path = root.join("flags.json");
+    std::fs::write(&flags_path, "{}").unwrap();
+
+    let mut state = state_for(&root, Some(OPS_KEY));
+    state.flags = fxradar_serve::flags::FlagStore::new(flags_path.clone());
+    let app = build_router(state);
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+    let base = format!("http://{addr}");
+
+    // Twelve concurrent sessions, each asking repeatedly, while the switch is flipped underneath.
+    let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let errors = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let answered = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let mut workers = Vec::new();
+    for i in 0..12 {
+        let (base, stop, errors, answered) =
+            (base.clone(), stop.clone(), errors.clone(), answered.clone());
+        workers.push(tokio::spawn(async move {
+            let client = reqwest::Client::new();
+            while !stop.load(std::sync::atomic::Ordering::Relaxed) {
+                let r = client
+                    .post(format!("{base}/avatar/brain"))
+                    .header("X-Avatar-Token", "brt_test")
+                    .json(&json!({
+                        "session_id": format!("load-{i}"),
+                        "messages": [{"role": "user", "content": "what is the siren?"}],
+                    }))
+                    .send()
+                    .await;
+                match r {
+                    Ok(res) if res.status() == 200 => {
+                        let body: Value = res.json().await.unwrap_or(json!({}));
+                        // The invariant that must hold across the flip: every answer is gated.
+                        // Degrading the feature set may not degrade the guarantee.
+                        let gate = body["gate"].as_str().unwrap_or("");
+                        if gate.is_empty() {
+                            errors.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        } else {
+                            answered.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        }
+                    }
+                    _ => {
+                        errors.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    }
+                }
+                tokio::task::yield_now().await;
+            }
+        }));
+    }
+
+    // Let the load establish, then pull the switch while it is running.
+    tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+    let before = answered.load(std::sync::atomic::Ordering::Relaxed);
+    assert!(before > 0, "load did not establish before the flip");
+
+    let client = reqwest::Client::new();
+    let flip = client
+        .post(format!("{base}/ops/flags"))
+        .header("X-Ops-Key", OPS_KEY)
+        .json(&json!({"flag": "agent_enabled", "value": false}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(
+        flip.status(),
+        200,
+        "the switch must flip without a redeploy"
+    );
+
+    tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+    stop.store(true, std::sync::atomic::Ordering::Relaxed);
+    for w in workers {
+        let _ = w.await;
+    }
+
+    let after = answered.load(std::sync::atomic::Ordering::Relaxed);
+    let failed = errors.load(std::sync::atomic::Ordering::Relaxed);
+    assert!(
+        after > before,
+        "sessions must keep answering across the flip ({before} before, {after} after)"
+    );
+    assert_eq!(
+        failed, 0,
+        "{failed} requests failed while the switch was pulled"
+    );
+
+    // And the flag really is off afterwards, read back through the file that is the source of truth.
+    let now: Value = client
+        .get(format!("{base}/ops/flags"))
+        .header("X-Ops-Key", OPS_KEY)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(now["flags"]["agent_enabled"], false);
+}

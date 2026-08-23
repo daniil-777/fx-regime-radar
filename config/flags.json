@@ -1,0 +1,13 @@
+{
+ "agent_enabled": true,
+ "lane_archive": true,
+ "lane_logbook": false,
+ "lane_cookbook": true,
+ "packs_enabled": true,
+ "paraphrase_cache_enabled": true,
+ "conversation_state_enabled": true,
+ "wait_line_enabled": true,
+ "embeddings_enabled": false,
+ "shadow_mode": false,
+ "shadow_sample_rate": 0.2
+}

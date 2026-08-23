@@ -85,12 +85,34 @@ def main() -> None:
     rows, errors = [], 0
     t_start = time.time()
     for i, item in enumerate(items, 1):
-        messages = []
+        # A multi-turn item is TWO requests on ONE session, because that is what a conversation is.
+        #
+        # This used to send both turns in a single request as a `messages` array against a fresh
+        # session id. That looks equivalent and is not: reference resolution reads SERVER-SIDE
+        # conversation state keyed by session id, which is empty on a session's first request. So
+        # the prior turn sat in an array the deterministic path never reads, the follow-up was
+        # resolved as though asked cold, and the multi_turn_followup score measured everything
+        # about the system except the feature the family exists to test. The phase-45 ablation
+        # found it: turning conversation state OFF changed nothing at all, which is only possible
+        # if it was never on.
+        session = f"eval-{item.id}"
         if item.turn_context:
-            messages.append({"role": "user", "content": item.turn_context})
-            messages.append({"role": "assistant", "content": "(prior answer)"})
-        messages.append({"role": "user", "content": item.question})
-        body = {"session_id": f"eval-{item.id}", "messages": messages}
+            try:
+                post(
+                    args.base,
+                    "/avatar/brain",
+                    {
+                        "session_id": session,
+                        "messages": [{"role": "user", "content": item.turn_context}],
+                    },
+                    brain_token,
+                )
+            except urllib.error.HTTPError:
+                pass  # the prior turn failing is itself informative, and the follow-up still runs
+        body = {
+            "session_id": session,
+            "messages": [{"role": "user", "content": item.question}],
+        }
         t0 = time.perf_counter()
         try:
             r = post(args.base, "/avatar/brain", body, brain_token)

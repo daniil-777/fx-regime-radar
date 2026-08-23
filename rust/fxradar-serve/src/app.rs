@@ -133,6 +133,8 @@ pub struct AppState {
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
     /// Phase 43: recent turns, for the operator trace view. In memory, bounded, never on disk.
     pub traces: crate::trace::TraceStore,
+    /// Phase 45: runtime flags and the kill switch, re-read from disk on change.
+    pub flags: crate::flags::FlagStore,
 }
 
 /// Newest-row-per-pair view of regimes.parquet, re-read only when the file changes (the pipeline
@@ -188,6 +190,11 @@ impl AppState {
             conversations: Arc::new(crate::packs::ConversationStore::default()),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
             traces: crate::trace::TraceStore::new(crate::trace::TraceCfg::default()),
+            flags: crate::flags::FlagStore::new(
+                std::env::var("FXRADAR_FLAGS")
+                    .map(PathBuf::from)
+                    .unwrap_or_else(|_| PathBuf::from("config/flags.json")),
+            ),
         }
     }
 
@@ -1173,6 +1180,10 @@ pub fn build_router(state: AppState) -> Router {
         .route("/ops/traces", get(crate::ops::traces_index))
         .route("/ops/audit", get(crate::ops::audit_log))
         .route("/ops/trace/{trace_id}", get(crate::ops::trace_view))
+        .route(
+            "/ops/flags",
+            get(crate::ops::flags_get).post(crate::ops::flags_set),
+        )
         .route("/ops/trace/{trace_id}/json", get(crate::ops::trace_json))
         .route(
             "/ops/trace/{trace_id}/receipt",

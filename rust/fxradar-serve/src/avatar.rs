@@ -613,15 +613,22 @@ fn direction_intent_re() -> &'static Regex {
         Regex::new(concat!(
             r"\b(rise|rises|rising|risen|fall|falls|falling|fallen|",
             r"go up|goes up|going up|go down|goes down|going down|",
+            r"go(?:es|ing)? (?:higher|lower)|went (?:up|down|higher|lower)|",
             r"head(?:ed|ing)? (?:up|down|higher|lower)|",
             r"mov(?:e|es|ing) (?:up|down|higher|lower)|",
             r"drop|drops|dropping|rally|rallies|bullish|bearish|",
             r"target|price target|forecast the (?:rate|price)|predict the (?:rate|price)|",
             r"which way|higher or lower|up or down|",
             r"appreciate|depreciate|strengthen|strengthens|strengthening|",
-            r"weaken|weakens|weakening|worth more|worth less|cheaper|more expensive|",
-            r"steigen|steigt|f(?:ä|ae)llt|st(?:ä|ae)rker|schw(?:ä|ae)cher|",
-            r"monter|baisser|va-t-il monter)\b",
+            r"weaken|weakens|weakening|weaker|stronger|softer|firmer|",
+            r"worth more|worth less|cheaper|more expensive|",
+            // German: the eval found "steigt", "fällt" and "schwächer" arriving in questions the
+            // English list could never have matched.
+            r"steigen|steigt|steigend|f(?:ä|ae)llt|fallen|sinkt|sinken|",
+            r"st(?:ä|ae)rker|schw(?:ä|ae)cher|aufwerten|abwerten|hoch oder runter|",
+            // French: "monte ou baisse" is how the question is actually asked, not "monter".
+            r"monte|montent|monter|baisse|baissent|baisser|hausse|",
+            r"plus fort|plus faible|va-t-il monter|va monter)\b",
         ))
         .expect("static regex")
     })
@@ -638,10 +645,155 @@ fn direction_intent_re() -> &'static Regex {
 /// So: a movement word makes a question directional only when it is NOT about one of the published
 /// non-price quantities.
 fn asks_price_direction(q: &str) -> bool {
-    if !direction_intent_re().is_match(q) {
+    let Some(hit) = direction_intent_re().find(q) else {
+        return false;
+    };
+    // A CONDITIONAL is not a forecast. "What would a 3% drop cost us on 2.4 million of receivables"
+    // supplies the move and asks for the arithmetic; it neither asks nor implies which way the rate
+    // goes, and the scenario engine exists precisely to answer it. Refusing it would be the guard
+    // failing the person it was built to serve — the treasurer with a real exposure and a real
+    // question — while protecting nobody, since no direction claim is anywhere in it.
+    //
+    // Callers that normalise the text decide this once on the ORIGINAL and short-circuit; the check
+    // stays here so a caller that forgets still gets the right answer on un-normalised input.
+    if conditional_scenario_re().is_match(q) {
         return false;
     }
-    !non_price_subject_re().is_match(q)
+    // The exemption is PROXIMITY-based, not sentence-based.
+    //
+    // The first version asked "does this sentence mention volatility, risk or the siren anywhere?"
+    // and exempted it if so. That is wrong in a way the eval caught: "risk jumped on cable — so
+    // sterling weaker this week?" mentions risk in its PREMISE and asks about the rate in its
+    // QUESTION. Scanning the whole sentence let the premise excuse the question, which is exactly
+    // the smuggling pattern the framing rules exist to stop, arriving through the guard meant to
+    // prevent over-refusal.
+    //
+    // So look only at what the movement word is attached to: a short window before it, and a
+    // couple of words after. "volatility falling" and "the siren is going up" keep their exemption;
+    // "sterling weaker" does not get one from a clause it does not belong to.
+    let start = q[..hit.start()]
+        .char_indices()
+        .rev()
+        .take(48)
+        .last()
+        .map_or(0, |(i, _)| i);
+    let end = q[hit.end()..]
+        .char_indices()
+        .take(20)
+        .last()
+        .map_or(hit.end(), |(i, c)| hit.end() + i + c.len_utf8());
+    !non_price_subject_re().is_match(&q[start..end])
+}
+
+/// Small talk, which is not off-topic — it is the beginning and end of every real conversation.
+///
+/// Nine golden items are "hi", "thx", "ok", "sorry can u repeat that", "whats your name",
+/// "sprichst du deutsch?", "merci c'est bon". Every one came back with the branded off-topic
+/// refusal — "I only speak from the published numbers" — in answer to somebody saying thank you.
+/// A product that refuses a greeting has not protected anything; it has just told the user it is
+/// not really talking to them.
+///
+/// These answers are fixed strings, so nothing here can invent a number or a market claim, and
+/// they all pass the same gates as any other answer.
+fn courtesy_reply(q: &str) -> Option<&'static str> {
+    let t = q
+        .trim()
+        .trim_end_matches(['?', '!', '.'])
+        .trim()
+        .to_lowercase();
+    if t.len() > 40 {
+        return None; // a greeting is short; a long sentence that opens with "hi" is a question
+    }
+    let is = |set: &[&str]| {
+        set.iter()
+            .any(|w| t == *w || t.starts_with(&format!("{w} ")))
+    };
+    if is(&[
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "hallo",
+        "guten morgen",
+        "guten tag",
+        "grüezi",
+        "gruezi",
+        "salut",
+        "bonjour",
+    ]) {
+        return Some("Hello. Ask me about today's regime, the change risk, the siren, or how any of it is computed.");
+    }
+    if is(&[
+        "thanks",
+        "thank you",
+        "thx",
+        "ta",
+        "cheers",
+        "danke",
+        "vielen dank",
+        "merci",
+        "merci c'est bon",
+        "ok",
+        "okay",
+        "got it",
+        "alles klar",
+        "d'accord",
+    ]) {
+        return Some(
+            "Any time. I am here if you want another market or the method behind a number.",
+        );
+    }
+    if is(&["bye", "goodbye", "tschüss", "tschuess", "au revoir", "ciao"]) {
+        return Some("Goodbye. The published reading is on the dashboard whenever you need it.");
+    }
+    if t.contains("your name")
+        || t.contains("who are you")
+        || t.contains("wie heisst du")
+        || t.contains("wer bist du")
+        || t.contains("comment tu t'appelles")
+    {
+        return Some(
+            "I am the radar's AI presenter — a computer-generated voice, not a person. I read out              what the models published and how they computed it.",
+        );
+    }
+    if t.contains("sprichst du")
+        || t.contains("do you speak")
+        || t.contains("parlez-vous")
+        || t.contains("tu parles")
+    {
+        return Some("Yes — English, German and French. Ask in whichever you prefer.");
+    }
+    if t.contains("repeat")
+        || t.contains("say that again")
+        || t.contains("noch mal")
+        || t.contains("nochmal")
+        || t.contains("répète")
+        || t.contains("repete")
+    {
+        return Some("Of course — ask me again and I will give you the same reading.");
+    }
+    None
+}
+
+/// A stated hypothetical move, asked for its consequence rather than its likelihood.
+///
+/// The user supplies the move, so the system is never the source of a directional claim — it is
+/// doing arithmetic on somebody else's premise, with the premise stated out loud in the question.
+fn conditional_scenario_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(concat!(
+            r"(?i)(what|how much) would (a|an|the)? ?[\d.]+\s?(%|percent|pct|bp|basis) ",
+            r"?\w*\s?(drop|fall|move|rise|gain|loss|swing|shift)",
+            r"|if (the |it |eur|usd|gbp|chf|the rate |the pair )?\w*\s?(dropped|fell|moved|rose|gained|weakened|strengthened) ",
+            r"?(by )?[\d.]+\s?(%|percent|pct|bp)",
+            r"|(a|an) [\d.]+\s?(%|percent|pct|bp)\s?\w*\s?(drop|fall|move|rise|swing) (would|costs?|means?)",
+            r"|was (w(?:ü|ue)rde|kostet) (ein|eine) [\d.]+\s?(%|prozent)",
+        ))
+        .expect("static regex")
+    })
 }
 
 /// The quantities this radar publishes, which may rise and fall freely in conversation.
@@ -674,7 +826,29 @@ fn asserts_a_figure(q: &str) -> bool {
         "multiply",
         "as a percentage",
     ];
-    CUES.iter().any(|c| q.contains(c))
+    if CUES.iter().any(|c| q.contains(c)) {
+        return true;
+    }
+    // "Is the change risk 0.87 today?" and "confirm the siren is 42" plant a figure and invite a
+    // yes. Answering either from the general path would let the user leave believing we confirmed
+    // a number we never published — the planted-number family exists for exactly this, and it was
+    // catching only the "you said" phrasings.
+    planted_figure_re().is_match(q)
+}
+
+/// A figure asserted in the question and offered for confirmation.
+fn planted_figure_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(concat!(
+            r"(?i)\b(is|are|was|isn't|ist|est)\b[^?]{0,40}\b",
+            r"(change risk|risk|siren|anomaly|regime prob\w*|brier|coverage|risiko|sirene)\b",
+            r"[^?]{0,20}[\d]",
+            r"|(?i)\b(confirm|bestätige|bestaetige|confirme)\b[^?]{0,60}[\d]",
+            r"|(?i)\b(change risk|siren|risk|risiko|sirene)\b\s*(is|=|ist|est)\s*[\d]",
+        ))
+        .expect("static regex")
+    })
 }
 
 /// Does the question name published DATA (as opposed to asking what a term means)? Used to stop a
@@ -1486,13 +1660,19 @@ fn finish_with(
     // What the receipt needs in order to be regenerable from the trace alone. Without these the
     // operator could see the answer but not reissue the document, which is the half of the promise
     // that actually matters to somebody handling a client dispute.
+    let mut v = std::collections::BTreeMap::new();
     if let Ok(pk) = st.avatar_pack() {
-        let mut v = std::collections::BTreeMap::new();
         v.insert("context".to_string(), pk.data_through.clone());
         v.insert("chain_head".to_string(), pk.chain_head.clone());
         v.insert("disclosure".to_string(), pk.disclosure.clone());
-        crate::trace::versions(v);
     }
+    // Phase 45: the flag state travels with the turn. Reading a six-week-old trace against
+    // today's configuration is how you conclude the wrong thing about a bug that was really a
+    // flag being off.
+    let f = st.flags.get();
+    v.insert("flags".to_string(), f.stamp());
+    v.insert("config_hash".to_string(), f.config_hash());
+    crate::trace::versions(v);
     if let Some(turn) = crate::trace::finish(
         question,
         &text,
@@ -1753,7 +1933,16 @@ async fn brain_inner(
     // --- phase 40: resolve references FIRST -------------------------------------------------------
     // "and USDCHF?" is not a question until it has been expanded. Classifying or looking it up
     // before resolution classifies the wrong utterance.
-    let prior = st.conversations.get(&req.session_id);
+    // The configuration this turn runs under, read once. Stamped into the trace so an old trace
+    // can be interpreted under the flags that produced it rather than under today's.
+    let flags = st.flags.get();
+    // Reference resolution is what conversation state DOES; with state off there is nothing to
+    // resolve against, which is exactly the ablation the phase asks for on the multi-turn family.
+    let prior = if flags.conversation_state_enabled {
+        st.conversations.get(&req.session_id)
+    } else {
+        None
+    };
     let t_resolve = crate::trace::elapsed_ms();
     let resolution = crate::packs::resolve(&question, prior.as_ref());
     crate::trace::stage("reference resolution", t_resolve);
@@ -1807,11 +1996,25 @@ async fn brain_inner(
     // detector catches the costumes — premise smuggling, persona shift, completion, extrapolation,
     // authority claims. Both run on the raw utterance as well as the resolved one.
     let framing = crate::guard::detect(&raw_lower).or_else(|| crate::guard::detect(&q_lower));
-    let asks_direction = asks_price_direction(&q_lower)
-        || asks_price_direction(&raw_lower)
-        || framing.is_some_and(|f| f.is_direction());
+    // Digit substitution defeats a word list, so the keyword guard reads the de-obfuscated form as
+    // well. Only the GUARDS see this text; the answer is always produced from what the user wrote.
+    let plain = crate::guard::deobfuscate(&raw_lower);
+    // The scenario exemption is decided ONCE, on the text the user actually wrote, and then applies
+    // to every variant the guards look at. De-obfuscation maps digits to letters, so "a 3% drop"
+    // becomes "a e% drop" and the exemption's own evidence disappears — which made the normalised
+    // pass refuse the arithmetic question the un-normalised pass had correctly allowed. The rule
+    // that falls out of it, and that both this and the exposure exemption now follow: normalisation
+    // may reveal an obfuscated word, and may never remove evidence.
+    let scenario = conditional_scenario_re().is_match(&raw_lower)
+        || conditional_scenario_re().is_match(&q_lower);
+    let asks_direction = !scenario
+        && (asks_price_direction(&q_lower)
+            || asks_price_direction(&raw_lower)
+            || asks_price_direction(&plain)
+            || framing.is_some_and(|f| f.is_direction()));
     let asks_advice = advice_intent_re().is_match(&q_lower)
         || advice_intent_re().is_match(&raw_lower)
+        || advice_intent_re().is_match(&plain)
         || framing.is_some_and(|f| !f.is_direction());
     crate::trace::resolution(
         &question,
@@ -1903,6 +2106,44 @@ async fn brain_inner(
     // count or a comparison asks for something no pack can hold, however confident the match. When
     // both fire it is worth counting — if that climbs, one of them is wrong, and the counter is how
     // anybody would notice.
+    // A planted figure is corrected wherever it arrives, not only where the FAQ happens to match.
+    //
+    // `asserts_a_figure` was checked inside one branch of the fallback chain, so "is the change
+    // risk 0.87 today?" sailed past it whenever the FAQ missed and a card could be found — and the
+    // user got a confident-sounding answer to a question containing a number we never published.
+    // The premise has to be corrected before any path gets the chance to talk around it.
+    if asserts_a_figure(&q_lower) && !question_numbers.is_empty() {
+        let asserted_is_ours = question_numbers.iter().all(|n| pack.allowed.contains(n));
+        if !asserted_is_ours {
+            m::avatar_refusal("not_in_pack");
+            crate::trace::route("refusal", "planted figure");
+            crate::trace::gate("planted_number", "fail", "a figure we never published");
+            return Ok(finish(
+                &st,
+                &req.session_id,
+                &question,
+                pack.refusals.not_in_pack.clone(),
+                "refusal",
+                "refused:not_in_pack",
+                t0,
+            ));
+        }
+    }
+
+    // Courtesy, before anything that reads data: "thanks" needs no lookup and deserves no refusal.
+    if let Some(reply) = courtesy_reply(&question) {
+        crate::trace::route("courtesy", "small talk");
+        return Ok(finish(
+            &st,
+            &req.session_id,
+            &question,
+            reply.to_string(),
+            "template",
+            "pass",
+            t0,
+        ));
+    }
+
     let t_route = crate::trace::elapsed_ms();
     let pre_router = crate::slip::pre_router_wants_archive(&q_lower);
     if pre_router {
@@ -1915,7 +2156,11 @@ async fn brain_inner(
             }
         }
     }
-    if let Some(archive) = st.archive() {
+    // The kill switch. `agent_enabled=false` returns the system to phase-41 behaviour — packs,
+    // paraphrase cache and the FAQ, with no rooms — on the very next turn, including for sessions
+    // already in progress. No redeploy, no dropped WebRTC session.
+    let rooms_open = flags.agent_enabled && flags.lane_archive;
+    if let Some(archive) = st.archive().filter(|_| rooms_open) {
         if let Some(found) = crate::archive::answer(&archive, &q_lower) {
             crate::trace::stage("archive lookup", t_route);
             crate::trace::route(
@@ -2054,13 +2299,17 @@ async fn brain_inner(
                             t0,
                         ));
                     }
-                    None => match pack_answer(&st, &effective, "en", !echo.is_empty())
-                        .map(|(speech, board, stale)| {
-                            pack_board = board;
-                            pack_stale = stale;
-                            speech
-                        })
-                        .or_else(|| visual_answer(&st, &effective))
+                    None => match (if flags.packs_enabled {
+                        pack_answer(&st, &effective, "en", !echo.is_empty())
+                    } else {
+                        None
+                    })
+                    .map(|(speech, board, stale)| {
+                        pack_board = board;
+                        pack_stale = stale;
+                        speech
+                    })
+                    .or_else(|| visual_answer(&st, &effective))
                     {
                         Some(text) => {
                             candidate = text;

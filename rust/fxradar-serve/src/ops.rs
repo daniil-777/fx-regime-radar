@@ -291,6 +291,53 @@ pub async fn trace_receipt(
     Ok(Html(crate::receipt::render(&payload_from_trace(&turn))).into_response())
 }
 
+/// Read the current flags.
+pub async fn flags_get(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    let kh = require_operator(&st, &headers)?;
+    audit(&st, "flags_read", "", &kh, "");
+    let f = st.flags.get();
+    Ok(Json(json!({
+        "flags": &*f,
+        "config_hash": f.config_hash(),
+        "stamp": f.stamp(),
+        "source": st.flags.path().display().to_string(),
+    })))
+}
+
+#[derive(serde::Deserialize)]
+pub struct FlagSet {
+    pub flag: String,
+    pub value: serde_json::Value,
+}
+
+/// Flip one flag. Takes effect on the next turn — including for sessions already in progress,
+/// which is the property that makes the kill switch a mitigation rather than a deploy.
+pub async fn flags_set(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<FlagSet>,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    let kh = require_operator(&st, &headers)?;
+    let next = st
+        .flags
+        .set(&req.flag, req.value.clone())
+        .map_err(|e| ApiError(StatusCode::BAD_REQUEST, e))?;
+    audit(
+        &st,
+        "flags_set",
+        "",
+        &kh,
+        &format!("{}={}", req.flag, req.value),
+    );
+    tracing::warn!(flag = %req.flag, value = %req.value, "runtime flag changed");
+    Ok(Json(
+        json!({"flags": next, "config_hash": next.config_hash()}),
+    ))
+}
+
 /// The audit trail itself, so an operator can see who looked at what.
 pub async fn audit_log(
     State(st): State<AppState>,

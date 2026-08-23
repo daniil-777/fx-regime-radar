@@ -52,3 +52,47 @@ phase `/api/regimes/{pair}` re-scanned the whole `regimes.parquet` per request (
 c=8, 43 req/s); the newest-row map is now cached on (mtime, size) and re-read only when the
 pipeline rewrites the file. `oha`/`k6` were not installed on this machine, hence the Python client;
 numbers are upper bounds on latency (client overhead is inside them), not lower bounds.
+
+
+## Concurrency, phase 45
+
+**Measured on `macOS-26.5.1-arm64-arm-64bit` (arm) — NOT on the
+Oracle VM.** The VM is a CPU-only ARM instance; these absolute numbers do not transfer to it and are
+not presented as capacity figures for it. `docs/CAPACITY.md` records which figures are still owed.
+
+What does transfer is the shape: whether latency degrades smoothly or falls off a cliff, whether
+errors appear before saturation, and how resident memory grows per concurrent session.
+
+Each level ran for a fixed wall-clock window with N threads issuing back-to-back requests, so the
+request counts differ by level and throughput is the comparable number.
+
+### Archive path (the slow lane)
+
+| concurrent sessions | requests | req/s | p50 ms | p95 ms | p99 ms | max ms | errors | RSS MB |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 331 | 110.3 | 8.8 | 9.8 | 15.0 | 38.5 | 0 | 28.1 |
+| 3 | 880 | 293.3 | 10.2 | 11.0 | 17.2 | 18.2 | 0 | 32.6 |
+| 5 | 1402 | 467.3 | 10.4 | 13.2 | 18.2 | 20.3 | 0 | 36.6 |
+| 10 | 2348 | 782.7 | 12.2 | 16.8 | 20.9 | 32.0 | 0 | 44.3 |
+
+### Pack path (the common path), for contrast
+
+| concurrent sessions | requests | req/s | p50 ms | p95 ms | p99 ms | max ms | errors | RSS MB |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 359 | 119.7 | 8.3 | 8.8 | 9.4 | 10.8 | 0 | 45.3 |
+| 5 | 1458 | 486.0 | 9.9 | 15.2 | 17.7 | 19.2 | 0 | 46.5 |
+| 10 | 2476 | 825.3 | 11.5 | 15.9 | 21.6 | 38.0 | 0 | 47.8 |
+
+Resident memory: **19.8 MB at rest, 47.8 MB peak** across every level. The service loads its
+indices, packs and archive once at start-up and holds them read-only, so memory is a function of the
+artifacts rather than of concurrency — which is why the figure barely moves between 1 and 10 sessions
+and why **memory, not CPU, is the binding constraint on a small box**: the floor is paid before the
+first request arrives.
+
+### Errors
+
+Zero at every level. Saturation on this host was never reached, so **the concurrency limit cannot be
+set from this run** — a limit derived from a machine that never struggled would be a guess wearing a
+number. It has to come from the VM.
+
+_Educational tool. Not investment advice._

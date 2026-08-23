@@ -99,6 +99,43 @@ to the build.
 
 ---
 
+## The rollback ladder
+
+Each rung is executable from a phone in under two minutes, and you climb it in order — the cheapest
+mitigation that could work, first. Every rung has a metric that tells you whether it worked.
+
+| # | action | how | recovery | proves it worked |
+|---:|---|---|---:|---|
+| 1 | turn off the affected lane | `POST /ops/flags {"flag":"lane_archive","value":false}` | next turn | `feature_flag` gauge; the failing family stops failing |
+| 2 | pull the kill switch | `POST /ops/flags {"flag":"agent_enabled","value":false}` | next turn | back to phase-41 behaviour; sessions keep answering |
+| 3 | previous release | `git checkout v<prev> && systemctl restart fxradar-serve` | ~2 min | `/api/health` reports the prior bundle version |
+| 4 | previous artifacts | `git checkout <sha> -- data/ && systemctl restart` | ~3 min | `context_version` in `/ops/flags` and on the pages |
+| 5 | repoint DNS to Streamlit | change the apex record | one TTL | the site resolves to the console |
+
+Rungs 1 and 2 need **no deploy and no restart**, which is the whole reason they exist. Both take
+effect on the very next turn, including for sessions already in progress — proven under concurrent
+load by `the_kill_switch_takes_effect_mid_session_under_load`.
+
+**Rehearsal status.** Rungs 1 and 2 are rehearsed and tested. Rungs 3–5 are **not yet rehearsed**;
+they need the live deployment. A rollback that has never been executed is a hypothesis, and it is
+recorded as one here rather than described as a capability.
+
+## Symptom → cause → first action
+
+| symptom | first metric to read | likely cause | first action |
+|---|---|---|---|
+| p95 climbing | `prompt_cache_hit_ratio`, `prompt_prefix_hash_changes_total` | one character of prompt drift destroyed the cache | compare the prefix hash against the last deploy; revert the prompt |
+| p95 climbing, cache fine | per-stage latency histogram | a room is slow | rung 1 on that lane |
+| a breaker stuck open | `breaker_open_total{room}`, service memory | the snapshot read path or memory | check the artifact mtimes; restart; rung 1 |
+| provenance failures appearing | `nightly_pack_build_seconds`, the daily Action | the nightly build did not finish | re-run the Action; the stale badge should already be showing |
+| cost spiking | `prompt_cache_hit_ratio`, `tool_rounds{n}` | cache misses or a second tool round on too much traffic | rung 1, then look at what changed in the router |
+| the daily Action failed | `data/` commit time | a data source or a model stage | see "The daily build failed" above; **do not hand-edit artifacts** |
+| answers sound wrong, gates pass | open `/ops/traces` | almost always routing, not generation | read the deciding stage, hit Replay, hit Promote to golden |
+| a direction question got answered | the trace's `topic_guard` reason | a framing the rule set does not know | add the rule with a test, then promote the turn to golden |
+
+The last two rows are the ones that matter most and the ones least likely to page anybody, because
+nothing is down. They surface as a user saying "that's not what I asked".
+
 ## Restore the ledger
 
 The ledger is the one artifact that cannot be regenerated. Everything else — features, regimes,

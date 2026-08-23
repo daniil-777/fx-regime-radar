@@ -55,16 +55,57 @@ arrives next is the same as not reserving it.
 
 ## Known limits
 
-- **DuckDB serialises** on a bounded thread pool. Concurrent archive queries queue, and the queue
-  wait counts against the turn's deadline rather than hiding behind it. Pool size and queue depth
-  are phase-45 measurements.
+- **The archive is a JSON document held in memory**, not a query engine. That is why it costs
+  nothing per request and why its size is a start-up cost rather than a per-turn one — and it is
+  also the limit: it answers eleven closed shapes and nothing else. The day it needs to answer an
+  arbitrary range is the day an embedded engine earns its place, with the bounds and the pool that
+  phase 45 specified for it.
 - **One box, no redundancy.** A VM failure takes the API down until it restarts; see
   `docs/RUNBOOK.md`. The static surface is unaffected, which is most of what a reader needs.
 - **The avatar's cost caps are monthly and enforced server-side**, so the ceiling on vendor spend is
   a configuration value rather than a hope.
 
+## Measured, and where
+
+`scripts/load_test.py` drives N concurrent sessions against a running service. Full tables in
+`rust/BENCH.md`. **Run on an ARM Mac, not on the Oracle VM** — so these are not capacity figures for
+the VM and are not presented as such.
+
+| concurrent sessions | req/s | p50 | p95 | p99 | errors | resident |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 110 | 8.8 ms | 9.8 ms | 15.0 ms | 0 | 28 MB |
+| 3 | 293 | 10.2 ms | 11.0 ms | 17.2 ms | 0 | 33 MB |
+| 5 | 467 | 10.4 ms | 13.2 ms | 18.2 ms | 0 | 37 MB |
+| 10 | 783 | 12.2 ms | 16.8 ms | 20.9 ms | 0 | 44 MB |
+
+**19.8 MB at rest, 48 MB peak.** Two things transfer from this even though the absolute numbers do
+not:
+
+**Memory is the binding constraint, and it is paid up front.** The service loads its indices, packs
+and archive once at start-up and holds them read-only, so resident memory is a function of the
+artifacts rather than of concurrency — it moves 28 → 44 MB across a tenfold increase in load. On a
+small box you run out of memory long before you run out of CPU, and you know your floor before the
+first request arrives.
+
+**Latency degrades smoothly, not off a cliff.** p50 rises 8.8 → 12.2 ms from 1 to 10 sessions with
+zero errors. Nothing queues, nothing times out, and the deadline is never approached.
+
+## The concurrency limit is not set
+
+The phase asks for a limit derived from the point at which the deadline starts being missed. **This
+host never got near it**, so there is no measurement to derive one from, and a limit taken from a
+machine that never struggled would be a guess wearing a number. It has to come from the VM.
+
 ## What is not measured yet
 
-Sustained concurrent-session capacity, the point at which archive queue waits begin to eat the
-deadline, and memory under load. All three belong to phase 45, which is where the load testing is
-specified. Writing estimates here now would create numbers that look measured and are not.
+- **Everything above, on the actual VM.** The shape is known; the numbers are not.
+- **The saturation point** — the concurrency at which the deadline starts being missed — and
+  therefore the concurrency limit and queue depth.
+- **Sustained load over hours** rather than seconds, which is where memory growth would show if
+  there is any.
+
+A note on the DuckDB bounds this document was expected to carry: **there is no DuckDB.** Phase 42
+measured the four hard families at 81–92% using eleven closed archive shapes and concluded that an
+embedded query engine should not be built yet. The memory limits, thread counts, statement timeouts
+and scan windows specified for it are therefore not applicable, and inventing figures for a component
+that does not exist would make this document less useful, not more.

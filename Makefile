@@ -117,6 +117,13 @@ static:           ## phase 44: build public/ — the static customer surface
 budgets:          ## phase 44: enforce the performance budgets on public/ (CI gate)
 	$(PYTHON) scripts/check_budgets.py
 
+ablation:         ## phase 45: re-run every configuration and regenerate reports/ablation.md
+	$(PYTHON) scripts/run_ablation.py --base $${FXRADAR_BASE:-http://localhost:8791} \
+	  --ops-key $${FXRADAR_OPS_KEY:-demo_ops}
+
+loadtest:         ## phase 45: concurrency measurement, appended to rust/BENCH.md
+	$(PYTHON) scripts/load_test.py --base $${FXRADAR_BASE:-http://localhost:8791}
+
 eval-snapshot:    ## freeze today's artifacts into eval/snapshot/<date> (only when re-baselining)
 	$(PYTHON) eval/build_snapshot.py
 
