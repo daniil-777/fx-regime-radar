@@ -1,0 +1,1193 @@
+{"text": "how does {pair} look today", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is the regime", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "is it calm right now", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "current conditions", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "give me today's read", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "how are things", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "where do things stand", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "give me the state of play", "intent_id": "ask_condition_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie sieht {pair} heute aus", "intent_id": "ask_condition_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie ist das regime", "intent_id": "ask_condition_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "ist es gerade ruhig", "intent_id": "ask_condition_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "comment se présente {pair} aujourd'hui", "intent_id": "ask_condition_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quel est le régime", "intent_id": "ask_condition_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "est-ce calme", "intent_id": "ask_condition_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "do the models agree", "intent_id": "ask_consensus_dots", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is the consensus", "intent_id": "ask_consensus_dots", "locale": "en", "source": "registry_phrasing"}
+{"text": "how many voters see stress", "intent_id": "ask_consensus_dots", "locale": "en", "source": "registry_phrasing"}
+{"text": "is there agreement", "intent_id": "ask_consensus_dots", "locale": "en", "source": "registry_phrasing"}
+{"text": "do your detectors agree", "intent_id": "ask_consensus_dots", "locale": "en", "source": "registry_phrasing"}
+{"text": "sind sich die modelle einig", "intent_id": "ask_consensus_dots", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie ist der konsens", "intent_id": "ask_consensus_dots", "locale": "de", "source": "registry_phrasing"}
+{"text": "les modèles sont-ils d'accord", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quel est le consensus", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how sure are you it is calm", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "what are the regime probabilities", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "how confident is the model", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "probability of each regime", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "how certain", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie sicher ist das", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie sind die regime wahrscheinlichkeiten", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "quelle est votre certitude", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "probabilités des régimes", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how unusual is today", "intent_id": "ask_siren_gauge", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is the siren", "intent_id": "ask_siren_gauge", "locale": "en", "source": "registry_phrasing"}
+{"text": "is today strange", "intent_id": "ask_siren_gauge", "locale": "en", "source": "registry_phrasing"}
+{"text": "anomaly reading", "intent_id": "ask_siren_gauge", "locale": "en", "source": "registry_phrasing"}
+{"text": "how weird is today", "intent_id": "ask_siren_gauge", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie ungewöhnlich ist heute", "intent_id": "ask_siren_gauge", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie hoch ist die sirene", "intent_id": "ask_siren_gauge", "locale": "de", "source": "registry_phrasing"}
+{"text": "à quel point aujourd'hui est inhabituel", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "registry_phrasing"}
+{"text": "niveau de la sirène", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "registry_phrasing"}
+{"text": "which pair is calmest", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "compare the pairs", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "how do the markets compare", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me all pairs", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "which market is quietest", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "welches paar ist am ruhigsten", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "vergleiche die paare", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "quelle paire est la plus calme", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "comparer les paires", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "is the model still healthy", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "has anything drifted", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "is the model stale", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "model health", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "are your models still valid", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "any degradation", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "is the pipeline healthy", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "have the models decayed", "intent_id": "ask_drift_status", "locale": "en", "source": "registry_phrasing"}
+{"text": "ist das modell noch gesund", "intent_id": "ask_drift_status", "locale": "de", "source": "registry_phrasing"}
+{"text": "gibt es drift", "intent_id": "ask_drift_status", "locale": "de", "source": "registry_phrasing"}
+{"text": "le modèle est-il toujours valide", "intent_id": "ask_drift_status", "locale": "fr", "source": "registry_phrasing"}
+{"text": "y a-t-il une dérive", "intent_id": "ask_drift_status", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how has risk moved", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me the risk over time", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "risk history", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "has change risk been rising", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "risk trend", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "plot the change risk", "intent_id": "ask_risk_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie hat sich das risiko entwickelt", "intent_id": "ask_risk_trace", "locale": "de", "source": "registry_phrasing"}
+{"text": "zeige den risikoverlauf", "intent_id": "ask_risk_trace", "locale": "de", "source": "registry_phrasing"}
+{"text": "comment le risque a évolué", "intent_id": "ask_risk_trace", "locale": "fr", "source": "registry_phrasing"}
+{"text": "historique du risque", "intent_id": "ask_risk_trace", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how long in this regime", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me the regime history", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "regime timeline", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "when did it change", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "how long has it been calm", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "paint the states over time", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "band the history", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "colour strip of the states", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie lange schon in diesem regime", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "registry_phrasing"}
+{"text": "zeige die regime historie", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "registry_phrasing"}
+{"text": "depuis combien de temps ce régime", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "registry_phrasing"}
+{"text": "chronologie des régimes", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "registry_phrasing"}
+{"text": "when was the last crisis", "intent_id": "ask_regime_history_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "list the past regimes", "intent_id": "ask_regime_history_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "regime dates", "intent_id": "ask_regime_history_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "history of storms", "intent_id": "ask_regime_history_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "when did the last crisis start", "intent_id": "ask_regime_history_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "wann war die letzte krise", "intent_id": "ask_regime_history_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "liste der vergangenen regime", "intent_id": "ask_regime_history_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "quand était la dernière crise", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "liste des régimes passés", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "is volatility rising", "intent_id": "ask_vol_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me volatility", "intent_id": "ask_vol_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "how volatile is it", "intent_id": "ask_vol_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "volatility trend", "intent_id": "ask_vol_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "has vol picked up", "intent_id": "ask_vol_trace", "locale": "en", "source": "registry_phrasing"}
+{"text": "steigt die volatilität", "intent_id": "ask_vol_trace", "locale": "de", "source": "registry_phrasing"}
+{"text": "zeige die volatilität", "intent_id": "ask_vol_trace", "locale": "de", "source": "registry_phrasing"}
+{"text": "la volatilité augmente-t-elle", "intent_id": "ask_vol_trace", "locale": "fr", "source": "registry_phrasing"}
+{"text": "montre la volatilité", "intent_id": "ask_vol_trace", "locale": "fr", "source": "registry_phrasing"}
+{"text": "what changed since yesterday", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "anything new", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what moved", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is different today", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "any change", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "change from the previous session", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "difference from the last close", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is new since the previous run", "intent_id": "ask_what_changed_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "was hat sich seit gestern geändert", "intent_id": "ask_what_changed_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "gibt es neues", "intent_id": "ask_what_changed_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "qu'est-ce qui a changé depuis hier", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quoi de neuf", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "hedge wait or ladder", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "what should I consider", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is the light", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "should I do something", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "what does the traffic light say", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "hedge or wait", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "is it a week to put cover on", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "what does the rule table output", "intent_id": "ask_treasury_light", "locale": "en", "source": "registry_phrasing"}
+{"text": "absichern warten oder staffeln", "intent_id": "ask_treasury_light", "locale": "de", "source": "registry_phrasing"}
+{"text": "was sagt die ampel", "intent_id": "ask_treasury_light", "locale": "de", "source": "registry_phrasing"}
+{"text": "couvrir attendre ou échelonner", "intent_id": "ask_treasury_light", "locale": "fr", "source": "registry_phrasing"}
+{"text": "que dit le feu", "intent_id": "ask_treasury_light", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how bad is a bad week", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is the value at risk", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "worst case week", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "expected shortfall", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "how much could I lose in a week", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "downside risk", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "quantify a rough week", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "size a bad five days", "intent_id": "ask_var_es_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie schlimm ist eine schlechte woche", "intent_id": "ask_var_es_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "was ist der value at risk", "intent_id": "ask_var_es_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "à quel point une mauvaise semaine", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quelle est la valeur en risque", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how often does that happen", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "how common is a 3 percent move", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "frequency of moves", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "has that happened before", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "how rare is that", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie oft passiert das", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie häufig ist eine solche bewegung", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "à quelle fréquence cela arrive", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "est-ce fréquent", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "forward versus ladder versus nothing", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "compare hedging approaches", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "what are my options", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "which hedge structure", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "hedge alternatives", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "put the structures next to each other", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "weigh the approaches", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "forwards against laddering", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "termin gegen staffel gegen nichts", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "vergleiche absicherungen", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "terme contre échelonnement contre rien", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "comparer les couvertures", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "what does another month cost", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "registry_phrasing"}
+{"text": "cost of waiting", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "registry_phrasing"}
+{"text": "if I delay", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "registry_phrasing"}
+{"text": "price of postponing", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "registry_phrasing"}
+{"text": "what if I wait", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "registry_phrasing"}
+{"text": "was kostet ein weiterer monat", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "registry_phrasing"}
+{"text": "kosten des wartens", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "registry_phrasing"}
+{"text": "combien coûte un mois de plus", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "registry_phrasing"}
+{"text": "coût de l attente", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "registry_phrasing"}
+{"text": "why should I trust you", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is your track record", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "how accurate are you", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me your record", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "are you any good", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "your scoreboard", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "warum sollte ich ihnen vertrauen", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie ist ihre bilanz", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "pourquoi vous faire confiance", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quel est votre historique", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "are your bands honest", "intent_id": "ask_coverage_plot", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is your coverage", "intent_id": "ask_coverage_plot", "locale": "en", "source": "registry_phrasing"}
+{"text": "do the intervals hold", "intent_id": "ask_coverage_plot", "locale": "en", "source": "registry_phrasing"}
+{"text": "band coverage", "intent_id": "ask_coverage_plot", "locale": "en", "source": "registry_phrasing"}
+{"text": "are the bands calibrated", "intent_id": "ask_coverage_plot", "locale": "en", "source": "registry_phrasing"}
+{"text": "sind ihre bänder ehrlich", "intent_id": "ask_coverage_plot", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie ist die abdeckung", "intent_id": "ask_coverage_plot", "locale": "de", "source": "registry_phrasing"}
+{"text": "vos bandes sont-elles honnêtes", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quelle est la couverture", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "registry_phrasing"}
+{"text": "show me an actual sealed row", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me a ledger entry", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "registry_phrasing"}
+{"text": "one real forecast", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "registry_phrasing"}
+{"text": "prove a forecast was sealed", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "registry_phrasing"}
+{"text": "show a receipt", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "registry_phrasing"}
+{"text": "zeig mir einen versiegelten eintrag", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "registry_phrasing"}
+{"text": "ein echter ledger eintrag", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "registry_phrasing"}
+{"text": "montre une ligne scellée", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "registry_phrasing"}
+{"text": "une vraie prévision", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how do I verify it myself", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "can I check the chain", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "how do I audit this", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "verify independently", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "prove it to me", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie kann ich das selbst prüfen", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie verifiziere ich die kette", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "comment vérifier moi-même", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "comment auditer", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "can anyone predict price", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "will it go up", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "where is the rate heading", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is your forecast for the price", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "can you predict direction", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "buy or sell", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "kann jemand den preis vorhersagen", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "steigt es", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "peut-on prévoir le prix", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "va-t-il monter", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "what is coming up", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "any events this week", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "when is the next central bank meeting", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is on the calendar", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "upcoming events", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "when is the fed", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "registry_phrasing"}
+{"text": "was steht an", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "registry_phrasing"}
+{"text": "wann ist die nächste notenbanksitzung", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "registry_phrasing"}
+{"text": "qu est-ce qui arrive", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "registry_phrasing"}
+{"text": "prochaine réunion de banque centrale", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "registry_phrasing"}
+{"text": "why is risk elevated", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is driving this", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "which features matter", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "why that number", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "what pushed the risk up", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "explain the drivers", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "registry_phrasing"}
+{"text": "warum ist das risiko erhöht", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "was treibt das", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "registry_phrasing"}
+{"text": "pourquoi le risque est élevé", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "qu est-ce qui explique cela", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how did covid look", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me a past storm", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "registry_phrasing"}
+{"text": "what did 2008 look like", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "registry_phrasing"}
+{"text": "replay a crisis", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me march 2020", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie sah covid aus", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "registry_phrasing"}
+{"text": "zeige einen vergangenen sturm", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "registry_phrasing"}
+{"text": "à quoi ressemblait le covid", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "registry_phrasing"}
+{"text": "montre une tempête passée", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how does the siren work", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "explain the model", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "how does it work", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "show me how this works", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "explain the pipeline", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "how is the regime found", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "registry_phrasing"}
+{"text": "wie funktioniert die sirene", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "registry_phrasing"}
+{"text": "erkläre das modell", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "registry_phrasing"}
+{"text": "comment fonctionne la sirène", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "registry_phrasing"}
+{"text": "expliquez le modèle", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "registry_phrasing"}
+{"text": "what does chop mean", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "define the siren", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is a regime", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what does that word mean", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "explain the term", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is filtered", "intent_id": "ask_glossary_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "was bedeutet chop", "intent_id": "ask_glossary_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "definiere die sirene", "intent_id": "ask_glossary_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "que signifie chop", "intent_id": "ask_glossary_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "définition de la sirène", "intent_id": "ask_glossary_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "where does this number come from", "intent_id": "ask_methodology_flow", "locale": "en", "source": "registry_phrasing"}
+{"text": "how is change risk computed", "intent_id": "ask_methodology_flow", "locale": "en", "source": "registry_phrasing"}
+{"text": "what goes into that metric", "intent_id": "ask_methodology_flow", "locale": "en", "source": "registry_phrasing"}
+{"text": "trace the number", "intent_id": "ask_methodology_flow", "locale": "en", "source": "registry_phrasing"}
+{"text": "how do you calculate it", "intent_id": "ask_methodology_flow", "locale": "en", "source": "registry_phrasing"}
+{"text": "woher kommt diese zahl", "intent_id": "ask_methodology_flow", "locale": "de", "source": "registry_phrasing"}
+{"text": "wie wird das berechnet", "intent_id": "ask_methodology_flow", "locale": "de", "source": "registry_phrasing"}
+{"text": "d où vient ce chiffre", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "registry_phrasing"}
+{"text": "comment est-ce calculé", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "registry_phrasing"}
+{"text": "what do I get for 79 francs", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what are the tiers", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "how much does it cost", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what is included", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "pricing", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what do the alerts do", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "alerting options", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "data retention and privacy", "intent_id": "ask_faq_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "was bekomme ich für 79 franken", "intent_id": "ask_faq_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "welche stufen gibt es", "intent_id": "ask_faq_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "que comprend l abonnement", "intent_id": "ask_faq_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "quels sont les paliers", "intent_id": "ask_faq_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "should I buy dollars", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what should I do with my money", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "give me advice", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "what would you do", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "should I invest", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "tell me what to trade", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "registry_phrasing"}
+{"text": "soll ich dollar kaufen", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "was soll ich tun", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "registry_phrasing"}
+{"text": "dois-je acheter des dollars", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "que dois-je faire", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "registry_phrasing"}
+{"text": "show me the numbers", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "give me the metrics", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "what are the values", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "the data please", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "list the figures", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "show the table", "intent_id": "ask_metric_table", "locale": "en", "source": "registry_phrasing"}
+{"text": "zeig mir die zahlen", "intent_id": "ask_metric_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "gib mir die kennzahlen", "intent_id": "ask_metric_table", "locale": "de", "source": "registry_phrasing"}
+{"text": "montre les chiffres", "intent_id": "ask_metric_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "donne les mesures", "intent_id": "ask_metric_table", "locale": "fr", "source": "registry_phrasing"}
+{"text": "how's eurusd looking today", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "condition card for usdchf", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "eurusd status?", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats the state of gbpusd right now", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "quick read on euro dollar please", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "sum up today for usdchf — regime, change risk, siren", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "eurusd todya?", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "current condition eur/usd", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "where do we stand on gbpusd", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "just the headline for the franc, im in a rush", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "overall picture for the euro market today", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "brief me on usdchf", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "so what's euro dollar doing today, overall", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the daily card for gbp/usd", "intent_id": "ask_condition_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "Wie steht EURUSD heute?", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Lage USDCHF?", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Kurzer Überblick zu GBPUSD bitte", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zustandskarte EURUSD", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Gib mir den Tagesstand für Euro Dollar", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie sieht der Franken heute aus – Regime, Wechselrisiko, Sirene?", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Status EURUSD kurz und knapp", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Was ist heute los bei GBPUSD?", "intent_id": "ask_condition_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "EURUSD aujourd'hui ?", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "L'état du marché sur USDCHF ?", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Fais-moi le point sur GBPUSD", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Résumé du jour pour l'euro dollar", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Ça donne quoi le franc aujourd'hui ?", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Carte de situation EURUSD s'il te plaît", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Régime, risque de changement, sirène — pour USDCHF", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Où on en est sur GBPUSD ?", "intent_id": "ask_condition_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "do the detectors agree?", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "consensus?", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "are the stress voters aligned on eurusd", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "any disagreement between the detectors today", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "consenus dots for usdchf", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the panel split?", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "do all the stress signals point the same way", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the agreement dots", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "are the voters unanimous right now", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "who's dissenting on gbpusd", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "detectors in agreement or not, quickly", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "stress detectors — agree or split?", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "is there consensus on the stress read for the franc", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "dots?", "intent_id": "ask_consensus_dots", "locale": "en", "source": "model_paraphrase"}
+{"text": "Sind sich die Detektoren einig?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Konsens?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Stimmen die Stressmelder überein oder nicht?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Gibt es Uneinigkeit bei EURUSD?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zeig mir die Konsenspunkte", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Sind die Stimmen heute einstimmig?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wer schert bei USDCHF aus?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Einig oder gespalten, die Detektoren?", "intent_id": "ask_consensus_dots", "locale": "de", "source": "model_paraphrase"}
+{"text": "Les détecteurs sont d'accord ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Consensus ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Y a-t-il un désaccord sur EURUSD ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Montre les points de consensus", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Les signaux de stress vont tous dans le même sens ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Unanimité ou pas aujourd'hui ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Qui n'est pas d'accord sur USDCHF ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Détecteurs alignés ou divisés ?", "intent_id": "ask_consensus_dots", "locale": "fr", "source": "model_paraphrase"}
+{"text": "how confident is the model in the regime label", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "regime probabilities please", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how sure are you it's chop", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the probability bars for eurusd", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the regime call solid or borderline", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "what are the odds on each regime state", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "regime confidnce?", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how strong is the calm read", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "break down the regime probabilities for usdchf", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "is it a close call between trend and chop", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "prob bars", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how much weight does the model put on each regime", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "certainty of the regime classification for gbpusd", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how firm is that regime word", "intent_id": "ask_regime_probability_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "Wie sicher ist das Regime?", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Regimewahrscheinlichkeiten bitte", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie überzeugt ist das Modell beim Label?", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zeig die Wahrscheinlichkeitsbalken für EURUSD", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Ist die Einstufung eindeutig oder knapp?", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie stark ist die Ruhig-Einschätzung?", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wahrscheinlichkeiten je Regime für USDCHF", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie belastbar ist das Regimewort?", "intent_id": "ask_regime_probability_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Le modèle est sûr de son régime ?", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Probabilités par régime, stp", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Montre les barres de probabilité pour EURUSD", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "C'est net ou c'est limite comme classification ?", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Quelle confiance sur l'étiquette de régime ?", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Poids de chaque régime sur USDCHF", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Le mot du régime, il tient la route ?", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Confiance du modèle sur le régime GBPUSD", "intent_id": "ask_regime_probability_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "siren?", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "anomaly percentile for eurusd", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "is today weird?", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "siren gauge pls", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "how strange does today look versus history", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats the anomaly reading on usdchf", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "siern?", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the siren elevated", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "how far from normal are we today", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the anomaly score for gbpusd", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "does today stand out", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "siren level, quick", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "how rare is today's behaviour in the euro market", "intent_id": "ask_siren_gauge", "locale": "en", "source": "model_paraphrase"}
+{"text": "Sirene?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie ungewöhnlich ist heute?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Anomaliewert EURUSD?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Ist heute auffällig?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie weit weg vom Normalen sind wir?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Sirenenstand kurz bitte", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Sticht der Tag heraus?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie selten ist so ein Tag beim Franken?", "intent_id": "ask_siren_gauge", "locale": "de", "source": "model_paraphrase"}
+{"text": "La sirène ?", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "C'est inhabituel aujourd'hui ?", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Percentile d'anomalie sur EURUSD", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "À quel point la journée sort de l'ordinaire ?", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Niveau de sirène, vite", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "La journée est bizarre ou normale ?", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "On est loin de la normale ?", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Score d'anomalie du franc aujourd'hui", "intent_id": "ask_siren_gauge", "locale": "fr", "source": "model_paraphrase"}
+{"text": "compare the markets today", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "which pair looks worst right now", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "side by side table of all pairs", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do eurusd and usdchf stack up", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "rank the markets by change risk", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "compair the pairs", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me everything in one table", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "which market is calmest today", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "all pairs at a glance", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "cross market comparison please", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "who's the outlier across the pairs", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "line up the markets against each other", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "table of all markets, sorted by risk", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "eurusd vs gbpusd vs usdchf — comparison", "intent_id": "ask_pair_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "Märkte vergleichen bitte", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Welches Paar sieht am schlechtesten aus?", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Alle Paare nebeneinander", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Vergleich EURUSD gegen USDCHF", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Rangliste nach Wechselrisiko", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wo ist es heute am ruhigsten?", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Übersichtstabelle aller Märkte", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Stell die Märkte gegenüber", "intent_id": "ask_pair_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Compare les marchés aujourd'hui", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Quelle paire est la pire en ce moment ?", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Tableau comparatif de toutes les paires", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "EURUSD contre GBPUSD, ça donne quoi ?", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Classe les marchés par risque de changement", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Où est-ce le plus calme aujourd'hui ?", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Toutes les paires en un coup d'œil", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "Mets les marchés côte à côte", "intent_id": "ask_pair_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "models still healthy?", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "any drift?", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "drift status", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "is anything drifting", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "how's calibration holding up", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "brier still where it should be?", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "did the model degrade since we froze it", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "check model health pls", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "anythign drifted lately", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "are the forecasts still trustworthy or has the model gone stale", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "coverage still on target?", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "drift — yes or no?", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "quick health check on the models", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the radar still calibrated or do we need to retrain", "intent_id": "ask_drift_status", "locale": "en", "source": "model_paraphrase"}
+{"text": "Drift-Status?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "läuft das Modell noch sauber?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "gibt's irgendwo Drift?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "ist die Kalibrierung weggelaufen?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "kurzer Modell-Check bitte", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "hat sich seit dem Einfrieren was verschlechtert?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "Abdeckung noch im Zielbereich?", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "modell noch gesund oder driftet das", "intent_id": "ask_drift_status", "locale": "de", "source": "model_paraphrase"}
+{"text": "dérive ?", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "les modèles tiennent toujours ?", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "état de la dérive", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "la calibration a bougé ?", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "petit check santé des modèles", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le modèle s'est dégradé depuis le gel ?", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "la couverture est toujours dans la cible ?", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "modeles ok ou ca derive", "intent_id": "ask_drift_status", "locale": "fr", "source": "model_paraphrase"}
+{"text": "how has change risk moved lately", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "risk trace", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the change risk curve", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "has change risk been climbing this week?", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "chnage risk trend", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "plot change risk over the past month", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "where's change risk been heading", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the risk line up or down recently", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "change risk history please", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "risk over the window?", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "trend of the change risk since last month", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the risk trajectory", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "did change risk spike at any point recently", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "risk curve — flat or rising?", "intent_id": "ask_risk_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "Risikoverlauf?", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie hat sich das Änderungsrisiko entwickelt?", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig mir die Risikokurve der letzten Wochen", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "steigt das Wechselrisiko gerade?", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Verlauf Änderungsrisiko bitte", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "war das Risiko zuletzt eher hoch oder flach?", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "risiko trend letzte wochen", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Kurve vom Änderungsrisiko seit letztem Monat", "intent_id": "ask_risk_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "évolution du risque ?", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre la courbe du risque de changement", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le risque monte depuis la semaine dernière ?", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "historique du risque sur la période", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "trace du risque svp", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça a bougé comment le risque de changement ces derniers temps ?", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "risque plutôt stable ou en hausse récemment ?", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "courbe risque le mois dernier", "intent_id": "ask_risk_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "how long have we been in this regime?", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "days in regime?", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "regime ribbon", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the regime timeline", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "how long has calm lasted", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "streak length for the current regime", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "how long since the regime flipped", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "regime timeilne pls", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the shape of the regime history", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "are we in a long stretch or has it been flipping a lot?", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "how stable has the regime been over the year", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "current regime — how old is it?", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the band of regimes over time", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "has this regime been running a while?", "intent_id": "ask_regime_timeline_ribbon", "locale": "en", "source": "model_paraphrase"}
+{"text": "wie lange sind wir schon in dem Regime?", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "Tage im Regime?", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "Regime-Verlauf anzeigen", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie lange hält die Ruhe schon an?", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "Regimeband bitte", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "wechselt das Regime oft oder läuft es lange durch?", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "seit wann läuft das aktuelle Regime?", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "regime timeline zeigen", "intent_id": "ask_regime_timeline_ribbon", "locale": "de", "source": "model_paraphrase"}
+{"text": "on est dans ce régime depuis combien de temps ?", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "durée du régime actuel ?", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre la frise des régimes", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le calme dure depuis longtemps ?", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ruban des régimes stp", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça change souvent de régime ou ça tient ?", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "depuis quand le régime actuel tourne ?", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "historique visuel des regimes", "intent_id": "ask_regime_timeline_ribbon", "locale": "fr", "source": "model_paraphrase"}
+{"text": "when was the last crisis?", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "list past regime episodes", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "dates of the previous chop periods", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "regime history table", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "when did the last trend regime start and end", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the episode table", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "last crisis date?", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "which dates were we in crisis", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "show past episodes with dates", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "when did we last flip to chop", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "episode list pls", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "history of regime episodes as a table", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "when was teh last crisis regime", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "pull up the dates of every crisis episode", "intent_id": "ask_regime_history_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "wann war die letzte Krise?", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Liste der vergangenen Regime-Episoden", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Daten der letzten Chop-Phasen", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Regime-Historie als Tabelle", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "wann hat der letzte Trend angefangen und aufgehört?", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "wann waren wir zuletzt im Krisenregime?", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Episodentabelle bitte", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "gib mir die Termine aller Krisenphasen", "intent_id": "ask_regime_history_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "c'était quand la dernière crise ?", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "liste des épisodes de régime passés", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "dates des phases de chop", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "tableau de l'historique des régimes", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quand a commencé et fini le dernier régime de tendance ?", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "on était en crise à quelles dates ?", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "sors-moi le tableau des épisodes", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "derniere crise c'etait quand", "intent_id": "ask_regime_history_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "what changed since yesterday?", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what's new today", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "anything move overnight?", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "diff vs yesterday", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what changed", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the delta from yesterday's run", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats different this morning", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "anything worth knowing since the last update?", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "changes since yesterday pls", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what moved since the last run", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "did anything shift overnight or is it the same as yesterday", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "today vs yesterday — what's different?", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "quick summary of what changed", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "anything new since yesterday, keep it short", "intent_id": "ask_what_changed_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "was hat sich seit gestern geändert?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was ist heute neu?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Änderungen zu gestern?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "hat sich über Nacht was bewegt?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Unterschied zum gestrigen Lauf", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kurz: was ist anders als gestern?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was gibts neues seit dem letzten update", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "seit gestern irgendwas passiert?", "intent_id": "ask_what_changed_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "qu'est-ce qui a changé depuis hier ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quoi de neuf aujourd'hui ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "des changements depuis hier ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça a bougé cette nuit ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "différence avec le run d'hier", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "en bref, qu'est-ce qui est différent d'hier ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "du nouveau depuis la dernière mise à jour ?", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quoi de change depuis hier", "intent_id": "ask_what_changed_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vol trace", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me realised vol for eurusd", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "how volatile has the euro been lately?", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "rolling volatility chart please", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "realized vol over the window", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "plot the vol history for usdchf", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "vol trend?", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "how much has cable been swinging recently", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the realised volatility curve", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "realsied vol chart pls", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "what's realised vol doing right now", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "is vol rising or falling here", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "vol traec for the franc, quick", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "show volatility over time", "intent_id": "ask_vol_trace", "locale": "en", "source": "model_paraphrase"}
+{"text": "Vola-Verlauf", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie stark schwankt EURCHF zurzeit?", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zeig mir die realisierte Vola über den Zeitraum", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Volatilitätskurve bitte", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "vola chart eurusd", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "War die Vola zuletzt höher oder tiefer?", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "Schwankungsbreite im Verlauf anzeigen", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "realisierte volatilitaet bitte kurz", "intent_id": "ask_vol_trace", "locale": "de", "source": "model_paraphrase"}
+{"text": "courbe de volatilité", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "la vol a fait quoi ces derniers temps ?", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre la volatilité réalisée sur la période", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça bouge beaucoup en ce moment ?", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "graphe de vola EURCHF", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "la volatilité monte ou baisse ?", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "volat réalisée stp", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "historique de la volatilité de la livre", "intent_id": "ask_vol_trace", "locale": "fr", "source": "model_paraphrase"}
+{"text": "treasury light?", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "hedge or wait?", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "what does the light say today", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "should we hedge now or hold off", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "traffic light for eurchf", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "is it a ladder day?", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "hedging signal pls", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "do we cover now or not", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "green amber or red for treasury", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the hedge/wait/ladder call", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "shoudl i hedge today", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "wait or ladder in?", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "treasury recommendation for the franc exposure", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "just tell me: cover, wait, or stagger", "intent_id": "ask_treasury_light", "locale": "en", "source": "model_paraphrase"}
+{"text": "Ampel?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Absichern oder abwarten?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Was sagt die Ampel heute?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Sollen wir gestaffelt absichern?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Jetzt hedgen oder noch warten", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Empfehlung: sichern, warten oder staffeln?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "hedge signal fuer den franken?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "Kurz und knapp: absichern ja oder nein?", "intent_id": "ask_treasury_light", "locale": "de", "source": "model_paraphrase"}
+{"text": "on couvre ou on attend ?", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le feu dit quoi ?", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "feu de trésorerie pour l'EURCHF", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "faut-il couvrir maintenant ?", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "on étale la couverture ou pas ?", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "signal de couverture du jour", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "je couvre, j'attends ou j'échelonne ?", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "verdict couverture stp", "intent_id": "ask_treasury_light", "locale": "fr", "source": "model_paraphrase"}
+{"text": "var by regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "expected shortfall per regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the es bars", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how bad is the tail in the crisis regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "value at risk chart", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "cvar by regime pls", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "worst-case loss in each regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "what's the VaR right now for eurusd", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "tail risk broken down by regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "es vs var per regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "downside risk numbers by regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "var bars eurchf", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "expected shortfal in chop", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how much could we lose on a bad day in the trend regime", "intent_id": "ask_var_es_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "VaR je Regime", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Expected Shortfall nach Regime", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie hoch ist das Tail-Risiko im Krisenregime?", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zeig die VaR-Balken", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Was verlieren wir an einem schlechten Tag im Trendregime?", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Verlustrisiko pro Regime", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "CVaR pro Regime bitte", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "expected shortfal im chop regime", "intent_id": "ask_var_es_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "VaR par régime", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "expected shortfall selon le régime", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelle perte en régime de crise ?", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre les barres de VaR", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "risque de queue par régime", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "perte moyenne sur les pires journées par régime", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "cvar par regime svp", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "combien on perd sur une mauvaise journée en régime trend ?", "intent_id": "ask_var_es_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "how often does it move that much?", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "frequency of moves that size", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how many days have seen a swing like this", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "has a move like that happened before, and how often", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "move frequency bars", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "historical frequency of jumps that big", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how often per year does eurusd move like that", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how comon is a move this size", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "count of days with moves that large", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how rare is this kind of move", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "occurrence rate of such moves", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how frequently has cable jumped that far", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "frequency chart of daily moves", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "how often historically?", "intent_id": "ask_move_frequency_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "Wie oft kam so eine Bewegung vor?", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Häufigkeit solcher Ausschläge", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie häufig bewegt sich das Paar so stark?", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Gab es solche Sprünge schon öfter?", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Wie selten ist so ein Tag?", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Historische Häufigkeit von Bewegungen dieser Grössenordnung", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie oft pro jahr passiert sowas", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "Häufigkeitsverteilung der Tagesbewegungen", "intent_id": "ask_move_frequency_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "c'est arrivé combien de fois ?", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "fréquence des mouvements de cette ampleur", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "à quelle fréquence ça bouge autant ?", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "historiquement ça arrive souvent ?", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "combien de journées avec un écart pareil ?", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "histogramme des variations quotidiennes", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "c'est fréquent un mouvement pareil ?", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "recurrence de tels ecarts svp", "intent_id": "ask_move_frequency_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "forward vs option", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "compare hedging structures", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "collar or forward, which is better", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "hedge structure comparison table", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the hedge instruments side by side", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "what structures can we use to hedge, compare them", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "cost comparison of the hedge alternatives", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "participating forward vs plain vanilla?", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "compair forward, collar and option", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "side by side of the hedging choices", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "which hedge structure is cheapest", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "table of hedge variants pls", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "collar against a straight forward", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "run the structure comparison for the chf exposure", "intent_id": "ask_hedge_compare_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "Termingeschäft oder Option?", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Vergleich der Absicherungsinstrumente", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Collar gegen Forward vergleichen", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Welche Struktur ist günstiger?", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Tabelle mit den Absicherungsvarianten", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Gegenüberstellung der Hedging-Strukturen bitte", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "forward vs collar kosten", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Was kostet uns welche Absicherungsvariante im Vergleich?", "intent_id": "ask_hedge_compare_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "forward ou option ?", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comparer les structures de couverture", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "tableau comparatif des couvertures", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "collar contre terme sec, ça donne quoi ?", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelle structure est la moins chère ?", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "compare les instruments de couverture stp", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "options vs contrats à terme", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "mets-moi les variantes de couverture côte à côte", "intent_id": "ask_hedge_compare_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "what does waiting cost me", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "cost of waiting curve", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "if I push the hedge out a quarter what's the damage", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "price of delay pls", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "how much more risk do I eat by sitting on this", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "what do I give up by postponing", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "cost of waitng?", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the delay curve", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "hedging later instead of now, what's the extra cost", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "does it get more expensive the longer I leave it unhedged", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "cost of deferring", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats the penalty for not acting today", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "wait cost", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "so if we hold off until after quarter end, how much worse does the tail get", "intent_id": "ask_cost_of_waiting_curve", "locale": "en", "source": "model_paraphrase"}
+{"text": "was kostet mich das zuwarten", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "wenn ich die absicherung aufschiebe, was kostet das", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie teuer wird das verzögern", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "was verliere ich, wenn ich noch abwarte", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "wird es teurer je länger ich ungesichert bleibe", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "wartekosten bitte", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "kosten des wartesn?", "intent_id": "ask_cost_of_waiting_curve", "locale": "de", "source": "model_paraphrase"}
+{"text": "combien ça me coûte d'attendre", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le coût du report", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "si je diffère la couverture, ça chiffre combien", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "et si j'attends encore un peu", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça devient plus cher si je traîne", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "coût de l attente svp", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "qu'est-ce que je perds à repousser", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "cout de lattente", "intent_id": "ask_cost_of_waiting_curve", "locale": "fr", "source": "model_paraphrase"}
+{"text": "why should I trust this thing", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "track record?", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how good have your calls been", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the scoreboard", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats your brier score live", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "are you actually any good", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "hows the forward test going", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "trck record pls", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how has the model done since launch", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the hit rate on your forecasts", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "scoreboard", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "is this better than guessing", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "before I take this to my CFO I need to see the record", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "live brier against the frozen one", "intent_id": "ask_scoreboard_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "warum sollte ich euch vertrauen", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie ist eure blianz bisher", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig mir den trackrecord", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie gut lagt ihr bisher", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "brier score live?", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie läuft der forwardtest", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "trefferquote eurer prognosen", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "seit dem start, wie ist die bilanz", "intent_id": "ask_scoreboard_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "c'est quoi votre historique", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vous êtes fiables ou pas", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montrez votre bilan de prévisions", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "score de brier en direct", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vos prévisions passées valent quoi", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le forward test donne quoi", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "votre historque svp", "intent_id": "ask_scoreboard_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "do your bands actually cover", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "coverage plot", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "are the intervals honest", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "how often does the truth land inside the band", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "band coverage against target", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "is the conformal calibrated", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "coverge?", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the coverage over time", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "your confidence bands, do they hold up", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "empirical coverage pls", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "are the bands too wide or too narrow", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "how often do you miss the interval", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "conformal coverage", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "do the ranges you quote hold in practice", "intent_id": "ask_coverage_plot", "locale": "en", "source": "model_paraphrase"}
+{"text": "halten eure bänder", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie ist die tatsächliche abdeckung", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "sind die intervalle kalibriert", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie oft liegt der wert im band", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "abdeckung gegen ziel zeigen", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "konforme abdeckung?", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "sind die bänder zu breit", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "abdekung der prognoseintervalle", "intent_id": "ask_coverage_plot", "locale": "de", "source": "model_paraphrase"}
+{"text": "vos bandes couvrent vraiment", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "taux de couverture réel des intervalles", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "les intervalles tiennent-ils", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "à quelle fréquence la valeur tombe dans la bande", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "calibration des bandes conformes", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "couverture conforme svp", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vos intervalles sont trop larges", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "couvertur des bandes", "intent_id": "ask_coverage_plot", "locale": "fr", "source": "model_paraphrase"}
+{"text": "show me one sealed row", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "ledger entry pls", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "can I see an actual forecast as it was written", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "pull up a row from the ledger", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "i want to see a real sealed forecast, not a summary", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "ledgr row", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me what you wrote before the outcome existed", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "single entry from the record please", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me a sealed forecast to look at", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "receipt for a forecast", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the row itself, hash and all", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "an example ledger line", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "what does a sealed row actually look like", "intent_id": "ask_ledger_row_receipt", "locale": "en", "source": "model_paraphrase"}
+{"text": "zeig mir eine versiegelte zeile", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "einen echten ledger eintrag bitte", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie sieht so ein eintrag aus", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "beleg für eine prognose", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig was ihr vor dem ergebnis geschrieben habt", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "eine zeile aus dem journal", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "ledger zeile mit hash bitte", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "gib mir ein beispiel aus dem register", "intent_id": "ask_ledger_row_receipt", "locale": "de", "source": "model_paraphrase"}
+{"text": "montre une ligne scellée du registre", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "une vraie prévision telle qu'elle a été écrite", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "un justificatif de prévision", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "sors-moi une entrée du registre", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça ressemble à quoi une ligne scellée", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "une ligne du journal avec son hash", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre ce que vous aviez écrit avant le résultat", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "entrée du regsitre stp", "intent_id": "ask_ledger_row_receipt", "locale": "fr", "source": "model_paraphrase"}
+{"text": "how do I verify this myself", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can I recompute the hashes", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do i audit the chain", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can my auditor check this without you", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats the chain head", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do i know the ledger wasnt edited afterwards", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "verifiy the chain", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "steps to check the hash chain", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "is there a script i can run to check it", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "chain verification", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "i dont want to take your word for it, how do i confirm the record myself", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "prove the chain is intact", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how would compliance validate this on their own", "intent_id": "ask_chain_verify_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "wie verifiziere ich die hashkette", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kann mein revisor das unabhängig nachrechnen", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "gibt es ein skript zum prüfen", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "woher weiss ich dass nichts nachträglich geändert wurde", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kette prüfen, wie", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "chain head?", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie auditiere ich das ohne euch", "intent_id": "ask_chain_verify_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "comment je vérifie moi-même", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment auditer la chaîne de hachage", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "mon réviseur peut contrôler ça sans vous", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "il y a un script pour vérifier", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment savoir que rien n'a été modifié après coup", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vérifier la chaîne, on fait comment", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "c'est quoi le hash de tête", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "je veux contrôler ça en indépendant", "intent_id": "ask_chain_verify_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "up or down", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "direction?", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "will eurusd go up", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "where is the rate headed", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can you predcit direction", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats your price forecast", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "do you call the direction or not", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "so you have no view on the rate itself", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "why wont you say if it rises or falls", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "why no directional call", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "just tell me strengthen or weaken", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can anyone actually forecast fx", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "is there any evidence direction is forecastable", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "come on give me the direction", "intent_id": "ask_direction_evidence_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "rauf oder runter", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "richtung?", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "steigt der euro oder fällt er", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wohin läuft der kurs den", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "warum gebt ihr keine kursprognose ab", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "könnt ihr die richtung vorhersagen", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "also überhaupt keine meinung zum kurs?", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kann das überhaupt jemand vorhersagen", "intent_id": "ask_direction_evidence_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "ça monte ou ça descend", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "direction ?", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "l euro va monter ?", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vous prévoyez le cours ou pas", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "pourquoi pas de prévision de cours", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "dites-moi juste si ça va baisser", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "donc aucun avis sur le sens du marché ?", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelqu un peut-il vraiment prévoir le change", "intent_id": "ask_direction_evidence_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "calendar?", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats coming up", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "events this week", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "next fed meeting", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats on the calender", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "any data releases ahead", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "anything scheduled i should watch", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "when does the snb decide", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "upcoming risk events", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "is there anything in the diary before month end", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "when is cpi published", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the event schedule", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "anything on tomorrow", "intent_id": "ask_event_countdown_strip", "locale": "en", "source": "model_paraphrase"}
+{"text": "termine?", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "was steht diese woche an", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "wann ist die nächste ezb sitzung", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "was kommt noch vor monatsende", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "gibt es demnächst wichtige daten", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "wann entscheidet die snb", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "kalender bitte", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "steht morgen was an", "intent_id": "ask_event_countdown_strip", "locale": "de", "source": "model_paraphrase"}
+{"text": "agenda ?", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quoi au calendrier", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "il y a quoi cette semaine", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "prochaine réunion de la bce", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "des chiffres importants à venir", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quand décide la bns", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quels événements avant la fin du mois", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "il se passe quelque chose demain", "intent_id": "ask_event_countdown_strip", "locale": "fr", "source": "model_paraphrase"}
+{"text": "drivers?", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "why is risk this high", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "what is driving it", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "waht is pushing risk up", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "which features matter most today", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats behind the elevated risk", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the contributions", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "why did the risk jump", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "break it down for me", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "which inputs are doing the work", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "why so elevated", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "what explains todays reading", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "top drivers please", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the reasons behind the risk", "intent_id": "ask_feature_driver_bars", "locale": "en", "source": "model_paraphrase"}
+{"text": "treiber?", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "warum ist das risiko so hoch", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "was treibt das heute", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "welche merkmale schlagen durch", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "woran liegt das", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "was hat das risiko hochgetrieben", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig mir die beiträge", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "begründung für den wert bitte", "intent_id": "ask_feature_driver_bars", "locale": "de", "source": "model_paraphrase"}
+{"text": "facteurs ?", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "pourquoi le risque est si haut", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "qu est-ce qui pousse le risque", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quels indicateurs pèsent le plus", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "ça vient de quoi", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre les contributions", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "pourquoi cette hausse du risque aujourd hui", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "détaille les raisons", "intent_id": "ask_feature_driver_bars", "locale": "fr", "source": "model_paraphrase"}
+{"text": "storm replay", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "replay?", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "replay the snb shock", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "how did covd look", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "what did the financial crisis look like", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "play back brexit night", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "run the franc shock again", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the last big crisis day by day", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "can i see how the pandemic unfolded", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "walk me through a past episode", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the taper tantrum", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "how did the regimes move during the euro crisis", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me a crisis replay", "intent_id": "ask_storm_replay_mini", "locale": "en", "source": "model_paraphrase"}
+{"text": "sturm replay", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig mir den frankenschock", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie sah covid damals aus", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "spiel die finanzkrise nochmal ab", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie lief die brexit nacht", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "kann ich eine alte krise durchspielen", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "vergangene episode bitte", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig wie sich die regime in der eurokrise bewegt haben", "intent_id": "ask_storm_replay_mini", "locale": "de", "source": "model_paraphrase"}
+{"text": "replay de crise", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "rejouer le choc de la bns", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre une ancienne tempête", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "le covid ça donnait quoi", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "rejoue la crise financière", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "et la nuit du brexit", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "je veux revoir un épisode passé", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment les régimes ont bougé pendant la crise de l euro", "intent_id": "ask_storm_replay_mini", "locale": "fr", "source": "model_paraphrase"}
+{"text": "diagram?", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "explain the pipeline with a picture", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "draw me the flow", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "how does the hmm actually work", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me how the consensus is put together", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "can you sketch how this works", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "how does the conformal band work", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "explain the mechanism", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the moving parts", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "how does it all fit together", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "picture of how the model works please", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "how does the hash chain work", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "explian how the forecaster works", "intent_id": "ask_explainer_diagram", "locale": "en", "source": "model_paraphrase"}
+{"text": "schaubild?", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "zeig mir das als diagramm", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "erklär mir den ablauf mit einer skizze", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie arbeitet das hmm", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie greift das alles ineinander", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "male mir das mal auf", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie kommt das konsens signal zustande", "intent_id": "ask_explainer_diagram", "locale": "de", "source": "model_paraphrase"}
+{"text": "schéma ?", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment marche la sirène", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "fais moi un schéma", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "explique le mécanisme", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment fonctionne le hmm", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "dessine le flux de bout en bout", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment tout ça s emboîte", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "montre les rouages du modèle", "intent_id": "ask_explainer_diagram", "locale": "fr", "source": "model_paraphrase"}
+{"text": "what is expected shortfall", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "define chop regime", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "siren — what does that word mean?", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "meaning of days-in-regime?", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats a conformal band", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "explain the term consensus, briefly", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "glossary: anomaly percentile", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "define VaR pls", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what do you mean by regime exactly", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "quick def of hash-chained ledger", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "expected shortfall vs VaR — definitions only", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "term: change risk. define.", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "wht does calm mean here", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can you define trend regime in plain words", "intent_id": "ask_glossary_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "was heisst expected shortfall", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "definiere chop", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Sirene – was ist das eigentlich?", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kurz erklärt: Konformalband?", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was bedeutet Regime bei euch", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Begriff 'days in regime' bitte definieren", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was ist das Anomalie-Perzentil, kurz", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "erklär mir mal den Begriff Konsens", "intent_id": "ask_glossary_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "c'est quoi l'expected shortfall", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "définis chop", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "sirène, ça veut dire quoi ?", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "définition de la bande conforme svp", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "que signifie régime ici", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "terme « jours dans le régime » : définition", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "def rapide de la VaR", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "tu peux définir le consensus simplement", "intent_id": "ask_glossary_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "where does the siren percentile come from", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "what goes into the consensus vote", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do you get the band around change risk", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "which model produces the regime label", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "walk me through how todays number was made", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "methodology behind the expected shortfall pls", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "what inputs feed the regime classifier", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do u calculate days in regime", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "show the pipeline for change risk", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "what's the derivation of the conditional VaR", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "explain how the ledger hash is built", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "sources + steps for the siren score", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "is change risk fitted or rule-based, how derived", "intent_id": "ask_methodology_flow", "locale": "en", "source": "model_paraphrase"}
+{"text": "wie wird das Änderungsrisiko berechnet", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "woher kommt das Sirenen-Perzentil", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "welches Modell liefert das Regime-Label", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "Rechenweg für die Bandbreite bitte", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "was fliesst in den Konsens ein", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie entsteht die veröffentlichte Zahl, Schritt für Schritt", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "welche Grössen stecken hinter dem VaR", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "Herleitung days in regime?", "intent_id": "ask_methodology_flow", "locale": "de", "source": "model_paraphrase"}
+{"text": "comment est calculé le risque de changement", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "d'où vient le percentile de la sirène", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quel modèle sort l'étiquette de régime", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "la méthodo de la bande, en bref", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "qu'est-ce qui entre dans le consensus", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "explique la chaîne de calcul du chiffre publié", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelles entrées alimentent la VaR conditionnelle", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment vous obtenez les jours dans le régime", "intent_id": "ask_methodology_flow", "locale": "fr", "source": "model_paraphrase"}
+{"text": "price?", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "whats included in the pro tier", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "do you send email alerts", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "can I get an alert when the regime flips", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "is there a free trial", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "do you have an API", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "which markets do you cover", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how do I cancel my plan", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "seats for the whole treasury team?", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "how often does the data refresh", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "is your data licensed for redistribution", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "annual billing discount?", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "do u support sso", "intent_id": "ask_faq_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "was kostet das", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "welche Pakete gibt es", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "gibt's E-Mail-Alerts?", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "kann ich das testen bevor ich zahle", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "API vorhanden?", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "welche Währungspaare sind dabei", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "wie kündige ich", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Rechnung in CHF möglich?", "intent_id": "ask_faq_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "ça coûte combien", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelles formules proposez-vous", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "vous faites des alertes mail ?", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "essai gratuit ?", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "y a-t-il une API", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelles paires sont couvertes", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "comment résilier", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "facturation en francs possible ?", "intent_id": "ask_faq_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "what should I ask my bank", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "questions for my FX desk", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me talking points for the bank call", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what do I put to the counterparty instead of asking you for advice", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "bank questions pls", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "im meeting our relationship manager, what do i ask", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "which questions should a treasurer raise with the bank", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "prep me for the hedging conversation with the bank", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "what to ask the bank about forward pricing", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "questions to challenge my bank's quote", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "help me draft questions for the dealer", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "ask-your-bank card", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "wht questions do i bring to my banker this week", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "not advice — just what should I ask them", "intent_id": "ask_ask_your_bank_card", "locale": "en", "source": "model_paraphrase"}
+{"text": "was soll ich meine Bank fragen", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Fragen fürs Bankgespräch bitte", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "welche Fragen stelle ich dem Händler", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Gesprächsleitfaden für den Termin mit der Bank", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was frage ich meinen Kundenberater", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "Fragenliste für die Absicherungsdiskussion", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "womit hake ich bei der Bank nach", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "was frag ich die Bank zum Terminkurs", "intent_id": "ask_ask_your_bank_card", "locale": "de", "source": "model_paraphrase"}
+{"text": "qu'est-ce que je demande à ma banque", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "questions pour mon banquier", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "prépare-moi le rendez-vous avec la banque", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quelles questions poser au desk FX", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "je veux challenger la cotation, quelles questions", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "liste de questions pour la couverture", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "quoi demander à mon conseiller", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "questions à poser plutôt qu'un conseil", "intent_id": "ask_ask_your_bank_card", "locale": "fr", "source": "model_paraphrase"}
+{"text": "just the numbers", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "give me the raw metrics", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "table pls", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "dump todays values for EURCHF", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "all published metrics, no commentary", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "show me the full metric table", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "numbers only, skip the talk", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "current values for every market", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "raw figures pls", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "print the daily table", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "csv of the published metrics", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "gimme the stats sheet", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "eurusd metrics, plain", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "no narration, just the published values", "intent_id": "ask_metric_table", "locale": "en", "source": "model_paraphrase"}
+{"text": "nur die Zahlen", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "gib mir die Tabelle", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "alle Kennzahlen roh bitte", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Werte für EURCHF, ohne Kommentar", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Übersicht aller Märkte als Tabelle", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Zahlen, kurz und knapp", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "Tagesdaten ausgeben", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "nur Rohwerte, kein Text", "intent_id": "ask_metric_table", "locale": "de", "source": "model_paraphrase"}
+{"text": "juste les chiffres", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "donne-moi le tableau", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "toutes les valeurs publiées, sans blabla", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "chiffres bruts svp", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "tableau du jour pour EURCHF", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "les métriques, brut de brut", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "affiche les valeurs de tous les marchés", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}
+{"text": "pas de commentaire, que les données", "intent_id": "ask_metric_table", "locale": "fr", "source": "model_paraphrase"}

@@ -1,0 +1,1172 @@
+[
+ {
+  "intent_id": "ask_condition_card",
+  "en": [
+   "how's eurusd looking today",
+   "condition card for usdchf",
+   "eurusd status?",
+   "whats the state of gbpusd right now",
+   "quick read on euro dollar please",
+   "sum up today for usdchf — regime, change risk, siren",
+   "eurusd todya?",
+   "current condition eur/usd",
+   "where do we stand on gbpusd",
+   "just the headline for the franc, im in a rush",
+   "overall picture for the euro market today",
+   "brief me on usdchf",
+   "so what's euro dollar doing today, overall",
+   "give me the daily card for gbp/usd"
+  ],
+  "de": [
+   "Wie steht EURUSD heute?",
+   "Lage USDCHF?",
+   "Kurzer Überblick zu GBPUSD bitte",
+   "Zustandskarte EURUSD",
+   "Gib mir den Tagesstand für Euro Dollar",
+   "Wie sieht der Franken heute aus – Regime, Wechselrisiko, Sirene?",
+   "Status EURUSD kurz und knapp",
+   "Was ist heute los bei GBPUSD?"
+  ],
+  "fr": [
+   "EURUSD aujourd'hui ?",
+   "L'état du marché sur USDCHF ?",
+   "Fais-moi le point sur GBPUSD",
+   "Résumé du jour pour l'euro dollar",
+   "Ça donne quoi le franc aujourd'hui ?",
+   "Carte de situation EURUSD s'il te plaît",
+   "Régime, risque de changement, sirène — pour USDCHF",
+   "Où on en est sur GBPUSD ?"
+  ]
+ },
+ {
+  "intent_id": "ask_consensus_dots",
+  "en": [
+   "do the detectors agree?",
+   "consensus?",
+   "are the stress voters aligned on eurusd",
+   "any disagreement between the detectors today",
+   "consenus dots for usdchf",
+   "is the panel split?",
+   "do all the stress signals point the same way",
+   "show me the agreement dots",
+   "are the voters unanimous right now",
+   "who's dissenting on gbpusd",
+   "detectors in agreement or not, quickly",
+   "stress detectors — agree or split?",
+   "is there consensus on the stress read for the franc",
+   "dots?"
+  ],
+  "de": [
+   "Sind sich die Detektoren einig?",
+   "Konsens?",
+   "Stimmen die Stressmelder überein oder nicht?",
+   "Gibt es Uneinigkeit bei EURUSD?",
+   "Zeig mir die Konsenspunkte",
+   "Sind die Stimmen heute einstimmig?",
+   "Wer schert bei USDCHF aus?",
+   "Einig oder gespalten, die Detektoren?"
+  ],
+  "fr": [
+   "Les détecteurs sont d'accord ?",
+   "Consensus ?",
+   "Y a-t-il un désaccord sur EURUSD ?",
+   "Montre les points de consensus",
+   "Les signaux de stress vont tous dans le même sens ?",
+   "Unanimité ou pas aujourd'hui ?",
+   "Qui n'est pas d'accord sur USDCHF ?",
+   "Détecteurs alignés ou divisés ?"
+  ]
+ },
+ {
+  "intent_id": "ask_regime_probability_bars",
+  "en": [
+   "how confident is the model in the regime label",
+   "regime probabilities please",
+   "how sure are you it's chop",
+   "show the probability bars for eurusd",
+   "is the regime call solid or borderline",
+   "what are the odds on each regime state",
+   "regime confidnce?",
+   "how strong is the calm read",
+   "break down the regime probabilities for usdchf",
+   "is it a close call between trend and chop",
+   "prob bars",
+   "how much weight does the model put on each regime",
+   "certainty of the regime classification for gbpusd",
+   "how firm is that regime word"
+  ],
+  "de": [
+   "Wie sicher ist das Regime?",
+   "Regimewahrscheinlichkeiten bitte",
+   "Wie überzeugt ist das Modell beim Label?",
+   "Zeig die Wahrscheinlichkeitsbalken für EURUSD",
+   "Ist die Einstufung eindeutig oder knapp?",
+   "Wie stark ist die Ruhig-Einschätzung?",
+   "Wahrscheinlichkeiten je Regime für USDCHF",
+   "Wie belastbar ist das Regimewort?"
+  ],
+  "fr": [
+   "Le modèle est sûr de son régime ?",
+   "Probabilités par régime, stp",
+   "Montre les barres de probabilité pour EURUSD",
+   "C'est net ou c'est limite comme classification ?",
+   "Quelle confiance sur l'étiquette de régime ?",
+   "Poids de chaque régime sur USDCHF",
+   "Le mot du régime, il tient la route ?",
+   "Confiance du modèle sur le régime GBPUSD"
+  ]
+ },
+ {
+  "intent_id": "ask_siren_gauge",
+  "en": [
+   "siren?",
+   "how unusual is today",
+   "anomaly percentile for eurusd",
+   "is today weird?",
+   "siren gauge pls",
+   "how strange does today look versus history",
+   "whats the anomaly reading on usdchf",
+   "siern?",
+   "is the siren elevated",
+   "how far from normal are we today",
+   "give me the anomaly score for gbpusd",
+   "does today stand out",
+   "siren level, quick",
+   "how rare is today's behaviour in the euro market"
+  ],
+  "de": [
+   "Sirene?",
+   "Wie ungewöhnlich ist heute?",
+   "Anomaliewert EURUSD?",
+   "Ist heute auffällig?",
+   "Wie weit weg vom Normalen sind wir?",
+   "Sirenenstand kurz bitte",
+   "Sticht der Tag heraus?",
+   "Wie selten ist so ein Tag beim Franken?"
+  ],
+  "fr": [
+   "La sirène ?",
+   "C'est inhabituel aujourd'hui ?",
+   "Percentile d'anomalie sur EURUSD",
+   "À quel point la journée sort de l'ordinaire ?",
+   "Niveau de sirène, vite",
+   "La journée est bizarre ou normale ?",
+   "On est loin de la normale ?",
+   "Score d'anomalie du franc aujourd'hui"
+  ]
+ },
+ {
+  "intent_id": "ask_pair_compare_table",
+  "en": [
+   "compare the markets today",
+   "which pair looks worst right now",
+   "side by side table of all pairs",
+   "how do eurusd and usdchf stack up",
+   "rank the markets by change risk",
+   "compair the pairs",
+   "show me everything in one table",
+   "which market is calmest today",
+   "all pairs at a glance",
+   "cross market comparison please",
+   "who's the outlier across the pairs",
+   "line up the markets against each other",
+   "table of all markets, sorted by risk",
+   "eurusd vs gbpusd vs usdchf — comparison"
+  ],
+  "de": [
+   "Märkte vergleichen bitte",
+   "Welches Paar sieht am schlechtesten aus?",
+   "Alle Paare nebeneinander",
+   "Vergleich EURUSD gegen USDCHF",
+   "Rangliste nach Wechselrisiko",
+   "Wo ist es heute am ruhigsten?",
+   "Übersichtstabelle aller Märkte",
+   "Stell die Märkte gegenüber"
+  ],
+  "fr": [
+   "Compare les marchés aujourd'hui",
+   "Quelle paire est la pire en ce moment ?",
+   "Tableau comparatif de toutes les paires",
+   "EURUSD contre GBPUSD, ça donne quoi ?",
+   "Classe les marchés par risque de changement",
+   "Où est-ce le plus calme aujourd'hui ?",
+   "Toutes les paires en un coup d'œil",
+   "Mets les marchés côte à côte"
+  ]
+ },
+ {
+  "intent_id": "ask_drift_status",
+  "en": [
+   "models still healthy?",
+   "any drift?",
+   "drift status",
+   "is anything drifting",
+   "how's calibration holding up",
+   "brier still where it should be?",
+   "did the model degrade since we froze it",
+   "check model health pls",
+   "anythign drifted lately",
+   "are the forecasts still trustworthy or has the model gone stale",
+   "coverage still on target?",
+   "drift — yes or no?",
+   "quick health check on the models",
+   "is the radar still calibrated or do we need to retrain"
+  ],
+  "de": [
+   "Drift-Status?",
+   "läuft das Modell noch sauber?",
+   "gibt's irgendwo Drift?",
+   "ist die Kalibrierung weggelaufen?",
+   "kurzer Modell-Check bitte",
+   "hat sich seit dem Einfrieren was verschlechtert?",
+   "Abdeckung noch im Zielbereich?",
+   "modell noch gesund oder driftet das"
+  ],
+  "fr": [
+   "dérive ?",
+   "les modèles tiennent toujours ?",
+   "état de la dérive",
+   "la calibration a bougé ?",
+   "petit check santé des modèles",
+   "le modèle s'est dégradé depuis le gel ?",
+   "la couverture est toujours dans la cible ?",
+   "modeles ok ou ca derive"
+  ]
+ },
+ {
+  "intent_id": "ask_risk_trace",
+  "en": [
+   "how has change risk moved lately",
+   "risk trace",
+   "show me the change risk curve",
+   "has change risk been climbing this week?",
+   "chnage risk trend",
+   "plot change risk over the past month",
+   "where's change risk been heading",
+   "is the risk line up or down recently",
+   "change risk history please",
+   "risk over the window?",
+   "trend of the change risk since last month",
+   "give me the risk trajectory",
+   "did change risk spike at any point recently",
+   "risk curve — flat or rising?"
+  ],
+  "de": [
+   "Risikoverlauf?",
+   "wie hat sich das Änderungsrisiko entwickelt?",
+   "zeig mir die Risikokurve der letzten Wochen",
+   "steigt das Wechselrisiko gerade?",
+   "Verlauf Änderungsrisiko bitte",
+   "war das Risiko zuletzt eher hoch oder flach?",
+   "risiko trend letzte wochen",
+   "Kurve vom Änderungsrisiko seit letztem Monat"
+  ],
+  "fr": [
+   "évolution du risque ?",
+   "montre la courbe du risque de changement",
+   "le risque monte depuis la semaine dernière ?",
+   "historique du risque sur la période",
+   "trace du risque svp",
+   "ça a bougé comment le risque de changement ces derniers temps ?",
+   "risque plutôt stable ou en hausse récemment ?",
+   "courbe risque le mois dernier"
+  ]
+ },
+ {
+  "intent_id": "ask_regime_timeline_ribbon",
+  "en": [
+   "how long have we been in this regime?",
+   "days in regime?",
+   "regime ribbon",
+   "show the regime timeline",
+   "how long has calm lasted",
+   "streak length for the current regime",
+   "how long since the regime flipped",
+   "regime timeilne pls",
+   "give me the shape of the regime history",
+   "are we in a long stretch or has it been flipping a lot?",
+   "how stable has the regime been over the year",
+   "current regime — how old is it?",
+   "show me the band of regimes over time",
+   "has this regime been running a while?"
+  ],
+  "de": [
+   "wie lange sind wir schon in dem Regime?",
+   "Tage im Regime?",
+   "Regime-Verlauf anzeigen",
+   "wie lange hält die Ruhe schon an?",
+   "Regimeband bitte",
+   "wechselt das Regime oft oder läuft es lange durch?",
+   "seit wann läuft das aktuelle Regime?",
+   "regime timeline zeigen"
+  ],
+  "fr": [
+   "on est dans ce régime depuis combien de temps ?",
+   "durée du régime actuel ?",
+   "montre la frise des régimes",
+   "le calme dure depuis longtemps ?",
+   "ruban des régimes stp",
+   "ça change souvent de régime ou ça tient ?",
+   "depuis quand le régime actuel tourne ?",
+   "historique visuel des regimes"
+  ]
+ },
+ {
+  "intent_id": "ask_regime_history_table",
+  "en": [
+   "when was the last crisis?",
+   "list past regime episodes",
+   "dates of the previous chop periods",
+   "regime history table",
+   "when did the last trend regime start and end",
+   "give me the episode table",
+   "last crisis date?",
+   "which dates were we in crisis",
+   "show past episodes with dates",
+   "when did we last flip to chop",
+   "episode list pls",
+   "history of regime episodes as a table",
+   "when was teh last crisis regime",
+   "pull up the dates of every crisis episode"
+  ],
+  "de": [
+   "wann war die letzte Krise?",
+   "Liste der vergangenen Regime-Episoden",
+   "Daten der letzten Chop-Phasen",
+   "Regime-Historie als Tabelle",
+   "wann hat der letzte Trend angefangen und aufgehört?",
+   "wann waren wir zuletzt im Krisenregime?",
+   "Episodentabelle bitte",
+   "gib mir die Termine aller Krisenphasen"
+  ],
+  "fr": [
+   "c'était quand la dernière crise ?",
+   "liste des épisodes de régime passés",
+   "dates des phases de chop",
+   "tableau de l'historique des régimes",
+   "quand a commencé et fini le dernier régime de tendance ?",
+   "on était en crise à quelles dates ?",
+   "sors-moi le tableau des épisodes",
+   "derniere crise c'etait quand"
+  ]
+ },
+ {
+  "intent_id": "ask_what_changed_card",
+  "en": [
+   "what changed since yesterday?",
+   "what's new today",
+   "anything move overnight?",
+   "diff vs yesterday",
+   "what changed",
+   "give me the delta from yesterday's run",
+   "whats different this morning",
+   "anything worth knowing since the last update?",
+   "changes since yesterday pls",
+   "what moved since the last run",
+   "did anything shift overnight or is it the same as yesterday",
+   "today vs yesterday — what's different?",
+   "quick summary of what changed",
+   "anything new since yesterday, keep it short"
+  ],
+  "de": [
+   "was hat sich seit gestern geändert?",
+   "was ist heute neu?",
+   "Änderungen zu gestern?",
+   "hat sich über Nacht was bewegt?",
+   "Unterschied zum gestrigen Lauf",
+   "kurz: was ist anders als gestern?",
+   "was gibts neues seit dem letzten update",
+   "seit gestern irgendwas passiert?"
+  ],
+  "fr": [
+   "qu'est-ce qui a changé depuis hier ?",
+   "quoi de neuf aujourd'hui ?",
+   "des changements depuis hier ?",
+   "ça a bougé cette nuit ?",
+   "différence avec le run d'hier",
+   "en bref, qu'est-ce qui est différent d'hier ?",
+   "du nouveau depuis la dernière mise à jour ?",
+   "quoi de change depuis hier"
+  ]
+ },
+ {
+  "intent_id": "ask_vol_trace",
+  "en": [
+   "vol trace",
+   "show me realised vol for eurusd",
+   "how volatile has the euro been lately?",
+   "rolling volatility chart please",
+   "realized vol over the window",
+   "plot the vol history for usdchf",
+   "vol trend?",
+   "how much has cable been swinging recently",
+   "give me the realised volatility curve",
+   "realsied vol chart pls",
+   "what's realised vol doing right now",
+   "is vol rising or falling here",
+   "vol traec for the franc, quick",
+   "show volatility over time"
+  ],
+  "de": [
+   "Vola-Verlauf",
+   "Wie stark schwankt EURCHF zurzeit?",
+   "Zeig mir die realisierte Vola über den Zeitraum",
+   "Volatilitätskurve bitte",
+   "vola chart eurusd",
+   "War die Vola zuletzt höher oder tiefer?",
+   "Schwankungsbreite im Verlauf anzeigen",
+   "realisierte volatilitaet bitte kurz"
+  ],
+  "fr": [
+   "courbe de volatilité",
+   "la vol a fait quoi ces derniers temps ?",
+   "montre la volatilité réalisée sur la période",
+   "ça bouge beaucoup en ce moment ?",
+   "graphe de vola EURCHF",
+   "la volatilité monte ou baisse ?",
+   "volat réalisée stp",
+   "historique de la volatilité de la livre"
+  ]
+ },
+ {
+  "intent_id": "ask_treasury_light",
+  "en": [
+   "treasury light?",
+   "hedge or wait?",
+   "what does the light say today",
+   "should we hedge now or hold off",
+   "traffic light for eurchf",
+   "is it a ladder day?",
+   "hedging signal pls",
+   "do we cover now or not",
+   "green amber or red for treasury",
+   "give me the hedge/wait/ladder call",
+   "shoudl i hedge today",
+   "wait or ladder in?",
+   "treasury recommendation for the franc exposure",
+   "just tell me: cover, wait, or stagger"
+  ],
+  "de": [
+   "Ampel?",
+   "Absichern oder abwarten?",
+   "Was sagt die Ampel heute?",
+   "Sollen wir gestaffelt absichern?",
+   "Jetzt hedgen oder noch warten",
+   "Empfehlung: sichern, warten oder staffeln?",
+   "hedge signal fuer den franken?",
+   "Kurz und knapp: absichern ja oder nein?"
+  ],
+  "fr": [
+   "on couvre ou on attend ?",
+   "le feu dit quoi ?",
+   "feu de trésorerie pour l'EURCHF",
+   "faut-il couvrir maintenant ?",
+   "on étale la couverture ou pas ?",
+   "signal de couverture du jour",
+   "je couvre, j'attends ou j'échelonne ?",
+   "verdict couverture stp"
+  ]
+ },
+ {
+  "intent_id": "ask_var_es_bars",
+  "en": [
+   "var by regime",
+   "expected shortfall per regime",
+   "show the es bars",
+   "how bad is the tail in the crisis regime",
+   "value at risk chart",
+   "cvar by regime pls",
+   "worst-case loss in each regime",
+   "what's the VaR right now for eurusd",
+   "tail risk broken down by regime",
+   "es vs var per regime",
+   "downside risk numbers by regime",
+   "var bars eurchf",
+   "expected shortfal in chop",
+   "how much could we lose on a bad day in the trend regime"
+  ],
+  "de": [
+   "VaR je Regime",
+   "Expected Shortfall nach Regime",
+   "Wie hoch ist das Tail-Risiko im Krisenregime?",
+   "Zeig die VaR-Balken",
+   "Was verlieren wir an einem schlechten Tag im Trendregime?",
+   "Verlustrisiko pro Regime",
+   "CVaR pro Regime bitte",
+   "expected shortfal im chop regime"
+  ],
+  "fr": [
+   "VaR par régime",
+   "expected shortfall selon le régime",
+   "quelle perte en régime de crise ?",
+   "montre les barres de VaR",
+   "risque de queue par régime",
+   "perte moyenne sur les pires journées par régime",
+   "cvar par regime svp",
+   "combien on perd sur une mauvaise journée en régime trend ?"
+  ]
+ },
+ {
+  "intent_id": "ask_move_frequency_bars",
+  "en": [
+   "how often does it move that much?",
+   "frequency of moves that size",
+   "how many days have seen a swing like this",
+   "has a move like that happened before, and how often",
+   "move frequency bars",
+   "historical frequency of jumps that big",
+   "how often per year does eurusd move like that",
+   "how comon is a move this size",
+   "count of days with moves that large",
+   "how rare is this kind of move",
+   "occurrence rate of such moves",
+   "how frequently has cable jumped that far",
+   "frequency chart of daily moves",
+   "how often historically?"
+  ],
+  "de": [
+   "Wie oft kam so eine Bewegung vor?",
+   "Häufigkeit solcher Ausschläge",
+   "Wie häufig bewegt sich das Paar so stark?",
+   "Gab es solche Sprünge schon öfter?",
+   "Wie selten ist so ein Tag?",
+   "Historische Häufigkeit von Bewegungen dieser Grössenordnung",
+   "wie oft pro jahr passiert sowas",
+   "Häufigkeitsverteilung der Tagesbewegungen"
+  ],
+  "fr": [
+   "c'est arrivé combien de fois ?",
+   "fréquence des mouvements de cette ampleur",
+   "à quelle fréquence ça bouge autant ?",
+   "historiquement ça arrive souvent ?",
+   "combien de journées avec un écart pareil ?",
+   "histogramme des variations quotidiennes",
+   "c'est fréquent un mouvement pareil ?",
+   "recurrence de tels ecarts svp"
+  ]
+ },
+ {
+  "intent_id": "ask_hedge_compare_table",
+  "en": [
+   "forward vs option",
+   "compare hedging structures",
+   "collar or forward, which is better",
+   "hedge structure comparison table",
+   "show me the hedge instruments side by side",
+   "what structures can we use to hedge, compare them",
+   "cost comparison of the hedge alternatives",
+   "participating forward vs plain vanilla?",
+   "compair forward, collar and option",
+   "side by side of the hedging choices",
+   "which hedge structure is cheapest",
+   "table of hedge variants pls",
+   "collar against a straight forward",
+   "run the structure comparison for the chf exposure"
+  ],
+  "de": [
+   "Termingeschäft oder Option?",
+   "Vergleich der Absicherungsinstrumente",
+   "Collar gegen Forward vergleichen",
+   "Welche Struktur ist günstiger?",
+   "Tabelle mit den Absicherungsvarianten",
+   "Gegenüberstellung der Hedging-Strukturen bitte",
+   "forward vs collar kosten",
+   "Was kostet uns welche Absicherungsvariante im Vergleich?"
+  ],
+  "fr": [
+   "forward ou option ?",
+   "comparer les structures de couverture",
+   "tableau comparatif des couvertures",
+   "collar contre terme sec, ça donne quoi ?",
+   "quelle structure est la moins chère ?",
+   "compare les instruments de couverture stp",
+   "options vs contrats à terme",
+   "mets-moi les variantes de couverture côte à côte"
+  ]
+ },
+ {
+  "intent_id": "ask_cost_of_waiting_curve",
+  "en": [
+   "what does waiting cost me",
+   "cost of waiting curve",
+   "if I push the hedge out a quarter what's the damage",
+   "price of delay pls",
+   "how much more risk do I eat by sitting on this",
+   "what do I give up by postponing",
+   "cost of waitng?",
+   "show me the delay curve",
+   "hedging later instead of now, what's the extra cost",
+   "does it get more expensive the longer I leave it unhedged",
+   "cost of deferring",
+   "whats the penalty for not acting today",
+   "wait cost",
+   "so if we hold off until after quarter end, how much worse does the tail get"
+  ],
+  "de": [
+   "was kostet mich das zuwarten",
+   "kosten des wartens",
+   "wenn ich die absicherung aufschiebe, was kostet das",
+   "wie teuer wird das verzögern",
+   "was verliere ich, wenn ich noch abwarte",
+   "wird es teurer je länger ich ungesichert bleibe",
+   "wartekosten bitte",
+   "kosten des wartesn?"
+  ],
+  "fr": [
+   "combien ça me coûte d'attendre",
+   "le coût du report",
+   "si je diffère la couverture, ça chiffre combien",
+   "et si j'attends encore un peu",
+   "ça devient plus cher si je traîne",
+   "coût de l attente svp",
+   "qu'est-ce que je perds à repousser",
+   "cout de lattente"
+  ]
+ },
+ {
+  "intent_id": "ask_scoreboard_card",
+  "en": [
+   "why should I trust this thing",
+   "track record?",
+   "how good have your calls been",
+   "show me the scoreboard",
+   "whats your brier score live",
+   "are you actually any good",
+   "hows the forward test going",
+   "trck record pls",
+   "how has the model done since launch",
+   "give me the hit rate on your forecasts",
+   "scoreboard",
+   "is this better than guessing",
+   "before I take this to my CFO I need to see the record",
+   "live brier against the frozen one"
+  ],
+  "de": [
+   "warum sollte ich euch vertrauen",
+   "wie ist eure blianz bisher",
+   "zeig mir den trackrecord",
+   "wie gut lagt ihr bisher",
+   "brier score live?",
+   "wie läuft der forwardtest",
+   "trefferquote eurer prognosen",
+   "seit dem start, wie ist die bilanz"
+  ],
+  "fr": [
+   "pourquoi vous faire confiance",
+   "c'est quoi votre historique",
+   "vous êtes fiables ou pas",
+   "montrez votre bilan de prévisions",
+   "score de brier en direct",
+   "vos prévisions passées valent quoi",
+   "le forward test donne quoi",
+   "votre historque svp"
+  ]
+ },
+ {
+  "intent_id": "ask_coverage_plot",
+  "en": [
+   "do your bands actually cover",
+   "coverage plot",
+   "are the intervals honest",
+   "how often does the truth land inside the band",
+   "band coverage against target",
+   "is the conformal calibrated",
+   "coverge?",
+   "show the coverage over time",
+   "your confidence bands, do they hold up",
+   "empirical coverage pls",
+   "are the bands too wide or too narrow",
+   "how often do you miss the interval",
+   "conformal coverage",
+   "do the ranges you quote hold in practice"
+  ],
+  "de": [
+   "halten eure bänder",
+   "wie ist die tatsächliche abdeckung",
+   "sind die intervalle kalibriert",
+   "wie oft liegt der wert im band",
+   "abdeckung gegen ziel zeigen",
+   "konforme abdeckung?",
+   "sind die bänder zu breit",
+   "abdekung der prognoseintervalle"
+  ],
+  "fr": [
+   "vos bandes couvrent vraiment",
+   "taux de couverture réel des intervalles",
+   "les intervalles tiennent-ils",
+   "à quelle fréquence la valeur tombe dans la bande",
+   "calibration des bandes conformes",
+   "couverture conforme svp",
+   "vos intervalles sont trop larges",
+   "couvertur des bandes"
+  ]
+ },
+ {
+  "intent_id": "ask_ledger_row_receipt",
+  "en": [
+   "show me one sealed row",
+   "ledger entry pls",
+   "can I see an actual forecast as it was written",
+   "show a receipt",
+   "pull up a row from the ledger",
+   "i want to see a real sealed forecast, not a summary",
+   "ledgr row",
+   "show me what you wrote before the outcome existed",
+   "single entry from the record please",
+   "give me a sealed forecast to look at",
+   "receipt for a forecast",
+   "show me the row itself, hash and all",
+   "an example ledger line",
+   "what does a sealed row actually look like"
+  ],
+  "de": [
+   "zeig mir eine versiegelte zeile",
+   "einen echten ledger eintrag bitte",
+   "wie sieht so ein eintrag aus",
+   "beleg für eine prognose",
+   "zeig was ihr vor dem ergebnis geschrieben habt",
+   "eine zeile aus dem journal",
+   "ledger zeile mit hash bitte",
+   "gib mir ein beispiel aus dem register"
+  ],
+  "fr": [
+   "montre une ligne scellée du registre",
+   "une vraie prévision telle qu'elle a été écrite",
+   "un justificatif de prévision",
+   "sors-moi une entrée du registre",
+   "ça ressemble à quoi une ligne scellée",
+   "une ligne du journal avec son hash",
+   "montre ce que vous aviez écrit avant le résultat",
+   "entrée du regsitre stp"
+  ]
+ },
+ {
+  "intent_id": "ask_chain_verify_card",
+  "en": [
+   "how do I verify this myself",
+   "can I recompute the hashes",
+   "how do i audit the chain",
+   "verify independently",
+   "can my auditor check this without you",
+   "whats the chain head",
+   "how do i know the ledger wasnt edited afterwards",
+   "verifiy the chain",
+   "steps to check the hash chain",
+   "is there a script i can run to check it",
+   "chain verification",
+   "i dont want to take your word for it, how do i confirm the record myself",
+   "prove the chain is intact",
+   "how would compliance validate this on their own"
+  ],
+  "de": [
+   "wie kann ich das selbst prüfen",
+   "wie verifiziere ich die hashkette",
+   "kann mein revisor das unabhängig nachrechnen",
+   "gibt es ein skript zum prüfen",
+   "woher weiss ich dass nichts nachträglich geändert wurde",
+   "kette prüfen, wie",
+   "chain head?",
+   "wie auditiere ich das ohne euch"
+  ],
+  "fr": [
+   "comment je vérifie moi-même",
+   "comment auditer la chaîne de hachage",
+   "mon réviseur peut contrôler ça sans vous",
+   "il y a un script pour vérifier",
+   "comment savoir que rien n'a été modifié après coup",
+   "vérifier la chaîne, on fait comment",
+   "c'est quoi le hash de tête",
+   "je veux contrôler ça en indépendant"
+  ]
+ },
+ {
+  "intent_id": "ask_direction_evidence_card",
+  "en": [
+   "up or down",
+   "direction?",
+   "will eurusd go up",
+   "where is the rate headed",
+   "can you predcit direction",
+   "whats your price forecast",
+   "do you call the direction or not",
+   "so you have no view on the rate itself",
+   "why wont you say if it rises or falls",
+   "why no directional call",
+   "just tell me strengthen or weaken",
+   "can anyone actually forecast fx",
+   "is there any evidence direction is forecastable",
+   "come on give me the direction"
+  ],
+  "de": [
+   "rauf oder runter",
+   "richtung?",
+   "steigt der euro oder fällt er",
+   "wohin läuft der kurs den",
+   "warum gebt ihr keine kursprognose ab",
+   "könnt ihr die richtung vorhersagen",
+   "also überhaupt keine meinung zum kurs?",
+   "kann das überhaupt jemand vorhersagen"
+  ],
+  "fr": [
+   "ça monte ou ça descend",
+   "direction ?",
+   "l euro va monter ?",
+   "vous prévoyez le cours ou pas",
+   "pourquoi pas de prévision de cours",
+   "dites-moi juste si ça va baisser",
+   "donc aucun avis sur le sens du marché ?",
+   "quelqu un peut-il vraiment prévoir le change"
+  ]
+ },
+ {
+  "intent_id": "ask_event_countdown_strip",
+  "en": [
+   "calendar?",
+   "whats coming up",
+   "events this week",
+   "next fed meeting",
+   "when is the next central bank meeting",
+   "whats on the calender",
+   "any data releases ahead",
+   "anything scheduled i should watch",
+   "when does the snb decide",
+   "upcoming risk events",
+   "is there anything in the diary before month end",
+   "when is cpi published",
+   "give me the event schedule",
+   "anything on tomorrow"
+  ],
+  "de": [
+   "termine?",
+   "was steht diese woche an",
+   "wann ist die nächste ezb sitzung",
+   "was kommt noch vor monatsende",
+   "gibt es demnächst wichtige daten",
+   "wann entscheidet die snb",
+   "kalender bitte",
+   "steht morgen was an"
+  ],
+  "fr": [
+   "agenda ?",
+   "quoi au calendrier",
+   "il y a quoi cette semaine",
+   "prochaine réunion de la bce",
+   "des chiffres importants à venir",
+   "quand décide la bns",
+   "quels événements avant la fin du mois",
+   "il se passe quelque chose demain"
+  ]
+ },
+ {
+  "intent_id": "ask_feature_driver_bars",
+  "en": [
+   "drivers?",
+   "why is risk this high",
+   "what is driving it",
+   "waht is pushing risk up",
+   "which features matter most today",
+   "whats behind the elevated risk",
+   "show me the contributions",
+   "why did the risk jump",
+   "break it down for me",
+   "which inputs are doing the work",
+   "why so elevated",
+   "what explains todays reading",
+   "top drivers please",
+   "give me the reasons behind the risk"
+  ],
+  "de": [
+   "treiber?",
+   "warum ist das risiko so hoch",
+   "was treibt das heute",
+   "welche merkmale schlagen durch",
+   "woran liegt das",
+   "was hat das risiko hochgetrieben",
+   "zeig mir die beiträge",
+   "begründung für den wert bitte"
+  ],
+  "fr": [
+   "facteurs ?",
+   "pourquoi le risque est si haut",
+   "qu est-ce qui pousse le risque",
+   "quels indicateurs pèsent le plus",
+   "ça vient de quoi",
+   "montre les contributions",
+   "pourquoi cette hausse du risque aujourd hui",
+   "détaille les raisons"
+  ]
+ },
+ {
+  "intent_id": "ask_storm_replay_mini",
+  "en": [
+   "storm replay",
+   "replay?",
+   "replay the snb shock",
+   "show me a past storm",
+   "how did covd look",
+   "what did the financial crisis look like",
+   "play back brexit night",
+   "run the franc shock again",
+   "show the last big crisis day by day",
+   "can i see how the pandemic unfolded",
+   "walk me through a past episode",
+   "show me the taper tantrum",
+   "how did the regimes move during the euro crisis",
+   "give me a crisis replay"
+  ],
+  "de": [
+   "sturm replay",
+   "zeig mir den frankenschock",
+   "wie sah covid damals aus",
+   "spiel die finanzkrise nochmal ab",
+   "wie lief die brexit nacht",
+   "kann ich eine alte krise durchspielen",
+   "vergangene episode bitte",
+   "zeig wie sich die regime in der eurokrise bewegt haben"
+  ],
+  "fr": [
+   "replay de crise",
+   "rejouer le choc de la bns",
+   "montre une ancienne tempête",
+   "le covid ça donnait quoi",
+   "rejoue la crise financière",
+   "et la nuit du brexit",
+   "je veux revoir un épisode passé",
+   "comment les régimes ont bougé pendant la crise de l euro"
+  ]
+ },
+ {
+  "intent_id": "ask_explainer_diagram",
+  "en": [
+   "diagram?",
+   "how does the siren work",
+   "explain the pipeline with a picture",
+   "draw me the flow",
+   "how does the hmm actually work",
+   "show me how the consensus is put together",
+   "can you sketch how this works",
+   "how does the conformal band work",
+   "explain the mechanism",
+   "show the moving parts",
+   "how does it all fit together",
+   "picture of how the model works please",
+   "how does the hash chain work",
+   "explian how the forecaster works"
+  ],
+  "de": [
+   "schaubild?",
+   "wie funktioniert die sirene",
+   "zeig mir das als diagramm",
+   "erklär mir den ablauf mit einer skizze",
+   "wie arbeitet das hmm",
+   "wie greift das alles ineinander",
+   "male mir das mal auf",
+   "wie kommt das konsens signal zustande"
+  ],
+  "fr": [
+   "schéma ?",
+   "comment marche la sirène",
+   "fais moi un schéma",
+   "explique le mécanisme",
+   "comment fonctionne le hmm",
+   "dessine le flux de bout en bout",
+   "comment tout ça s emboîte",
+   "montre les rouages du modèle"
+  ]
+ },
+ {
+  "intent_id": "ask_glossary_card",
+  "en": [
+   "what is expected shortfall",
+   "define chop regime",
+   "siren — what does that word mean?",
+   "meaning of days-in-regime?",
+   "whats a conformal band",
+   "explain the term consensus, briefly",
+   "glossary: anomaly percentile",
+   "define VaR pls",
+   "what do you mean by regime exactly",
+   "quick def of hash-chained ledger",
+   "expected shortfall vs VaR — definitions only",
+   "term: change risk. define.",
+   "wht does calm mean here",
+   "can you define trend regime in plain words"
+  ],
+  "de": [
+   "was heisst expected shortfall",
+   "definiere chop",
+   "Sirene – was ist das eigentlich?",
+   "kurz erklärt: Konformalband?",
+   "was bedeutet Regime bei euch",
+   "Begriff 'days in regime' bitte definieren",
+   "was ist das Anomalie-Perzentil, kurz",
+   "erklär mir mal den Begriff Konsens"
+  ],
+  "fr": [
+   "c'est quoi l'expected shortfall",
+   "définis chop",
+   "sirène, ça veut dire quoi ?",
+   "définition de la bande conforme svp",
+   "que signifie régime ici",
+   "terme « jours dans le régime » : définition",
+   "def rapide de la VaR",
+   "tu peux définir le consensus simplement"
+  ]
+ },
+ {
+  "intent_id": "ask_methodology_flow",
+  "en": [
+   "how is change risk computed",
+   "where does the siren percentile come from",
+   "what goes into the consensus vote",
+   "how do you get the band around change risk",
+   "which model produces the regime label",
+   "walk me through how todays number was made",
+   "methodology behind the expected shortfall pls",
+   "what inputs feed the regime classifier",
+   "how do u calculate days in regime",
+   "show the pipeline for change risk",
+   "what's the derivation of the conditional VaR",
+   "explain how the ledger hash is built",
+   "sources + steps for the siren score",
+   "is change risk fitted or rule-based, how derived"
+  ],
+  "de": [
+   "wie wird das Änderungsrisiko berechnet",
+   "woher kommt das Sirenen-Perzentil",
+   "welches Modell liefert das Regime-Label",
+   "Rechenweg für die Bandbreite bitte",
+   "was fliesst in den Konsens ein",
+   "wie entsteht die veröffentlichte Zahl, Schritt für Schritt",
+   "welche Grössen stecken hinter dem VaR",
+   "Herleitung days in regime?"
+  ],
+  "fr": [
+   "comment est calculé le risque de changement",
+   "d'où vient le percentile de la sirène",
+   "quel modèle sort l'étiquette de régime",
+   "la méthodo de la bande, en bref",
+   "qu'est-ce qui entre dans le consensus",
+   "explique la chaîne de calcul du chiffre publié",
+   "quelles entrées alimentent la VaR conditionnelle",
+   "comment vous obtenez les jours dans le régime"
+  ]
+ },
+ {
+  "intent_id": "ask_faq_card",
+  "en": [
+   "how much does it cost",
+   "price?",
+   "whats included in the pro tier",
+   "do you send email alerts",
+   "can I get an alert when the regime flips",
+   "is there a free trial",
+   "do you have an API",
+   "which markets do you cover",
+   "how do I cancel my plan",
+   "seats for the whole treasury team?",
+   "how often does the data refresh",
+   "is your data licensed for redistribution",
+   "annual billing discount?",
+   "do u support sso"
+  ],
+  "de": [
+   "was kostet das",
+   "welche Pakete gibt es",
+   "gibt's E-Mail-Alerts?",
+   "kann ich das testen bevor ich zahle",
+   "API vorhanden?",
+   "welche Währungspaare sind dabei",
+   "wie kündige ich",
+   "Rechnung in CHF möglich?"
+  ],
+  "fr": [
+   "ça coûte combien",
+   "quelles formules proposez-vous",
+   "vous faites des alertes mail ?",
+   "essai gratuit ?",
+   "y a-t-il une API",
+   "quelles paires sont couvertes",
+   "comment résilier",
+   "facturation en francs possible ?"
+  ]
+ },
+ {
+  "intent_id": "ask_ask_your_bank_card",
+  "en": [
+   "what should I ask my bank",
+   "questions for my FX desk",
+   "give me talking points for the bank call",
+   "what do I put to the counterparty instead of asking you for advice",
+   "bank questions pls",
+   "im meeting our relationship manager, what do i ask",
+   "which questions should a treasurer raise with the bank",
+   "prep me for the hedging conversation with the bank",
+   "what to ask the bank about forward pricing",
+   "questions to challenge my bank's quote",
+   "help me draft questions for the dealer",
+   "ask-your-bank card",
+   "wht questions do i bring to my banker this week",
+   "not advice — just what should I ask them"
+  ],
+  "de": [
+   "was soll ich meine Bank fragen",
+   "Fragen fürs Bankgespräch bitte",
+   "welche Fragen stelle ich dem Händler",
+   "Gesprächsleitfaden für den Termin mit der Bank",
+   "was frage ich meinen Kundenberater",
+   "Fragenliste für die Absicherungsdiskussion",
+   "womit hake ich bei der Bank nach",
+   "was frag ich die Bank zum Terminkurs"
+  ],
+  "fr": [
+   "qu'est-ce que je demande à ma banque",
+   "questions pour mon banquier",
+   "prépare-moi le rendez-vous avec la banque",
+   "quelles questions poser au desk FX",
+   "je veux challenger la cotation, quelles questions",
+   "liste de questions pour la couverture",
+   "quoi demander à mon conseiller",
+   "questions à poser plutôt qu'un conseil"
+  ]
+ },
+ {
+  "intent_id": "ask_metric_table",
+  "en": [
+   "just the numbers",
+   "give me the raw metrics",
+   "table pls",
+   "dump todays values for EURCHF",
+   "all published metrics, no commentary",
+   "show me the full metric table",
+   "numbers only, skip the talk",
+   "current values for every market",
+   "raw figures pls",
+   "print the daily table",
+   "csv of the published metrics",
+   "gimme the stats sheet",
+   "eurusd metrics, plain",
+   "no narration, just the published values"
+  ],
+  "de": [
+   "nur die Zahlen",
+   "gib mir die Tabelle",
+   "alle Kennzahlen roh bitte",
+   "Werte für EURCHF, ohne Kommentar",
+   "Übersicht aller Märkte als Tabelle",
+   "Zahlen, kurz und knapp",
+   "Tagesdaten ausgeben",
+   "nur Rohwerte, kein Text"
+  ],
+  "fr": [
+   "juste les chiffres",
+   "donne-moi le tableau",
+   "toutes les valeurs publiées, sans blabla",
+   "chiffres bruts svp",
+   "tableau du jour pour EURCHF",
+   "les métriques, brut de brut",
+   "affiche les valeurs de tous les marchés",
+   "pas de commentaire, que les données"
+  ]
+ }
+]

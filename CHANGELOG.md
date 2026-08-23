@@ -2,6 +2,47 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.34.0 — phase 40: precomputed answers, the cube, the classifier, conversation state (2026-08-23)
+
+The market moves once a day, so the answers are now built once a day — and the two things a
+conversational product cannot work without arrive with them.
+
+- **279 answer packs** (`data/answer_packs.json`), one per intent × market × locale, each with a
+  resolved board, a provenance record per value and a cache key. **All gates run at build time**, so
+  a pack that would fail one never exists and no gate work happens while a user waits — the build
+  blocked 3, and the blocked list is committed as evidence the gate is real. What this buys beyond
+  speed is inspection: an answer built nightly can be read in full by a human before anyone hears it.
+- **Two speech variants per pack.** `standalone` for a cold question, `followup` for "and USDCHF?" —
+  "USD/CHF, same reading: calm". Getting this wrong is what makes a voice product sound like a
+  kiosk. Two defects were caught by reading the output aloud: blind lower-casing produced "eUR/USD",
+  and the first draft repeated the market name twice in one sentence.
+- **German and French packs are actually localised**, not merely comma-decimalised: a pack that says
+  "change risk 0,03" is comfortable for nobody. The four regime words stay untranslated on purpose —
+  they are the canonical labels in the ledger and the API, and a treasurer comparing a German screen
+  against a sealed English record needs the same word on both.
+- **Conversation state and reference resolution** (`rust/.../packs.rs`), resolution running FIRST
+  because "and USDCHF?" is not a question until it is expanded. Bare markets inherit the last intent,
+  bare time expressions inherit intent and market, deictics resolve against the last board — and an
+  ambiguous reference **asks a one-line question rather than guessing**, because a silently wrong
+  resolution is confident, fast, and answers something nobody asked. Every resolution is echoed.
+- **The honesty fix that matters most in this phase:** "what about last month?" resolved correctly
+  and then answered with *today's* reading under a "last month" echo. Right shape, right market,
+  wrong period — the most convincing kind of wrong answer. It now says "That's today's reading — I
+  can't read back to last month yet", and the archive that will honour it is phase 42's job.
+- **The rollup cube** (`data/rollups.parquet`, 2,039 rows) over five documented shapes, each row
+  carrying the recipe that produced it. A test proves the cube and a live scan agree.
+- **The intent classifier**, trained on 1,190 rows that provably exclude every golden question — the
+  filter is in `build_corpus` itself, because a corpus built without it looks identical and reports
+  an accuracy that means nothing. `reports/intent_classifier.md` publishes both numbers: **69.5%
+  held-out, 53.8% on the golden set**. The 16-point gap is the informative figure. A sweep over
+  feature unions, estimators and C moved top-1 by under two points while top-3 reached 89%, which
+  says the ceiling is the TAXONOMY — several intents genuinely overlap — not the estimator. The
+  threshold is chosen precision-first (0.6 → 96.5% precision at 24% coverage): a pack served under
+  the wrong intent answers a question nobody asked, whereas falling through costs milliseconds.
+- Audio is **not** baked: no ElevenLabs key at build time. The manifest says so in words rather than
+  leaving a null to be discovered, and it remains the largest latency component on the common path.
+- 358 python (+17) + 67 rust (+7) tests green; ruff, black, clippy, `make lint-ui` clean.
+
 ## v2.33.0 — phase 39: the eval harness and a frozen baseline (2026-08-23)
 
 Nothing in phases 40–45 can be judged without this: every decision from here is a comparison, and a

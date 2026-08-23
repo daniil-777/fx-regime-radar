@@ -16,6 +16,7 @@ pub mod features;
 pub mod hmm;
 pub mod infer;
 pub mod metrics;
+pub mod packs;
 pub mod ratelimit;
 pub mod selftest;
 pub mod state_store;

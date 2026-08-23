@@ -103,6 +103,28 @@ pub fn visual_null_board() {
     metrics::counter!("visual_null_board_total").increment(1);
 }
 
+// ---- precomputed answers (phase 40) ------------------------------------------------------------
+
+/// path ∈ {"pack", "live"} — how the answer was produced.
+pub fn answer_path(path: &str) {
+    metrics::counter!("answer_path_total", "path" => path.to_string()).increment(1);
+}
+
+/// A pack was served although it was built under superseded rules; the stale badge went with it.
+pub fn answer_pack_stale() {
+    metrics::counter!("answer_pack_stale_total").increment(1);
+}
+
+/// outcome ∈ {"verbatim", "expanded", "ambiguous"} — what reference resolution did with a turn.
+pub fn reference_resolution(outcome: &str) {
+    metrics::counter!("reference_resolution_total", "outcome" => outcome.to_string()).increment(1);
+}
+
+/// Answer latency, labelled by path, so the pack and live tails can be read apart.
+pub fn answer_latency(path: &str, seconds: f64) {
+    metrics::histogram!("answer_latency_seconds", "path" => path.to_string()).record(seconds);
+}
+
 /// gate ∈ {"direction", "grounding"}
 pub fn avatar_lint_rejection(gate: &str) {
     metrics::counter!("avatar_lint_rejections_total", "gate" => gate.to_string()).increment(1);

@@ -1,0 +1,1010 @@
+intent_version: 1.0.0
+note: The canonical intent set. Parameters are pair and locale only — anything needing a user-supplied
+  quantity (an exposure, a hypothetical move) is excluded by construction, because it cannot be built
+  before the user speaks.
+excluded_from_precompute:
+- exposure_calculator
+- hedge_ladder_plan
+- impact_waterfall
+- scenario_ladder
+intents:
+- intent_id: ask_condition_card
+  description: '{pair} · {word} · change risk {risk} (band {lo} to {hi}) · siren {siren}'
+  family: state
+  card: condition_card
+  varies_over:
+    pair:
+    - ADA-USD
+    - AUDUSD
+    - BNB-USD
+    - BTC-USD
+    - ETH-USD
+    - EURGBP
+    - EURJPY
+    - EURUSD
+    - GBPUSD
+    - NZDUSD
+    - USDBRL
+    - USDCAD
+    - USDCHF
+    - USDJPY
+    - USDMXN
+    - USDPLN
+    - USDRUB
+    - USDSEK
+    - USDZAR
+    - XRP-USD
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how does {pair} look today
+    - what is the regime
+    - is it calm right now
+    - current conditions
+    - give me today's read
+    - how are things
+    - where do things stand
+    - give me the state of play
+    de:
+    - wie sieht {pair} heute aus
+    - wie ist das regime
+    - ist es gerade ruhig
+    fr:
+    - comment se présente {pair} aujourd'hui
+    - quel est le régime
+    - est-ce calme
+  golden_items:
+  - adversarial_injection-010
+  - adversarial_injection-011
+  - today_state-002
+  - today_state-008
+  - today_state-010
+  - today_state-011
+  precomputable: true
+- intent_id: ask_consensus_dots
+  description: 'Stress consensus for {pair}: {votes} of 3 voters'
+  family: state
+  card: consensus_dots
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - do the models agree
+    - what is the consensus
+    - how many voters see stress
+    - is there agreement
+    - do your detectors agree
+    de:
+    - sind sich die modelle einig
+    - wie ist der konsens
+    fr:
+    - les modèles sont-ils d'accord
+    - quel est le consensus
+  golden_items:
+  - today_state-007
+  - causal_explanatory-004
+  - multi_hop-001
+  precomputable: true
+- intent_id: ask_regime_probability_bars
+  description: '{pair} regime probabilities · {word} leads'
+  family: state
+  card: regime_probability_bars
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how sure are you it is calm
+    - what are the regime probabilities
+    - how confident is the model
+    - probability of each regime
+    - how certain
+    de:
+    - wie sicher ist das
+    - wie sind die regime wahrscheinlichkeiten
+    fr:
+    - quelle est votre certitude
+    - probabilités des régimes
+  golden_items:
+  - today_state-043
+  - today_state-044
+  - today_state-045
+  precomputable: true
+- intent_id: ask_siren_gauge
+  description: 'Siren for {pair}: {siren} of 100'
+  family: state
+  card: siren_gauge
+  varies_over:
+    pair:
+    - ADA-USD
+    - AUDUSD
+    - BNB-USD
+    - BTC-USD
+    - ETH-USD
+    - EURGBP
+    - EURJPY
+    - EURUSD
+    - GBPUSD
+    - NZDUSD
+    - USDBRL
+    - USDCAD
+    - USDCHF
+    - USDJPY
+    - USDMXN
+    - USDPLN
+    - USDRUB
+    - USDSEK
+    - USDZAR
+    - XRP-USD
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how unusual is today
+    - what is the siren
+    - is today strange
+    - anomaly reading
+    - how weird is today
+    de:
+    - wie ungewöhnlich ist heute
+    - wie hoch ist die sirene
+    fr:
+    - à quel point aujourd'hui est inhabituel
+    - niveau de la sirène
+  golden_items:
+  - stale_context-004
+  - today_state-001
+  - today_state-040
+  - multi_turn_followup-016
+  - multi_turn_followup-018
+  precomputable: true
+- intent_id: ask_pair_compare_table
+  description: 'Today across the markets: regime, change risk and siren side by side'
+  family: state
+  card: pair_compare_table
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - which pair is calmest
+    - compare the pairs
+    - how do the markets compare
+    - show me all pairs
+    - which market is quietest
+    de:
+    - welches paar ist am ruhigsten
+    - vergleiche die paare
+    fr:
+    - quelle paire est la plus calme
+    - comparer les paires
+  golden_items:
+  - today_state-017
+  - aggregation-001
+  - aggregation-002
+  - aggregation-003
+  - aggregation-004
+  - aggregation-006
+  precomputable: true
+- intent_id: ask_drift_status
+  description: 'Model health: stale={stale} · live for {days} days'
+  family: state
+  card: drift_status
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - is the model still healthy
+    - has anything drifted
+    - is the model stale
+    - model health
+    - are your models still valid
+    - any degradation
+    - is the pipeline healthy
+    - have the models decayed
+    de:
+    - ist das modell noch gesund
+    - gibt es drift
+    fr:
+    - le modèle est-il toujours valide
+    - y a-t-il une dérive
+  golden_items:
+  - today_state-041
+  - today_state-046
+  - today_state-047
+  precomputable: true
+- intent_id: ask_risk_trace
+  description: '{pair} change risk over {window}, with its conformal band · now {risk}'
+  family: time
+  card: risk_trace
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how has risk moved
+    - show me the risk over time
+    - risk history
+    - has change risk been rising
+    - risk trend
+    - plot the change risk
+    de:
+    - wie hat sich das risiko entwickelt
+    - zeige den risikoverlauf
+    fr:
+    - comment le risque a évolué
+    - historique du risque
+  golden_items:
+  - today_state-004
+  - multi_turn_followup-008
+  - multi_turn_followup-015
+  - multi_turn_followup-019
+  - comparative_temporal-004
+  - comparative_temporal-006
+  precomputable: true
+- intent_id: ask_regime_timeline_ribbon
+  description: '{pair} regimes over {window} · day {days} of the current one'
+  family: time
+  card: regime_timeline_ribbon
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how long in this regime
+    - show me the regime history
+    - regime timeline
+    - when did it change
+    - how long has it been calm
+    - paint the states over time
+    - band the history
+    - colour strip of the states
+    de:
+    - wie lange schon in diesem regime
+    - zeige die regime historie
+    fr:
+    - depuis combien de temps ce régime
+    - chronologie des régimes
+  golden_items:
+  - comparative_temporal-001
+  - today_state-048
+  - today_state-049
+  precomputable: true
+- intent_id: ask_regime_history_table
+  description: '{pair}: past regime episodes with start dates and lengths'
+  family: time
+  card: regime_history_table
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - when was the last crisis
+    - list the past regimes
+    - regime dates
+    - history of storms
+    - when did the last crisis start
+    de:
+    - wann war die letzte krise
+    - liste der vergangenen regime
+    fr:
+    - quand était la dernière crise
+    - liste des régimes passés
+  golden_items:
+  - aggregation-010
+  - multi_turn_followup-004
+  - multi_turn_followup-007
+  - comparative_temporal-008
+  - comparative_temporal-009
+  - comparative_temporal-010
+  precomputable: true
+- intent_id: ask_vol_trace
+  description: '{pair} realised volatility over {window}'
+  family: time
+  card: vol_trace
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - is volatility rising
+    - show me volatility
+    - how volatile is it
+    - volatility trend
+    - has vol picked up
+    de:
+    - steigt die volatilität
+    - zeige die volatilität
+    fr:
+    - la volatilité augmente-t-elle
+    - montre la volatilité
+  golden_items:
+  - comparative_temporal-007
+  - today_state-042
+  - today_state-050
+  precomputable: true
+- intent_id: ask_what_changed_card
+  description: '{pair} since yesterday: {word}, change risk {risk} ({delta})'
+  family: time
+  card: what_changed_card
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - what changed since yesterday
+    - anything new
+    - what moved
+    - what is different today
+    - any change
+    - change from the previous session
+    - difference from the last close
+    - what is new since the previous run
+    de:
+    - was hat sich seit gestern geändert
+    - gibt es neues
+    fr:
+    - qu'est-ce qui a changé depuis hier
+    - quoi de neuf
+  golden_items:
+  - stale_context-001
+  - today_state-006
+  - causal_explanatory-003
+  - multi_hop-005
+  precomputable: true
+- intent_id: ask_treasury_light
+  description: '{pair}: the light is {light} — {why}'
+  family: decision
+  card: treasury_light
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - hedge wait or ladder
+    - what should I consider
+    - what is the light
+    - should I do something
+    - what does the traffic light say
+    - hedge or wait
+    - is it a week to put cover on
+    - what does the rule table output
+    de:
+    - absichern warten oder staffeln
+    - was sagt die ampel
+    fr:
+    - couvrir attendre ou échelonner
+    - que dit le feu
+  golden_items:
+  - adversarial_injection-004
+  - today_state-005
+  - today_state-013
+  - multi_hop-004
+  - multi_hop-010
+  precomputable: true
+- intent_id: ask_var_es_bars
+  description: '{pair} {metric} by regime · today''s regime is {regime}'
+  family: decision
+  card: var_es_bars
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how bad is a bad week
+    - what is the value at risk
+    - worst case week
+    - expected shortfall
+    - how much could I lose in a week
+    - downside risk
+    - quantify a rough week
+    - size a bad five days
+    de:
+    - wie schlimm ist eine schlechte woche
+    - was ist der value at risk
+    fr:
+    - à quel point une mauvaise semaine
+    - quelle est la valeur en risque
+  golden_items:
+  - today_state-003
+  - multi_turn_followup-012
+  - multi_hop-012
+  precomputable: true
+- intent_id: ask_move_frequency_bars
+  description: '{pair}: how often moves of that size occurred in the record'
+  family: decision
+  card: move_frequency_bars
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how often does that happen
+    - how common is a 3 percent move
+    - frequency of moves
+    - has that happened before
+    - how rare is that
+    de:
+    - wie oft passiert das
+    - wie häufig ist eine solche bewegung
+    fr:
+    - à quelle fréquence cela arrive
+    - est-ce fréquent
+  golden_items:
+  - today_state-059
+  - today_state-060
+  - today_state-061
+  precomputable: true
+- intent_id: ask_hedge_compare_table
+  description: '{pair}: three mechanical approaches, and what each leaves uncovered'
+  family: decision
+  card: hedge_compare_table
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - forward versus ladder versus nothing
+    - compare hedging approaches
+    - what are my options
+    - which hedge structure
+    - hedge alternatives
+    - put the structures next to each other
+    - weigh the approaches
+    - forwards against laddering
+    de:
+    - termin gegen staffel gegen nichts
+    - vergleiche absicherungen
+    fr:
+    - terme contre échelonnement contre rien
+    - comparer les couvertures
+  golden_items:
+  - today_state-062
+  - today_state-063
+  - today_state-064
+  precomputable: true
+- intent_id: ask_cost_of_waiting_curve
+  description: '{pair}: uncovered expected shortfall as the horizon lengthens'
+  family: decision
+  card: cost_of_waiting_curve
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - what does another month cost
+    - cost of waiting
+    - if I delay
+    - price of postponing
+    - what if I wait
+    de:
+    - was kostet ein weiterer monat
+    - kosten des wartens
+    fr:
+    - combien coûte un mois de plus
+    - coût de l attente
+  golden_items:
+  - multi_hop-006
+  - today_state-065
+  - today_state-066
+  precomputable: true
+- intent_id: ask_scoreboard_card
+  description: Live for {days} days · live Brier {live} against frozen {frozen} · chain {head}
+  family: trust
+  card: scoreboard_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - why should I trust you
+    - what is your track record
+    - how accurate are you
+    - show me your record
+    - are you any good
+    - your scoreboard
+    de:
+    - warum sollte ich ihnen vertrauen
+    - wie ist ihre bilanz
+    fr:
+    - pourquoi vous faire confiance
+    - quel est votre historique
+  golden_items:
+  - planted_number-001
+  - knowledge_methodology-003
+  - ledger_historical-002
+  - ledger_historical-007
+  - ledger_historical-008
+  - ledger_historical-009
+  precomputable: true
+- intent_id: ask_coverage_plot
+  description: Conformal coverage over time · live {live} against the 0.9 target
+  family: trust
+  card: coverage_plot
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - are your bands honest
+    - what is your coverage
+    - do the intervals hold
+    - band coverage
+    - are the bands calibrated
+    de:
+    - sind ihre bänder ehrlich
+    - wie ist die abdeckung
+    fr:
+    - vos bandes sont-elles honnêtes
+    - quelle est la couverture
+  golden_items:
+  - ledger_historical-016
+  - ledger_historical-019
+  - ledger_historical-020
+  - ledger_historical-021
+  precomputable: true
+- intent_id: ask_ledger_row_receipt
+  description: One sealed ledger row from {date}, exactly as written before the outcome existed
+  family: trust
+  card: ledger_row_receipt
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - show me an actual sealed row
+    - show me a ledger entry
+    - one real forecast
+    - prove a forecast was sealed
+    - show a receipt
+    de:
+    - zeig mir einen versiegelten eintrag
+    - ein echter ledger eintrag
+    fr:
+    - montre une ligne scellée
+    - une vraie prévision
+  golden_items:
+  - ledger_historical-003
+  - ledger_historical-004
+  - ledger_historical-005
+  - ledger_historical-010
+  - ledger_historical-011
+  precomputable: true
+- intent_id: ask_chain_verify_card
+  description: Chain head {head} · {n} forecasts · verifier says chain_ok={ok}
+  family: trust
+  card: chain_verify_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how do I verify it myself
+    - can I check the chain
+    - how do I audit this
+    - verify independently
+    - prove it to me
+    de:
+    - wie kann ich das selbst prüfen
+    - wie verifiziere ich die kette
+    fr:
+    - comment vérifier moi-même
+    - comment auditer
+  golden_items:
+  - knowledge_methodology-005
+  - ledger_historical-001
+  - ledger_historical-006
+  - ledger_historical-012
+  - ledger_historical-015
+  precomputable: true
+- intent_id: ask_direction_evidence_card
+  description: This system models conditions and risk, never direction — and the record shows why that
+    is the honest position
+  family: trust
+  card: direction_evidence_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - can anyone predict price
+    - will it go up
+    - where is the rate heading
+    - what is your forecast for the price
+    - can you predict direction
+    - buy or sell
+    de:
+    - kann jemand den preis vorhersagen
+    - steigt es
+    fr:
+    - peut-on prévoir le prix
+    - va-t-il monter
+  golden_items:
+  - adversarial_injection-001
+  - adversarial_injection-003
+  - adversarial_injection-005
+  - adversarial_injection-012
+  - adversarial_injection-013
+  - adversarial_direction-001
+  precomputable: true
+- intent_id: ask_event_countdown_strip
+  description: Scheduled events ahead, nearest first
+  family: context
+  card: event_countdown_strip
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - what is coming up
+    - any events this week
+    - when is the next central bank meeting
+    - what is on the calendar
+    - upcoming events
+    - when is the fed
+    de:
+    - was steht an
+    - wann ist die nächste notenbanksitzung
+    fr:
+    - qu est-ce qui arrive
+    - prochaine réunion de banque centrale
+  golden_items:
+  - multi_hop-011
+  - today_state-067
+  - today_state-068
+  precomputable: true
+- intent_id: ask_feature_driver_bars
+  description: '{pair}: what contributed most to today''s change risk'
+  family: context
+  card: feature_driver_bars
+  varies_over:
+    pair:
+    - EURUSD
+    - GBPUSD
+    - USDCHF
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - why is risk elevated
+    - what is driving this
+    - which features matter
+    - why that number
+    - what pushed the risk up
+    - explain the drivers
+    de:
+    - warum ist das risiko erhöht
+    - was treibt das
+    fr:
+    - pourquoi le risque est élevé
+    - qu est-ce qui explique cela
+  golden_items:
+  - multi_turn_followup-006
+  - multi_turn_followup-013
+  - causal_explanatory-001
+  - causal_explanatory-005
+  - causal_explanatory-006
+  - causal_explanatory-007
+  precomputable: true
+- intent_id: ask_storm_replay_mini
+  description: '{episode}: how the regimes moved through the episode'
+  family: story
+  card: storm_replay_mini
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how did covid look
+    - show me a past storm
+    - what did 2008 look like
+    - replay a crisis
+    - show me march 2020
+    de:
+    - wie sah covid aus
+    - zeige einen vergangenen sturm
+    fr:
+    - à quoi ressemblait le covid
+    - montre une tempête passée
+  golden_items:
+  - multi_turn_followup-021
+  - comparative_temporal-003
+  - comparative_temporal-005
+  - comparative_temporal-015
+  - comparative_temporal-016
+  - comparative_temporal-017
+  precomputable: true
+- intent_id: ask_explainer_diagram
+  description: How {diagram} works, end to end
+  family: explain
+  card: explainer_diagram
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - how does the siren work
+    - explain the model
+    - how does it work
+    - show me how this works
+    - explain the pipeline
+    - how is the regime found
+    de:
+    - wie funktioniert die sirene
+    - erkläre das modell
+    fr:
+    - comment fonctionne la sirène
+    - expliquez le modèle
+  golden_items:
+  - knowledge_methodology-001
+  - knowledge_methodology-007
+  - knowledge_methodology-008
+  - knowledge_methodology-011
+  - knowledge_methodology-013
+  - knowledge_methodology-014
+  precomputable: true
+- intent_id: ask_glossary_card
+  description: '{term}: {definition}'
+  family: explain
+  card: glossary_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - what does chop mean
+    - define the siren
+    - what is a regime
+    - what does that word mean
+    - explain the term
+    - what is filtered
+    de:
+    - was bedeutet chop
+    - definiere die sirene
+    fr:
+    - que signifie chop
+    - définition de la sirène
+  golden_items:
+  - knowledge_methodology-004
+  - knowledge_methodology-016
+  - knowledge_methodology-017
+  - knowledge_methodology-018
+  precomputable: true
+- intent_id: ask_methodology_flow
+  description: How {metric} is produced, from raw bars to the published value
+  family: explain
+  card: methodology_flow
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - where does this number come from
+    - how is change risk computed
+    - what goes into that metric
+    - trace the number
+    - how do you calculate it
+    de:
+    - woher kommt diese zahl
+    - wie wird das berechnet
+    fr:
+    - d où vient ce chiffre
+    - comment est-ce calculé
+  golden_items:
+  - knowledge_methodology-010
+  - knowledge_methodology-019
+  - knowledge_methodology-020
+  - knowledge_methodology-021
+  precomputable: true
+- intent_id: ask_faq_card
+  description: '{topic}: what is included, in plain terms'
+  family: explain
+  card: faq_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - what do I get for 79 francs
+    - what are the tiers
+    - how much does it cost
+    - what is included
+    - pricing
+    - what do the alerts do
+    - alerting options
+    - data retention and privacy
+    de:
+    - was bekomme ich für 79 franken
+    - welche stufen gibt es
+    fr:
+    - que comprend l abonnement
+    - quels sont les paliers
+  golden_items:
+  - product_faq-001
+  - product_faq-002
+  - product_faq-003
+  - product_faq-005
+  - product_faq-006
+  - product_faq-007
+  precomputable: true
+- intent_id: ask_ask_your_bank_card
+  description: Questions worth putting to your bank or adviser about {topic}
+  family: explain
+  card: ask_your_bank_card
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - should I buy dollars
+    - what should I do with my money
+    - give me advice
+    - what would you do
+    - should I invest
+    - tell me what to trade
+    de:
+    - soll ich dollar kaufen
+    - was soll ich tun
+    fr:
+    - dois-je acheter des dollars
+    - que dois-je faire
+  golden_items:
+  - adversarial_injection-014
+  - adversarial_advice-003
+  - adversarial_advice-004
+  - adversarial_advice-005
+  - adversarial_advice-006
+  - adversarial_advice-007
+  precomputable: true
+- intent_id: ask_metric_table
+  description: The requested published values, with their as-of stamp
+  family: explain
+  card: metric_table
+  varies_over:
+    pair: []
+    locale:
+    - en
+    - de
+    - fr
+  phrasings:
+    en:
+    - show me the numbers
+    - give me the metrics
+    - what are the values
+    - the data please
+    - list the figures
+    - show the table
+    de:
+    - zeig mir die zahlen
+    - gib mir die kennzahlen
+    fr:
+    - montre les chiffres
+    - donne les mesures
+  golden_items:
+  - aggregation-005
+  - aggregation-011
+  - aggregation-014
+  precomputable: true

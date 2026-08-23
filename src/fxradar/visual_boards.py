@@ -590,7 +590,7 @@ def _coverage(args: dict, ctx: dict) -> dict | None:
         return None
     return {
         "points": pts,
-        "subline": f"coverage per regime against the {target:.0%} target · "
+        "subline": f"coverage per regime against the {target:.0%} nominal level · "
         f"overall {float((cov.get('frozen_test') or {}).get('overall', 0)):.1%}",
     }
 

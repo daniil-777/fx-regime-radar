@@ -81,6 +81,9 @@ impl Latencies {
     }
 }
 
+/// mtime-stamped cache of the nightly answer packs (phase 40).
+type PacksCache = (std::time::SystemTime, u64, Arc<crate::packs::AnswerPacks>);
+
 /// mtime-stamped cache of the two answer-board artifacts (phase 36).
 pub struct VisualCache {
     pub index_stamp: (std::time::SystemTime, u64),
@@ -116,6 +119,10 @@ pub struct AppState {
     /// Phase 36: the resolved answer boards and their retrieval index, both written by the daily
     /// pipeline (rule 8) and read here as data (rule 11 — no Python at runtime).
     visual_cache: Arc<Mutex<Option<VisualCache>>>,
+    /// Phase 40: nightly answer packs, and the small per-session state that reference resolution
+    /// needs. Both are read-mostly; the packs reload on mtime like every other artifact.
+    packs_cache: Arc<Mutex<Option<PacksCache>>>,
+    pub(crate) conversations: Arc<crate::packs::ConversationStore>,
     /// Sessions that already heard the decision-support disclosure (advice mode).
     pub(crate) advice_disclosed: Arc<Mutex<std::collections::HashSet<String>>>,
 }
@@ -167,6 +174,8 @@ impl AppState {
             tts_order: Arc::new(Mutex::new(std::collections::VecDeque::new())),
             decision_cache: Arc::new(Mutex::new(None)),
             visual_cache: Arc::new(Mutex::new(None)),
+            packs_cache: Arc::new(Mutex::new(None)),
+            conversations: Arc::new(crate::packs::ConversationStore::default()),
             advice_disclosed: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
     }
@@ -235,6 +244,30 @@ impl AppState {
                 boards_stamp: sb,
                 loaded: Arc::clone(&loaded),
             });
+        }
+        Some(loaded)
+    }
+
+    /// Tonight's answer packs, if the nightly build wrote any. Absent is not an error: the system
+    /// simply answers live, which is what it did before this phase existed.
+    pub fn answer_packs(&self) -> Option<Arc<crate::packs::AnswerPacks>> {
+        let path = self.data_dir.join("answer_packs.json");
+        let meta = std::fs::metadata(&path).ok()?;
+        let stamp = (meta.modified().unwrap_or(std::time::UNIX_EPOCH), meta.len());
+        if let Ok(guard) = self.packs_cache.lock() {
+            if let Some((m, l, packs)) = guard.as_ref() {
+                if (*m, *l) == stamp {
+                    return Some(Arc::clone(packs));
+                }
+            }
+        }
+        let loaded = Arc::new(
+            crate::packs::load_packs(&path)
+                .map_err(|e| tracing::warn!(error = %e, "answer packs unusable; answering live"))
+                .ok()?,
+        );
+        if let Ok(mut guard) = self.packs_cache.lock() {
+            *guard = Some((stamp.0, stamp.1, Arc::clone(&loaded)));
         }
         Some(loaded)
     }

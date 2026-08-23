@@ -26,6 +26,7 @@ import pandas as pd
 
 from fxradar import (
     advisor,
+    answer_packs,
     arcade,
     avatar_context,
     bocpd,
@@ -43,6 +44,7 @@ from fxradar import (
     narrate,
     regime_models,
     replay,
+    rollups,
     siren,
     treasury,
     visual_boards,
@@ -295,6 +297,12 @@ register(
 register(
     "visuals", fx_only(visual_boards.stage)
 )  # phase 36: resolve every card the artifacts can fill → visual_boards.json + visual_index.json
+register(
+    "packs", fx_only(answer_packs.stage)
+)  # phase 40: precompute every answer that needs no user input, gates run at build time
+register(
+    "rollups", fx_only(rollups.stage)
+)  # phase 40: the aggregation cube the archive queries first
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
 
 

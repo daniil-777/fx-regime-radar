@@ -1408,7 +1408,42 @@ pub async fn brain(
         .find(|msg| msg.role == "user")
         .map(|msg| msg.content.clone())
         .ok_or_else(|| ApiError(StatusCode::BAD_REQUEST, "no user message in body".into()))?;
-    let q_lower = question.to_lowercase();
+    // --- phase 40: resolve references FIRST -------------------------------------------------------
+    // "and USDCHF?" is not a question until it has been expanded. Classifying or looking it up
+    // before resolution classifies the wrong utterance.
+    let prior = st.conversations.get(&req.session_id);
+    let resolution = crate::packs::resolve(&question, prior.as_ref());
+    let (effective, echo, period) = match &resolution {
+        crate::packs::Resolution::Verbatim => {
+            m::reference_resolution("verbatim");
+            (question.clone(), String::new(), None)
+        }
+        crate::packs::Resolution::Expanded {
+            query,
+            echo,
+            period,
+            ..
+        } => {
+            m::reference_resolution("expanded");
+            (query.clone(), echo.clone(), period.clone())
+        }
+        crate::packs::Resolution::Ambiguous { question: ask } => {
+            #[allow(clippy::let_unit_value)]
+            // Asking costs one turn. A wrong silent resolution costs the user's trust in every
+            // answer that follows it, because they now know the system guesses.
+            m::reference_resolution("ambiguous");
+            return Ok(finish(
+                &st,
+                &req.session_id,
+                &question,
+                ask.clone(),
+                "clarify",
+                "pass",
+                t0,
+            ));
+        }
+    };
+    let q_lower = effective.to_lowercase();
     let question_numbers: HashSet<String> = extract_numbers(&question).into_iter().collect();
 
     // (a) topic guard — direction/advice intent short-circuits to the pack's branded refusal.
@@ -1500,7 +1535,7 @@ pub async fn brain(
                     source = "template";
                     forced_card = Some(format!("condition_card|pair={pair}"));
                 }
-                None => match faq_best(&pack.faq, &question) {
+                None => match faq_best(&pack.faq, &effective) {
                     Some(entry) => {
                         candidate = entry.answer.clone();
                         source = "template";
@@ -1509,7 +1544,7 @@ pub async fn brain(
                     // PIPELINE wrote from published numbers, so it is grounded by construction and
                     // faces the same gates as any other answer. Refusing a question we can clearly
                     // illustrate was never the honest outcome — it was just the easy one.
-                    None => match visual_answer(&st, &question) {
+                    None => match visual_answer(&st, &effective) {
                         Some(caption) => {
                             candidate = caption;
                             source = "visual";
@@ -1582,7 +1617,24 @@ pub async fn brain(
             }
         }
     };
-    Ok(finish_with(
+    // Echo the resolution in the answer, so a mis-resolution is caught in the same breath.
+    //
+    // With one exception that matters more than the feature: if the follow-up asked for a DIFFERENT
+    // PERIOD and every answering path we have reads today's published state, the echo would claim a
+    // reading we did not perform. Say what actually happened instead. The archive that would honour
+    // it is phase 42's job, and pretending otherwise here would be the most convincing kind of
+    // wrong answer — right shape, right market, wrong century.
+    if gate_label == "pass" {
+        if let Some(when) = period.as_deref() {
+            candidate = format!(
+                "That's today's reading — I can't read back to {when} yet. {}",
+                candidate.trim_start()
+            );
+        } else if !echo.is_empty() {
+            candidate = format!("{echo} {}", candidate.trim_start());
+        }
+    }
+    let response = finish_with(
         &st,
         &req.session_id,
         &question,
@@ -1591,7 +1643,46 @@ pub async fn brain(
         gate_label,
         t0,
         forced_card.as_deref(),
-    ))
+    );
+    remember_turn(&st, &req.session_id, &effective, &response, prior);
+    Ok(response)
+}
+
+/// Carry forward only what an elliptical follow-up needs: the subject, the market, the board.
+/// Storing the utterance itself would make this a transcript store with a TTL, which is a different
+/// thing with different obligations.
+fn remember_turn(
+    st: &AppState,
+    session_id: &str,
+    effective: &str,
+    response: &Json<BrainResponse>,
+    prior: Option<crate::packs::SessionState>,
+) {
+    let mut state = prior.unwrap_or_default();
+    state.turn_index = state.turn_index.saturating_add(1);
+    if let Some(card) = response.0.board.first() {
+        state.last_card = Some(card.component.clone());
+        state.last_intent = Some(format!("ask_{}", card.component));
+        if let Some(pair) = card.args.get("pair").and_then(|v| v.as_str()) {
+            state.last_pair = Some(pair.to_string());
+        }
+    }
+    if state.last_pair.is_none() {
+        let up = effective.to_uppercase();
+        for code in ["EURUSD", "USDCHF", "GBPUSD", "USDJPY", "USDRUB", "BTC-USD"] {
+            if up.contains(code) {
+                state.last_pair = Some(code.to_string());
+                break;
+            }
+        }
+    }
+    state.last_board_cards = response
+        .0
+        .board
+        .iter()
+        .map(|c| c.component.clone())
+        .collect();
+    st.conversations.put(session_id, state);
 }
 
 /// Session greeting: the pack's pre-gated greeting + disclosure. The grounding gate still runs
