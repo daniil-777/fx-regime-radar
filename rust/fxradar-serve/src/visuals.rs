@@ -316,13 +316,25 @@ fn instances<'a>(boards: &'a VisualBoards, component: &str) -> Vec<(&'a String, 
 }
 
 /// Pick the instance whose arguments best match what the question actually named.
+///
+/// `pair_hint` is the market the CALLER resolved from the question, using the one canonical
+/// resolver that knows every name a person uses for a market ("franc", "swissie", "the aussie",
+/// "bitcoin"). This function used to match on the literal pair CODE alone, so none of those names
+/// scored, the default bonus won, and a question about the franc got a card about EUR/USD.
+///
+/// The hint does two jobs, and the second matters more: a matching card is promoted, and a card
+/// for a DIFFERENT market is pushed below every alternative so it can never win on the default
+/// bonus. Showing the lead market when nothing was named is a sensible default; showing it when
+/// something else was named is a wrong answer with real numbers on it.
 fn best_instance<'a>(
     boards: &'a VisualBoards,
     component: &str,
     question: &str,
+    pair_hint: Option<&str>,
 ) -> Option<&'a CardSpec> {
     let q = question.to_lowercase();
     let compact: String = q.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
+    let hint = pair_hint.map(|h| h.to_lowercase());
     let mut best: Option<(i32, &CardSpec)> = None;
     for (key, spec) in instances(boards, component) {
         let mut score = 0;
@@ -330,10 +342,24 @@ fn best_instance<'a>(
             for (name, value) in obj.iter() {
                 let Some(v) = value.as_str() else { continue };
                 let v = v.to_lowercase();
-                if compact.contains(&v.replace('-', "")) || q.contains(&v) {
+                let named_outright = compact.contains(&v.replace('-', "")) || q.contains(&v);
+                if name == "pair" {
+                    match hint.as_deref() {
+                        Some(h) if h == v => score += 6, // the question named THIS market
+                        Some(_) => score -= 8, // it named a different one: never show this
+                        None if named_outright => score += 4,
+                        None => {
+                            if boards.default_args.get(name).map(|d| d.to_lowercase()) == Some(v) {
+                                score += 2; // nothing named: the lead market it is
+                            }
+                        }
+                    }
+                    continue;
+                }
+                if named_outright {
                     score += 4; // the question named this argument outright
                 } else if boards.default_args.get(name).map(|d| d.to_lowercase()) == Some(v) {
-                    score += 2; // nothing named: the lead market beats an arbitrary one
+                    score += 2;
                 }
             }
             score -= obj.len() as i32; // fewer arguments wins when nothing was named
@@ -341,6 +367,12 @@ fn best_instance<'a>(
         let _ = key;
         if best.as_ref().is_none_or(|(s, _)| score > *s) {
             best = Some((score, spec));
+        }
+    }
+    // A card that exists only for a market the question did not ask about is worse than no card.
+    if let Some((score, _)) = best {
+        if hint.is_some() && score < 0 {
+            return None;
         }
     }
     best.map(|(_, s)| s)
@@ -353,6 +385,7 @@ pub fn select_board(
     boards: &VisualBoards,
     question: &str,
     forced: Option<&str>,
+    pair_hint: Option<&str>,
 ) -> Vec<CardSpec> {
     if index.docs.is_empty() || boards.cards.is_empty() {
         return Vec::new();
@@ -396,7 +429,7 @@ pub fn select_board(
         if chosen.len() >= MAX_BOARD_CARDS {
             break;
         }
-        let Some(spec) = best_instance(boards, &id, question) else {
+        let Some(spec) = best_instance(boards, &id, question, pair_hint) else {
             continue;
         };
         if !chosen.is_empty() {

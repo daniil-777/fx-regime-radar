@@ -617,7 +617,19 @@ fn direction_intent_re() -> &'static Regex {
             r"head(?:ed|ing)? (?:up|down|higher|lower)|",
             r"mov(?:e|es|ing) (?:up|down|higher|lower)|",
             r"drop|drops|dropping|rally|rallies|bullish|bearish|",
-            r"target|price target|forecast the (?:rate|price)|predict the (?:rate|price)|",
+            // The BLUNTEST phrasings, which the rule set missed entirely because it was tuned
+            // against clever adversarial questions. "What would be your prediction of the market
+            // of the franc" walked straight through and got a calm condition card. The plain word
+            // is the one most people use.
+            // NOT the bare nouns "forecast" / "prediction". They are ambiguous in this product in
+            // a way that bit immediately: "how many sealed forecasts so far?" is a question about
+            // the LEDGER — the thing that makes this system checkable — and adding the bare word
+            // here refused it as a price call. The forecast-shaped ASKS are matched with their
+            // context by `guard::plain_forecast_ask` instead, which needs "your forecast" or
+            // "forecast for <market>" and so cannot swallow a count.
+            r"target|price target|crystal ball|",
+            r"prognose|vorhersage|voraussage|einsch(?:ä|ae)tzung|",
+            r"pr(?:é|e)vision|pronostic|",
             r"which way|higher or lower|up or down|",
             r"appreciate|depreciate|strengthen|strengthens|strengthening|",
             r"weaken|weakens|weakening|weaker|stronger|softer|firmer|",
@@ -701,8 +713,16 @@ fn courtesy_reply(q: &str) -> Option<&'static str> {
         .trim_end_matches(['?', '!', '.'])
         .trim()
         .to_lowercase();
-    if t.len() > 40 {
-        return None; // a greeting is short; a long sentence that opens with "hi" is a question
+    // A greeting is short; a long sentence that merely opens with "hi" is a question. Identity
+    // questions get more room, because "wait, are you a real person?" is how it actually gets
+    // asked — and answering it is the Article 50 disclosure, not small talk.
+    let identity = t.contains("real person")
+        || t.contains("are you human")
+        || t.contains("are you a bot")
+        || t.contains("are you an ai")
+        || t.contains("who are you");
+    if t.len() > 40 && !(identity && t.len() <= 70) {
+        return None;
     }
     let is = |set: &[&str]| {
         set.iter()
@@ -750,6 +770,14 @@ fn courtesy_reply(q: &str) -> Option<&'static str> {
     }
     if t.contains("your name")
         || t.contains("who are you")
+        // "Wait, are you a real person?" is the Article 50 disclosure question, asked the way
+        // people actually ask it. Answering it plainly is a compliance obligation, not small talk;
+        // it was coming back as "that's outside what I know".
+        || t.contains("real person")
+        || t.contains("are you human")
+        || t.contains("are you a bot")
+        || t.contains("are you an ai")
+        || t.contains("bist du echt")
         || t.contains("wie heisst du")
         || t.contains("wer bist du")
         || t.contains("comment tu t'appelles")
@@ -804,7 +832,13 @@ fn non_price_subject_re() -> &'static Regex {
             r"\b(volatilit(?:y|ä|ae|e)\w*|vola|vol|risk|risiko|risque|",
             r"siren|sirene|sir(?:è|e)ne|anomaly|anomalie|regime\w*|r(?:é|e)gime|",
             r"uncertainty|unsicherheit|incertitude|entropy|entropie|",
-            r"consensus|konsens|drawdown|brier|coverage|turnover)\b",
+            r"consensus|konsens|drawdown|brier|coverage|turnover|",
+            // Questions about the MODEL rather than about a price. "How do you forecast regime
+            // change", "what is your forecast accuracy", "what is your Brier score" all contain
+            // forecast words and are all questions this product must answer — refusing them would
+            // make the widening above a bigger bug than the one it fixes.
+            r"model|models|method|methodology|accuracy|accurate|skill|calibrat\w*|",
+            r"backtest|pipeline|system|score|scores|track record|forecaster)\b",
         ))
         .expect("static regex")
     })
@@ -853,7 +887,31 @@ fn planted_figure_re() -> &'static Regex {
 
 /// Does the question name published DATA (as opposed to asking what a term means)? Used to stop a
 /// glossary entry from standing in for a historical reading it cannot provide.
+/// Is this a question about how the system WORKS, rather than about what it currently reads?
+fn methodology_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(concat!(
+            r"(?i)\b(hmm|hidden markov|xgboost|autoencoder|bocpd|changepoint|",
+            r"embargo|look-?ahead|leakage|truncation|walk-?forward|",
+            r"how (many|does|do) .{0,25}(state|states|model|models|algorithm)|",
+            r"(model|models|algorithm|pipeline) (work|works|trained|training|is trained)|",
+            r"how (is|are) .{0,20}(model|models|it) trained|",
+            r"funktioniert|trainiert|entra(?:î|i)n(?:é|e))\b",
+        ))
+        .expect("static regex")
+    })
+}
+
 fn mentions_data(q: &str) -> bool {
+    // A question about how the MODEL works is methodology, not a reading. "How many states does
+    // the regime model have?" names a regime and asks "how many", so the pre-router sent it to the
+    // archive, the archive had no such shape, and the archive-miss refusal fired before the FAQ —
+    // which answers it — was ever consulted. Methodology wins over the data reading here because
+    // no archive shape will ever answer a question about the model's construction.
+    if methodology_re().is_match(q) {
+        return false;
+    }
     const WORDS: [&str; 10] = [
         "risk",
         "siren",
@@ -1003,38 +1061,198 @@ pub fn faq_best<'a>(faq: &'a [FaqEntry], question: &str) -> Option<&'a FaqEntry>
 /// Currency-word synonyms for the market lookup ("yen" → jpy). "usd"/"dollar" are deliberately
 /// absent (every pair contains the dollar) and so is "real" (too common an English word; say
 /// "brazilian" or "USDBRL").
-const CCY_SYNONYMS: &[(&str, &str)] = &[
-    ("yen", "jpy"),
-    ("sterling", "gbp"),
-    ("pound", "gbp"),
-    ("cable", "gbp"),
-    ("euro", "eur"),
-    ("franc", "chf"),
-    ("swissy", "chf"),
-    ("aussie", "aud"),
-    ("australian", "aud"),
-    ("kiwi", "nzd"),
-    ("loonie", "cad"),
-    ("canadian", "cad"),
-    ("krona", "sek"),
-    ("swedish", "sek"),
-    ("krone", "nok"),
-    ("norwegian", "nok"),
-    ("peso", "mxn"),
-    ("mexican", "mxn"),
-    ("brazilian", "brl"),
-    ("rand", "zar"),
-    ("zloty", "pln"),
-    ("polish", "pln"),
-    ("ruble", "rub"),
-    ("rouble", "rub"),
-    ("russian", "rub"),
-    ("bitcoin", "btc"),
-    ("ethereum", "eth"),
-    ("ether", "eth"),
-    ("ripple", "xrp"),
-    ("cardano", "ada"),
-    ("binance", "bnb"),
+/// Every market word a person might say, mapped to its currency/asset leg and a human name.
+///
+/// ONE table, deliberately including markets this radar does NOT publish. Coverage is decided
+/// against the pack at call time, never by omission from this list — that distinction is the whole
+/// point. A word that is missing here reads as "no market named", and the caller then answers about
+/// the lead market: that is how "how unusual is the Norwegian krone today?" returned EUR/USD's
+/// siren. Listing the krone lets the system say "I don't cover that" instead of substituting.
+const CCY_SYNONYMS: &[(&str, &str, &str)] = &[
+    // covered, or covered depending on the configured universes
+    ("yen", "jpy", "the yen"),
+    ("sterling", "gbp", "sterling"),
+    ("pound", "gbp", "the pound"),
+    ("cable", "gbp", "cable"),
+    ("quid", "gbp", "the pound"),
+    ("euro", "eur", "the euro"),
+    ("franc", "chf", "the franc"),
+    ("swissy", "chf", "the franc"),
+    ("swissie", "chf", "the franc"),
+    ("aussie", "aud", "the Australian dollar"),
+    ("australian", "aud", "the Australian dollar"),
+    ("kiwi", "nzd", "the New Zealand dollar"),
+    ("loonie", "cad", "the Canadian dollar"),
+    ("canadian", "cad", "the Canadian dollar"),
+    ("krona", "sek", "the Swedish krona"),
+    ("swedish", "sek", "the Swedish krona"),
+    ("krone", "nok", "the Norwegian krone"),
+    ("norwegian", "nok", "the Norwegian krone"),
+    ("peso", "mxn", "the Mexican peso"),
+    ("mexican", "mxn", "the Mexican peso"),
+    ("brazilian", "brl", "the Brazilian real"),
+    // NOT bare "real": "wait, are you a real person?" was being declined as a question about the
+    // Brazilian real. A market word that is also an ordinary English word costs more than it wins.
+    ("brl", "brl", "the Brazilian real"),
+    ("rand", "zar", "the rand"),
+    ("zloty", "pln", "the zloty"),
+    ("polish", "pln", "the zloty"),
+    ("ruble", "rub", "the rouble"),
+    ("rouble", "rub", "the rouble"),
+    ("russian", "rub", "the rouble"),
+    ("lira", "try", "the Turkish lira"),
+    ("turkish", "try", "the Turkish lira"),
+    ("bitcoin", "btc", "Bitcoin"),
+    ("ethereum", "eth", "Ether"),
+    ("ether", "eth", "Ether"),
+    ("ripple", "xrp", "XRP"),
+    ("cardano", "ada", "Cardano"),
+    ("binance", "bnb", "BNB"),
+    // named here precisely so they can be DECLINED rather than silently substituted
+    ("baht", "thb", "the Thai baht"),
+    ("rupee", "inr", "the Indian rupee"),
+    ("yuan", "cny", "the Chinese yuan"),
+    ("renminbi", "cny", "the Chinese yuan"),
+    ("won", "krw", "the Korean won"),
+    ("shekel", "ils", "the Israeli shekel"),
+    ("forint", "huf", "the Hungarian forint"),
+    ("koruna", "czk", "the Czech koruna"),
+    ("ringgit", "myr", "the Malaysian ringgit"),
+    ("rupiah", "idr", "the Indonesian rupiah"),
+    ("gold", "xau", "gold"),
+    ("silver", "xag", "silver"),
+    ("copper", "xcu", "copper"),
+    ("oil", "oil", "oil"),
+    ("brent", "oil", "Brent crude"),
+    ("wti", "oil", "WTI crude"),
+    ("nasdaq", "ndx", "the Nasdaq"),
+    ("dax", "dax", "the DAX"),
+    ("smi", "smi", "the SMI"),
+    ("ftse", "ftse", "the FTSE"),
+    ("nikkei", "nky", "the Nikkei"),
+    ("vix", "vix", "the VIX"),
+    ("dogecoin", "doge", "Dogecoin"),
+    ("doge", "doge", "Dogecoin"),
+    ("solana", "sol", "Solana"),
+    ("litecoin", "ltc", "Litecoin"),
+    ("polkadot", "dot", "Polkadot"),
+];
+
+/// Does this text name a market other than the one the question asked about?
+///
+/// The last line of defence, and deliberately a dumb one. Card arguments are steered by the pair
+/// hint, but some cards carry a market in their CAPTION without carrying it as an argument — so
+/// "show me the volatility of the aussie" could still come back captioned "EUR/USD realised
+/// volatility over 5y". Every layer above this is about picking the right card; this one asks a
+/// single question of whatever was picked — does it talk about a different market than the user
+/// asked about — and drops it if so.
+///
+/// It fires only on a CONFLICT, never on absence. A caption that names no market is left alone:
+/// silence is not a wrong claim, and being too eager here would empty boards that were fine.
+pub fn names_a_different_market(text: &str, hint: &str) -> bool {
+    let want: String = hint
+        .to_uppercase()
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .collect();
+    let upper = text.to_uppercase();
+    let compact: String = upper
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .collect();
+    // Six-letter codes and their slashed display forms: EURUSD, EUR/USD, BTC-USD, BTC/USD.
+    let mut found_other = false;
+    let bytes: Vec<char> = compact.chars().collect();
+    for i in 0..bytes.len().saturating_sub(5) {
+        let window: String = bytes[i..i + 6].iter().collect();
+        if !window.chars().all(|c| c.is_ascii_alphabetic()) {
+            continue;
+        }
+        if !KNOWN_LEG_PREFIXES
+            .iter()
+            .any(|p| window.starts_with(p) || window[3..].starts_with(p))
+        {
+            continue;
+        }
+        if window == want {
+            return false; // it names the market we asked about: settled, keep it
+        }
+        found_other = true;
+    }
+    found_other
+}
+
+/// Currency and asset legs that make a six-letter run an actual market code rather than a word.
+const KNOWN_LEG_PREFIXES: &[&str] = &[
+    "EUR", "USD", "CHF", "GBP", "JPY", "AUD", "NZD", "CAD", "SEK", "NOK", "MXN", "BRL", "ZAR",
+    "PLN", "RUB", "TRY", "BTC", "ETH", "XRP", "ADA", "BNB",
+];
+
+/// What market, if any, this question is about.
+#[derive(Debug, Clone, PartialEq)]
+pub enum MarketMention {
+    /// No market named — the lead market is a reasonable default.
+    None,
+    /// A market this radar publishes.
+    Covered(String),
+    /// A market-shaped name this radar does not publish. Never substitute another one.
+    Uncovered(String),
+}
+
+/// The ONE place a question is turned into a market.
+///
+/// There were four implementations of this before, with four different vocabularies, and the
+/// weakest of them owned the path that long questions fall through to. The result was that
+/// "hi what would be your prediction of the market of the franc" answered about EUR/USD: the board
+/// selector matched only the literal pair CODE, found nothing, and took the default. A caption
+/// saying EUR/USD in answer to a question about the franc is not a near miss — every number in it
+/// is real and about the wrong thing, which is the most dangerous answer this product can give.
+///
+/// Unlike `market_lookup_pair` this is NOT gated on sentence length: identifying which market a
+/// question is about and deciding whether the question wants a condition read are two different
+/// jobs, and merging them is what let long questions escape the good resolver.
+pub fn resolve_named_market(pack: &Pack, q_lower: &str) -> MarketMention {
+    if let Some((uni, blk)) = market_lookup(pack, q_lower) {
+        if let Some((code, _)) = uni.pairs.iter().find(|(_, p)| std::ptr::eq(*p, blk)) {
+            return MarketMention::Covered(code.clone());
+        }
+    }
+    // A market word that matched no covered pair is NOT "no market named". The krone and the lira
+    // are in the table above precisely so this branch can reach them: the pack has no NOK or TRY
+    // pair, `market_lookup` scores nothing, and without this the caller would fall through to the
+    // lead market and answer about EUR/USD. Being unable to answer is the truth; saying so is the
+    // answer.
+    let words: Vec<&str> = q_lower
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .collect();
+    for (word, _, display) in CCY_SYNONYMS {
+        if words.contains(word) {
+            return MarketMention::Uncovered((*display).to_string());
+        }
+    }
+    // A bare ISO code we do not carry ("how is the THB doing"), which no synonym covers.
+    for w in &words {
+        if w.len() == 3 && w.chars().all(|c| c.is_ascii_alphabetic()) {
+            let up = w.to_uppercase();
+            let known = pack
+                .markets
+                .values()
+                .any(|u| u.pairs.keys().any(|p| p.to_uppercase().contains(&up)));
+            if !known && KNOWN_ISO.contains(&up.as_str()) {
+                return MarketMention::Uncovered(up);
+            }
+        }
+    }
+    MarketMention::None
+}
+
+/// ISO codes that are unmistakably a currency, so a bare one we do not carry can be declined by
+/// name rather than answered about with something else.
+const KNOWN_ISO: &[&str] = &[
+    "THB", "INR", "CNY", "KRW", "ILS", "HUF", "CZK", "RON", "BGN", "UAH", "NGN", "AED", "SAR",
+    "MYR", "IDR", "PHP", "VND", "EGP", "PKR", "BDT", "CLP", "COP", "PEN", "ARS", "TWD", "HKD",
+    "SGD", "DKK", "ISK", "TRY", "NOK", "SEK",
 ];
 
 /// Deterministic market lookup over every universe in the pack: pair codes ("usdjpy", "usd/jpy"),
@@ -1053,7 +1271,7 @@ pub fn market_lookup<'a>(
         .filter(|w| !w.is_empty())
         .collect();
     let mut codes: HashSet<&str> = HashSet::new();
-    for (word, code) in CCY_SYNONYMS {
+    for (word, code, _) in CCY_SYNONYMS {
         if words.contains(word) {
             codes.insert(code);
         }
@@ -1557,10 +1775,29 @@ fn visual_answer(st: &AppState, question: &str) -> Option<String> {
     if !crate::visuals::is_confident(&ranked) || index.catch_alls.iter().any(|c| c == top_id) {
         return None;
     }
-    let cards = crate::visuals::select_board(index, boards, question, None);
+    // The market the question named, resolved once by the canonical resolver. Without this the
+    // selector matches only literal pair codes and quietly falls back to the lead market.
+    let hint = match st.avatar_pack() {
+        Ok(pack) => match resolve_named_market(&pack, &question.to_lowercase()) {
+            MarketMention::Covered(code) => Some(code),
+            // A market we do not publish gets no card at all. Showing a different market's card
+            // beside an answer about an unavailable one is how the siren for EUR/USD ended up
+            // being offered as the reading for the Turkish lira.
+            MarketMention::Uncovered(_) => return None,
+            MarketMention::None => None,
+        },
+        Err(_) => None,
+    };
+    let cards = crate::visuals::select_board(index, boards, question, None, hint.as_deref());
     let first = cards.first()?;
     if first.caption.trim().is_empty() {
         return None;
+    }
+    if let Some(h) = hint.as_deref() {
+        if names_a_different_market(&first.caption, h) {
+            // Better to say nothing than to answer about a market nobody asked about.
+            return None;
+        }
     }
     Some(first.caption.clone())
 }
@@ -1582,7 +1819,15 @@ fn select_board_for(
     gate_label: &str,
     forced_card: Option<&str>,
 ) -> Vec<crate::visuals::CardSpec> {
-    if gate_label == "blocked" || gate_label == "refused:off_topic" {
+    // Rule 2, applied to EVERY refusal rather than to two of them. An archive miss was still
+    // shipping a card — and, before the hint existed, a card for EUR/USD beside a refusal about the
+    // zloty. The direction and advice refusals keep their designated cards (set below); every other
+    // refusal gets nothing, because a picture beside "I can't answer that" answers it.
+    if gate_label == "blocked"
+        || (gate_label.starts_with("refused:")
+            && gate_label != "refused:direction"
+            && gate_label != "refused:advice")
+    {
         return Vec::new();
     }
     let Some(loaded) = st.visuals() else {
@@ -1596,9 +1841,24 @@ fn select_board_for(
     } else {
         forced_card
     };
-    let mut cards = crate::visuals::select_board(index, boards, question, forced);
+    let hint = match st.avatar_pack() {
+        Ok(pack) => match resolve_named_market(&pack, &question.to_lowercase()) {
+            MarketMention::Covered(code) => Some(code),
+            MarketMention::Uncovered(_) => return Vec::new(),
+            MarketMention::None => None,
+        },
+        Err(_) => None,
+    };
+    let mut cards = crate::visuals::select_board(index, boards, question, forced, hint.as_deref());
     if forced.is_some() {
         cards.truncate(1); // a refusal is not an invitation to browse
+    }
+    if let Some(h) = hint.as_deref() {
+        let before = cards.len();
+        cards.retain(|c| !names_a_different_market(&c.caption, h));
+        if cards.len() != before {
+            warn!(market = %h, "dropped a card captioned for a different market");
+        }
     }
     if !crate::visuals::board_is_grounded(&cards) {
         warn!("board dropped: a card carried no resolved data");
@@ -2130,6 +2390,45 @@ async fn brain_inner(
         }
     }
 
+    // A market we do not publish is named as such, before ANY path can answer with a different one.
+    //
+    // This sits above the archive, the packs and the board because every one of those will happily
+    // produce a confident answer about the lead market instead. "How unusual is the Turkish lira
+    // today?" returned "Siren for EUR/USD: 79 of 100" — a real number, correctly computed, about a
+    // market the user did not mention. There is no version of that which is better than saying we
+    // do not cover it.
+    // Resolved once per turn and reused: every path that can answer needs to agree about which
+    // market the question is about, and re-deriving it per path is how they came to disagree.
+    let named_market = resolve_named_market(&pack, &q_lower);
+    if let MarketMention::Uncovered(name) = &named_market {
+        m::avatar_refusal("market_not_covered");
+        crate::trace::route("refusal", "market not covered");
+        let covered: Vec<String> = pack
+            .markets
+            .values()
+            .map(|u| u.label.clone())
+            .filter(|l| !l.is_empty())
+            .collect();
+        let text = format!(
+            "I don't cover {name}, so I have no reading for it — and I won't hand you another \
+             market's numbers in its place. What I do carry is {}.",
+            if covered.is_empty() {
+                "the currency pairs on the radar".to_string()
+            } else {
+                covered.join(", ")
+            }
+        );
+        return Ok(finish(
+            &st,
+            &req.session_id,
+            &question,
+            text,
+            "refusal",
+            "refused:not_covered",
+            t0,
+        ));
+    }
+
     // Courtesy, before anything that reads data: "thanks" needs no lookup and deserves no refusal.
     if let Some(reply) = courtesy_reply(&question) {
         crate::trace::route("courtesy", "small talk");
@@ -2303,6 +2602,13 @@ async fn brain_inner(
                         pack_answer(&st, &effective, "en", !echo.is_empty())
                     } else {
                         None
+                    })
+                    // The pack path runs BEFORE the visual path and was answering with a
+                    // precomputed EUR/USD line to questions about the aussie. A precomputed answer
+                    // is still an answer, and it has to be about the market that was asked about.
+                    .filter(|(speech, _, _)| match &named_market {
+                        MarketMention::Covered(code) => !names_a_different_market(speech, code),
+                        _ => true,
                     })
                     .map(|(speech, board, stale)| {
                         pack_board = board;
@@ -2918,6 +3224,30 @@ mod tests {
 
     #[test]
     fn topic_guard_regexes() {
+        // The blunt forecast asks are owned by `guard::plain_forecast_ask`, NOT by this keyword
+        // list — deliberately, because the bare noun is ambiguous here: "how many sealed forecasts
+        // so far?" is a question about the ledger and must be answered.
+        for q in [
+            "what is your prediction for the franc",
+            "hi what would be your prediction of the market of the franc",
+            "forecast for the euro",
+            "outlook for sterling",
+        ] {
+            assert!(
+                crate::guard::detect(q).is_some_and(|f| f.is_direction()),
+                "the guard missed {q:?}"
+            );
+        }
+        for q in [
+            "how many sealed forecasts so far?",
+            "what is your forecast accuracy",
+            "how do you forecast regime change",
+        ] {
+            assert!(
+                !asks_price_direction(q) && crate::guard::detect(q).is_none(),
+                "{q:?} is about the record or the method and must not be refused"
+            );
+        }
         assert!(direction_intent_re().is_match("will eurusd rise?"));
         assert!(direction_intent_re().is_match("which way is the franc going"));
         assert!(!direction_intent_re().is_match("what is the current regime?"));

@@ -506,10 +506,18 @@ async fn the_kill_switch_takes_effect_mid_session_under_load() {
         }));
     }
 
-    // Let the load establish, then pull the switch while it is running.
-    tokio::time::sleep(std::time::Duration::from_millis(150)).await;
-    let before = answered.load(std::sync::atomic::Ordering::Relaxed);
-    assert!(before > 0, "load did not establish before the flip");
+    // Wait for the load to actually establish rather than sleeping a fixed interval and hoping.
+    // A fixed sleep passes on an idle machine and flakes on a busy one, which is the worst
+    // combination: it fails in CI and passes for whoever is asked to look at it.
+    let mut before = 0;
+    for _ in 0..100 {
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        before = answered.load(std::sync::atomic::Ordering::Relaxed);
+        if before > 0 {
+            break;
+        }
+    }
+    assert!(before > 0, "load did not establish within 2s");
 
     let client = reqwest::Client::new();
     let flip = client
@@ -525,7 +533,13 @@ async fn the_kill_switch_takes_effect_mid_session_under_load() {
         "the switch must flip without a redeploy"
     );
 
-    tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+    // And wait for turns to complete AFTER the flip, again by condition rather than by clock.
+    for _ in 0..100 {
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        if answered.load(std::sync::atomic::Ordering::Relaxed) > before {
+            break;
+        }
+    }
     stop.store(true, std::sync::atomic::Ordering::Relaxed);
     for w in workers {
         let _ = w.await;

@@ -88,6 +88,54 @@ probabilities are filtered rather than smoothed, and the splits are strictly tim
 5-day embargo at each boundary. Each feature module also has a truncation-invariance test: recompute
 on a shortened history and the overlapping rows must match exactly.
 
+### Q: How does the HMM work?
+
+The HMM — a hidden Markov model — assumes the market is in one of four unobserved states and that
+each state produces returns with its own character. It never sees the state directly; it infers how
+likely each one is from what the prices did. The forward algorithm updates that belief one day at a
+time using only days already past, which is what makes the output usable in real time rather than
+only in hindsight.
+
+### Q: How many states does the regime model have?
+
+Four: calm, trend, chop and crisis. The number was fixed before the model was fitted and has not
+been tuned to make results look better, which matters because adding states almost always improves
+the fit and almost never improves the honesty.
+
+### Q: What is XGBoost doing in the pipeline?
+
+XGBoost is the gradient-boosting model that produces the 5-day change risk — the probability that
+the regime label will be different a week from now. It is scored against a persistence base rate, a
+logistic regression and a one-feature rule, because a model that cannot beat those three has not
+earned its complexity.
+
+### Q: How is the model trained?
+
+On history up to the end of 2016, validated on 2017 and 2018, and tested once on 2019 onward. The
+test result was recorded and then frozen. Retraining happens on a schedule rather than whenever a
+number disappoints, and every fit is written down with the data that produced it.
+
+### Q: What is the embargo gap?
+
+A 5-trading-day hole left at every boundary between training, validation and test. Without it a
+label built from a forward window can overlap the next period's features, and the model scores
+better than it deserves. The gap costs a few days of data and removes that particular way of
+fooling yourself.
+
+### Q: How long has the forward test been running, and what is the track record?
+
+Every forecast has been written to a sealed, hash-chained ledger since the record opened. The live
+count of days, of forecasts and of resolved outcomes, together with the live score beside the frozen
+one, is on the Proof page — I quote it from there rather than from memory, and the chain head is
+published so you can recompute it yourself.
+
+### Q: When does the pipeline run?
+
+Every weekday around 06:00 UTC. It downloads the daily bars, rebuilds the features, scores the
+models, writes the forecasts to the ledger and publishes the artifacts. Every surface carries the
+date its data runs through, and if a build does not finish you see yesterday's reading behind a
+stale badge rather than a blank page.
+
 ### Q: What markets do you cover?
 23 markets on four boards: the three FX majors that carry the frozen record, the ten G10 crosses,
 five emerging-market pairs, and five crypto majors. Ask me about any of them by name and I will read

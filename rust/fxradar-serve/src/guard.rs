@@ -91,7 +91,7 @@ fn direction_rules() -> &'static Rules {
             // with "it's just a label" attached.
             (
                 "signed_regime",
-                re(r"(?i)(positive|negative)[- ]momentum|is (it|the trend|the regime) (up|down|bullish|bearish)|which direction is the (trend|regime)|signed (trend|regime)"),
+                re(r"(?i)(positive|negative)[- ]momentum|is (it|the trend|the regime) (up|down|bullish|bearish)|(which|what) direction\b|signed (trend|regime)|\brichtung\b|\bquelle direction\b"),
             ),
             // "what happened after 2015 — what does that imply for the coming week". The analogue is
             // history; the implication is a forecast.
@@ -126,6 +126,61 @@ fn direction_rules() -> &'static Rules {
             (
                 "direction_idiom_fr",
                 re(r"(?i)il monte ou il baisse|(?:monte|baisse) ou (?:baisse|monte)|(?:ç|c)a va monter|(?:ç|c)a va baisser|ton avis sur|o(?:ù|u) va (?:l\'|le |la )"),
+            ),
+            // ── The plain asks ────────────────────────────────────────────────────────────
+            // Everything below was found by probing the live system with the phrasings people
+            // actually type. The rule set had been tuned against clever adversarial questions and
+            // missed the blunt ones completely: "what would be your prediction of the market of
+            // the franc" was answered with a calm condition card. Cleverness is not the threat
+            // model — most users are not attacking anything, they are just asking.
+            (
+                "plain_forecast_ask",
+                re(concat!(
+                    // "your prediction", "a rough forecast" — a forecast asked OF the system.
+                    r"(?i)\b(your|ur|my|a|any)\s+(honest\s+|quick\s+|rough\s+|best\s+)?",
+                    r"(prediction|forecast|projection|outlook|prognosis)\b",
+                    // "forecast FOR the euro", "outlook ON sterling" — the noun with its object.
+                    r"|\b(prediction|forecast|projection|outlook|prognosis|view)\s+(for|on)\s+",
+                    r"(the\s+|a\s+)?\w*\s?(euro|dollar|pound|sterling|franc|yen|swissie|market|",
+                    r"eur|usd|gbp|chf|jpy|aud|cad|nzd|btc|eth)\b",
+                    // the verb, aimed at a market
+                    // "the euro outlook for Q4" — the market comes BEFORE the noun.
+                    r"|\b(euro|dollar|pound|sterling|franc|yen|swissie|market|",
+                    r"eurusd|usdchf|gbpusd|usdjpy)\s+(outlook|forecast|prediction|projection|view)\b",
+                    r"|\b(predict|forecasting)\s+(the\s+)?(market|rate|price|euro|dollar|pound|franc|yen|it)\b",
+                    r"|\bcan you predict\b|\bmarket (prediction|view|outlook)\b|\bcrystal ball\b",
+
+                )),
+            ),
+            // "Where is it going", "where's the dollar headed", "wohin entwickelt sich", "où va".
+            (
+                "whither",
+                re(r"(?i)\bwhere(?:'s|s| is| are| will| do you see) .{0,30}(going|headed|heading|end up|be)\b|\bwhere to (for|from here)\b|\bnext move\b|\btrajectory\b|\bfrom here\b.{0,12}$|\bwohin (geht|entwickelt|l(?:ä|ae)uft|steuert)\b|\bo(?:ù|u) va\b|\bcomment va (?:é|e)voluer\b|\bwie wird sich .{0,30}entwickeln\b"),
+            ),
+            // Asking for the system's opinion of what comes next, without the word forecast.
+            (
+                "how_do_you_see",
+                re(r"(?i)\bhow do you see\b|\bwhat do you reckon\b|\bwhat should i expect (from|for)\b|\bbest guess\b|\bhunch\b|\bgut (feel|feeling)|\bwhat.{0,12}(euro|dollar|pound|franc|yen|market|it).{0,12}going to do\b|\bwhat happens next\b|\bwhat's next for\b|\bdeine (meinung|einsch(?:ä|ae)tzung) zu\b|\bta vision pour\b|\bquelle est (ta|votre) vision\b"),
+            ),
+            // Future tense aimed at a market: "how will the pound move", "what will EURUSD do".
+            (
+                "future_tense_market",
+                re(r"(?i)\bhow will .{0,30}(move|end|close|do|fare|perform)\b|\bwhat will .{0,30}(do|be|happen)\b|\bwill .{0,25}(be|end|close) (higher|lower|above|below|at)\b|\bwhat .{0,20}(market|rate) does tomorrow\b|\bse renforcer\b|\bse d(?:é|e)pr(?:é|e)cier\b|\bva-t-il\b|\bwird sich .{0,25}entwickeln\b"),
+            ),
+            // A price target by any name.
+            (
+                "price_target_ask",
+                re(r"(?i)\bhow (high|low|far) (can|could|will|might) .{0,25}\bgo\b|\bwhere will .{0,30}\bbe\b|\bkursziel\b|\bobjectif de cours\b|\btarget for (the )?(euro|dollar|pound|franc|yen|eur|usd|gbp|chf)\b|\b(price|rate) target\b"),
+            ),
+            // "So it broke higher after, right?" asks us to confirm a past MOVE and to endorse the
+            // read of it. It gets its own rule rather than living inside the forecast rule,
+            // because the methodology exemption switches that one off — and this question arrived
+            // wrapped in the word "ledger", which is exactly the sort of premise the exemption is
+            // meant to honour. A direction claim does not stop being one because it is asked
+            // alongside a question about the record.
+            (
+                "past_move_confirmation",
+                re(r"(?i)\bbr(?:oke|eak|eaks|eaking) (higher|lower|out|down|up)\b|\b(rallied|tanked|plunged|surged|spiked|jumped|slumped) (after|since|then|on the)\b"),
             ),
             // Timing framed as hedging is still a rate view: "wait two weeks" only pays if the rate
             // moves your way.
@@ -199,9 +254,40 @@ fn advice_rules() -> &'static Rules {
             ),
             // Moving personal savings between currencies is an allocation decision, not insurance
             // on an exposure that already exists.
+            // Narrowed after probing: "my savings are in francs, how strange is the franc today?"
+            // was refused as advice. The savings are the PREMISE; the question is about the siren,
+            // which is the thing this radar publishes. Mentioning that you own something is not
+            // asking what to do with it — so the rule now needs a decision verb near the money,
+            // not merely the money.
             (
                 "personal_savings",
-                re(r"(?i)(my|our|private|personal) (savings|cash|money|nest egg)|move .{0,25}(savings|savings into|money into)|(privat|erspart)|(mon|mes) (?:é|e)conomies"),
+                re(r"(?i)(move|shift|switch|put|convert|allocate|split|park|verschieb\w*|umschicht\w*)\s+(my|our|the|mein\w*|unser\w*)?\s*(savings|cash|money|nest egg|ersparnisse|(?:é|e)conomies)|(my|our|private|personal)\s+(savings|cash|money|nest egg)\s+(in)?to\b|what (should|do) i do with (my|our) (savings|cash|money)"),
+            ),
+            // ── The plain asks, advice side ───────────────────────────────────────────────
+            (
+                "long_or_short",
+                re(r"(?i)\blong or short\b|\bbuy or sell\b|\bacheter ou vendre\b|\bkaufen oder verkaufen\b|\bin or out\b|\bstay in or\b"),
+            ),
+            (
+                "wager",
+                re(r"(?i)\bwhat would you bet\b|\bwould you bet\b|\bput money on\b|\bwetten\b|\bparier\b"),
+            ),
+            // "Is now a good time to buy dollars" is a decision request with a forecast inside it.
+            (
+                "good_time_to_act",
+                re(r"(?i)\b(is|would)\s+(now|this|today)\s+(a\s+)?(good|right|bad)\s+(time|moment)\b|\bist jetzt ein guter zeitpunkt\b|\blohnt sich (der|die|das)?\s*(kauf|verkauf)\b|\best-ce le bon moment\b|\bc'est le bon moment\b"),
+            ),
+            (
+                "recommendation_ask",
+                re(r"(?i)\bempfehlen sie\b|\b(deine|ihre|eine klare) empfehlung\b|\bempfehlung f(?:ü|ue)r\b|\brecommandation\b|\bque me conseill\w*\b|\bton conseil\b|\bvotre avis sur\b|\bgive me a (clear )?recommendation\b"),
+            ),
+            (
+                "when_should_i",
+                re(r"(?i)\bwhen should i\b|\bwann soll(te)? ich\b|\bquand dois-je\b|\bwann .{0,20}(umtauschen|kaufen|verkaufen)\b"),
+            ),
+            (
+                "what_should_i_do",
+                re(r"(?i)\bwhat should i do\b|\bwas soll ich tun\b|\bwas w(?:ü|ue)rdest du an meiner stelle\b|\bque ferais-tu (?:à|a) ma place\b|\bque feriez-vous (?:à|a) ma place\b|\bsoll ich .{0,25}(kaufen|verkaufen|umtauschen|tauschen)\b"),
             ),
             // Tax and accounting treatment belongs to their accountant or auditor.
             (
@@ -227,6 +313,40 @@ fn advice_rules() -> &'static Rules {
 /// This is deliberately narrow — the six substitutions that actually appear, applied only for
 /// MATCHING. Nothing downstream ever sees the normalised text, so a legitimate question containing
 /// "EUR/USD 1.05" is unaffected in the answer; at worst it gets an extra look here.
+/// Everyday shorthand, expanded for MATCHING only.
+///
+/// Found by probing: "whats ur view on eurusd" passed while "whats your view on the pound" was
+/// refused. The rule depended on the literal word "your", and half the people who type quickly do
+/// not write it. This is not an attack vector, it is how people type — and a guard that only holds
+/// for users with good keyboard manners does not hold.
+pub fn expand_shorthand(q: &str) -> String {
+    let mut out = String::with_capacity(q.len() + 16);
+    for word in q.split_inclusive(|c: char| !c.is_alphanumeric()) {
+        let (core, tail) = match word.char_indices().find(|(_, c)| !c.is_alphanumeric()) {
+            Some((i, _)) => word.split_at(i),
+            None => (word, ""),
+        };
+        let replaced = match core.to_lowercase().as_str() {
+            "ur" => "your",
+            "u" => "you",
+            "r" => "are",
+            "pls" | "plz" => "please",
+            "wot" => "what",
+            "gonna" => "going to",
+            "wanna" => "want to",
+            "shud" | "shld" => "should",
+            "wud" | "wld" => "would",
+            "cud" => "could",
+            "tmrw" | "tmr" => "tomorrow",
+            "y" => "why",
+            _ => core,
+        };
+        out.push_str(replaced);
+        out.push_str(tail);
+    }
+    out
+}
+
 pub fn deobfuscate(q: &str) -> String {
     let mut out = String::with_capacity(q.len());
     for ch in q.chars() {
@@ -277,6 +397,29 @@ fn states_an_exposure(q: &str) -> bool {
     re.is_match(q)
 }
 
+/// Is the question about how well the SYSTEM forecasts, rather than about where a price goes?
+///
+/// "What is your forecast accuracy?" and "how do you forecast regime change?" are questions about
+/// the model — the first is asking for our track record, which this product publishes precisely so
+/// that it can be asked. They contain forecast words and must not be refused. Nothing here is a
+/// market: the exemption cannot be used to smuggle a rate question through, because it requires a
+/// word about measurement or method and none of those name a price.
+fn is_methodology(q: &str) -> bool {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    let rx = RE.get_or_init(|| {
+        re(concat!(
+            r"(?i)\b(accuracy|accurate|brier|calibrat\w*|skill|track record|hit rate|",
+            r"how (good|reliable|well)|methodolog\w*|backtest|regime change|coverage|",
+            r"score|scores|sealed|ledger|record|resolved|verif\w*)\b",
+        ))
+    });
+    rx.is_match(q)
+}
+
+/// Rules that a methodology question turns off. Only the forecast-shaped ones: the rest do not
+/// collide with questions about the model.
+const EXEMPT_WHEN_METHODOLOGY: &[&str] = &["plain_forecast_ask", "how_do_you_see"];
+
 /// Framings a stated exposure exempts — deliberately empty, and the empty list is the finding.
 ///
 /// The first version of this exemption let a stated exposure excuse the *timing* and *personal
@@ -318,6 +461,12 @@ pub fn detect(question: &str) -> Option<Framing> {
     if let Some(f) = detect_in(question, exposure) {
         return Some(f);
     }
+    let expanded = expand_shorthand(question);
+    if expanded != question {
+        if let Some(f) = detect_in(&expanded, exposure) {
+            return Some(f);
+        }
+    }
     // Only pay for the second pass when the text actually contains substitution characters.
     if question.chars().any(|c| "013457@$".contains(c)) {
         return detect_in(&deobfuscate(question), exposure);
@@ -326,7 +475,11 @@ pub fn detect(question: &str) -> Option<Framing> {
 }
 
 fn detect_in(question: &str, exposure: bool) -> Option<Framing> {
-    let exempt = |name: &str| exposure && EXEMPT_WITH_EXPOSURE.contains(&name);
+    let methodology = is_methodology(question);
+    let exempt = |name: &str| {
+        (exposure && EXEMPT_WITH_EXPOSURE.contains(&name))
+            || (methodology && EXEMPT_WHEN_METHODOLOGY.contains(&name))
+    };
     for (name, rx) in direction_rules() {
         if rx.is_match(question) && !exempt(name) {
             return Some(Framing::Direction(name));

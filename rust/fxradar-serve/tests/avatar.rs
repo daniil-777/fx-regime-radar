@@ -1056,6 +1056,7 @@ fn direction_questions_get_only_the_evidence_card() {
             &boards,
             q,
             Some("direction_evidence_card"),
+            None,
         );
         assert_eq!(cards[0].component, "direction_evidence_card", "{q}");
         assert!(
@@ -1230,6 +1231,140 @@ async fn a_stated_exposure_exempts_the_timing_question_and_nothing_else() {
             gate.starts_with("refused"),
             "{q:?} names an amount but asks for a view; it must still be refused (got {gate:?}): {}",
             a["text"]
+        );
+    }
+}
+
+/// The bug a user reported, and the whole class behind it.
+///
+/// "hi what would be your prediction of the market of the franc" came back with
+/// "EUR/USD · calm · change risk 0.03 · siren 79". Two failures in one answer: a forecast request
+/// was answered rather than refused, and it was answered about a market the user had not named.
+/// The second is the worse one — every number in it was real, correctly computed, and about
+/// something else.
+#[tokio::test]
+async fn a_forecast_request_is_refused_and_never_answered_about_another_market() {
+    let root = scratch_dir("franc");
+    write_pack(&root, GREETING);
+    let (base, _store) = spawn_app(&root, base_cfg()).await;
+
+    // The plainest ways to ask for a forecast. None of these is an attack; they are how people ask.
+    for q in [
+        "hi what would be your prediction of the market of the franc",
+        "what is your prediction for USDCHF",
+        "whats ur prediction for eurusd",
+        "what is your projection for the euro",
+        "forecast for the euro",
+        "outlook for sterling",
+        "where is the franc going",
+        "what's the next move for the franc",
+        "how do you see the yen",
+        "gut feel on the dollar",
+        "best guess for the euro next week",
+        "what direction for the franc",
+        "Was ist deine Prognose für EUR/USD?",
+        "Ton pronostic pour l'euro la semaine prochaine ?",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        assert_eq!(
+            a["gate"], "refused:direction",
+            "{q:?} asks for a forecast and must be refused, got {:?}: {}",
+            a["gate"], a["text"]
+        );
+    }
+
+    // And the questions about the RECORD and the METHOD, which contain the same words and must
+    // never be mistaken for a price call. Widening the vocabulary without this half would be a
+    // worse bug than the one it fixes — "how many sealed forecasts so far?" is a question about
+    // the ledger, and refusing it as a direction request is how that regression actually appeared.
+    //
+    // The assertion is specifically that they are not refused AS DIRECTION: this fixture carries
+    // no archive and no ledger FAQ, so some of them legitimately have nothing to answer from here.
+    // What they may never do is trip the direction guard.
+    for q in [
+        "how many sealed forecasts so far?",
+        "what is your forecast accuracy",
+        "how do you forecast regime change",
+        "what is your Brier score",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        assert_ne!(
+            a["gate"], "refused:direction",
+            "{q:?} is about our own record or method, not about a price: {}",
+            a["text"]
+        );
+    }
+}
+
+/// A question about one market is never answered about another, and a market we do not publish is
+/// said out loud rather than substituted.
+#[tokio::test]
+async fn the_answer_is_about_the_market_that_was_asked_about() {
+    let root = scratch_dir("mkt");
+    write_pack(&root, GREETING);
+    let (base, _store) = spawn_app(&root, base_cfg()).await;
+
+    for (q, want) in [
+        ("say something about the franc", "USD/CHF"),
+        ("how is the franc doing", "USD/CHF"),
+        ("brief me on the swissie", "USD/CHF"),
+        ("how unusual is the franc today", "USD/CHF"),
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        let text = a["text"].as_str().unwrap_or("");
+        let gate = a["gate"].as_str().unwrap_or("");
+        if gate.starts_with("refused") {
+            continue; // a refusal names no market, which is honest
+        }
+        let board = a["board"].to_string();
+        assert!(
+            text.contains(want) || board.contains("USDCHF"),
+            "{q:?} asked about the franc and was answered with {text:?} / {board}"
+        );
+        assert!(
+            !text.contains("EUR/USD"),
+            "{q:?} asked about the franc and the answer talks about EUR/USD: {text}"
+        );
+    }
+
+    // A market this radar does not publish is declined by name — never swapped for another one.
+    for q in [
+        "what regime is gold in",
+        "how unusual is the turkish lira today",
+        "how is the norwegian krone doing",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        let text = a["text"].as_str().unwrap_or("");
+        assert_eq!(
+            a["gate"], "refused:not_covered",
+            "{q:?} names a market we do not carry and must say so, got {:?}: {text}",
+            a["gate"]
+        );
+        assert!(
+            !text.contains("EUR/USD"),
+            "the refusal must not hand over another market's numbers: {text}"
+        );
+    }
+}
+
+/// Courtesy and the identity disclosure are answered, not refused.
+#[tokio::test]
+async fn greetings_and_the_identity_question_are_answered() {
+    let root = scratch_dir("courtesy2");
+    write_pack(&root, GREETING);
+    let (base, _store) = spawn_app(&root, base_cfg()).await;
+    for q in [
+        "hello",
+        "thanks that helps",
+        "whats your name",
+        "wait are you a real person",
+        "sprichst du deutsch?",
+    ] {
+        let a = ask(&base, "brt_test", q, None).await;
+        assert!(
+            !a["gate"].as_str().unwrap_or("").starts_with("refused"),
+            "{q:?} must not be refused, got {:?}",
+            a["gate"]
         );
     }
 }

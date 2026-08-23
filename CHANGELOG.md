@@ -2,6 +2,81 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.40.1 — the franc bug, and the class behind it (2026-08-23)
+
+A user asked **"hi what would be your prediction of the market of the franc"** and got back
+**"EUR/USD · calm · change risk 0.03 (band 0.00 to 0.52) · siren 79"**. Two distinct failures in one
+answer, and the second is the worse one.
+
+### What was wrong
+
+**The guard had no word for "prediction".** It had been tuned against sophisticated adversarial
+questions — premise smuggling, persona shift, chart extrapolation — and missed the plainest
+phrasings entirely. Cleverness was never the threat model: most users are not attacking anything,
+they are just asking. "Your prediction", "forecast for the euro", "where is the franc going", "gut
+feel on the dollar", "Prognose", "pronostic" — none of them fired.
+
+**The answer was about the wrong market.** This is the serious one. Four different pair resolvers
+had grown up in the codebase with four different vocabularies, and the weakest of them owned the
+path that long questions fall through to: the board selector matched only the literal pair CODE, so
+"franc" scored nothing, and a +2 default bonus handed the question to EUR/USD. Every number in that
+answer was real, correctly computed, and about something else — which is the most dangerous answer
+this product can give, because it looks exactly like a good one. It also affected markets we do not
+publish: "how unusual is the Turkish lira today?" returned EUR/USD's siren.
+
+### The fix
+
+- **One canonical market resolver** (`resolve_named_market`), which returns `Covered`, `Uncovered`
+  or `None` — and is not gated on sentence length, because identifying which market a question is
+  about and deciding whether it wants a condition read are two different jobs.
+- **One market-word table**, deliberately including markets we do *not* carry, so coverage is
+  decided against the pack rather than by omission. That distinction is the whole fix for the lira.
+- **The board selector takes the resolved market as a hint** and pushes a card for a *different*
+  market below every alternative, so it can never win on the default bonus.
+- **An uncovered market is said out loud** — "I don't cover the Turkish lira, so I have no reading
+  for it — and I won't hand you another market's numbers in its place" — above every path that
+  could otherwise substitute one.
+- **A caption safety net**: whatever card is finally chosen, if it names a different market than the
+  one asked about, it is dropped. It fires on conflict, never on absence.
+- **Named plain-ask rules** in `guard.rs` for the blunt phrasings, in English, German and French,
+  plus shorthand expansion (`ur` → `your`), because a guard that only holds for users with good
+  keyboard manners does not hold.
+
+### Found and fixed on the way
+
+- **Bare "forecast" was too blunt.** Adding it to the keyword list immediately refused *"how many
+  sealed forecasts so far?"* — a question about the ledger, the thing that makes this system
+  checkable. The forecast-shaped asks are now matched with their context instead, and a methodology
+  exemption keeps "what is your forecast accuracy" and "how do you forecast regime change" answered.
+- **"my savings are in francs, how strange is the franc today?"** was refused as advice. The savings
+  are the premise; the question is about the siren. Narrowed to require a decision verb.
+- **"wait, are you a real person?"** was answered "that's outside what I know". It is the Article 50
+  disclosure question, and it now gets the disclosure.
+- **Bare "real" was a market word** for the Brazilian real — which is how the identity question above
+  came to be declined as a question about a currency. A market word that is also an ordinary English
+  word costs more than it wins.
+- **Methodology questions were refused as archive misses.** "How many states does the regime model
+  have?" went to the archive because it starts with "how many", missed, and refused before the FAQ
+  was consulted. Seven methodology entries were added to the knowledge pack (HMM, XGBoost, the
+  embargo gap, training, the forward test, the pipeline schedule) and they now answer.
+- **A stale server on the port** meant an early round of "still broken" readings was measured
+  against a binary that predated the fix. Worth recording: the reading was real, the diagnosis was
+  not.
+
+### Measured
+
+A six-dimension probe of the live service found 180 candidate defects; 161 were confirmed by
+adversarial re-verification. **132 of the 140 actionable ones are fixed**, including **52 of 52
+missed direction refusals and 18 of 18 missed advice refusals**. The eight that remain are five
+retrieval misroutes (the answer names no market — irrelevant rather than wrong), one typo-tolerance
+gap, and two archive shapes that do not exist.
+
+On the frozen golden set: **no family regressed**, the constitutional families stayed at 100%, and
+`no banned words` stayed at 100%. Three new regression tests pin the reported bug, the wrong-market
+class and the courtesy/identity behaviour.
+
+`make test` 377 passed · `make lint-ui` green · full Rust suite green · clippy clean.
+
 ## v2.40.0 — phase 45: prove and ship (2026-08-23)
 
 **Everything built in phases 39–44, measured against itself and then against the questions people
