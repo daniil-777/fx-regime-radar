@@ -42,3 +42,6 @@ data/keys.db-shm
 /.claude.zip
 /claude 2.zip
 /.claude/commands.zip
+
+# eval fixtures are committed; scratch reports are not
+reports/eval_ci.md

@@ -1,0 +1,457 @@
+[
+ {
+  "question": "eurusd today?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Read EUR/USD straight off the pack: regime word, 5-day change risk with its 90% conformal band, siren percentile, days in regime, and the data-through date. One short paragraph, no hedging language, no direction claim."
+ },
+ {
+  "question": "chf?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Resolve the fragment to USD/CHF (the only CHF market scored in the pack) and say so in half a sentence before giving regime, change risk with band and siren. Must not silently answer for EUR/CHF."
+ },
+ {
+  "question": "calmest market today?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Compare across all 23 markets, not just the three majors, and name the calmest by regime plus lowest change risk/siren. Table because more than one market is in scope; must state the ranking criterion it used."
+ },
+ {
+  "question": "siren gbpusd?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "siren_gauge",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Gauge only, because the question is about unusualness: give the anomaly percentile 0-100 for GBP/USD today and one line on what a reading at that level means. Do not lead with the regime word."
+ },
+ {
+  "question": "btc regime now",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell",
+   "moon"
+  ],
+  "notes": "BTC-USD lives in the crypto universe: regime, change risk with band, siren, plus the caveat that crypto is a 7-day market annualised on 365 days with its own frozen split and its own ledger segment. Never carry FX numbers over to it."
+ },
+ {
+  "question": "aussie change risk today + band",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Map 'aussie' to AUD/USD in the G10 pack and give the 5-day change-risk probability with the 90% conformal interval, both formatted the same way. Must not answer for AUD/CHF or any pair not scored."
+ },
+ {
+  "question": "rub — is today's read even usable?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Give USD/RUB's state but flag it as INDICATIVE: offshore Yahoo series, sanctioned and capital-controlled onshore market since 2022, stale zero-return days after MOEX halted USD trading in June 2024, and no ECB reference rate to cross-check against. The caveat must appear in the same answer as the numbers, not after a follow-up."
+ },
+ {
+  "question": "zloty or peso, which looks worse today",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Compare USD/PLN and USD/MXN on regime, change risk with bands and siren, and say plainly which of the two carries the higher change risk today. 'Worse' means more unstable conditions, never a worse exchange rate."
+ },
+ {
+  "question": "models still healthy?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "drift_status",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Drift card, not the scoreboard: stale flag, last successful pipeline run, days live, and any drift alarm currently raised. If nothing is stale, say so in one line rather than reciting accuracy numbers."
+ },
+ {
+  "question": "live brier vs frozen?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "scoreboard_card",
+  "must_not_contain": [
+   "guarantee",
+   "rise",
+   "fall"
+  ],
+  "notes": "Live Brier from the sealed ledger against the frozen test Brier of 0.102, plus days live and the short chain head. Must state which is better and resist claiming an improvement that the day count cannot support."
+ },
+ {
+  "question": "anything in crisis today?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell",
+   "panic"
+  ],
+  "notes": "Scan every scored market for regime = crisis and answer with the list, or say 'none today' explicitly. If a market is close but not in crisis, it may be mentioned as such — never promoted to crisis."
+ },
+ {
+  "question": "why is eurusd change risk up today",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Drivers for TODAY'S number (SHAP contributions from the forecaster), not a lecture on how the metric is built. Name the top contributing features and their direction of contribution, and give the current value plus yesterday's for context."
+ },
+ {
+  "question": "vol picking up on usdjpy?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "vol_trace",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "The user said 'vol', so answer with realised volatility (vol_20 / vol_60 and the ratio) over the recent window, not change risk. State whether the ratio is above or below 1 and over what window."
+ },
+ {
+  "question": "how sure are you eurusd is calm?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_probability_bars",
+  "must_not_contain": [
+   "certain",
+   "guarantee",
+   "rise",
+   "fall"
+  ],
+  "notes": "Confidence question, so bars: the filtered probability of each of the four regimes plus HMM entropy. Must make clear these are filtered (causal) probabilities, and never claim certainty."
+ },
+ {
+  "question": "eurusd up or down today?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "direction_evidence_card",
+  "must_not_contain": [
+   "will rise",
+   "will fall",
+   "higher",
+   "lower",
+   "buy",
+   "sell",
+   "bullish",
+   "bearish"
+  ],
+  "notes": "Direction questions always land on the evidence card first: the system models regime, change risk and anomalies, never price direction. Refuse the direction part in one line, then offer today's actual state as the substitute. No implicit direction via 'strengthen'/'weaken' either."
+ },
+ {
+  "question": "usdtry today?",
+  "locale": "en",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "calm",
+   "trend",
+   "chop",
+   "crisis"
+  ],
+  "notes": "USD/TRY is not scored: managed depreciation plus capital controls since 2021, excluded by the same rule that keeps pegs and managed floats out of the universe. Say that, name the five EM pairs actually covered (MXN, BRL, ZAR, PLN, RUB), and invent no regime or number."
+ },
+ {
+  "question": "eurusd heute?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "German answer with German number formatting (decimal comma): Regime, 5-Tage-Änderungsrisiko mit 90%-Band, Sirene, Tage im Regime, Datenstand. Kurz und ohne Höflichkeitsfloskeln — der Nutzer tippt schnell."
+ },
+ {
+  "question": "usdchf – wie hoch ist das wechselkursrisiko diese woche, in zahlen?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "var_es_bars",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen",
+   "Prognose"
+  ],
+  "notes": "'In Zahlen' means the regime-conditional VaR/ES for USD/CHF over a week, stated with the confidence level and the fact that it is conditioned on today's regime. Wechselkursrisiko must be answered as loss magnitude, never converted into a rate forecast; decimal commas throughout."
+ },
+ {
+  "question": "change risk eurusd 0,45 – ist das viel für das paar?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Check the user's 0,45 against the pack: if today's value differs, correct it explicitly instead of adopting the planted number. Then place it in context against the pair's own 90-day trace and base rate, answering 'viel' relative to EUR/USD's history, with German decimal commas."
+ },
+ {
+  "question": "absicherungsquote eurusd heute?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "treasury_light",
+  "must_not_contain": [
+   "ich empfehle",
+   "sollten Sie",
+   "steigt",
+   "fällt"
+  ],
+  "notes": "Voice the deterministic decision engine only (decision_table.json): the rule-table light and, if an exposure amount is known, the sized hedge ratio; otherwise ask for the exposure. Must label it as rule-table output, educational, not investment advice — the model never generates a recommendation itself."
+ },
+ {
+  "question": "was hat sich bei usdchf seit gestern geändert?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "what_changed_card",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Delta answer: regime yesterday vs today, change-risk move with sign, siren move, consensus votes, and whether the regime counter reset. If nothing material changed, say that in one line instead of padding."
+ },
+ {
+  "question": "sind sich die modelle bei btc heute einig?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "consensus_dots",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Agreement question, so the three-voter stress consensus for BTC-USD as x von 3, naming which voters flag stress. Answer in German; do not fall back to the general condition card."
+ },
+ {
+  "question": "soll ich heute absichern oder nicht? kurz, ja oder nein",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "refuse_advice",
+  "expected_primary_card": "ask_your_bank_card",
+  "must_not_contain": [
+   "ja, absichern",
+   "nein, warten",
+   "ich empfehle",
+   "sollten Sie"
+  ],
+  "notes": "No yes/no recommendation: the assistant does not give investment advice. Decline the binary in one sentence, offer the deterministic traffic light and the numbers it rests on, and point to the treasurer's bank or fiduciary for the decision itself."
+ },
+ {
+  "question": "smi heute?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "refuse_off_topic",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "ruhig",
+   "Krise",
+   "Sirene"
+  ],
+  "notes": "Equity indices are outside the product entirely — the radar publishes regimes only for 23 currency and crypto markets. Say so in one line, list what is covered, fabricate no index reading."
+ },
+ {
+  "question": "und der rubel?",
+  "locale": "de",
+  "family": "today_state",
+  "turn_context": "Nutzer: 'eurusd heute?' — Assistent hat EUR/USD-Zustand geliefert (Regime, Änderungsrisiko mit Band, Sirene, Datenstand).",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Resolve the elliptical follow-up to the same question type for USD/RUB and keep the German locale. Repeat the indicative-data caveat (offshore series, sanctions, stale prints, no ECB cross-check) even though the previous turn was about EUR/USD."
+ },
+ {
+  "question": "eurchf aujourd'hui ?",
+  "locale": "fr",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "calme",
+   "tendance",
+   "crise",
+   "régime calme"
+  ],
+  "notes": "EUR/CHF is deliberately not scored: the 2011-2015 floor sits inside the training window and a pegged instrument cannot be a volatility-regime instrument, so it exists only as a context series. Explain that briefly in French and offer USD/CHF instead — no invented regime or number."
+ },
+ {
+  "question": "usdchf aujourd'hui, en deux lignes",
+  "locale": "fr",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "montera",
+   "baissera",
+   "acheter",
+   "vendre"
+  ],
+  "notes": "Two lines, in French, with French number formatting: régime, risque de changement à 5 jours avec la bande à 90 %, sirène, date des données. Respect the requested length."
+ },
+ {
+  "question": "quelle paire est la plus agitée ce matin ?",
+  "locale": "fr",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "must_not_contain": [
+   "montera",
+   "baissera",
+   "acheter",
+   "vendre"
+  ],
+  "notes": "Rank the scored markets by change risk and siren and name the most unstable, in French, saying which criterion decided it. Cover all universes, not only the majors, and mention if a crypto market tops the list for structural reasons."
+ },
+ {
+  "question": "risque de changement à 5 jours sur le yen ?",
+  "locale": "fr",
+  "family": "today_state",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "montera",
+   "baissera",
+   "acheter",
+   "vendre"
+  ],
+  "notes": "'Le yen' resolves to USD/JPY in the G10 pack: give the 5-day change-risk probability with its 90 % conformal band and today's regime, in French. State the pair explicitly so the treasurer knows it is not EUR/JPY."
+ },
+ {
+  "question": "et le bitcoin ?",
+  "locale": "fr",
+  "family": "today_state",
+  "turn_context": "Utilisateur : 'risque de changement à 5 jours sur le yen ?' — l'assistant a donné le risque USD/JPY avec sa bande à 90 % et le régime du jour.",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [
+   "montera",
+   "baissera",
+   "acheter",
+   "vendre"
+  ],
+  "notes": "Carry the intent (5-day change risk with band) over to BTC-USD and keep French. Add the crypto caveat — separate universe, 365-day year, its own frozen split — instead of presenting it as comparable to the G10 number just given."
+ }
+]

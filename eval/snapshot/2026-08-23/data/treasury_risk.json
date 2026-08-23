@@ -1,0 +1,208 @@
+{
+ "generated_at_utc": "2026-08-21T06:49:13Z",
+ "as_of": "2026-08-20",
+ "levels": [
+  0.95,
+  0.99
+ ],
+ "horizon_days": 5,
+ "train_end": "2016-12-31",
+ "min_windows": 30,
+ "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
+ "thresholds": {
+  "high_risk": 0.3052325284990942,
+  "low_risk": 0.09028702194668232,
+  "wide": 1.0,
+  "narrow": 0.8297945380744868,
+  "risk_source": "train-era percentiles (n=9151)",
+  "width_source": "train-era clipped band widths (n=9151)",
+  "high_risk_pctl": 0.8,
+  "low_risk_pctl": 0.4,
+  "event_window_days": 5
+ },
+ "pairs": {
+  "EURUSD": {
+   "current_regime": "calm",
+   "regime_prob": 0.9999998969932693,
+   "days_in_regime": 82,
+   "table": {
+    "calm": {
+     "n": 766,
+     "var_95": 0.018093778095714767,
+     "es_95": 0.021648202687769465,
+     "var_99": 0.024439012920737965,
+     "es_99": 0.026782781285129592,
+     "fallback": false
+    },
+    "trend": {
+     "n": 705,
+     "var_95": 0.028037490992188396,
+     "es_95": 0.033743059292591485,
+     "var_99": 0.03742481788691276,
+     "es_99": 0.04252642222111702,
+     "fallback": false
+    },
+    "chop": {
+     "n": 857,
+     "var_95": 0.024734166971595688,
+     "es_95": 0.033148638123000486,
+     "var_99": 0.03845949794818441,
+     "es_99": 0.05113730273305557,
+     "fallback": false
+    },
+    "crisis": {
+     "n": 705,
+     "var_95": 0.0361783984310665,
+     "es_95": 0.04901666475206072,
+     "var_99": 0.05859740751257493,
+     "es_99": 0.07238084088490196,
+     "fallback": false
+    }
+   },
+   "unconditional": {
+    "n": 3033,
+    "var_95": 0.02757418448903934,
+    "es_95": 0.03697724512805575,
+    "var_99": 0.041707811633963,
+    "es_99": 0.055494997897725204,
+    "fallback": false
+   },
+   "light": "wait",
+   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
+   "inputs": {
+    "change_risk_5d": 0.02511780664070759,
+    "risk_lo": 0.0,
+    "risk_hi": 0.517965538677585,
+    "agreement": 1,
+    "consensus_text": "1/3 \u2014 likely a one-day spike; one voter sees stress",
+    "days_to_next_event": 11,
+    "next_event": "NFP"
+   }
+  },
+  "GBPUSD": {
+   "current_regime": "calm",
+   "regime_prob": 0.9997752381562709,
+   "days_in_regime": 5,
+   "table": {
+    "calm": {
+     "n": 486,
+     "var_95": 0.019786903492745547,
+     "es_95": 0.026109847933858444,
+     "var_99": 0.03043915401225701,
+     "es_99": 0.03534952577912309,
+     "fallback": false
+    },
+    "trend": {
+     "n": 880,
+     "var_95": 0.02760899872250077,
+     "es_95": 0.04055447886756713,
+     "var_99": 0.04043254310116588,
+     "es_99": 0.07043776894030516,
+     "fallback": false
+    },
+    "chop": {
+     "n": 1409,
+     "var_95": 0.020256970757363612,
+     "es_95": 0.024655908100167125,
+     "var_99": 0.027896512041664746,
+     "es_99": 0.03091981845648597,
+     "fallback": false
+    },
+    "crisis": {
+     "n": 276,
+     "var_95": 0.04897483995365767,
+     "es_95": 0.06187307712263263,
+     "var_99": 0.06657094381288059,
+     "es_99": 0.08260376790822911,
+     "fallback": false
+    }
+   },
+   "unconditional": {
+    "n": 3051,
+    "var_95": 0.026926015848055873,
+    "es_95": 0.03839695326933081,
+    "var_99": 0.04404315111306667,
+    "es_99": 0.060389176000417176,
+    "fallback": false
+   },
+   "light": "wait",
+   "light_reason": "Calm regime, change risk 5% is below the train-era 40th percentile (9%), the interval on it is narrow (0.54), next scheduled event (NFP) is 11 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "inputs": {
+    "change_risk_5d": 0.051569358491187364,
+    "risk_lo": 0.0,
+    "risk_hi": 0.5444170905280648,
+    "agreement": 0,
+    "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
+    "days_to_next_event": 11,
+    "next_event": "NFP"
+   }
+  },
+  "USDCHF": {
+   "current_regime": "calm",
+   "regime_prob": 0.7188842750916916,
+   "days_in_regime": 127,
+   "table": {
+    "calm": {
+     "n": 1613,
+     "var_95": 0.023885837214665393,
+     "es_95": 0.03833238562416669,
+     "var_99": 0.03495382577949287,
+     "es_99": 0.07593614303188051,
+     "fallback": false
+    },
+    "trend": {
+     "n": 969,
+     "var_95": 0.02856207868498437,
+     "es_95": 0.033756849136858,
+     "var_99": 0.03684564066133153,
+     "es_99": 0.040727672721008024,
+     "fallback": false
+    },
+    "chop": {
+     "n": 450,
+     "var_95": 0.04234280144131426,
+     "es_95": 0.069083331918891,
+     "var_99": 0.09488538721382603,
+     "es_99": 0.10651923371767288,
+     "fallback": false
+    },
+    "crisis": {
+     "n": 20,
+     "var_95": 0.028454222956941243,
+     "es_95": 0.04351964183842072,
+     "var_99": 0.046397549760033664,
+     "es_99": 0.08255056042201357,
+     "fallback": true
+    }
+   },
+   "unconditional": {
+    "n": 3052,
+    "var_95": 0.028454222956941243,
+    "es_95": 0.04351964183842072,
+    "var_99": 0.046397549760033664,
+    "es_99": 0.08255056042201357,
+    "fallback": false
+   },
+   "light": "ladder",
+   "light_reason": "Neither clear-cut: change risk 62% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 2/3: 2/3 agree: conditions are shifting \u2014 two voters see stress.",
+   "inputs": {
+    "change_risk_5d": 0.6195659864932367,
+    "risk_lo": 0.1267182544563593,
+    "risk_hi": 1.0,
+    "agreement": 2,
+    "consensus_text": "2/3 agree: conditions are shifting \u2014 two voters see stress",
+    "days_to_next_event": 11,
+    "next_event": "NFP"
+   }
+  }
+ },
+ "fx": {
+  "EURUSD": 1.1673787832260132,
+  "USDCHF": 0.7977700233459473,
+  "GBPUSD": 1.3599891662597656,
+  "EURCHF": 0.93129979914778,
+  "GBPCHF": 1.0849585889172886,
+  "EURGBP": 0.8583735901636126
+ },
+ "disclaimer": "Educational tool. Not investment advice."
+}

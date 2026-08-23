@@ -47,3 +47,8 @@ jobs:
           PY
       - name: Public verifier (stdlib only) agrees
         run: python scripts/verify_ledger.py
+      - name: Evaluation gate (hermetic — snapshot + recorded fixtures, no network, no model)
+        run: |
+          python eval/run_eval.py --out reports/eval_ci.md --check
+          echo "--- eval summary ---"
+          sed -n '/## By family/,/## By locale/p' reports/eval_ci.md

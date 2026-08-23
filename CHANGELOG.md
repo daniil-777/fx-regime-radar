@@ -2,6 +2,47 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.33.0 — phase 39: the eval harness and a frozen baseline (2026-08-23)
+
+Nothing in phases 40–45 can be judged without this: every decision from here is a comparison, and a
+comparison without a fixed measuring stick is taste wearing a lab coat. No user-facing behaviour
+changed.
+
+- **A frozen snapshot** (`eval/snapshot/2026-08-23/`, 15 files, 1.2 MB, SHA-256 per file). Every eval
+  path reads it and never `data/` — a test enforces that, because a suite pointed at live data
+  produces a different number every morning and the flakiness is indistinguishable from a regression.
+- **Gold values are COMPUTED, never typed.** Each numeric expectation carries a `source_ref` — an
+  address into the snapshot (`pack:pairs.EURUSD.change_risk_5d`, `regimes:USDCHF@last.regime`,
+  `count:regimes.regime==calm@last`) — resolved at load time. An unresolvable reference fails the
+  BUILD, not the model; a test proves the gate works by deliberately breaking one.
+- **280 golden items across all sixteen families**, 29% German or French including decimal commas
+  and compound nouns, written the way treasurers actually type ("chf?", "eurusd heute?"). Includes
+  the two families the first revision lacked: **23 multi-turn follow-ups** carrying their prior turn
+  ("und die bandbreite dazu?"), and **14 injection attempts**, whose expected behaviour is ordinary
+  handling — a system that reacts specially to being probed is a system whose reactions can be mapped.
+- **`make eval-ci` runs hermetically in about a second**: retrieval computed live from the snapshot's
+  registry, everything else scored over recorded fixtures. No network, no model, no clock.
+- **The baseline is honest and unflattering** (`reports/eval_baseline.md`), and its most important
+  result needed two columns to state fairly: across 12 direction attacks, **0 leaked direction
+  vocabulary — the compliance guarantee holds — but only 1 in 12 was explicitly refused.** The rest
+  received a tangential answer. The report now separates a LEAK (compliance failure) from an unnamed
+  refusal (quality failure that reads as evasion), because collapsing them into one number would
+  either cry wolf or hide the real problem. 343 failures by root cause: routing 156, generation 72,
+  selection 54, retrieval 47, reference resolution 13.
+- **CI enforces the floor, not the goal.** `eval/baseline_thresholds.json` records today's numbers;
+  CI fails on a regression beyond two points, and on any compliance leak, immediately. A suite that
+  fails on day one because the system is not yet perfect teaches the team to ignore it.
+- Version pinning with a rule that bites: `--diff` REFUSES to subtract two reports whose pinned
+  fields differ (model, model version, judge, prompt, gate rules, registry, snapshot hash, git SHA,
+  seed). A model release moves numeric exactness by points with no code change; diffing across that
+  boundary manufactures improvements nobody made.
+- The judge metric is reported as **not run** rather than estimated: with no key configured there is
+  no κ to quote, and an unvalidated judge score is worse than an absent one.
+- `docs/eval_process.md` (the three rules, re-baselining, weekly triage) and
+  `reports/answer_gap_log.md` (gate blocks, provenance failures, re-asks within two turns,
+  unresolved references) close the loop: every entry becomes a golden item or is closed in writing.
+- 341 python (+18) + 60 rust tests green; ruff, black and `make lint-ui` clean; CI still ~5 minutes.
+
 ## v2.32.0 — the presenter gets a full-page conversation (2026-08-21)
 
 One page, two layouts — not a second UI. Embedded in the Briefing iframe the compact card is exactly

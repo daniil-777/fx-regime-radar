@@ -4,6 +4,8 @@ PY      ?= python3.11
 VENV    := .venv
 BIN     := $(VENV)/bin
 PYTHON  := $(BIN)/python
+EVAL_BASE ?= http://127.0.0.1:8090
+AVATAR_BASE ?= http://127.0.0.1:8080
 
 .PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate avatar model-lab treasury weekly metrics storms verify-ledger
 
@@ -106,6 +108,24 @@ lint-ui:          ## phase 31: no hex colour literal outside design/tokens.json 
 	@if grep -rnE "#[0-9A-Fa-f]{6}\b" app src scripts pipelines --include='*.py' ; then \
 	  echo "lint-ui: hex literal found — use fxradar.tokens / app.ui tokens (design/tokens.json is the only source)"; exit 1; \
 	else echo "lint-ui: ok — no hex literals outside design/tokens.json"; fi
+
+eval-snapshot:    ## freeze today's artifacts into eval/snapshot/<date> (only when re-baselining)
+	$(PYTHON) eval/build_snapshot.py
+
+eval-seed:        ## rebuild eval/golden.yaml from eval/authored/ with computed gold values
+	$(PYTHON) eval/seed_golden.py
+
+eval-record:      ## record fixtures against a service started ON THE SNAPSHOT (see docs/eval_process.md)
+	$(PYTHON) eval/record_fixtures.py --base $(EVAL_BASE)
+
+eval-ci:          ## hermetic scoring: no network, no model — the CI gate
+	$(PYTHON) eval/run_eval.py --out reports/eval_ci.md --check
+
+eval-report:      ## write reports/eval_baseline.md from the recorded fixtures
+	$(PYTHON) eval/run_eval.py --out reports/eval_baseline.md
+
+eval-smoke:       ## three structural questions against LIVE artifacts (never values)
+	$(PYTHON) eval/smoke_live.py --base $(AVATAR_BASE)
 
 tokens:           ## regenerate .streamlit/config.toml, design/tokens.css, widget-tokens.css and rust static tokens from design/tokens.json
 	$(PYTHON) scripts/gen_tokens.py

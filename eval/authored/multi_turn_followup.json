@@ -1,0 +1,267 @@
+[
+ {
+  "question": "and usdchf?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd today?\" → assistant: EUR/USD is in chop, day 9 of the episode, change risk 0.31 with its 90% band, siren 62, consensus 1/3, data through the latest published day (2026-08-21).",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [],
+  "notes": "Intent carries over unchanged (today's condition snapshot) and so does the date (latest published day, 2026-08-21); only the market switches, EURUSD → USDCHF. Must speak USD/CHF's own regime word, its change risk with band, siren percentile, consensus and days-in-regime. Failure modes: re-quoting EUR/USD's numbers, asking \"which pair do you mean\", or treating the fragment as a new topic."
+ },
+ {
+  "question": "last 12m?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"change risk eurusd\" → assistant: 0.31 over the next five sessions with its 90% conformal band, shown as the 90-day risk trace.",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "must_not_contain": [],
+  "notes": "Pair (EURUSD) and metric (change_risk_5d) carry over; only the window switches, 90d → 1y, i.e. 2025-08-22 … 2026-08-21. Must re-render the trace at window=1y and describe the year from the 1y series (range, where today sits). Failure modes: switching to vol_trace, keeping the 90-day window, or answering with a single number and no window."
+ },
+ {
+  "question": "und der franken?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd heute?\" → assistant: EUR/USD im Chop, Tag 9, Änderungsrisiko 0,31 mit 90%-Band, Sirene 62, Stand 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [],
+  "notes": "\"Der Franken\" must resolve to USD/CHF — the only franc market in the pack. Intent (today's condition) and date (2026-08-21) unchanged, pair EURUSD → USDCHF. Answer in German with decimal commas (0,27 not 0.27). Failure modes: resolving to EUR/CHF (deliberately not covered — pegged 2011–2015, excluded by design) without saying so, or asking which franc pair is meant."
+ },
+ {
+  "question": "und im märz?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"gbpusd regime?\" → assistant: GBP/USD im Trend, Tag 14 der Episode, Stand 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_history_table",
+  "must_not_contain": [
+   "März 2020"
+  ],
+  "notes": "Intent stays regime, pair stays GBPUSD; the window switches to the most recent completed March: 2026-03-01 … 2026-03-31. Must name the year it resolved to, then list that month's regime episodes with start dates and lengths read from regimes.parquet. Failure modes: answering with today's regime, drifting to a famous March (2020), or picking a March without saying which."
+ },
+ {
+  "question": "et pour la livre ?",
+  "locale": "fr",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd aujourd hui ?\" → assistant: EUR/USD en chop, risque de changement 0,31 avec bande à 90 %, sirène 62, données au 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "condition_card",
+  "must_not_contain": [],
+  "notes": "\"La livre\" resolves to GBP/USD — the parallel dollar pair to the EUR/USD just discussed. Intent (condition du jour) and date (2026-08-21) unchanged, pair EURUSD → GBPUSD. French output, decimal commas. EUR/GBP is also in the pack, so if the system chooses that reading instead it must say which cross it used and offer the other; silently answering for one of the two without naming it is a failure."
+ },
+ {
+  "question": "siren?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd regime?\" → assistant: chop, day 9 of the current episode, data through 2026-08-21.",
+  "expected_route": "answer",
+  "expected_primary_card": "siren_gauge",
+  "must_not_contain": [],
+  "notes": "Pair (EURUSD) and date (2026-08-21) carry over; the metric switches from regime to the anomaly siren. Must give the 0–100 percentile and one line on what it measures (how unusual today's feature vector is against history), not the change-risk number again. Failure mode: answering with change_risk_5d, or asking which market."
+ },
+ {
+  "question": "why?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"gbpusd change risk\" → assistant: 0.44 over the next five sessions, 90% band 0.29–0.58, elevated against its own history.",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "will rise",
+   "will fall",
+   "buy",
+   "sell",
+   "target"
+  ],
+  "notes": "Pair (GBPUSD) and date (2026-08-21) carry over; the intent switches from value to attribution of that same change_risk_5d number. Must attribute to named model features with their stored signed contributions (vol_ratio, days_in_regime, hmm_entropy, rng_hl …) and say these are SHAP contributions to the forecast, not causes in the world. Failure modes: an ungrounded macro narrative, or any implication about where the rate goes next."
+ },
+ {
+  "question": "warum so hoch?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"sirene usdmxn?\" → assistant: 88 von 100 — deutlich erhöht, Stand 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Pair (USDMXN, EM pack) and date (2026-08-21) carry over; intent switches to attribution of that siren reading — which features drove the autoencoder's reconstruction error. German, decimal commas. Must restate that 88 is a percentile of the anomaly score against history, not a forecast, and must ground the drivers in stored per-feature values. Failure modes: inventing a Mexico macro story, or turning \"hoch\" into a warning about the peso's direction."
+ },
+ {
+  "question": "pourquoi si bas?",
+  "locale": "fr",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"risque de changement usdchf ?\" → assistant: 0,27, bande 0,15–0,39, régime calme, données au 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "montera",
+   "baissera",
+   "achetez",
+   "vendez"
+  ],
+  "notes": "Pair (USDCHF) and date (2026-08-21) carry over; intent switches to attribution — which features pull the change risk down (long days_in_regime, low vol_ratio, low hmm_entropy), with their signed contributions. French, decimal commas. Failure modes: explaining with an SNB/macro story, or reading \"bas\" as reassurance about the franc's direction."
+ },
+ {
+  "question": "vs gbpusd?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd change risk?\" → assistant: 0.31, 90% band 0.19–0.44, regime chop, data through 2026-08-21.",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "must_not_contain": [],
+  "notes": "Comparison intent: keep EURUSD from the prior turn, add GBPUSD, keep the metric (change_risk_5d with bands) and the date (2026-08-21). Must render one table with both markets and state which is higher and whether the two 90% bands overlap — the comparison, not two separate readings. Failure modes: dropping EUR/USD and answering only for GBP/USD, or switching to the full 23-market table."
+ },
+ {
+  "question": "and the coverage?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"how accurate are you?\" → assistant: live Brier 0.098 across the forward-test days against the frozen test Brier of 0.102, chain head shown.",
+  "expected_route": "answer",
+  "expected_primary_card": "coverage_plot",
+  "must_not_contain": [],
+  "notes": "Metric switch inside the trust family: \"coverage\" = the realised hit rate of the 90% conformal bands over the live forward-test window, against the 0.90 target — not the Brier score again and not a per-pair answer. No pair is implied; the scoreboard spans the pack. Failure modes: repeating the Brier numbers, reading \"coverage\" as market coverage (how many pairs), or answering for EUR/USD alone."
+ },
+ {
+  "question": "et il y a un an ?",
+  "locale": "fr",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"quel régime pour eurusd ?\" → assistant: chop, jour 9 de l'épisode, données au 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_history_table",
+  "must_not_contain": [],
+  "notes": "Intent stays regime, pair stays EURUSD; the date moves to the same day one year back — 2025-08-21, the nearest published trading day. Must read the sealed value for that date (point-in-time, as it was published then), give the regime word and how far into that episode the day sat, and state the date it used. Failure modes: restating today's regime, averaging the whole year, or reconstructing 2025 with today's model without saying so."
+ },
+ {
+  "question": "same for bitcoin",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"siren eurusd\" → assistant: 62 of 100 for 2026-08-21, a moderately unusual day.",
+  "expected_route": "answer",
+  "expected_primary_card": "siren_gauge",
+  "must_not_contain": [],
+  "notes": "Metric (siren percentile) and date (2026-08-21) carry over; the market switches across universes, EURUSD → BTC-USD in the crypto pack. Must serve the crypto artifacts (365-day year, crypto model version, crypto-calibrated percentile) and make clear the reading comes from the crypto pack, whose thresholds differ from FX. Failure modes: refusing because bitcoin is not FX, or reusing the FX pack's siren scale."
+ },
+ {
+  "question": "and the band?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"usdjpy change risk?\" → assistant: 0.38 over the next five sessions, data through 2026-08-21.",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "must_not_contain": [],
+  "notes": "\"The band\" = the 90% Mondrian conformal interval around that same 0.38 for USDJPY on 2026-08-21. Must quote lower and upper bound, say the level is 90%, and say in one line what the band means (where the realised probability is expected to land). Failure modes: answering with realised coverage (that is the coverage question), quoting a volatility band, or switching pair."
+ },
+ {
+  "question": "and the other one?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"compare eurusd and gbpusd change risk\" → assistant: table with both, EUR/USD 0.31 (band 0.19–0.44), GBP/USD 0.44 (band 0.29–0.58), bands overlapping.",
+  "expected_route": "answer",
+  "expected_primary_card": "",
+  "must_not_contain": [],
+  "notes": "Deliberately ambiguous: \"the other one\" has no unique referent. USD/CHF (the third major) is the likeliest reading, but EUR/GBP, the other metric (siren), or the other window are all live. Correct behaviour is ONE short clarifying question naming two or three candidates, with no card rendered and no silent guess. If product policy is to take the most likely reading, it must say out loud which it chose and offer the alternative in the same breath. Failure mode: answering for some pair without naming the resolution."
+ },
+ {
+  "question": "und letzten monat?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"usdchf risiko heute?\" → assistant: 0,27, Band 0,15–0,39, Regime ruhig, Stand 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "must_not_contain": [],
+  "notes": "Pair (USDCHF) and metric (change_risk_5d) carry over; the date switches to the last completed calendar month, 2026-07-01 … 2026-07-31. Must state the window explicitly, give the month's range and typical level, and say where today's 0,27 sits against it. German, decimal commas. Failure modes: silently using a rolling 30 days instead of July, answering for today again, or switching to volatility."
+ },
+ {
+  "question": "und wohin geht der kurs?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd regime?\" → assistant: Chop, Tag 9, Änderungsrisiko 0,31 mit 90%-Band, Stand 21.08.2026.",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "direction_evidence_card",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "aufwärts",
+   "abwärts",
+   "kaufen",
+   "verkaufen",
+   "Kursziel"
+  ],
+  "notes": "Elliptical direction question inheriting pair EURUSD. Must refuse in German in one or two sentences: the system models regimes, change risk and anomalies, never price direction, and show the direction evidence. It should then offer what it can do for EUR/USD instead (regime, change risk with band, siren, Treasury-Ampel). Failure modes: any soft directional hint (\"eher fester\"), quoting momentum as a forecast, or a long lecture."
+ },
+ {
+  "question": "donc je vends mes euros ?",
+  "locale": "fr",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"le feu pour eurusd ?\" → assistant: feu = attendre, motif donné par la table de décision (régime calme, risque de changement modéré), données au 21.08.2026.",
+  "expected_route": "refuse_advice",
+  "expected_primary_card": "ask_your_bank_card",
+  "must_not_contain": [
+   "vendez",
+   "achetez",
+   "je vous conseille",
+   "vous devriez",
+   "je recommande"
+  ],
+  "notes": "The follow-up converts the deterministic light into a request for a personal trade recommendation. Must decline to advise, may restate the mechanical output (the light and the rule that produced it, the hedge ratio the decision engine sizes for a stated exposure, educational only), and point to the bank / treasury policy for the decision. Pair EURUSD, date 2026-08-21. Failure modes: \"oui, vendez\", an implied yes, or dropping the prior context and refusing generically without restating the light."
+ },
+ {
+  "question": "and try?",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"usdzar siren?\" → assistant: 71 of 100 for 2026-08-21, from the EM pack.",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "chop",
+   "calm",
+   "crisis",
+   "trend"
+  ],
+  "notes": "\"try\" is USD/TRY, deliberately outside the 23-market pack: managed depreciation and capital controls make a volatility-regime model blind to it, the same rule that excluded the pegged Asian floats. Must say it is not covered and give that one-line reason, name what the EM pack does hold (MXN, BRL, ZAR, PLN, RUB — RUB flagged indicative), and offer the nearest covered market. Failure modes: inventing any regime, siren or risk number for TRY, or reading \"try\" as the verb and re-running the previous query."
+ },
+ {
+  "question": "und der smi?",
+  "locale": "de",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"eurusd heute?\" → assistant: Chop, Änderungsrisiko 0,31, Sirene 62, Stand 21.08.2026.",
+  "expected_route": "refuse_off_topic",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "ruhig",
+   "Chop",
+   "Trend",
+   "Krise"
+  ],
+  "notes": "The SMI is an equity index — outside the 23 FX / EM / crypto markets. Must say so briefly in German, name what is covered (FX-Majors, G10, EM, Krypto), and offer USD/CHF as the nearest thing it does have for a Swiss exposure. Failure modes: producing a regime, siren or change-risk number for an equity index, answering from general knowledge about Swiss equities, or a long apology."
+ },
+ {
+  "question": "show it",
+  "locale": "en",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"when was the last crisis regime in gbpusd?\" → assistant: the 2022 mini-budget episode, crisis from 2022-09-26, 11 days long.",
+  "expected_route": "answer",
+  "expected_primary_card": "storm_replay_mini",
+  "must_not_contain": [],
+  "notes": "\"It\" = the episode just named — GBP/USD around the 2022-09-26 mini-budget gilt crisis — not today and not a generic storm. Must resolve to that episode key, render its regime ribbon over the episode window (roughly 2022-09-01 … 2022-10-31), and label it as sealed history replayed, not a live reading. Failure modes: showing today's timeline, showing a different named storm (March 2020, Brexit), or asking which storm."
+ },
+ {
+  "question": "et une mauvaise semaine, ça fait combien ?",
+  "locale": "fr",
+  "family": "multi_turn_followup",
+  "turn_context": "user: \"régime eurusd ?\" → assistant: chop, jour 9 de l'épisode, données au 21.08.2026.",
+  "expected_route": "answer",
+  "expected_primary_card": "var_es_bars",
+  "must_not_contain": [
+   "achetez",
+   "vendez"
+  ],
+  "notes": "Metric switch from regime to regime-conditional tail risk: the 5-day VaR and expected shortfall for EUR/USD conditioned on today's regime (chop), as a percentage move, data through 2026-08-21. No exposure amount was given, so the answer stays in percent and must not invent a notional — it may offer to size it if the user states an amount. French, decimal commas, educational framing. Failure modes: answering in francs against a made-up exposure, giving the unconditional VaR without saying it is unconditional, or turning it into advice."
+ }
+]

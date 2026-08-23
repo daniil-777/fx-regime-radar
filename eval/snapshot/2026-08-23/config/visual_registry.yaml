@@ -1,0 +1,1750 @@
+# GENERATED ONCE by scripts/seed_visual_registry.py (phase 38); the YAML is now the
+# source of truth — edit entries here, and add golden questions before flipping a status.
+registry_version: 3.0.0
+schema: v3
+catalog: docs/REGISTRY-50.md
+cards:
+- id: condition_card
+  status: built
+  tier: 1
+  family: state
+  primitive: stat_block
+  question_intents:
+    en:
+    - how does {pair} look today
+    - what is the regime
+    - is it calm right now
+    - current conditions
+    - give me today's read
+    - how are things
+    - where do things stand
+    - give me the state of play
+    - how are we placed
+    de:
+    - wie sieht {pair} heute aus
+    - wie ist das regime
+    - ist es gerade ruhig
+    fr:
+    - comment se présente {pair} aujourd'hui
+    - quel est le régime
+    - est-ce calme
+  args:
+    pair: &id001
+      type: enum
+      values: &id002
+      - EURUSD
+      - USDCHF
+      - GBPUSD
+  bindings:
+    word: pack.pairs.{pair}.regime
+    risk: pack.pairs.{pair}.change_risk_5d
+    lo: pack.pairs.{pair}.risk_lo
+    hi: pack.pairs.{pair}.risk_hi
+    siren: pack.pairs.{pair}.anomaly_pct
+  disambiguation:
+    rivals:
+    - regime_probability_bars
+    - siren_gauge
+    rule: word first; probabilities only if the user asks how sure; gauge only for unusualness
+  caption:
+    en: '{pair} · {word} · change risk {risk} (band {lo} to {hi}) · siren {siren}'
+  aria:
+    en: 'Condition for {pair}: {word}, change risk {risk}, band {lo} to {hi}'
+  when_not: user asked about history, money impact, or methodology
+  owner_artifact: data/avatar_context.json
+- id: consensus_dots
+  status: built
+  tier: 1
+  family: state
+  primitive: dot_row
+  question_intents:
+    en:
+    - do the models agree
+    - what is the consensus
+    - how many voters see stress
+    - is there agreement
+    - do your detectors agree
+    de:
+    - sind sich die modelle einig
+    - wie ist der konsens
+    fr:
+    - les modèles sont-ils d'accord
+    - quel est le consensus
+  args:
+    pair: *id001
+  bindings:
+    votes: pack.pairs.{pair}.agreement
+    text: pack.pairs.{pair}.consensus_text
+  disambiguation:
+    rivals:
+    - condition_card
+    rule: dots only when the question is about agreement
+  caption:
+    en: 'Stress consensus for {pair}: {votes} of 3 voters'
+  aria:
+    en: 'Consensus for {pair}: {votes} of 3 stress voters agree'
+  when_not: user asked for the overall condition
+  owner_artifact: data/avatar_context.json
+- id: regime_probability_bars
+  status: built
+  tier: 2
+  family: state
+  primitive: bar_row
+  question_intents:
+    en:
+    - how sure are you it is calm
+    - what are the regime probabilities
+    - how confident is the model
+    - probability of each regime
+    - how certain
+    de:
+    - wie sicher ist das
+    - wie sind die regime wahrscheinlichkeiten
+    fr:
+    - quelle est votre certitude
+    - probabilités des régimes
+  args:
+    pair: *id001
+  bindings:
+    probs: series.regime_probs.{pair}
+    word: pack.pairs.{pair}.regime
+  disambiguation:
+    rivals:
+    - condition_card
+    rule: bars only when the user asks how sure or for probabilities
+  caption:
+    en: '{pair} regime probabilities · {word} leads'
+  aria:
+    en: Regime probabilities for {pair}, {word} leads
+  when_not: user asked what the regime is
+  owner_artifact: data/avatar_context.json
+- id: siren_gauge
+  status: built
+  tier: 2
+  family: state
+  primitive: stat_block
+  question_intents:
+    en:
+    - how unusual is today
+    - what is the siren
+    - is today strange
+    - anomaly reading
+    - how weird is today
+    de:
+    - wie ungewöhnlich ist heute
+    - wie hoch ist die sirene
+    fr:
+    - à quel point aujourd'hui est inhabituel
+    - niveau de la sirène
+  args:
+    pair: *id001
+  bindings:
+    siren: pack.pairs.{pair}.anomaly_pct
+  disambiguation:
+    rivals:
+    - condition_card
+    rule: gauge only when the question is about unusualness
+  caption:
+    en: 'Siren for {pair}: {siren} of 100'
+  aria:
+    en: Siren for {pair} is {siren} out of 100
+  when_not: user asked for the regime or the change risk
+  owner_artifact: data/avatar_context.json
+- id: pair_compare_table
+  status: built
+  tier: 1
+  family: state
+  primitive: table
+  question_intents:
+    en:
+    - which pair is calmest
+    - compare the pairs
+    - how do the markets compare
+    - show me all pairs
+    - which market is quietest
+    de:
+    - welches paar ist am ruhigsten
+    - vergleiche die paare
+    fr:
+    - quelle paire est la plus calme
+    - comparer les paires
+  args:
+    pairs:
+      type: enum_list
+      values: *id002
+  bindings:
+    rows: table.pair_compare
+  disambiguation:
+    rivals:
+    - condition_card
+    rule: table when more than one market is named or compared
+  caption:
+    en: 'Today across the markets: regime, change risk and siren side by side'
+  aria:
+    en: Comparison table of markets by regime, change risk and siren
+  when_not: user named exactly one market
+  owner_artifact: data/avatar_context.json
+- id: drift_status
+  status: built
+  tier: 2
+  family: state
+  primitive: stat_block
+  question_intents:
+    en:
+    - is the model still healthy
+    - has anything drifted
+    - is the model stale
+    - model health
+    - are your models still valid
+    - any degradation
+    - is the pipeline healthy
+    - have the models decayed
+    - is anything out of date
+    de:
+    - ist das modell noch gesund
+    - gibt es drift
+    fr:
+    - le modèle est-il toujours valide
+    - y a-t-il une dérive
+  args: {}
+  bindings:
+    stale: pack.drift.model_stale
+    days: pack.ledger.days_live
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: 'Model health: stale={stale} · live for {days} days'
+  aria:
+    en: Model health, stale flag {stale}, live for {days} days
+  when_not: user asked about forecast accuracy — use the scoreboard
+  owner_artifact: data/status.json
+- id: risk_trace
+  status: built
+  tier: 1
+  family: time
+  primitive: trace_band
+  question_intents:
+    en:
+    - how has risk moved
+    - show me the risk over time
+    - risk history
+    - has change risk been rising
+    - risk trend
+    - plot the change risk
+    de:
+    - wie hat sich das risiko entwickelt
+    - zeige den risikoverlauf
+    fr:
+    - comment le risque a évolué
+    - historique du risque
+  args:
+    pair: *id001
+    window: &id003
+      type: enum
+      values:
+      - 30d
+      - 90d
+      - 1y
+      - 5y
+  bindings:
+    points: series.risk.{pair}.{window}
+    risk: pack.pairs.{pair}.change_risk_5d
+  disambiguation:
+    rivals:
+    - vol_trace
+    rule: risk unless the user says the word volatility
+  caption:
+    en: '{pair} change risk over {window}, with its conformal band · now {risk}'
+  aria:
+    en: Change risk trace for {pair} over {window}, currently {risk}
+  when_not: user asked about volatility specifically
+  owner_artifact: data/avatar_context.json
+- id: regime_timeline_ribbon
+  status: built
+  tier: 1
+  family: time
+  primitive: ribbon
+  question_intents:
+    en:
+    - how long in this regime
+    - show me the regime history
+    - regime timeline
+    - when did it change
+    - how long has it been calm
+    - paint the states over time
+    - band the history
+    - colour strip of the states
+    - states across the past year
+    de:
+    - wie lange schon in diesem regime
+    - zeige die regime historie
+    fr:
+    - depuis combien de temps ce régime
+    - chronologie des régimes
+  args:
+    pair: *id001
+    window: *id003
+  bindings:
+    segments: series.regime.{pair}.{window}
+    days: pack.pairs.{pair}.days_in_regime
+  disambiguation:
+    rivals:
+    - regime_history_table
+    rule: ribbon for the shape, table when they ask for dates
+  caption:
+    en: '{pair} regimes over {window} · day {days} of the current one'
+  aria:
+    en: Regime timeline for {pair} over {window}, day {days} of the current regime
+  when_not: user asked for specific dates
+  owner_artifact: data/avatar_context.json
+- id: regime_history_table
+  status: built
+  tier: 2
+  family: time
+  primitive: table
+  question_intents:
+    en:
+    - when was the last crisis
+    - list the past regimes
+    - regime dates
+    - history of storms
+    - when did the last crisis start
+    de:
+    - wann war die letzte krise
+    - liste der vergangenen regime
+    fr:
+    - quand était la dernière crise
+    - liste des régimes passés
+  args:
+    pair: *id001
+  bindings:
+    rows: table.regime_history.{pair}
+  disambiguation:
+    rivals:
+    - regime_timeline_ribbon
+    rule: table when the user asks when or for dates
+  caption:
+    en: '{pair}: past regime episodes with start dates and lengths'
+  aria:
+    en: Table of past regime episodes for {pair}
+  when_not: user wanted the visual shape of history
+  owner_artifact: data/avatar_context.json
+- id: period_compare_card
+  status: built
+  tier: 2
+  family: time
+  primitive: stat_block
+  question_intents:
+    en:
+    - versus last month
+    - how does this compare to last week
+    - compared to a year ago
+    - is this worse than before
+    - change since last quarter
+    de:
+    - im vergleich zum letzten monat
+    - wie war es letzte woche
+    fr:
+    - par rapport au mois dernier
+    - comparé à la semaine dernière
+  args:
+    pair: *id001
+    anchor:
+      type: enum
+      values:
+      - week
+      - month
+      - quarter
+      - year
+  bindings:
+    now: pack.pairs.{pair}.change_risk_5d
+    then: series.anchor.{pair}.{anchor}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair} change risk now {now} versus {anchor} ago {then}'
+  aria:
+    en: Change risk for {pair} now {now} against {then} a {anchor} ago
+  when_not: user asked only about today
+  owner_artifact: data/avatar_context.json
+- id: vol_trace
+  status: built
+  tier: 2
+  family: time
+  primitive: trace_band
+  question_intents:
+    en:
+    - is volatility rising
+    - show me volatility
+    - how volatile is it
+    - volatility trend
+    - has vol picked up
+    de:
+    - steigt die volatilität
+    - zeige die volatilität
+    fr:
+    - la volatilité augmente-t-elle
+    - montre la volatilité
+  args:
+    pair: *id001
+    window: *id003
+  bindings:
+    points: series.vol.{pair}.{window}
+  disambiguation:
+    rivals:
+    - risk_trace
+    rule: volatility only when the user says volatility or vol
+  caption:
+    en: '{pair} realised volatility over {window}'
+  aria:
+    en: Realised volatility trace for {pair} over {window}
+  when_not: user asked about change risk
+  owner_artifact: data/avatar_context.json
+- id: regime_duration_stats
+  status: planned
+  tier: 3
+  family: time
+  primitive: bar_row
+  question_intents:
+    en:
+    - how long do storms last
+    - typical regime length
+    - average crisis duration
+    de:
+    - wie lange dauern stürme
+    fr:
+    - combien de temps durent les tempêtes
+  args:
+    pair: *id001
+  bindings:
+    rows: table.regime_durations.{pair}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair}: typical length of each regime'
+  aria:
+    en: Typical regime durations for {pair}
+  when_not: user asked about the current regime only
+  owner_artifact: data/avatar_context.json
+- id: what_changed_card
+  status: built
+  tier: 2
+  family: time
+  primitive: stat_block
+  question_intents:
+    en:
+    - what changed since yesterday
+    - anything new
+    - what moved
+    - what is different today
+    - any change
+    - change from the previous session
+    - difference from the last close
+    - what is new since the previous run
+    de:
+    - was hat sich seit gestern geändert
+    - gibt es neues
+    fr:
+    - qu'est-ce qui a changé depuis hier
+    - quoi de neuf
+  args:
+    pair: *id001
+  bindings:
+    word: pack.pairs.{pair}.regime
+    risk: pack.pairs.{pair}.change_risk_5d
+    delta: series.delta.{pair}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair} since yesterday: {word}, change risk {risk} ({delta})'
+  aria:
+    en: 'What changed for {pair} since yesterday: {word}, change risk {risk}, moved {delta}'
+  when_not: user asked for a longer history
+  owner_artifact: data/avatar_context.json
+- id: treasury_light
+  status: built
+  tier: 1
+  family: decision
+  primitive: stat_block
+  question_intents:
+    en:
+    - hedge wait or ladder
+    - what should I consider
+    - what is the light
+    - should I do something
+    - what does the traffic light say
+    - hedge or wait
+    - is it a week to put cover on
+    - what does the rule table output
+    - what stance for this week
+    de:
+    - absichern warten oder staffeln
+    - was sagt die ampel
+    fr:
+    - couvrir attendre ou échelonner
+    - que dit le feu
+  args:
+    pair: *id001
+  bindings:
+    light: treasury.pairs.{pair}.light
+    why: treasury.pairs.{pair}.light_reason
+    word: pack.pairs.{pair}.regime
+  disambiguation:
+    rivals:
+    - scenario_ladder
+    - exposure_calculator
+    rule: light when they ask what to consider; ladder when they name a move; calculator when they name
+      an amount
+  caption:
+    en: '{pair}: the light is {light} — {why}'
+  aria:
+    en: Treasury light for {pair} is {light}, because {why}
+  when_not: user named a specific amount or move
+  owner_artifact: data/treasury_risk.json
+- id: var_es_bars
+  status: built
+  tier: 1
+  family: decision
+  primitive: bar_row
+  question_intents:
+    en:
+    - how bad is a bad week
+    - what is the value at risk
+    - worst case week
+    - expected shortfall
+    - how much could I lose in a week
+    - downside risk
+    - quantify a rough week
+    - size a bad five days
+    - how deep can a week go
+    de:
+    - wie schlimm ist eine schlechte woche
+    - was ist der value at risk
+    fr:
+    - à quel point une mauvaise semaine
+    - quelle est la valeur en risque
+  args:
+    pair: *id001
+    metric:
+      type: enum
+      values:
+      - var_99
+      - var_95
+      - es_99
+      - es_95
+  bindings:
+    rows: table.var_es.{pair}.{metric}
+    regime: treasury.pairs.{pair}.current_regime
+  disambiguation:
+    rivals:
+    - impact_waterfall
+    - exposure_calculator
+    rule: bars for the risk numbers themselves; calculator once an exposure amount is given
+  caption:
+    en: '{pair} {metric} by regime · today''s regime is {regime}'
+  aria:
+    en: Value at risk bars for {pair}, metric {metric}, current regime {regime}
+  when_not: user gave an amount — use the calculator
+  owner_artifact: data/treasury_risk.json
+- id: exposure_calculator
+  status: built
+  tier: 1
+  family: decision
+  primitive: stat_block
+  question_intents:
+    en:
+    - what about my 800000 euros
+    - I have an exposure
+    - for my position
+    - what does that mean for my amount
+    - size it for me
+    - my exposure is
+    de:
+    - was bedeutet das für meine 800000 euro
+    - für meine position
+    fr:
+    - et pour mes 800000 euros
+    - pour ma position
+  args:
+    pair: *id001
+    exposure: &id004
+      type: from_user
+    tolerance:
+      type: enum
+      values:
+      - conservative
+      - balanced
+      - aggressive
+  bindings:
+    ratio: decision.pairs.{pair}.{tolerance}.hedge_ratio
+    es: decision.pairs.{pair}.{tolerance}.es_99_1w
+    light: decision.pairs.{pair}.{tolerance}.light
+  disambiguation:
+    rivals:
+    - treasury_light
+    - scenario_ladder
+    rule: calculator only when the user states an amount
+  caption:
+    en: Cover {ratio} of the exposure · uncovered one-week expected shortfall {es} · light {light}
+  aria:
+    en: 'For your exposure: cover {ratio}, uncovered expected shortfall {es}, light {light}'
+  when_not: no amount was given
+  owner_artifact: data/decision_table.json
+- id: scenario_ladder
+  status: built
+  tier: 1
+  family: decision
+  primitive: stat_block
+  question_intents:
+    en:
+    - what if it moves 3 percent
+    - what happens if it drops
+    - if the rate moves
+    - scenario for a move
+    - what if it shifts
+    de:
+    - was wenn es sich um 3 prozent bewegt
+    - szenario für eine bewegung
+    fr:
+    - et si ça bouge de 3 pour cent
+    - scénario de mouvement
+  args:
+    pair: *id001
+    move: *id004
+  bindings:
+    rows: table.scenario.{pair}
+    regime: treasury.pairs.{pair}.current_regime
+  disambiguation:
+    rivals:
+    - move_frequency_bars
+    - impact_waterfall
+    rule: ladder when they name a move; frequency when they ask how often; waterfall for the money breakdown
+  caption:
+    en: '{pair}: a move of the stated size against the historical record for {regime} conditions'
+  aria:
+    en: Scenario for {pair} for the stated move, current regime {regime}
+  when_not: user asked how often such moves happen
+  owner_artifact: data/treasury_risk.json
+- id: impact_waterfall
+  status: built
+  tier: 2
+  family: decision
+  primitive: bar_row
+  question_intents:
+    en:
+    - show me the damage
+    - break down the impact
+    - where does the loss come from
+    - impact breakdown
+    - what would it cost me
+    de:
+    - zeig mir den schaden
+    - aufschlüsselung der auswirkung
+    fr:
+    - montre-moi les dégâts
+    - détail de l impact
+  args:
+    pair: *id001
+    move: *id004
+  bindings:
+    rows: table.impact.{pair}
+  disambiguation:
+    rivals:
+    - scenario_ladder
+    rule: waterfall only when they ask to break the number down
+  caption:
+    en: '{pair}: where the impact of the stated move lands'
+  aria:
+    en: Impact breakdown for {pair} for the stated move
+  when_not: user only asked what happens, not why
+  owner_artifact: data/treasury_risk.json
+- id: move_frequency_bars
+  status: built
+  tier: 1
+  family: decision
+  primitive: bar_row
+  question_intents:
+    en:
+    - how often does that happen
+    - how common is a 3 percent move
+    - frequency of moves
+    - has that happened before
+    - how rare is that
+    de:
+    - wie oft passiert das
+    - wie häufig ist eine solche bewegung
+    fr:
+    - à quelle fréquence cela arrive
+    - est-ce fréquent
+  args:
+    pair: *id001
+    size_band:
+      type: enum
+      values:
+      - 1pct
+      - 2pct
+      - 3pct
+      - 5pct
+  bindings:
+    rows: table.move_frequency.{pair}.{size_band}
+  disambiguation:
+    rivals:
+    - scenario_ladder
+    rule: frequency when the question contains how often or how common
+  caption:
+    en: '{pair}: how often moves of that size occurred in the record'
+  aria:
+    en: Historical frequency of moves of the stated size for {pair}
+  when_not: user asked what a move would cost
+  owner_artifact: data/regimes.parquet
+- id: hedge_compare_table
+  status: built
+  tier: 2
+  family: decision
+  primitive: table
+  question_intents:
+    en:
+    - forward versus ladder versus nothing
+    - compare hedging approaches
+    - what are my options
+    - which hedge structure
+    - hedge alternatives
+    - put the structures next to each other
+    - weigh the approaches
+    - forwards against laddering
+    - which structure covers more
+    de:
+    - termin gegen staffel gegen nichts
+    - vergleiche absicherungen
+    fr:
+    - terme contre échelonnement contre rien
+    - comparer les couvertures
+  args:
+    pair: *id001
+  bindings:
+    rows: table.hedge_compare.{pair}
+  disambiguation:
+    rivals:
+    - treasury_light
+    rule: table when they ask to compare structures
+  caption:
+    en: '{pair}: three mechanical approaches, and what each leaves uncovered'
+  aria:
+    en: Comparison of hedging approaches for {pair}
+  when_not: user asked what to do rather than what the options are
+  owner_artifact: data/decision_table.json
+- id: cost_of_waiting_curve
+  status: built
+  tier: 2
+  family: decision
+  primitive: trace_band
+  question_intents:
+    en:
+    - what does another month cost
+    - cost of waiting
+    - if I delay
+    - price of postponing
+    - what if I wait
+    de:
+    - was kostet ein weiterer monat
+    - kosten des wartens
+    fr:
+    - combien coûte un mois de plus
+    - coût de l attente
+  args:
+    pair: *id001
+  bindings:
+    points: series.cost_of_waiting.{pair}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair}: uncovered expected shortfall as the horizon lengthens'
+  aria:
+    en: Cost of waiting curve for {pair} across horizons
+  when_not: user asked about today only
+  owner_artifact: data/treasury_risk.json
+- id: breakeven_rate_card
+  status: planned
+  tier: 3
+  family: decision
+  primitive: stat_block
+  question_intents:
+    en:
+    - at what rate do I break even
+    - breakeven rate
+    - where is my break even
+    de:
+    - bei welchem kurs ist der break even
+    fr:
+    - à quel taux suis-je à l équilibre
+  args:
+    pair: *id001
+  bindings:
+    rate: table.breakeven.{pair}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair}: the rate at which the hedge and the exposure offset'
+  aria:
+    en: Breakeven rate for {pair}
+  when_not: user asked about risk rather than a rate
+  owner_artifact: data/treasury_risk.json
+- id: hedge_ladder_plan
+  status: planned
+  tier: 3
+  family: decision
+  primitive: table
+  question_intents:
+    en:
+    - how would I tranche it
+    - ladder plan
+    - split it over weeks
+    de:
+    - wie würde ich es staffeln
+    fr:
+    - comment échelonner
+  args:
+    pair: *id001
+    horizon:
+      type: enum
+      values:
+      - '1'
+      - '2'
+      - '4'
+      - '8'
+      - '12'
+  bindings:
+    rows: decision.pairs.{pair}.balanced.schedule_by_horizon.{horizon}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{pair}: tranche schedule over {horizon} weeks'
+  aria:
+    en: Tranche schedule for {pair} over {horizon} weeks
+  when_not: user has not decided to hedge
+  owner_artifact: data/decision_table.json
+- id: scoreboard_card
+  status: built
+  tier: 1
+  family: trust
+  primitive: stat_block
+  question_intents:
+    en:
+    - why should I trust you
+    - what is your track record
+    - how accurate are you
+    - show me your record
+    - are you any good
+    - your scoreboard
+    de:
+    - warum sollte ich ihnen vertrauen
+    - wie ist ihre bilanz
+    fr:
+    - pourquoi vous faire confiance
+    - quel est votre historique
+  args: {}
+  bindings:
+    days: pack.ledger.days_live
+    live: pack.ledger.live_brier
+    frozen: pack.ledger.frozen_brier
+    head: pack.ledger.chain_head_short
+  disambiguation:
+    rivals:
+    - coverage_plot
+    - chain_verify_card
+    rule: scoreboard unless the word is bands, coverage or verify
+  caption:
+    en: Live for {days} days · live Brier {live} against frozen {frozen} · chain {head}
+  aria:
+    en: 'Track record: {days} days live, live Brier {live} versus frozen {frozen}'
+  when_not: user asked specifically about band coverage or verification
+  owner_artifact: data/avatar_context.json
+- id: coverage_plot
+  status: built
+  tier: 2
+  family: trust
+  primitive: trace_band
+  question_intents:
+    en:
+    - are your bands honest
+    - what is your coverage
+    - do the intervals hold
+    - band coverage
+    - are the bands calibrated
+    de:
+    - sind ihre bänder ehrlich
+    - wie ist die abdeckung
+    fr:
+    - vos bandes sont-elles honnêtes
+    - quelle est la couverture
+  args: {}
+  bindings:
+    points: series.coverage
+    live: pack.ledger.coverage_live
+  disambiguation:
+    rivals:
+    - scoreboard_card
+    rule: coverage only when the word is bands or coverage
+  caption:
+    en: Conformal coverage over time · live {live} against the 0.9 target
+  aria:
+    en: Coverage plot, live coverage {live} against the target
+  when_not: user asked about accuracy generally
+  owner_artifact: data/avatar_context.json
+- id: ledger_row_receipt
+  status: built
+  tier: 1
+  family: trust
+  primitive: table
+  question_intents:
+    en:
+    - show me an actual sealed row
+    - show me a ledger entry
+    - one real forecast
+    - prove a forecast was sealed
+    - show a receipt
+    de:
+    - zeig mir einen versiegelten eintrag
+    - ein echter ledger eintrag
+    fr:
+    - montre une ligne scellée
+    - une vraie prévision
+  args:
+    date:
+      type: key
+      source: ledger_dates
+  bindings:
+    rows: table.ledger_row.{date}
+  disambiguation:
+    rivals:
+    - chain_verify_card
+    rule: receipt shows a row; verify card shows how to check it
+  caption:
+    en: One sealed ledger row from {date}, exactly as written before the outcome existed
+  aria:
+    en: Sealed ledger row for {date}
+  when_not: user asked how to verify rather than to see one
+  owner_artifact: reports/live_scoreboard.md
+- id: chain_verify_card
+  status: built
+  tier: 2
+  family: trust
+  primitive: stat_block
+  question_intents:
+    en:
+    - how do I verify it myself
+    - can I check the chain
+    - how do I audit this
+    - verify independently
+    - prove it to me
+    de:
+    - wie kann ich das selbst prüfen
+    - wie verifiziere ich die kette
+    fr:
+    - comment vérifier moi-même
+    - comment auditer
+  args: {}
+  bindings:
+    head: pack.ledger.chain_head_short
+    ok: pack.ledger.chain_ok
+    n: pack.ledger.n_forecasts
+  disambiguation:
+    rivals:
+    - ledger_row_receipt
+    rule: verify card when the user asks how to check
+  caption:
+    en: Chain head {head} · {n} forecasts · verifier says chain_ok={ok}
+  aria:
+    en: 'Chain verification: head {head}, {n} forecasts, chain valid {ok}'
+  when_not: user asked to see a row
+  owner_artifact: data/avatar_context.json
+- id: direction_evidence_card
+  status: built
+  tier: 1
+  family: trust
+  primitive: stat_block
+  question_intents:
+    en:
+    - can anyone predict price
+    - will it go up
+    - where is the rate heading
+    - what is your forecast for the price
+    - can you predict direction
+    - buy or sell
+    de:
+    - kann jemand den preis vorhersagen
+    - steigt es
+    fr:
+    - peut-on prévoir le prix
+    - va-t-il monter
+  args: {}
+  bindings:
+    days: pack.ledger.days_live
+  disambiguation:
+    rivals:
+    - scoreboard_card
+    rule: always this card for any direction question, before any other
+  caption:
+    en: This system models conditions and risk, never direction — and the record shows why that is the
+      honest position
+  aria:
+    en: 'Direction evidence: this system does not model price direction'
+  when_not: never suppressed — direction questions always land here
+  owner_artifact: data/avatar_context.json
+- id: calibration_curve
+  status: planned
+  tier: 3
+  family: trust
+  primitive: trace_band
+  question_intents:
+    en:
+    - are your probabilities real
+    - show the calibration curve
+    - reliability diagram
+    de:
+    - sind ihre wahrscheinlichkeiten echt
+    fr:
+    - vos probabilités sont-elles fiables
+  args: {}
+  bindings:
+    points: series.calibration
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: 'Calibration: predicted probability against realised frequency'
+  aria:
+    en: Calibration curve
+  when_not: user asked about coverage instead
+  owner_artifact: data/avatar_context.json
+- id: model_version_card
+  status: planned
+  tier: 3
+  family: trust
+  primitive: table
+  question_intents:
+    en:
+    - what is running right now
+    - which model version
+    - what is deployed
+    de:
+    - welche version läuft
+    fr:
+    - quelle version tourne
+  args: {}
+  bindings:
+    rows: table.model_versions
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Deployed model versions and their frozen dates
+  aria:
+    en: Model version table
+  when_not: user asked about accuracy
+  owner_artifact: data/status.json
+- id: champion_challenger_card
+  status: planned
+  tier: 3
+  family: trust
+  primitive: table
+  question_intents:
+    en:
+    - which model is winning
+    - champion versus challenger
+    - is the challenger better
+    de:
+    - welches modell gewinnt
+    fr:
+    - quel modèle gagne
+  args:
+    slot:
+      type: enum
+      values:
+      - regime
+      - forecaster
+  bindings:
+    rows: table.champion_challenger.{slot}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Champion against challenger in the {slot} slot, scored on sealed rows
+  aria:
+    en: Champion challenger comparison for the {slot} slot
+  when_not: user asked about the shipped record only
+  owner_artifact: reports/live_scoreboard.md
+- id: event_countdown_strip
+  status: built
+  tier: 1
+  family: context
+  primitive: dot_row
+  question_intents:
+    en:
+    - what is coming up
+    - any events this week
+    - when is the next central bank meeting
+    - what is on the calendar
+    - upcoming events
+    - when is the fed
+    de:
+    - was steht an
+    - wann ist die nächste notenbanksitzung
+    fr:
+    - qu est-ce qui arrive
+    - prochaine réunion de banque centrale
+  args: {}
+  bindings:
+    events: pack.events
+  disambiguation:
+    rivals:
+    - event_study_card
+    rule: strip for what is coming; study for what usually happens
+  caption:
+    en: Scheduled events ahead, nearest first
+  aria:
+    en: Countdown strip of scheduled economic events
+  when_not: user asked what typically happens around an event
+  owner_artifact: data/events.csv
+- id: feature_driver_bars
+  status: built
+  tier: 1
+  family: context
+  primitive: bar_row
+  question_intents:
+    en:
+    - why is risk elevated
+    - what is driving this
+    - which features matter
+    - why that number
+    - what pushed the risk up
+    - explain the drivers
+    de:
+    - warum ist das risiko erhöht
+    - was treibt das
+    fr:
+    - pourquoi le risque est élevé
+    - qu est-ce qui explique cela
+  args:
+    pair: *id001
+  bindings:
+    rows: table.drivers.{pair}
+  disambiguation:
+    rivals:
+    - methodology_flow
+    rule: drivers for today's number; flow for how the metric is built
+  caption:
+    en: '{pair}: what contributed most to today''s change risk'
+  aria:
+    en: Feature drivers behind the change risk for {pair}
+  when_not: user asked how the metric is computed in general
+  owner_artifact: data/regimes.parquet
+- id: cross_asset_card
+  status: built
+  tier: 2
+  family: context
+  primitive: table
+  question_intents:
+    en:
+    - what is the wider market doing
+    - how are other assets
+    - cross asset picture
+    - what about equities and rates
+    - broader market
+    - what else is moving
+    - how are other markets behaving
+    - anything happening elsewhere
+    - the rest of the market
+    de:
+    - was macht der breitere markt
+    - wie stehen andere anlagen
+    fr:
+    - que fait le marché plus large
+    - vue multi-actifs
+  args: {}
+  bindings:
+    rows: table.cross_asset
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: The wider market context alongside the currency read
+  aria:
+    en: Cross asset context table
+  when_not: user asked about one currency pair only
+  owner_artifact: data/regimes.parquet
+- id: event_study_card
+  status: built
+  tier: 2
+  family: context
+  primitive: bar_row
+  question_intents:
+    en:
+    - what usually happens around snb
+    - typical behaviour around the fed
+    - how do markets behave on cpi days
+    - event study
+    - what happens around ecb
+    de:
+    - was passiert üblicherweise um die snb
+    - typisches verhalten um die ezb
+    fr:
+    - que se passe-t-il autour de la bns
+    - étude d événement
+  args:
+    event_type:
+      type: enum
+      values:
+      - FOMC
+      - ECB
+      - SNB
+      - BOE
+      - NFP
+      - CPI
+  bindings:
+    rows: table.event_study.{event_type}
+  disambiguation:
+    rivals:
+    - event_countdown_strip
+    rule: study when the user asks what usually happens
+  caption:
+    en: What conditions typically did around {event_type} in the record
+  aria:
+    en: Event study for {event_type}
+  when_not: user asked when the next one is
+  owner_artifact: data/events.csv
+- id: positioning_card
+  status: planned
+  tier: 3
+  family: context
+  primitive: stat_block
+  question_intents:
+    en:
+    - how is everyone positioned
+    - what is the market positioning
+    - crowding
+    de:
+    - wie ist die positionierung
+    fr:
+    - quel est le positionnement
+  args: {}
+  bindings:
+    value: table.positioning
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Aggregate positioning context
+  aria:
+    en: Positioning card
+  when_not: no positioning artifact is published
+  owner_artifact: data/avatar_context.json
+- id: policy_tone_card
+  status: planned
+  tier: 3
+  family: context
+  primitive: trace_band
+  question_intents:
+    en:
+    - have central banks turned
+    - policy tone
+    - is the tone changing
+    de:
+    - hat sich der ton geändert
+    fr:
+    - le ton a-t-il changé
+  args:
+    bank:
+      type: enum
+      values:
+      - FED
+      - ECB
+      - SNB
+      - BOE
+  bindings:
+    points: series.policy_tone.{bank}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Communication tone index for {bank} over time
+  aria:
+    en: Policy tone trace for {bank}
+  when_not: user asked about a scheduled meeting
+  owner_artifact: data/avatar_context.json
+- id: uncertainty_index_card
+  status: planned
+  tier: 3
+  family: context
+  primitive: trace_band
+  question_intents:
+    en:
+    - is macro uncertainty high
+    - uncertainty index
+    - how uncertain is the macro picture
+    de:
+    - ist die makro unsicherheit hoch
+    fr:
+    - l incertitude macro est-elle élevée
+  args: {}
+  bindings:
+    points: series.uncertainty
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Macro uncertainty index over time
+  aria:
+    en: Macro uncertainty index
+  when_not: user asked about one market
+  owner_artifact: data/avatar_context.json
+- id: storm_replay_mini
+  status: built
+  tier: 1
+  family: story
+  primitive: ribbon
+  question_intents:
+    en:
+    - how did covid look
+    - show me a past storm
+    - what did 2008 look like
+    - replay a crisis
+    - show me march 2020
+    de:
+    - wie sah covid aus
+    - zeige einen vergangenen sturm
+    fr:
+    - à quoi ressemblait le covid
+    - montre une tempête passée
+  args:
+    episode:
+      type: key
+      source: episodes
+  bindings:
+    segments: series.storm.{episode}
+  disambiguation:
+    rivals:
+    - storm_compare_card
+    - storm_replay_player
+    rule: mini for the shape; compare only when today is referenced; player when they ask day by day
+  caption:
+    en: '{episode}: how the regimes moved through the episode'
+  aria:
+    en: Storm replay ribbon for {episode}
+  when_not: user compared it to today
+  owner_artifact: data/regimes.parquet
+- id: storm_replay_player
+  status: built
+  tier: 2
+  family: story
+  primitive: media_frame
+  question_intents:
+    en:
+    - show me day by day
+    - play the replay
+    - walk me through it
+    - step through the crisis
+    - play it
+    de:
+    - zeig es tag für tag
+    - spiel die wiederholung
+    fr:
+    - montre jour par jour
+    - lance la relecture
+  args:
+    episode:
+      type: key
+      source: episodes
+  bindings:
+    src: media.storm.{episode}
+  disambiguation:
+    rivals:
+    - storm_replay_mini
+    rule: player only when they ask to step through or play
+  caption:
+    en: '{episode}, day by day'
+  aria:
+    en: Storm replay player for {episode}
+  when_not: a still ribbon answers the question
+  owner_artifact: data/regimes.parquet
+- id: storm_compare_card
+  status: built
+  tier: 2
+  family: story
+  primitive: table
+  question_intents:
+    en:
+    - is today like march 2023
+    - compare today to a past crisis
+    - does this look like 2008
+    - is this similar to covid
+    - compare with history
+    de:
+    - ist heute wie märz 2023
+    - vergleiche heute mit einer krise
+    fr:
+    - est-ce comme mars 2023
+    - comparer avec une crise passée
+  args:
+    pair: *id001
+    episode:
+      type: key
+      source: episodes
+  bindings:
+    rows: table.storm_compare.{pair}.{episode}
+  disambiguation:
+    rivals:
+    - storm_replay_mini
+    rule: compare only when today is referenced
+  caption:
+    en: '{pair} today against {episode}, metric by metric'
+  aria:
+    en: Comparison of today against {episode} for {pair}
+  when_not: user asked only about the past episode
+  owner_artifact: data/regimes.parquet
+- id: weekly_briefing_clip
+  status: built
+  tier: 2
+  family: story
+  primitive: media_frame
+  question_intents:
+    en:
+    - give me the weekly briefing
+    - the weekly report
+    - this week's summary
+    - weekly video
+    - monday briefing
+    de:
+    - gib mir das wochenbriefing
+    - der wochenbericht
+    fr:
+    - le briefing hebdomadaire
+    - le rapport de la semaine
+  args:
+    week:
+      type: key
+      source: weeks
+  bindings:
+    src: media.weekly.{week}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: The briefing published for week {week}
+  aria:
+    en: Weekly briefing clip for week {week}
+  when_not: user asked about today only
+  owner_artifact: docs/weekly
+- id: milestone_card
+  status: planned
+  tier: 3
+  family: story
+  primitive: stat_block
+  question_intents:
+    en:
+    - how long have you been live
+    - when did you start
+    - project milestones
+    de:
+    - wie lange sind sie schon live
+    fr:
+    - depuis quand êtes-vous en ligne
+  args: {}
+  bindings:
+    days: pack.ledger.days_live
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: Live for {days} days
+  aria:
+    en: Milestone card, live for {days} days
+  when_not: user asked about accuracy
+  owner_artifact: data/avatar_context.json
+- id: snapshot_export_card
+  status: built
+  tier: 2
+  family: story
+  primitive: media_frame
+  question_intents:
+    en:
+    - send this to my cfo
+    - export this
+    - can I share this
+    - give me a snapshot
+    - save this view
+    de:
+    - schick das an meinen cfo
+    - exportiere das
+    fr:
+    - envoyer ceci à mon directeur financier
+    - exporter ceci
+  args:
+    board_id:
+      type: key
+      source: boards
+  bindings:
+    src: media.snapshot.{board_id}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: A snapshot of this board, with its as-of stamp and chain head
+  aria:
+    en: Snapshot export of the current board
+  when_not: user asked a data question
+  owner_artifact: data/avatar_context.json
+- id: explainer_diagram
+  status: built
+  tier: 1
+  family: explain
+  primitive: diagram_frame
+  question_intents:
+    en:
+    - how does the siren work
+    - explain the model
+    - how does it work
+    - show me how this works
+    - explain the pipeline
+    - how is the regime found
+    de:
+    - wie funktioniert die sirene
+    - erkläre das modell
+    fr:
+    - comment fonctionne la sirène
+    - expliquez le modèle
+  args:
+    diagram:
+      type: enum
+      values:
+      - siren
+      - regime
+      - conformal
+      - ledger
+      - consensus
+      - pipeline
+  bindings:
+    svg: diagram.{diagram}
+  disambiguation:
+    rivals:
+    - methodology_flow
+    - glossary_card
+    rule: diagram for how it works; flow for where one number comes from; glossary for one word
+  caption:
+    en: How {diagram} works, end to end
+  aria:
+    en: Explainer diagram for {diagram}
+  when_not: user asked for the definition of a single term
+  owner_artifact: docs/diagrams
+- id: glossary_card
+  status: built
+  tier: 1
+  family: explain
+  primitive: stat_block
+  question_intents:
+    en:
+    - what does chop mean
+    - define the siren
+    - what is a regime
+    - what does that word mean
+    - explain the term
+    - what is filtered
+    de:
+    - was bedeutet chop
+    - definiere die sirene
+    fr:
+    - que signifie chop
+    - définition de la sirène
+  args:
+    term:
+      type: enum
+      values:
+      - chop
+      - calm
+      - trend
+      - crisis
+      - siren
+      - band
+      - brier
+      - consensus
+      - filtered
+      - ledger
+  bindings:
+    definition: glossary.{term}
+  disambiguation:
+    rivals:
+    - explainer_diagram
+    rule: glossary for one word; diagram when they ask how it works
+  caption:
+    en: '{term}: {definition}'
+  aria:
+    en: Glossary definition of {term}
+  when_not: user asked how the mechanism works
+  owner_artifact: docs/avatar_knowledge.md
+- id: methodology_flow
+  status: built
+  tier: 2
+  family: explain
+  primitive: diagram_frame
+  question_intents:
+    en:
+    - where does this number come from
+    - how is change risk computed
+    - what goes into that metric
+    - trace the number
+    - how do you calculate it
+    de:
+    - woher kommt diese zahl
+    - wie wird das berechnet
+    fr:
+    - d où vient ce chiffre
+    - comment est-ce calculé
+  args:
+    metric:
+      type: enum
+      values:
+      - change_risk
+      - siren
+      - regime
+      - band
+      - light
+  bindings:
+    svg: diagram.flow.{metric}
+  disambiguation:
+    rivals:
+    - explainer_diagram
+    - feature_driver_bars
+    rule: flow for how a number is built; drivers for why today's value is what it is
+  caption:
+    en: How {metric} is produced, from raw bars to the published value
+  aria:
+    en: Methodology flow for {metric}
+  when_not: user asked why today's value is high
+  owner_artifact: docs/diagrams
+- id: faq_card
+  status: built
+  tier: 2
+  family: explain
+  primitive: table
+  question_intents:
+    en:
+    - what do I get for 79 francs
+    - what are the tiers
+    - how much does it cost
+    - what is included
+    - pricing
+    - what do the alerts do
+    - alerting options
+    - data retention and privacy
+    - how do notifications work
+    de:
+    - was bekomme ich für 79 franken
+    - welche stufen gibt es
+    fr:
+    - que comprend l abonnement
+    - quels sont les paliers
+  args:
+    topic:
+      type: enum
+      values:
+      - pricing
+      - tiers
+      - alerts
+      - api
+      - data
+      - privacy
+  bindings:
+    rows: table.faq.{topic}
+  disambiguation:
+    rivals: []
+    rule: no near neighbour
+  caption:
+    en: '{topic}: what is included, in plain terms'
+  aria:
+    en: Frequently asked questions about {topic}
+  when_not: user asked a market question
+  owner_artifact: docs/avatar_knowledge.md
+- id: ask_your_bank_card
+  status: built
+  tier: 1
+  family: explain
+  primitive: table
+  question_intents:
+    en:
+    - should I buy dollars
+    - what should I do with my money
+    - give me advice
+    - what would you do
+    - should I invest
+    - tell me what to trade
+    de:
+    - soll ich dollar kaufen
+    - was soll ich tun
+    fr:
+    - dois-je acheter des dollars
+    - que dois-je faire
+  args:
+    topic:
+      type: enum
+      values:
+      - forward
+      - option
+      - spread
+      - ladder
+      - policy
+  bindings:
+    rows: table.ask_bank.{topic}
+  disambiguation:
+    rivals:
+    - treasury_light
+    - direction_evidence_card
+    rule: escalation card for any personal advice request; direction card if the question is about which
+      way
+  caption:
+    en: Questions worth putting to your bank or adviser about {topic}
+  aria:
+    en: Printable list of questions to ask your bank about {topic}
+  when_not: the question was about direction — that goes to the direction evidence card
+  owner_artifact: docs/avatar_knowledge.md
+- id: metric_table
+  status: built
+  tier: 1
+  family: explain
+  primitive: table
+  question_intents:
+    en:
+    - show me the numbers
+    - give me the metrics
+    - what are the values
+    - the data please
+    - list the figures
+    - show the table
+    de:
+    - zeig mir die zahlen
+    - gib mir die kennzahlen
+    fr:
+    - montre les chiffres
+    - donne les mesures
+  args:
+    metric_keys:
+      type: key_list
+      source: whitelisted_metrics
+  bindings:
+    rows: table.metrics.{metric_keys}
+  disambiguation:
+    rivals:
+    - condition_card
+    rule: 'catch-all: only when nothing else fits'
+  caption:
+    en: The requested published values, with their as-of stamp
+  aria:
+    en: Table of the requested metrics
+  when_not: a purpose-built card answers the question
+  owner_artifact: data/avatar_context.json

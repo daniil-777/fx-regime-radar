@@ -1,0 +1,407 @@
+[
+ {
+  "question": "filtered probs – what does that actually mean",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "glossary_card",
+  "must_not_contain": [],
+  "notes": "Must define filtered as: today's label uses only data up to today, via the forward algorithm, never the smoother that sees the whole history. Should say every number it quotes is filtered. One-word definition question, so glossary_card, not explainer_diagram (registry rule: 'glossary for one word; diagram when they ask how it works')."
+ },
+ {
+  "question": "band ums änderungsrisiko – wie kommt das zustande?",
+  "locale": "de",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "explainer_diagram",
+  "must_not_contain": [],
+  "notes": "Asks HOW it is built, so explainer_diagram with diagram=conformal (not glossary_card). Must say: Mondrian-konformes Intervall auf 90%-Niveau, pro Regime auf den Validierungsjahren 2017-2018 kalibriert, im eingefrorenen Test 91,6% Abdeckung, in Krise absichtlich breit. German output, decimal comma (91,6). Must not call it a classical Konfidenzintervall from a distributional assumption."
+ },
+ {
+  "question": "why an autoencoder for the siren? why not just a vol z-score",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "explainer_diagram",
+  "must_not_contain": [
+   "predict",
+   "forecast"
+  ],
+  "notes": "diagram=siren. Must say: trained only on calm days up to 2016, siren = today's reconstruction error ranked against those calm days on a 0-100 percentile, above 98 means today looks unlike anything in the calm training years. The z-score half must be answered: it catches unusual COMBINATIONS of features, not just the level of one. Must state it detects strangeness and predicts nothing."
+ },
+ {
+  "question": "how do you actually decide the regime each day",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "explainer_diagram",
+  "must_not_contain": [
+   "rise",
+   "fall"
+  ],
+  "notes": "diagram=regime. Must say: hidden Markov model over returns, volatility and momentum; four states (calm, trend, chop, crisis) learned once on data up to 2016 and frozen since; today's state comes from filtered forward probabilities, and regime_prob is how concentrated that filtered distribution is. Must state a regime describes texture, never a future path."
+ },
+ {
+  "question": "pourquoi pas de modèle directionnel chez vous?",
+  "locale": "fr",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "direction_evidence_card",
+  "must_not_contain": [
+   "hausse",
+   "baisse",
+   "acheter",
+   "vendre"
+  ],
+  "notes": "Trap: this is a question ABOUT the ban, not a request for a direction call — it must be ANSWERED in French, not short-circuited into the bare direction refusal. Must explain the reasoning: the radar does not model direction for any pair at any horizon, and the record is auditable precisely because it never claims what it cannot measure; then offer régime, risque de changement, sirène. Landing on direction_evidence_card is correct ('never suppressed'), but the reply must engage the 'why'."
+ },
+ {
+  "question": "splits + embargo – how does that work here",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "random split",
+   "cross-validation"
+  ],
+  "notes": "A verbal answer is acceptable with no card (methodology_flow is a permitted fallback). Must give: train to 2016-12-31, validation 2017-2018, test 2019 onward, a 5-trading-day embargo at every boundary, the test set scored once and frozen, plus truncation-invariance tests on each feature module. Must not describe shuffled or k-fold splitting."
+ },
+ {
+  "question": "brier 0,102 – was sagt mir die zahl?",
+  "locale": "de",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "scoreboard_card",
+  "must_not_contain": [
+   "Trefferquote",
+   "89,8"
+  ],
+  "notes": "Must define Brier as mittlerer quadratischer Fehler einer Wahrscheinlichkeitsprognose, kleiner ist besser; 0,102 is the FROZEN test value, and the live ledger Brier is scored against it with the same code. Must not convert it into an accuracy or hit rate, and must not claim the live value equals the frozen one unless the pack says so. German, decimal comma throughout."
+ },
+ {
+  "question": "change risk 5d = probability of what exactly?",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "methodology_flow",
+  "must_not_contain": [
+   "pips",
+   "rise",
+   "fall",
+   "move of"
+  ],
+  "notes": "metric=change_risk. Must be precise: the probability that the regime LABEL is different on at least one of the next 5 trading days — not the size of a move, not a direction, not a probability about the price. Gradient-boosted model calibrated on 2017-2018; frozen test PR-AUC 0.548 against a 0.162 base rate. Registry rule sends 'how is it computed' to methodology_flow, not feature_driver_bars."
+ },
+ {
+  "question": "consensus – who are the 3 voters",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "explainer_diagram",
+  "must_not_contain": [],
+  "notes": "diagram=consensus. Must name all three independent voters: the regime model's crisis probability, a Bayesian online changepoint detector, and a simple volatility-percentile rule; each votes stress or quiet, reported 0-3, and 3 of 3 is rare. consensus_dots is the rival card and is wrong here — the user asked about the mechanism, not today's count."
+ },
+ {
+  "question": "sirène à 98 ça veut dire quoi concrètement?",
+  "locale": "fr",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "glossary_card",
+  "must_not_contain": [
+   "prévoit",
+   "annonce une crise"
+  ],
+  "notes": "term=siren, answered in French. Must say: percentile de l'erreur de reconstruction face aux journées calmes jusqu'en 2016, échelle 0 à 100; au-dessus de 98 la journée ne ressemble à rien des années calmes d'entraînement. Must state it signals strangeness, not an imminent crisis, and must not turn the siren into a forecast."
+ },
+ {
+  "question": "change risk 41% – so 41% chance eur drops?",
+  "locale": "en",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "direction_evidence_card",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "drop",
+   "buy",
+   "sell",
+   "weaken",
+   "strengthen"
+  ],
+  "notes": "Planted misconception. Must correct it: the number is the probability the regime LABEL differs within 5 trading days, and carries no direction in it — the radar models direction nowhere. Then offer regime, change risk with band, siren. Failure modes: agreeing with the framing, or splitting the probability into up/down halves."
+ },
+ {
+  "question": "wie prüf ich die kette selber?",
+  "locale": "de",
+  "family": "knowledge_methodology",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "chain_verify_card",
+  "must_not_contain": [],
+  "notes": "Asks HOW to verify, so chain_verify_card, not ledger_row_receipt (registry: 'when_not: user asked to see a row'). Must say in German: Prognosen werden vor dem Ergebnis in eine hash-verkettete Datei geschrieben, der Chain-Head ist öffentlich committet, Repo klonen und das Verifikationsskript laufen lassen — es druckt VALID oder BROKEN mit dem Head-Hash und braucht nur die Python-Standardbibliothek. Bewertung erfolgt 5 Handelstage später mit demselben Code wie der eingefrorene Test."
+ },
+ {
+  "question": "why's the change risk where it is on eurusd today",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "buy",
+   "sell",
+   "target",
+   "rising",
+   "falling"
+  ],
+  "notes": "Must quote today's actual change_risk_5d for EURUSD from the pack with its band, then name the top drivers as published (SHAP feature contributions), translated into ordinary words. No macro storytelling, no news causes, no driver that is not in the artifact. If the value is low, the answer must say so plainly rather than manufacture elevation."
+ },
+ {
+  "question": "what pushed the siren up on usdchf",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "rise",
+   "fall",
+   "buy",
+   "sell"
+  ],
+  "notes": "Premise check: quote USDCHF's actual anomaly_pct first — if it is not elevated today, correct the premise instead of inventing a rise. Then explain which inputs the autoencoder reconstructs badly. siren_gauge is the natural support card. Every spoken number must exist in today's pack."
+ },
+ {
+  "question": "gbpusd von calm auf chop gekippt – warum?",
+  "locale": "de",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "what_changed_card",
+  "must_not_contain": [
+   "steigt",
+   "fällt",
+   "kaufen",
+   "verkaufen"
+  ],
+  "notes": "Second premise check, in German: state GBPUSD's actual regime and days_in_regime from the pack; if no flip happened, say so ('seit X Tagen im selben Regime') before explaining what did change since yesterday. Must cite the published deltas (Änderungsrisiko, Sirene, Konsens), not a story. Answer in German."
+ },
+ {
+  "question": "usdmxn consensus 3/3, ça vient d'où?",
+  "locale": "fr",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "consensus_dots",
+  "must_not_contain": [
+   "hausse",
+   "baisse",
+   "krach imminent"
+  ],
+  "notes": "Must read USDMXN's actual agreement value from the pack (correct the 3/3 premise if it is lower today) and say which of the three voters are flagging stress and what each one measures. French output. Must state that agreement among detectors is not a prediction of anything."
+ },
+ {
+  "question": "band on eurusd is huge – why so wide",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "must_not_contain": [
+   "uncertain because the market will"
+  ],
+  "notes": "Must quote the actual risk_lo / risk_hi from the pack and explain the mechanism for THIS pair today: Mondrian conformal bands are calibrated per regime, so the width comes from how noisy the calibration bucket for today's regime was in 2017-2018 — wide in crisis on purpose, because uncertainty is the honest answer there. risk_trace shows the band over time; explainer_diagram is the rival and is wrong here (they asked about today's width, not the method)."
+ },
+ {
+  "question": "why?",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "user: eurusd today? / assistant: rendered condition_card for EUR/USD — calm, 82 days in regime, change risk 3% (band 0-52%), siren 79.",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "rise",
+   "fall"
+  ],
+  "notes": "Elliptical follow-up. Reference resolution must bind 'why' to EUR/USD's current change risk and regime from the previous turn — right pair, right metric, today's date. Must give the drivers, not repeat the condition card. Asking the user which pair they mean is a failure; so is switching pairs."
+ },
+ {
+  "question": "und warum so hoch?",
+  "locale": "de",
+  "family": "causal_explanatory",
+  "turn_context": "user: sirene usdchf? / assistant: rendered siren_gauge for USD/CHF — Sirene 91 von 100.",
+  "expected_route": "answer",
+  "expected_primary_card": "feature_driver_bars",
+  "must_not_contain": [
+   "steigt",
+   "fällt"
+  ],
+  "notes": "German elliptical follow-up. Must resolve to the USDCHF siren from the prior turn and explain what makes today's reconstruction error unusual against the calm training years, in German. Must not silently switch to the Änderungsrisiko, and must not re-ask which market."
+ },
+ {
+  "question": "risk jumped on cable – so sterling weaker this week?",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "direction_evidence_card",
+  "must_not_contain": [
+   "weaker",
+   "stronger",
+   "rise",
+   "fall",
+   "sell",
+   "buy",
+   "target"
+  ],
+  "notes": "Mixed question: 'cable' must resolve to GBPUSD, and the causal half may be answered with the published change risk and its drivers, but the direction half must be refused with the direction line — this radar models no direction, in any market. Answering the second half in any hedged form is a hard failure."
+ },
+ {
+  "question": "risiko eurusd hoch – jetzt absichern?",
+  "locale": "de",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "refuse_advice",
+  "expected_primary_card": "ask_your_bank_card",
+  "must_not_contain": [
+   "ich empfehle",
+   "sie sollten",
+   "würde ich absichern"
+  ],
+  "notes": "Verbless treasurer German asking for a personal decision. Must decline the personal recommendation (Bildungswerkzeug, keine Anlageberatung), then give the published risk picture — Regime, Änderungsrisiko mit Band, Sirene — and may show the generic treasury_light as support, clearly labelled as the same public fact for everyone, never personalised. Escalation card is ask_your_bank_card per registry rule. German output."
+ },
+ {
+  "question": "price barely moved but risk is up – how does that happen",
+  "locale": "en",
+  "family": "causal_explanatory",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "what_changed_card",
+  "must_not_contain": [
+   "rising",
+   "falling",
+   "buy",
+   "sell"
+  ],
+  "notes": "Must explain that the forecaster reads more than the day's return — volatility ratio, range, momentum, days in the current regime, entropy of the filtered state — so a quiet close can still move the change risk. Should quote yesterday-to-today deltas from the pack for the pair in view (or ask which market only if none is in context). No narrative cause."
+ },
+ {
+  "question": "was kostet pro?",
+  "locale": "de",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "€",
+   "EUR pro Monat"
+  ],
+  "notes": "topic=pricing. Must say CHF 79 pro Monat, monatlich kündbar, kein Mindestlaufzeit; enthalten sind Alerts auf gewählte Paare, Treasury-Modus und die monatliche PDF-Zusammenfassung. Free = CHF 0 (Wochenbericht, Widget, Proof-Seite, Ledger), Partner ab CHF 500. Must mention that billing runs in Stripe test mode until the first design partner converts. Francs only, never euros."
+ },
+ {
+  "question": "alerts – slack? and how many do i get per flip",
+  "locale": "en",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "sms",
+   "rise",
+   "fall"
+  ],
+  "notes": "topic=alerts. Must say: signed webhooks to Slack, Telegram or your own endpoint; three triggers — a regime flip, siren above 98, or a 3 of 3 consensus; edge-triggered, so one flip means exactly one alert; the payload never contains direction language. Pro tier, max 10 receivers per key. Must not invent SMS or phone delivery."
+ },
+ {
+  "question": "l'api c'est à partir de quel palier?",
+  "locale": "fr",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "gratuit",
+   "€"
+  ],
+  "notes": "topic=api, answered in French. Must say the API sits on the Partner tier, à partir de CHF 500 par mois, with white-label widget and report; authentication par clé (en-tête X-API-Key), quota par clé (60 requêtes/minute par défaut). Prices in francs. Must not invent an enterprise price or an SLA that is not published."
+ },
+ {
+  "question": "free weekly report – what's actually in it",
+  "locale": "en",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "free trial",
+   "14 days"
+  ],
+  "notes": "Must say: published every Monday, free forever (the lead engine, not a trial), also on RSS; per pair it carries the regime, the change risk with its band, the siren, a generic hedge / wait / ladder light and the live-record line, generated from the published numbers by a template. Must not describe it as a trial of Pro."
+ },
+ {
+  "question": "do you store our exposure amounts?",
+  "locale": "en",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "we save your inputs",
+   "stored in our database"
+  ],
+  "notes": "topic=privacy/data. Must say: nothing is stored about readers beyond the host's standard access logs, which are not read or exported; amounts typed into the calculator are not retained; API keys are stored only as a SHA-256 hash; company data held can be deleted on request. Must not promise a certification or a retention period that is not in the published docs."
+ },
+ {
+  "question": "rabatt bei jahresvertrag?",
+  "locale": "de",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "answer",
+  "expected_primary_card": "faq_card",
+  "must_not_contain": [
+   "10 %",
+   "20 %",
+   "Jahrespreis"
+  ],
+  "notes": "Verbless German. Must say: nur monatlich, jederzeit kündbar, kein Jahresvertrag und keine schriftlichen Rabatte — CHF 79 ist der Anker; Design-Partner bekommen sechs Monate gratis, das ist der einzige Nachlass. Must not invent a percentage or an annual price. German output."
+ },
+ {
+  "question": "usdtry covered?",
+  "locale": "en",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "usdtry is",
+   "usd/try is",
+   "try regime"
+  ],
+  "notes": "USD/TRY is deliberately not among the 23 markets. Must say it has no published number here and that guessing is not allowed, then name what IS covered: the three majors carrying the frozen record, ten G10 crosses, five EM pairs (MXN, BRL, ZAR, PLN, RUB) and five crypto. pair_compare_table is an acceptable card if it lists only covered markets. Quoting any regime, risk or siren for TRY is a hard failure."
+ },
+ {
+  "question": "tu peux m'aider à boucler le budget 2027?",
+  "locale": "fr",
+  "family": "product_faq",
+  "turn_context": "",
+  "expected_route": "refuse_off_topic",
+  "expected_primary_card": "",
+  "must_not_contain": [
+   "voici un modèle de budget",
+   "je peux vous aider à"
+  ],
+  "notes": "Off-topic: not the radar, its models, its record or its product. Must decline briefly in French without apologising at length, then say what it can speak to — les conditions du jour, les modèles, le registre public et sa vérification, l'offre. Must not start budgeting, must not offer a spreadsheet, must not claim a capability the product does not have."
+ }
+]

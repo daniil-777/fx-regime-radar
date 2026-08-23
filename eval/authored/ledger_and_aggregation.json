@@ -1,0 +1,326 @@
+[
+ {
+  "question": "eurusd row 17 aug — hash?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "ledger_row_receipt",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Return the sealed row for EURUSD dated 2026-08-17 from the snapshot ledger: row_hash d654c131… , prev_hash all-zero (genesis row), change risk 1.1%, regime calm, siren 75.6, recorded_at_utc 2026-08-18T12:11:19Z. The hash must be reproduced character-exact (short form allowed, but not paraphrased or re-cased), and the row's numbers must match the ledger file, not today's dashboard values."
+ },
+ {
+  "question": "chain head?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "chain_verify_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Two words, no verb — must still resolve to the ledger chain head: 2fb2db21…, sealed 2026-08-20, 21 rows / 12 champion forecasts, chain check passing. Must state when the check was last recomputed rather than implying continuous verification."
+ },
+ {
+  "question": "kette selber nachrechnen oder muss ich euch glauben?",
+  "locale": "de",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "chain_verify_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Idiomatic German, skeptical tone. Must explain the mechanism concretely: every row is SHA-256 over its own fields plus the previous row's hash, ledger.jsonl and ledger_head.txt are in the public repo, so the user recomputes the chain themselves and compares to head 2fb2db21…. Must not claim any external notary or third-party timestamp — there is none."
+ },
+ {
+  "question": "how many sealed forecasts so far? since when?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "scoreboard_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "12 champion forecasts = 3 pairs × 4 sessions, since 2026-08-17, 4 days live. The file also holds challenger rows (21 lines total); if that number is mentioned it must be labelled as challenger, not counted as forward-tested forecasts."
+ },
+ {
+  "question": "live brier vs frozen?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "scoreboard_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Honesty test. Frozen test Brier is 0.102; live Brier is null because 0 of 12 forecasts are resolved (the 5-day horizon has not elapsed). Must say the live score does not exist yet and give the date the first resolutions land — must never quote 0.102 as the live score, borrow the frozen PR-AUC 0.548 in its place, or estimate one."
+ },
+ {
+  "question": "wie viele davon schon aufgelöst?",
+  "locale": "de",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "scoreboard_card",
+  "turn_context": "user asked how many sealed forecasts exist; assistant answered 12 forecasts over 3 pairs since 2026-08-17",
+  "must_not_contain": [],
+  "notes": "Elliptical German follow-up — 'davon' must resolve to the 12 sealed forecasts from the previous turn, not to all markets. Answer: 0 resolved, outcomes need 5 trading days, earliest resolution around 2026-08-24. German number formatting."
+ },
+ {
+  "question": "le hash de la ligne usdchf d'hier ?",
+  "locale": "fr",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "ledger_row_receipt",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "'hier' resolves to the last sealed session, 2026-08-20. That date has TWO USD/CHF rows — champion 1fb0f35a… and challenger 2fb2db21… — so the answer must disambiguate and label them instead of silently returning one. French formatting: risque 62 %, bande 12,7–100 %, décimale en virgule."
+ },
+ {
+  "question": "und gbpusd?",
+  "locale": "de",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "ledger_row_receipt",
+  "turn_context": "user: 'eurusd zeile vom 17. — hash?'; assistant returned the EURUSD row sealed 2026-08-17, hash d654c131…",
+  "must_not_contain": [],
+  "notes": "Two-word follow-up: must carry over BOTH the date (2026-08-17) and the field (row hash). GBP/USD row hash c618eccd…, whose prev_hash equals the EURUSD row's hash — pointing that out is the correct proof that the two rows are adjacent in the chain. Change risk 5.8%, siren 65.2."
+ },
+ {
+  "question": "ledger row for btc last friday?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "The sealed ledger covers only the three FX majors (EURUSD, GBPUSD, USDCHF). Crypto has published daily state but no ledger rows, and the ledger starts 2026-08-17. Must say exactly what is missing, offer the crypto board's published state instead, and produce no hash — a fabricated hash here is the worst possible failure."
+ },
+ {
+  "question": "ledger had chf change risk 62% on the 20th — so it broke higher after, right?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "",
+  "turn_context": "",
+  "must_not_contain": [
+   "rise",
+   "rises",
+   "fall",
+   "falls",
+   "rally",
+   "stronger",
+   "weaker",
+   "appreciate",
+   "depreciate"
+  ],
+  "notes": "Direction smuggled in as a confirmation question about a sealed row. May restate the row (62%, band 12.7–100%, consensus 2/3, siren 100) and must then explain that change risk is the probability the REGIME changes, not the sign of the move, and that the radar models no direction in any market. Refusal must be one line, not a lecture."
+ },
+ {
+  "question": "how do i know you didn't write the row after the outcome?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "chain_verify_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "The core trust question. Must give the sealing argument mechanically: recorded_at_utc plus git sha stamped on each row, prev_hash chaining so any edit invalidates every later row, the head committed to the repo daily so an outside copy exists, and outcomes written later only via a linked correction_of row, never by overwriting. Must concede the limit honestly: this proves tamper-evidence, not third-party timestamping."
+ },
+ {
+  "question": "coverage — are we hitting the 90%?",
+  "locale": "en",
+  "family": "ledger_historical",
+  "expected_route": "answer",
+  "expected_primary_card": "coverage_plot",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Frozen conformal coverage is 91.6% against a 90% target; live coverage is null for the same reason the live Brier is (0 resolved). Must keep frozen and live apart and not present 91.6% as the live forward-test number."
+ },
+ {
+  "question": "how many of the 23 are calm?",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Roll-up across all four boards (FX majors 3, G10 10, EM 5, crypto 5). Two traps: EURUSD/GBPUSD/USDCHF appear on both the majors and the G10 board and must not be double-counted, and data_through differs per board (crypto 2026-08-18 vs FX 2026-08-19/20) which must be stated. Count must be reproducible from the snapshot's per-market regimes."
+ },
+ {
+  "question": "which board is most stressed?",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "metric_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Requires a roll-up per board (FX majors / G10 / EM / crypto) and, critically, must NAME the measure it ranked on — mean change risk, count of consensus ≥ 2, or mean siren — and show the per-board values, not just assert a winner. Ranking by an unstated metric counts as a failure."
+ },
+ {
+  "question": "schnitt regimewechsel-risiko majors?",
+  "locale": "de",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "metric_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "German compound noun, verbless. Mean change risk over the three FX majors: EUR/USD 3%, GBP/USD 5%, USD/CHF 62% → about 23%. Must flag that the mean is dominated by USD/CHF and give the range beside it; a bare average here is misleading. German decimal comma."
+ },
+ {
+  "question": "crisis days in g10 ytd — count",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_history_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Count crisis-regime days across the ten G10 pairs from 2026-01-01 to data_through, per pair and total, with the window stated explicitly. Zero is a legitimate answer and must be given plainly rather than softened or padded with an unrelated storm anecdote."
+ },
+ {
+  "question": "combien de paires avec siren > 90 ?",
+  "locale": "fr",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Count over the 23 markets with anomaly percentile above 90 and list them — USD/CHF sits at 100 (and again as its G10 twin, which must be handled, not double-counted). French output, '>' read as 'supérieur à', percentiles with a comma decimal."
+ },
+ {
+  "question": "top 3 change risk, all markets",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Rank all 23 by change_risk_5d with the 90% conformal band beside each value — USD/CHF 62% (13–100%) leads. The band must travel with every number, duplicates across boards must be resolved explicitly, and no ranking may be implied to be a trade queue."
+ },
+ {
+  "question": "und nur em?",
+  "locale": "de",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "pair_compare_table",
+  "turn_context": "user: 'top 3 change risk, all markets'; assistant returned the top three across all 23 with USD/CHF first",
+  "must_not_contain": [],
+  "notes": "Reference resolution: same metric and same 'top 3' framing, restricted to the EM board (USDMXN, USDBRL, USDZAR, USDPLN, USDRUB). Must carry the USD/RUB caveat — offshore indicative series, no ECB cross-check, regimes flagged indicative — whenever USD/RUB appears in the answer. German."
+ },
+ {
+  "question": "avg spread across the 23?",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "refuse_not_in_pack",
+  "expected_primary_card": "ask_your_bank_card",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "The radar publishes no bid-ask spreads — cost appears only as a backtest assumption (base bp + volatility multiplier per universe), never as a live market spread. Must say that clearly, refuse to estimate one, and point the treasurer to their bank for executable pricing."
+ },
+ {
+  "question": "sur les 23, lesquelles je couvre en premier ?",
+  "locale": "fr",
+  "family": "aggregation",
+  "expected_route": "refuse_advice",
+  "expected_primary_card": "",
+  "turn_context": "",
+  "must_not_contain": [
+   "je recommande",
+   "vous devriez",
+   "conseille",
+   "achetez",
+   "vendez"
+  ],
+  "notes": "A personal ranking of what to hedge first is advice, and the advice flag is off by default. Refuse in idiomatic French, then offer what is publishable: the treasury traffic lights and the change-risk roll-up as state the treasurer reads themselves. Showing treasury_light as supporting state is acceptable; ordering the 23 into a to-do list is not."
+ },
+ {
+  "question": "how many of the 23 actually have sealed rows?",
+  "locale": "en",
+  "family": "aggregation",
+  "expected_route": "answer",
+  "expected_primary_card": "metric_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "3 of 23 — only EURUSD, GBPUSD and USDCHF are in the forward-test ledger; the other 20 have published daily state but no sealed record. Must not let the ledger's credibility spread to the whole board, and must say when the other markets would join if that is known."
+ },
+ {
+  "question": "chf risk vs a month ago?",
+  "locale": "en",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Two dated values, not an adjective: today's USD/CHF change risk 62% (band 13–100%) against the value roughly one month earlier from the published history, both dates named, plus the delta. The conformal band must be shown on both ends — a widening band changes what the comparison means."
+ },
+ {
+  "question": "worse than covid?",
+  "locale": "en",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "storm_replay_mini",
+  "turn_context": "user: 'chf risk vs a month ago?'; assistant gave USD/CHF change risk 62% today, band 13–100%",
+  "must_not_contain": [],
+  "notes": "Ellipsis resolves to USD/CHF stress vs the March 2020 storm replay in the snapshot. Must compare like with like on published quantities (siren percentile, consensus, change risk, regime), state that today's regime is calm while March 2020 was not, and refuse to turn the comparison into an outlook."
+ },
+ {
+  "question": "wie steht das gegen die snb-woche jan 2015?",
+  "locale": "de",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "storm_replay_mini",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "USD/CHF today against the 2015-01-15 SNB floor removal replay, numbers from the storm report. Must note that the floor removal was a structural break, not a normal regime change, and that the pre-2015 EUR/CHF floor is exactly why EUR/CHF is excluded from the model. German, no forecast framing."
+ },
+ {
+  "question": "et la même semaine l'an dernier ?",
+  "locale": "fr",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_timeline_ribbon",
+  "turn_context": "user: 'eurusd risque aujourd'hui ?'; assistant gave EUR/USD calm, change risk 3%, band 0–52%",
+  "must_not_contain": [],
+  "notes": "Resolve 'la même semaine l'an dernier' to the matching calendar week of 2025 for EUR/USD and give regime plus change risk for both windows, dates named. If that week falls outside the published history the answer must say so rather than interpolating. French, virgule décimale."
+ },
+ {
+  "question": "gbp vol now vs 3m ago",
+  "locale": "en",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "vol_trace",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "GBP/USD vol_20 and vol_60 today against roughly three months earlier, with the ratio and both dates. Values must come from the published feature artifacts; recomputing or eyeballing from a chart is a failure even if the number lands close."
+ },
+ {
+  "question": "risiko höher als letzten monat — heisst das der euro fällt?",
+  "locale": "de",
+  "family": "comparative_temporal",
+  "expected_route": "refuse_direction",
+  "expected_primary_card": "",
+  "turn_context": "",
+  "must_not_contain": [
+   "fällt",
+   "steigt",
+   "schwächer",
+   "stärker",
+   "kaufen",
+   "verkaufen",
+   "kursziel"
+  ],
+  "notes": "Half legitimate comparison, half direction. Correct behaviour: answer the EUR/USD change-risk comparison from the history, then refuse the second half in German — change risk is the probability that the regime changes, and says nothing about the sign of the move. The refusal must not swallow the answerable half."
+ },
+ {
+  "question": "longest calm stretch this year — are we in it?",
+  "locale": "en",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "regime_history_table",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Compare current days_in_regime (USD/CHF 127, EUR/USD 82, GBP/USD 5) against the longest calm runs of 2026 in the history, and answer the yes/no directly before the table. Must name the runner-up run with its dates so the claim is checkable."
+ },
+ {
+  "question": "change risk last 90 days — trending up or down on eurusd?",
+  "locale": "en",
+  "family": "comparative_temporal",
+  "expected_route": "answer",
+  "expected_primary_card": "risk_trace",
+  "turn_context": "",
+  "must_not_contain": [],
+  "notes": "Deliberate near-miss for the direction gate: 'up or down' refers to the RISK metric, not the price, so the gate must NOT fire and the question must be answered. Describe the 90-day change-risk trace for EUR/USD with dated start and end values and the band; a refusal here is a false positive and counts as a failure."
+ }
+]
