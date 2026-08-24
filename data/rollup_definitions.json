@@ -1,5 +1,7 @@
 {
  "definition_version": "1.0.0",
+ "generated_at_utc": "2026-08-24T07:01:10Z",
+ "note": "Every cube row carries `rollup` and `definition_version`; this file is the recipe each name refers to, so a number quoted from the cube can be traced to how it was computed rather than to the cube itself.",
  "definitions": {
   "regime_month": {
    "shape": "pair \u00d7 month \u00d7 regime",

@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-08-21T06:50:53Z",
-  "data_through": "2026-08-19",
+  "last_run_utc": "2026-08-24T07:02:21Z",
+  "data_through": "2026-08-22",
   "rows": {
-    "prices": 16029,
-    "features": 15729,
-    "regimes": 15729
+    "prices": 16044,
+    "features": 15744,
+    "regimes": 15744
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -14,24 +14,28 @@
   },
   "ecb_check": {},
   "stage_seconds": {
-    "data": 0.97,
-    "features": 0.07,
-    "hmm": 3.26,
+    "data": 2.25,
+    "features": 0.06,
+    "hmm": 1.82,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 1.1,
+    "forecaster": 0.82,
     "challenger": 0.0,
-    "siren": 0.45,
-    "bocpd": 1.14,
-    "conformal": 0.04,
-    "drift": 3.94,
-    "ledger": 0.06,
-    "narrator": 0.86,
+    "siren": 0.34,
+    "bocpd": 0.73,
+    "conformal": 0.03,
+    "drift": 2.37,
+    "ledger": 0.05,
+    "narrator": 0.61,
     "postmortem": 0.01,
-    "advisor": 0.06,
+    "advisor": 0.05,
     "treasury": 0.0,
     "avatar": 0.01,
     "decision": 0.0,
+    "visuals": 0.0,
+    "packs": 0.0,
+    "rollups": 0.0,
+    "archive": 0.0,
     "arcade": 0.0
   }
 }

@@ -1,107 +1,107 @@
 {
   "BTC-USD": {
-    "text": "BTC/USD is in a trending regime (trend) with 90% confidence, now on day 1 of this regime. The model puts the chance of a regime change within five trading days at 40%, which is moderate, driven mainly by how unsure the regime model is, how long the current regime has lasted and the size of daily trading ranges. Today looks somewhat unusual compared with calm history (anomaly percentile 97); the closest historical match is 2019-02-28.",
-    "generated_at": "2026-08-21T06:50:52Z",
+    "text": "BTC/USD is in a trending regime (trend) with 100% confidence, now on day 4 of this regime. The model puts the chance of a regime change within five trading days at 8%, which is low, driven mainly by how unsure the regime model is, recent volatility and the three-month volatility backdrop. Today looks somewhat unusual compared with calm history (anomaly percentile 94); the closest historical match is 2019-04-04.",
+    "generated_at": "2026-08-24T07:02:21Z",
     "source": "template",
     "stats": {
       "pair": "BTC-USD",
-      "date": "2026-08-19",
+      "date": "2026-08-22",
       "regime": "trend",
-      "regime_prob": 0.904,
-      "days_in_regime": 1,
-      "change_risk_5d": 0.397,
+      "regime_prob": 1.0,
+      "days_in_regime": 4,
+      "change_risk_5d": 0.081,
       "top_drivers": [
         "hmm_entropy",
-        "days_in_regime",
-        "rng_hl"
+        "vol_20",
+        "vol_60"
       ],
-      "anomaly_pct": 97.2,
-      "nearest_neighbor_date": "2019-02-28",
-      "ret_5d_pct": 9.99
+      "anomaly_pct": 94.2,
+      "nearest_neighbor_date": "2019-04-04",
+      "ret_5d_pct": 19.5
     }
   },
   "ETH-USD": {
-    "text": "ETH/USD is in a trending regime (trend) with 97% confidence, now on day 1 of this regime. The model puts the chance of a regime change within five trading days at 29%, which is moderate, driven mainly by how unsure the regime model is, how long the current regime has lasted and the size of daily trading ranges. Today looks highly unusual compared with calm history (anomaly percentile 100); the closest historical match is 2019-04-02.",
-    "generated_at": "2026-08-21T06:50:52Z",
+    "text": "ETH/USD is in a trending regime (trend) with 100% confidence, now on day 4 of this regime. The model puts the chance of a regime change within five trading days at 4%, which is low, driven mainly by how unsure the regime model is, the direction of volatility and recent volatility. Today looks somewhat unusual compared with calm history (anomaly percentile 98); the closest historical match is 2020-01-18.",
+    "generated_at": "2026-08-24T07:02:21Z",
     "source": "template",
     "stats": {
       "pair": "ETH-USD",
-      "date": "2026-08-19",
+      "date": "2026-08-22",
       "regime": "trend",
-      "regime_prob": 0.972,
-      "days_in_regime": 1,
-      "change_risk_5d": 0.291,
+      "regime_prob": 1.0,
+      "days_in_regime": 4,
+      "change_risk_5d": 0.035,
       "top_drivers": [
         "hmm_entropy",
-        "days_in_regime",
-        "rng_hl"
+        "vol_trend",
+        "vol_20"
       ],
-      "anomaly_pct": 99.7,
-      "nearest_neighbor_date": "2019-04-02",
-      "ret_5d_pct": 19.72
+      "anomaly_pct": 98.0,
+      "nearest_neighbor_date": "2020-01-18",
+      "ret_5d_pct": 26.78
     }
   },
   "XRP-USD": {
-    "text": "XRP/USD is in a calm regime (calm) with 99% confidence, now on day 175 of this regime. The model puts the chance of a regime change within five trading days at 47%, which is elevated, driven mainly by how long the current regime has lasted, how unsure the regime model is and the three-month volatility backdrop. Today looks somewhat unusual compared with calm history (anomaly percentile 98); the closest historical match is 2020-07-08.",
-    "generated_at": "2026-08-21T06:50:52Z",
+    "text": "XRP/USD is in a trending regime (trend) with 100% confidence, now on day 3 of this regime. The model puts the chance of a regime change within five trading days at 17%, which is low, driven mainly by the direction of volatility, one-month momentum and recent volatility. Today looks highly unusual compared with calm history (anomaly percentile 100); the closest historical match is 2019-05-15.",
+    "generated_at": "2026-08-24T07:02:21Z",
     "source": "template",
     "stats": {
       "pair": "XRP-USD",
-      "date": "2026-08-19",
-      "regime": "calm",
-      "regime_prob": 0.991,
-      "days_in_regime": 175,
-      "change_risk_5d": 0.466,
+      "date": "2026-08-22",
+      "regime": "trend",
+      "regime_prob": 0.999,
+      "days_in_regime": 3,
+      "change_risk_5d": 0.169,
       "top_drivers": [
-        "days_in_regime",
-        "hmm_entropy",
-        "vol_60"
+        "vol_trend",
+        "mom_20",
+        "vol_20"
       ],
-      "anomaly_pct": 97.5,
-      "nearest_neighbor_date": "2020-07-08",
-      "ret_5d_pct": 10.66
+      "anomaly_pct": 100.0,
+      "nearest_neighbor_date": "2019-05-15",
+      "ret_5d_pct": 45.99
     }
   },
   "BNB-USD": {
-    "text": "BNB/USD is in a calm regime (calm) with 100% confidence, now on day 178 of this regime. The model puts the chance of a regime change within five trading days at 12%, which is low, driven mainly by how unsure the regime model is, how long the current regime has lasted and recent volatility. Nothing looks unusual today compared with calm history (anomaly percentile 65).",
-    "generated_at": "2026-08-21T06:50:52Z",
+    "text": "BNB/USD is in a calm regime (calm) with 100% confidence, now on day 181 of this regime. The model puts the chance of a regime change within five trading days at 23%, which is moderate, driven mainly by how unsure the regime model is, how long the current regime has lasted and the three-month volatility backdrop. Nothing looks unusual today compared with calm history (anomaly percentile 75).",
+    "generated_at": "2026-08-24T07:02:21Z",
     "source": "template",
     "stats": {
       "pair": "BNB-USD",
-      "date": "2026-08-19",
+      "date": "2026-08-22",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 178,
-      "change_risk_5d": 0.122,
+      "days_in_regime": 181,
+      "change_risk_5d": 0.227,
       "top_drivers": [
         "hmm_entropy",
         "days_in_regime",
-        "vol_20"
+        "vol_60"
       ],
-      "anomaly_pct": 64.8,
-      "nearest_neighbor_date": "2020-07-01",
-      "ret_5d_pct": 3.11
+      "anomaly_pct": 75.4,
+      "nearest_neighbor_date": "2020-07-10",
+      "ret_5d_pct": 14.96
     }
   },
   "ADA-USD": {
-    "text": "ADA/USD is in a calm regime (calm) with 100% confidence, now on day 56 of this regime. The model puts the chance of a regime change within five trading days at 32%, which is moderate, driven mainly by recent volatility, how unsure the regime model is and how much the dollar is moving everything at once. Nothing looks unusual today compared with calm history (anomaly percentile 64).",
-    "generated_at": "2026-08-21T06:50:52Z",
+    "text": "ADA/USD is in a trending regime (trend) with 99% confidence, now on day 2 of this regime. The model puts the chance of a regime change within five trading days at 24%, which is moderate, driven mainly by how unsure the regime model is, how long the current regime has lasted and the direction of volatility. Today looks somewhat unusual compared with calm history (anomaly percentile 98); the closest historical match is 2020-05-29.",
+    "generated_at": "2026-08-24T07:02:21Z",
     "source": "template",
     "stats": {
       "pair": "ADA-USD",
-      "date": "2026-08-19",
-      "regime": "calm",
-      "regime_prob": 0.996,
-      "days_in_regime": 56,
-      "change_risk_5d": 0.324,
+      "date": "2026-08-22",
+      "regime": "trend",
+      "regime_prob": 0.991,
+      "days_in_regime": 2,
+      "change_risk_5d": 0.241,
       "top_drivers": [
-        "vol_20",
         "hmm_entropy",
-        "corr_20"
+        "days_in_regime",
+        "vol_trend"
       ],
-      "anomaly_pct": 64.2,
-      "nearest_neighbor_date": "2019-03-19",
-      "ret_5d_pct": 3.9
+      "anomaly_pct": 97.8,
+      "nearest_neighbor_date": "2020-05-29",
+      "ret_5d_pct": 30.02
     }
   }
 }
