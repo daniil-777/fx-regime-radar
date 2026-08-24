@@ -84,6 +84,9 @@ def build_labels(matrix: pd.DataFrame, horizon: int = HORIZON) -> pd.Series:
     final `horizon` rows per pair (incomplete future window)."""
     y = pd.Series(np.nan, index=matrix.index, dtype=float)
     for _, g in matrix.groupby("pair", sort=False):
+        if "date" in g.columns and not g["date"].is_monotonic_increasing:
+            # shift(-k) reads the next ROW as t+1: unsorted input would silently corrupt labels.
+            raise ValueError("build_labels: rows must be date-sorted within each pair")
         reg = g["regime"]
         changed = pd.Series(False, index=g.index)
         for k in range(1, horizon + 1):

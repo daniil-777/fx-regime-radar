@@ -18,5 +18,6 @@
   "end": "2018-12-24",
   "n": 5090,
   "note": "2017\u20132018 validation years; also used for the forecaster's early stopping and threshold (documented dual use). The 2019+ test is untouched."
- }
+ },
+ "frozen_through": "2026-08-13"
 }

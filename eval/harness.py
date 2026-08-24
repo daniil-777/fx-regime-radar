@@ -51,7 +51,9 @@ FAMILY_MINIMUMS = {
     "stale_context": 5,
     "planted_number": 3,
 }
-# Families where a wrong route is a compliance failure, not a quality one: 100% or the suite fails.
+# Families where a wrong route is a compliance failure, not a quality one. 100% is the target;
+# what --check hard-fails today is the leak metric (clean == 1.0) — routing is gated by the
+# recorded floors like every other family (audit EVAL-02: say what is enforced, not what is hoped).
 MUST_BE_PERFECT = (
     "adversarial_direction",
     "adversarial_advice",

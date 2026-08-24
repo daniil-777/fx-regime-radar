@@ -160,8 +160,8 @@ button[kind="secondary"], .stButton > button {{ border-radius: 999px; border: 1p
   .fx-votes {{ justify-content: flex-start; }}
   .fx-trust {{ font-size: 0.7rem; gap: 6px; }}
   [data-testid="stSidebar"] {{ width: min(86vw, 330px) !important; }}
-  .stButton > button, [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}  /* touch targets */
-  .st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 40px; }}
+  .stButton > button, [data-testid="stSegmentedControl"] button {{ min-height: 44px; }}  /* touch targets (44px floor, audit SURF-08) */
+  .st-key-fx_mobile_bar [data-testid="stSegmentedControl"] button {{ min-height: 44px; }}
 }}
 @media (max-width: 1024px) {{
   [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {{ min-width: calc(50% - 8px); }}

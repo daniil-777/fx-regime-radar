@@ -2,6 +2,79 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## audit 2026-08-24 — full-system audit: 21 confirmed findings fixed, two public corrections
+
+Eight hostile-reviewer audit passes (ML forensics, claim reproduction, backtest honesty, the
+answer engine and bounded agent, Python and Rust engineering, surfaces and web performance, the
+eval harness), every serious finding adversarially re-verified: **21 confirmed, 0 refuted**.
+Full ledger with verdicts, fixes and the deferred list: `reports/audit_2026-08-24_findings.md`.
+
+### Public corrections (the record, handled in the open)
+
+- **The conformal coverage receipt was not actually frozen.** README published n = 5,922; the
+  committed artifact had silently grown to n = 5,931, because `frozen_test_coverage` re-scored
+  2019→today on every pipeline run. The receipt window is now SEALED per universe
+  (fx through 2026-08-10 — which reproduces the published 5,922 / 91.6 % exactly; g10 and em
+  through 2026-08-13; crypto through 2026-08-14, each matching its committed artifact), the seal
+  is recorded in the conformal params and enforced by the pipeline stage, and the fx artifact was
+  regenerated through the documented path. Old value: n = 5,931 (drifted). New value: n = 5,922
+  (as published). Cause: missing seal, found by audit.
+- **The stress report's costs verdict was false as written**: "No strategy has a positive gross
+  Sharpe on the test set" contradicted its own table (S2_meanrev gross +0.12, breakeven 0.1×).
+  The committed report now carries the corrected sentence plus a visible correction note; the
+  template is a data-driven `costs_verdict()` with a pinning test. Every number is unchanged.
+  README's "breakeven cost multiplier is 0" bold corrected to "0–0.1×". A full report
+  regeneration was started, observed to move published numbers (the inputs had gained trading
+  days), and reverted — corrections never ride along with a silent re-score.
+
+### The answer engine (the wrong-market class, closed in the archive room too)
+
+- The archive lane still owned a sibling of the v2.40.1 franc bug: a historical question about a
+  covered non-major ("how many crisis days did the yen have last year?") fell through the
+  archive's own 3-major word detector to the EUR/USD default. The canonical resolver's market now
+  threads into `archive::answer` and a named market can never be substituted; regression-tested.
+- The runtime direction lint on LLM output was 14 exact words; "rising", "strengthen", "higher",
+  "appreciate" passed. One vocabulary now (62 words, narrate.py's set + inflections) shared by
+  the alert lint and the avatar gate.
+- Out-of-scope questions were being answered by similarity cards (an Excel-formula question got a
+  ledger card; a Swiss-tax question got the COVID episode; "ballpark, what will vol be tomorrow?"
+  got a 1y realised-vol caption). Off-domain vocabulary added, the out-of-scope screen now runs
+  before the visual caption lane in the live chain AND the replay, and the not-in-pack refusal
+  carries its own gate label. `/avatar/brain` gained a per-conversation rate limit, a 4,000-char
+  message cap and a 32-message conversation window (LLM spend is now bounded).
+- Replay parity restored: the planted-figure, uncovered-market and courtesy stages now run in
+  `replay_deterministic` exactly as they do live.
+
+### The eval harness (the measuring stick can now fail)
+
+- Fixtures re-recorded against the frozen 2026-08-23 snapshot with the fixed brain (280/280,
+  0 errors), baseline and 79 floors re-recorded via the documented process, `--check` green.
+  Routing before → after: direction 8→100 %, advice 10→100 %, planted-number 33→100 %,
+  stale-context 60→100 %, out-of-scope 50→100 %, injection 40→80 %; "no banned words" stayed
+  100 % throughout.
+- Gate hardening: a missing fixtures file or vanished floor now FAILS `--check` (it used to pass
+  vacuously); unknown `refused:*` labels can no longer score as "answered"; the recall@k report
+  column renders again; four mislabeled goldens re-authored; three poisoned aggregation golds
+  dropped per the seeder's own rule; enforcement labels now say what is enforced.
+
+### Tests, hygiene, environment
+
+- +7 pinning tests (sealed receipt ×2, costs verdict, val/test-boundary embargo, unsorted-labels
+  guard, wrong-market ×2) and a socket-blocking conftest fixture — "tests never touch the
+  network" is now a mechanism, not a comment. `build_labels` refuses unsorted input loudly.
+- The daily cron now commits `public/` — the static customer surface no longer goes stale while
+  the Action rebuilds it every morning. Overview's live-API cache got a TTL; touch targets meet
+  the 44 px floor.
+- Folder-move casualties repaired: dead venv editable path, a stale `fxradar-serve` from a
+  previous day still holding :8090 (the v2.40.1 trap, live), the swagger-ui build cache with
+  pre-move paths. Zero stale paths in tracked files; git fsck clean; ledger chain VALID.
+
+Gate: 382 Python tests green (+1 benign skip), Rust suites + `clippy -D warnings` green, bundle
+selftest green at startup, eval `--check` green, static budgets 83/83, ruff/black/lint-ui green.
+Deferred items needing an owner decision are listed in the findings ledger — the largest:
+LLM-vs-pack precedence when a key is set, the missing phase-37 scenario engine, open-mode's
+ungrounded-numbers exemption, and the moving multi-scoring of the 2019+ window across phases.
+
 ## v2.40.1 — the franc bug, and the class behind it (2026-08-23)
 
 A user asked **"hi what would be your prediction of the market of the franc"** and got back

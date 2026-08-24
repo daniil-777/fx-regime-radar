@@ -104,12 +104,21 @@ def coverage(y: np.ndarray, lo: np.ndarray, hi: np.ndarray) -> float | None:
     return float(((y[ok] >= lo[ok]) & (y[ok] <= hi[ok])).mean())
 
 
-def frozen_test_coverage(regimes: pd.DataFrame, params: dict) -> dict:
-    """Empirical coverage on the frozen 2019+ test (overall + per regime) and a rolling series."""
+def frozen_test_coverage(regimes: pd.DataFrame, params: dict, through: str | None = None) -> dict:
+    """Empirical coverage on the frozen 2019+ test (overall + per regime) and a rolling series.
+
+    `through` is the sealed receipt date: when set, only labeled test rows with date <= through
+    enter the receipt, so the published population can never grow after the number is published.
+    (Audit finding: without the seal, n drifted 5,922 -> 5,931 in four trading days while the
+    trust strip still said "frozen".)
+    """
     m = apply(regimes, params)[["date", "pair", "regime", "change_risk_5d", *INTERVAL_COLUMNS]]
+    m = m.sort_values(["pair", "date"])  # build_labels reads the NEXT ROW as t+1
     m["y"] = forecaster.build_labels(m)
     m["split"] = forecaster.assign_splits(m)
     te = m[(m["split"] == "test") & m["y"].notna()].sort_values("date")
+    if through is not None:
+        te = te[te["date"] <= pd.Timestamp(through)]
     per_regime = {r: coverage(g["y"], g["risk_lo"], g["risk_hi"]) for r, g in te.groupby("regime")}
     te["inside"] = ((te["y"] >= te["risk_lo"]) & (te["y"] <= te["risk_hi"])).astype(float)
     rolling = te.groupby("date")["inside"].mean().rolling(120, min_periods=60).mean().dropna()
@@ -118,8 +127,18 @@ def frozen_test_coverage(regimes: pd.DataFrame, params: dict) -> dict:
         "per_regime": per_regime,
         "n": int(len(te)),
         "test_start": str(te["date"].min().date()) if len(te) else None,
+        "frozen_through": through,
         "rolling_120d": {str(d.date()): round(float(v), 4) for d, v in rolling.items()},
     }
+
+
+def max_labeled_test_date(regimes: pd.DataFrame) -> str | None:
+    """The newest test row that already has a resolved 5-day label — the natural seal date."""
+    m = regimes[["date", "pair", "regime"]].sort_values(["pair", "date"]).copy()
+    m["y"] = forecaster.build_labels(m)
+    m["split"] = forecaster.assign_splits(m)
+    te = m[(m["split"] == "test") & m["y"].notna()]
+    return str(te["date"].max().date()) if len(te) else None
 
 
 def live_coverage(ledger: pd.DataFrame) -> dict:
@@ -149,12 +168,23 @@ def stage(ctx: dict) -> None:
         params = fit(ctx["regimes"])
         save_params(params)
         log.info("conformal: calibrated on %s → %s", params["calibration"], PARAMS_PATH)
+    if "frozen_through" not in params:
+        # Seal the receipt population at first publication. Without the seal the "frozen test,
+        # scored once" receipt grows by one labeled row per pair per trading day (audit finding:
+        # n drifted 5,922 -> 5,931 in four trading days while the trust strip said "frozen").
+        sealed = max_labeled_test_date(ctx["regimes"])
+        if sealed is not None:
+            params["frozen_through"] = sealed
+            save_params(params)
+            log.info("conformal: receipt window sealed through %s", sealed)
     ctx["regimes"] = apply(ctx["regimes"], params)
     ctx["conformal_params"] = params
     receipt = {
         "alpha": params["alpha"],
         "q": params["q"],
-        "frozen_test": frozen_test_coverage(ctx["regimes"], params),
+        "frozen_test": frozen_test_coverage(
+            ctx["regimes"], params, through=params.get("frozen_through")
+        ),
     }
     ctx["conformal_receipt"] = receipt
     ctx.setdefault("extra_writers", {})["conformal_coverage.json"] = (
@@ -174,6 +204,11 @@ def main() -> None:
 
     ap = argparse.ArgumentParser(description="Mondrian conformal intervals on change risk")
     ap.add_argument("--fit", action="store_true", help="(re)calibrate on the validation years")
+    ap.add_argument(
+        "--receipt",
+        action="store_true",
+        help="rewrite data/conformal_coverage.json from committed artifacts (sealed window)",
+    )
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     regimes = pd.read_parquet(config.REGIMES_PATH)
@@ -181,8 +216,14 @@ def main() -> None:
         save_params(fit(regimes))
     params = load_params()
     print(json.dumps({k: v for k, v in params.items()}, indent=1))
-    cov = frozen_test_coverage(regimes, params)
+    cov = frozen_test_coverage(regimes, params, through=params.get("frozen_through"))
     print("frozen-test coverage:", cov["overall"], cov["per_regime"], "n =", cov["n"])
+    if args.receipt:
+        ledger_path = config.DATA_DIR / "ledger.parquet"
+        ledger = pd.read_parquet(ledger_path) if ledger_path.exists() else None
+        receipt = {"alpha": params["alpha"], "q": params["q"], "frozen_test": cov}
+        COVERAGE_PATH.write_text(json.dumps({**receipt, "live": live_coverage(ledger)}, indent=1))
+        print(f"wrote {COVERAGE_PATH}")
 
 
 if __name__ == "__main__":

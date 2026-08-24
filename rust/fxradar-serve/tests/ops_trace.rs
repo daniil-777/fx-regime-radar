@@ -497,6 +497,11 @@ async fn the_kill_switch_takes_effect_mid_session_under_load() {
                             answered.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                         }
                     }
+                    Ok(res) if res.status() == 429 => {
+                        // The per-conversation turn rate limit (audit RUST-01) is deliberate
+                        // backpressure with a retry hint, not a dropped request: pace and go on.
+                        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                    }
                     _ => {
                         errors.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                     }

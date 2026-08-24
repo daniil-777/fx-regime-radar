@@ -117,3 +117,36 @@ def test_saved_model_scores_contract_columns() -> None:
     r = pd.read_parquet(config.REGIMES_PATH)
     assert {"change_risk_5d", "top_drivers"} <= set(r.columns)
     assert r["change_risk_5d"].between(0, 1).all() and r["top_drivers"].map(len).eq(3).all()
+
+
+def test_embargo_gap_exists_at_the_val_test_boundary(toy) -> None:
+    """Audit-01 fix: the original embargo test covered only the train/val boundary."""
+    feats, regs = toy
+    m = forecaster.build_matrix(feats, regs)
+    # The matrix's warm-up trim leaves rows from ~Jan 2015; +3y10m lands them on the 2018-19
+    # (val/test) boundary with rows on both sides.
+    m["date"] = m["date"] + pd.DateOffset(years=3, months=10)
+    split = forecaster.assign_splits(m, embargo=5)
+    for _, g in m.assign(split=split).groupby("pair"):
+        g = g.sort_values("date")
+        va, te = g[g["split"] == "val"], g[g["split"] == "test"]
+        assert len(va) and len(te)
+        between = g[(g["date"] > va["date"].max()) & (g["date"] < te["date"].min())]
+        assert len(between) >= 10  # 5 dropped on each side -> at least 10 rows nobody uses
+        assert (between["split"] == "embargo").all()
+        assert (g[g["date"] >= pd.Timestamp(config.TEST_START)]["split"] != "val").all()
+
+
+def test_build_labels_refuses_unsorted_rows() -> None:
+    """shift(-k) reads the next ROW as t+1; unsorted input must fail loudly, not corrupt."""
+    m = pd.DataFrame(
+        {
+            "date": pd.bdate_range("2020-01-01", periods=10),
+            "pair": "X",
+            "regime": ["a"] * 5 + ["b"] * 5,
+        }
+    )
+    shuffled = m.sample(frac=1.0, random_state=1)
+    assert not shuffled["date"].is_monotonic_increasing
+    with pytest.raises(ValueError, match="date-sorted"):
+        forecaster.build_labels(shuffled)

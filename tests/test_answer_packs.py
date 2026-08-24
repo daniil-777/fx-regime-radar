@@ -146,9 +146,10 @@ def test_low_confidence_never_selects_a_pack() -> None:
         pytest.skip("classifier not trained yet")
     model = IM.load(model_path)
     intent, p = model.confident("asdfghjkl qwertyuiop zxcvbnm")
-    assert p < 1.0
-    if p < model.threshold:
-        assert intent is None, "a low-confidence classification must not select a pack"
+    # Audit fix: the assertion used to hide inside `if p < model.threshold`, so an overconfident
+    # classifier made the test pass vacuously. Gibberish must fail the threshold, full stop.
+    assert p < model.threshold, f"gibberish must not clear the confidence threshold (p={p:.3f})"
+    assert intent is None, "a low-confidence classification must not select a pack"
 
 
 # ------------------------------------------------------------------- the cube ------------------

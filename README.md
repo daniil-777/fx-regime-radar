@@ -67,7 +67,7 @@ human decision) and the verify instructions.
 (`risk_lo`, `risk_hi`): per-regime 90 % quantiles of |outcome − p̂| calibrated on the 2017–2018
 validation years only (also used for early stopping and the threshold — a documented dual use); the
 2019+ test was touched once, for the receipt: empirical coverage 91.6 % (calm 92 %, chop 90 %,
-trend 92 %, crisis 93 %, n = 5,922). Time series violate exchangeability, so we report empirical
+trend 92 %, crisis 93 %, n = 5,922 — population sealed through 2026-08-10). Time series violate exchangeability, so we report empirical
 coverage — frozen and, as ledger rows mature, live — instead of citing the theorem. That is a
 feature, not a confession: the receipt is the claim.
 
@@ -144,8 +144,7 @@ A lag-law backtest engine (`backtest.py`), three mechanical strategies with an i
 and a blend (`strategies.py`), and a stress lab (`stress.py`) turn the signals into risk decisions
 and then attack them. Result, stated up front and confirmed: **after realistic, volatility-scaled
 costs there is no edge.** Test-period (2019+) net Sharpe: S1 trend −1.23, S2 mean reversion −1.36,
-S3 regime gate −1.30, blend −2.18; gross Sharpe is negative for three of four, so the **breakeven
-cost multiplier is 0** — nothing here survives its own transaction costs. Cost drag runs 4–7 %/yr;
+S3 regime gate −1.30, blend −2.18; gross Sharpe is negative for three of four (S2 mean reversion: +0.12 gross, breakeven 0.1×), so the **breakeven cost multipliers are 0–0.1×** — nothing here survives its own transaction costs. Cost drag runs 4–7 %/yr;
 one extra day of lag barely matters (there was little to lose); a ×1.5 crisis-return shock deepens
 the worst drawdown by only 0.5 % because the siren stop and crisis-flat gate take risk off; block
 bootstrap puts the blend's one-year max drawdown at −6 % median / −10 % 5th-percentile pain; a ±30 %

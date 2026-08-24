@@ -64,3 +64,39 @@ def test_live_coverage_handles_missing_columns() -> None:
         {"outcome": [1.0, 0.0, np.nan], "risk_lo": [0.0, 0.0, 0.0], "risk_hi": [0.6, 0.6, 0.6]}
     )
     assert conformal.live_coverage(led) == {"n": 2, "coverage": 0.5}
+
+
+def _toy_regimes() -> pd.DataFrame:
+    dates = pd.bdate_range("2017-01-02", "2019-06-28")
+    n = len(dates)
+    pattern = (["calm"] * 7 + ["trend"] * 5 + ["chop"] * 6 + ["crisis"] * 2) * (n // 20 + 1)
+    return pd.DataFrame({"date": dates, "pair": "EURUSD", "regime": pattern[:n]}).assign(
+        change_risk_5d=np.linspace(0.05, 0.6, n)
+    )
+
+
+def test_frozen_test_coverage_honors_the_sealed_window() -> None:
+    """Audit fix (receipt drift 5,922 -> 5,931): `through` caps the receipt population."""
+    r = _toy_regimes()
+    params = {"q": {"calm": 0.4, "trend": 0.6, "chop": 0.6, "crisis": 0.7}}
+    full = conformal.frozen_test_coverage(r, params)
+    sealed = conformal.frozen_test_coverage(r, params, through="2019-03-29")
+    assert sealed["n"] < full["n"], "the seal must cap the population"
+    assert sealed["frozen_through"] == "2019-03-29"
+    assert full["frozen_through"] is None
+    # growing the input beyond the seal date must not move the sealed receipt
+    grown = pd.concat([r, _toy_regimes().assign(pair="GBPUSD")], ignore_index=True)
+    sealed_grown = conformal.frozen_test_coverage(
+        grown[grown["pair"] == "EURUSD"], params, through="2019-03-29"
+    )
+    assert sealed_grown["n"] == sealed["n"] and sealed_grown["overall"] == sealed["overall"]
+
+
+def test_committed_fx_receipt_is_sealed_at_the_published_population() -> None:
+    """The published receipt (README: n = 5,922) is frozen; the artifact must agree forever."""
+    receipt = json.loads((ROOT / "data" / "conformal_coverage.json").read_text())
+    assert receipt["frozen_test"]["frozen_through"] == "2026-08-10"
+    assert receipt["frozen_test"]["n"] == 5922
+    assert round(receipt["frozen_test"]["overall"], 3) == 0.916
+    params = json.loads((ROOT / "models" / "conformal_v1.json").read_text())
+    assert params["frozen_through"] == "2026-08-10"

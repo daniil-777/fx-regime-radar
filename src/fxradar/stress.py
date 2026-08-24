@@ -372,6 +372,40 @@ def _md(df: pd.DataFrame, fmt: str = "{:.3f}") -> str:
     return "\n".join(out)
 
 
+def costs_verdict(be: pd.DataFrame) -> str:
+    """Cost-shock verdict written from the table it summarizes.
+
+    Audit correction (2026-08-24): the old template opened with "No strategy has a positive
+    gross Sharpe" whenever ANY breakeven multiplier was 0 — false when one strategy's gross
+    Sharpe was positive (S2_meanrev, +0.12), contradicting the table above it in the report.
+    """
+    be_blend = be.set_index("strategy").loc["BLEND", "breakeven_cost_mult"]
+    zero = be[be["breakeven_cost_mult"] == 0]
+    pos = be[be["breakeven_cost_mult"] > 0]
+    parts: list[str] = []
+    if len(zero):
+        names = ", ".join(zero["strategy"])
+        if (zero["gross_sharpe"] <= 0).all():
+            parts.append(
+                f"{names}: gross Sharpe is not positive on the test set, so the breakeven cost "
+                "multiplier is 0 — there is no edge to pay costs from."
+            )
+        else:
+            parts.append(f"Breakeven cost multiplier is 0 for {names}.")
+    for r in pos.itertuples():
+        parts.append(
+            f"{r.strategy}: gross Sharpe {r.gross_sharpe:+.2f}, "
+            f"breakeven {r.breakeven_cost_mult:g}× the modelled cost."
+        )
+    parts.append(f"BLEND breakeven {be_blend:g}× the modelled cost.")
+    if (be["breakeven_cost_mult"] <= 1).all():
+        parts.append(
+            "A practitioner reads this row first: "
+            "nothing here survives its own transaction costs."
+        )
+    return " ".join(parts)
+
+
 def run_lab(reports_dir: Path = config.REPORTS_DIR) -> dict:
     reports_dir.mkdir(parents=True, exist_ok=True)
     df = st.load_inputs()
@@ -390,22 +424,7 @@ def run_lab(reports_dir: Path = config.REPORTS_DIR) -> dict:
     v["replays"] = (
         f"Worst window/strategy: {worst_rep['strategy']} in {worst_rep['window']} (max DD {worst_rep['max_drawdown']:.1%}, worst day {worst_rep['worst_day']:.2%}). Siren stop fired on {int(fired['siren_days'].sum())} pair-days across the three windows (see table) — the overlay was flat exactly when it was supposed to be."
     )
-    be_blend = be.set_index("strategy").loc["BLEND", "breakeven_cost_mult"]
-    v["costs"] = (
-        (
-            "No strategy has a positive gross Sharpe on the test set, so the breakeven cost multiplier is 0 for "
-            + ", ".join(be[be["breakeven_cost_mult"] == 0]["strategy"])
-            + " — there is no edge to pay costs from. "
-            if (be["breakeven_cost_mult"] == 0).any()
-            else ""
-        )
-        + f"BLEND breakeven {be_blend:g}× the modelled cost."
-        + (
-            " A practitioner reads this row first: nothing here survives its own transaction costs."
-            if (be["breakeven_cost_mult"] <= 1).all()
-            else ""
-        )
-    )
+    v["costs"] = costs_verdict(be)
     v["execution"] = (
         f"One extra day of lag changes net Sharpe by {exe['decay'].min():+.2f} to {exe['decay'].max():+.2f}. "
         + (

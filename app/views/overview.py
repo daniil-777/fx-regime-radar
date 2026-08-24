@@ -73,7 +73,7 @@ def load_events(path: str, mtime: float) -> pd.DataFrame:
     return ev
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=60)
 def load_api_latest(api_url: str, pairs: tuple[str, ...]) -> dict:
     """Newest row per pair from the Rust service, if one is configured and answering (1 s budget)."""
     if not api_url:

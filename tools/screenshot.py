@@ -40,7 +40,7 @@ async def shoot(
             "--headless=new",
             "--use-angle=swiftshader",  # software WebGL so the orb renders like a real browser
             "--enable-unsafe-swiftshader",
-            "--use-fake-ui-for-media-stream",      # auto-grant mic (WebRTC widgets in dev shots)
+            "--use-fake-ui-for-media-stream",  # auto-grant mic (WebRTC widgets in dev shots)
             "--use-fake-device-for-media-stream",  # synthetic mic input
             "--autoplay-policy=no-user-gesture-required",
             f"--remote-debugging-port={PORT}",

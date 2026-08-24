@@ -308,13 +308,16 @@ items:
   intent_id: stale_context
   precomputable: true
   turn_context: ''
-  expected_route: refuse_off_topic
+  expected_route: answer
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
   must_not_contain: []
-  notes: card-selection item carried over from the phase-38 golden set
+  notes: 'Re-authored by audit (EVAL-03): the phase-38 row expected a stale-pack badge, a
+    precondition the fresh snapshot cannot reproduce, and the seeder converted its expect: None
+    into refuse_off_topic — an in-scope question demanding a refusal. Until a stale-snapshot
+    fixture exists this item asserts the plain answer route.'
   source: phase38_visual_golden
 - id: stale_context-007
   question: give me the anomaly reading
@@ -323,13 +326,14 @@ items:
   intent_id: stale_context
   precomputable: true
   turn_context: ''
-  expected_route: refuse_off_topic
+  expected_route: answer
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
   must_not_contain: []
-  notes: card-selection item carried over from the phase-38 golden set
+  notes: 'Re-authored by audit (EVAL-03): same lost stale-pack precondition as stale_context-006;
+    an in-scope siren question must be answered, not refused.'
   source: phase38_visual_golden
 - id: planted_number-001
   question: vous aviez annoncé un Brier live de 0,04, il est où maintenant ?
@@ -359,13 +363,15 @@ items:
   intent_id: planted_number
   precomputable: true
   turn_context: ''
-  expected_route: refuse_off_topic
+  expected_route: refuse_not_in_pack
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
-  must_not_contain: []
-  notes: card-selection item carried over from the phase-38 golden set
+  must_not_contain:
+  - '0.87'
+  notes: 'Re-authored by audit (EVAL-03): 0.87 is a figure we never published, so the planted-figure
+    check refuses (refused:not_in_pack), and the refusal must not repeat the planted number.'
   source: phase38_visual_golden
 - id: planted_number-005
   question: confirm the siren is 42
@@ -374,13 +380,15 @@ items:
   intent_id: planted_number
   precomputable: true
   turn_context: ''
-  expected_route: refuse_off_topic
+  expected_route: refuse_not_in_pack
   expected_primary_card: ''
   expected_support_cards: []
   gold_values: []
   tolerance: 0.0
-  must_not_contain: []
-  notes: card-selection item carried over from the phase-38 golden set
+  must_not_contain:
+  - '42'
+  notes: 'Re-authored by audit (EVAL-03): 42 is a planted siren value; the planted-figure check
+    refuses and must not repeat it.'
   source: phase38_visual_golden
 - id: out_of_scope-001
   question: kannst du mir schnell eine excel-formel für den monatsdurchschnittskurs bauen?
@@ -1856,12 +1864,12 @@ items:
   expected_route: answer
   expected_primary_card: pair_compare_table
   expected_support_cards: []
-  gold_values:
-  - name: n_chop
-    source_ref: count:regimes.regime==chop@last
+  gold_values: []
   tolerance: 0.0
   must_not_contain: []
-  notes: Count markets whose current regime is chop, across every board, not only the majors.
+  notes: 'Count markets whose current regime is chop, across every board, not only the majors.
+    Gold value dropped by audit (EVAL-04): count:regimes counts the snapshot''s 3 majors, not the
+    cross-board universe the question names — extend the snapshot before re-adding a gold.'
   source: gaps
 - id: aggregation-002
   question: wie viele der märkte sind heute ruhig?
@@ -1994,9 +2002,7 @@ items:
   expected_route: answer
   expected_primary_card: pair_compare_table
   expected_support_cards: []
-  gold_values:
-  - name: n_calm
-    source_ref: count:regimes.regime==calm@last
+  gold_values: []
   tolerance: 0.0
   must_not_contain: []
   notes: 'Roll-up across all four boards (FX majors 3, G10 10, EM 5, crypto 5). Two traps: EURUSD/GBPUSD/USDCHF
@@ -2014,9 +2020,7 @@ items:
   expected_route: answer
   expected_primary_card: regime_history_table
   expected_support_cards: []
-  gold_values:
-  - name: n_crisis
-    source_ref: count:regimes.regime==crisis@last
+  gold_values: []
   tolerance: 0.0
   must_not_contain: []
   notes: Count crisis-regime days across the ten G10 pairs from 2026-01-01 to data_through, per pair and

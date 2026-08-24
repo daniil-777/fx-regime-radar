@@ -1188,6 +1188,26 @@ const KNOWN_LEG_PREFIXES: &[&str] = &[
     "PLN", "RUB", "TRY", "BTC", "ETH", "XRP", "ADA", "BNB",
 ];
 
+/// The uncovered-market refusal, defined once: the live handler and the replay must produce the
+/// identical text, or every replayed lira/krone question shows a phantom divergence (phase 43).
+pub fn uncovered_refusal_text(pack: &Pack, name: &str) -> String {
+    let covered: Vec<String> = pack
+        .markets
+        .values()
+        .map(|u| u.label.clone())
+        .filter(|l| !l.is_empty())
+        .collect();
+    format!(
+        "I don't cover {name}, so I have no reading for it — and I won't hand you another \
+         market's numbers in its place. What I do carry is {}.",
+        if covered.is_empty() {
+            "the currency pairs on the radar".to_string()
+        } else {
+            covered.join(", ")
+        }
+    )
+}
+
 /// What market, if any, this question is about.
 #[derive(Debug, Clone, PartialEq)]
 pub enum MarketMention {
@@ -1337,6 +1357,19 @@ fn out_of_scope_re() -> &'static Regex {
     RE.get_or_init(|| {
         Regex::new(
             r"\b(sharpe|correlat\w*|trading|spot|level|levels|printing|outside|multiply|percentage|rank|allocate|split|expect\w*|year.?end|next (month|week|quarter)|tomorrow|estimate|ballpark|approximat\w*|sunday|saturday|forecast\w*)\b",
+        )
+        .expect("static regex")
+    })
+}
+
+/// Vocabulary that means the question is not about markets at all — spreadsheet help, tax or
+/// legal advice (audit: an excel-formula question in German matched a ledger card by similarity
+/// and was "answered"). These get the off-topic refusal, never a card.
+fn off_domain_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(
+            r"\b(excel|formul\w*|spreadsheet|tableur|fiscal\w*|steuer\w*|imp(?:ô|o)ts?|tax(?:es|ation)?|lawyer|anwalt|avocat|juridique)\b",
         )
         .expect("static regex")
     })
@@ -2010,9 +2043,9 @@ fn decision_advice(
 /// divergence every time someone replayed a historical question.
 const ARCHIVE_MISS_SHORT: &str = concat!(
     "That asks about the past, and I could not read it from the archive. ",
-    "I hold daily history for the three majors, monthly counts for every ",
-    "market, typical regime durations, named episodes, and a comparison ",
-    "against a month ago."
+    "I hold daily history and monthly counts for the three majors, typical ",
+    "regime durations, named episodes, and a comparison against a month ago; ",
+    "other markets I carry as today's reading only."
 );
 const ARCHIVE_MISS_LONG: &str = concat!(
     "I can read today's state, count the markets by regime, look up a date ",
@@ -2090,15 +2123,33 @@ pub fn replay_deterministic(st: &AppState, question: &str) -> ReplayOutcome {
 
     let historical = crate::archive::looks_historical(&q_lower);
     let framing = crate::guard::detect(&q_lower);
+    // Replay parity (audit AE-04): the pure stages the live handler runs — planted figure,
+    // uncovered market, courtesy — must run here too, or replaying the exact questions the
+    // c368437 fix addressed reports phantom divergences.
+    let named_market = resolve_named_market(&pack, &q_lower);
+    let named_code = if let MarketMention::Covered(code) = &named_market {
+        Some(code.clone())
+    } else {
+        None
+    };
     let decided: Step = if asks_price_direction(&q_lower)
         || framing.is_some_and(|f| f.is_direction())
     {
         refuse("refused:direction", pack.refusals.direction.clone())
     } else if advice_intent_re().is_match(&q_lower) || framing.is_some() {
         refuse("refused:advice", pack.refusals.advice.clone())
+    } else if asserts_a_figure(&q_lower)
+        && !question_numbers.is_empty()
+        && !question_numbers.iter().all(|n| pack.allowed.contains(n))
+    {
+        refuse("refused:not_in_pack", pack.refusals.not_in_pack.clone())
+    } else if let MarketMention::Uncovered(name) = &named_market {
+        refuse("refused:not_covered", uncovered_refusal_text(&pack, name))
+    } else if let Some(reply) = courtesy_reply(question) {
+        step("template", "pass", reply.to_string())
     } else if let Some(found) = st
         .archive()
-        .and_then(|a| crate::archive::answer(&a, &q_lower))
+        .and_then(|a| crate::archive::answer(&a, &q_lower, named_code.as_deref()))
     {
         step("archive", "pass", found.text)
     } else if let Some((uni, blk, pair)) = market_lookup_pair(&pack, &q_lower) {
@@ -2122,10 +2173,13 @@ pub fn replay_deterministic(st: &AppState, question: &str) -> ReplayOutcome {
                 if let Some((speech, board, _stale)) = pack_answer(st, question, "en", false) {
                     let route = if board.is_empty() { "visual" } else { "pack" };
                     check(step(route, "pass", speech))
+                } else if out_of_scope_re().is_match(&q_lower) {
+                    // Mirrors the live chain: out-of-scope vocabulary is never card-hijacked.
+                    refuse("refused:not_in_pack", pack.refusals.not_in_pack.clone())
+                } else if off_domain_re().is_match(&q_lower) {
+                    refuse("refused:off_topic", pack.refusals.off_topic.clone())
                 } else if let Some(text) = visual_answer(st, question) {
                     check(step("visual", "pass", text))
-                } else if out_of_scope_re().is_match(&q_lower) {
-                    refuse("refused:off_topic", pack.refusals.not_in_pack.clone())
                 } else {
                     refuse("refused:off_topic", pack.refusals.off_topic.clone())
                 }
@@ -2182,6 +2236,36 @@ async fn brain_inner(
 ) -> Result<Json<BrainResponse>, ApiError> {
     let t0 = Instant::now();
     brain_auth(&st, &headers)?;
+    // --- audit RUST-01: bounded spend per turn --------------------------------------------------
+    // The monthly minutes budget caps SESSIONS; nothing capped TURNS. Every turn forwards the
+    // whole conversation to the LLM, so an unbounded transcript is an unbounded bill and a client
+    // in a loop is a bill with no ceiling. Keyed on the credential, not the client-chosen session.
+    const MAX_TURN_CHARS: usize = 4_000;
+    const MAX_CONVERSATION_MESSAGES: usize = 32;
+    // Keyed on credential + conversation: a deployment-shared brain_token must not throttle
+    // every viewer collectively, and one runaway conversation must not spend the whole budget.
+    let limiter_key = match headers.get("x-avatar-token").and_then(|v| v.to_str().ok()) {
+        Some(tok) => format!("brain:{tok}:{}", req.session_id),
+        None => format!("brain:{}", req.session_id),
+    };
+    if let Err(retry) = st.limiter.check(&limiter_key) {
+        return Err(ApiError(
+            StatusCode::TOO_MANY_REQUESTS,
+            format!("brain turn rate limit reached; retry in {retry}s"),
+        ));
+    }
+    if req.messages.iter().any(|m| m.content.len() > MAX_TURN_CHARS) {
+        return Err(ApiError(
+            StatusCode::BAD_REQUEST,
+            format!("a message exceeds {MAX_TURN_CHARS} characters"),
+        ));
+    }
+    let mut req = req;
+    if req.messages.len() > MAX_CONVERSATION_MESSAGES {
+        // Keep the newest turns: the question lives at the tail, and the LLM context stays bounded.
+        let start = req.messages.len() - MAX_CONVERSATION_MESSAGES;
+        req.messages.drain(..start);
+    }
     let pack = load_pack_or_503(&st)?;
     let question = req
         .messages
@@ -2403,21 +2487,7 @@ async fn brain_inner(
     if let MarketMention::Uncovered(name) = &named_market {
         m::avatar_refusal("market_not_covered");
         crate::trace::route("refusal", "market not covered");
-        let covered: Vec<String> = pack
-            .markets
-            .values()
-            .map(|u| u.label.clone())
-            .filter(|l| !l.is_empty())
-            .collect();
-        let text = format!(
-            "I don't cover {name}, so I have no reading for it — and I won't hand you another \
-             market's numbers in its place. What I do carry is {}.",
-            if covered.is_empty() {
-                "the currency pairs on the radar".to_string()
-            } else {
-                covered.join(", ")
-            }
-        );
+        let text = uncovered_refusal_text(&pack, name);
         return Ok(finish(
             &st,
             &req.session_id,
@@ -2460,7 +2530,12 @@ async fn brain_inner(
     // already in progress. No redeploy, no dropped WebRTC session.
     let rooms_open = flags.agent_enabled && flags.lane_archive;
     if let Some(archive) = st.archive().filter(|_| rooms_open) {
-        if let Some(found) = crate::archive::answer(&archive, &q_lower) {
+        let named_code = if let MarketMention::Covered(code) = &named_market {
+            Some(code.as_str())
+        } else {
+            None
+        };
+        if let Some(found) = crate::archive::answer(&archive, &q_lower, named_code) {
             crate::trace::stage("archive lookup", t_route);
             crate::trace::route(
                 "archive",
@@ -2615,7 +2690,18 @@ async fn brain_inner(
                         pack_stale = stale;
                         speech
                     })
-                    .or_else(|| visual_answer(&st, &effective))
+                    .or_else(|| {
+                        // A question already wearing out-of-scope vocabulary must not be hijacked
+                        // by a similarity card ("ballpark ... volatility tomorrow" was answered
+                        // with a 1y realised-vol caption). The refusal branch below owns it.
+                        if out_of_scope_re().is_match(&q_lower)
+                            || off_domain_re().is_match(&q_lower)
+                        {
+                            None
+                        } else {
+                            visual_answer(&st, &effective)
+                        }
+                    })
                     {
                         Some(text) => {
                             candidate = text;
@@ -2645,7 +2731,11 @@ async fn brain_inner(
                                 &question,
                                 text,
                                 "refusal",
-                                "refused:off_topic",
+                                if asked_for_a_number {
+                                    "refused:not_in_pack"
+                                } else {
+                                    "refused:off_topic"
+                                },
                                 t0,
                             ));
                         }

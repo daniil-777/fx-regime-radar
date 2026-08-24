@@ -302,8 +302,15 @@ pub struct ArchiveAnswer {
 }
 
 /// Answer from the archive, or return None so the caller can refuse honestly.
-pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
+///
+/// `named` is the canonical resolver's covered market code (avatar's `resolve_named_market`).
+/// It OUTRANKS this module's own 3-major word detector, so a question about a covered non-major
+/// (yen, bitcoin, peso...) can never fall through to the EUR/USD default — the sibling of the
+/// wrong-market class the c368437 board fix closed (audit AE-01). With no history for that
+/// market, the history shapes simply miss and the caller refuses honestly.
+pub fn answer(archive: &Archive, q_lower: &str, named: Option<&str>) -> Option<ArchiveAnswer> {
     let q = q_lower;
+    let hint: Option<String> = named.map(|s| s.to_string());
 
     // --- shape 1: how many markets are in a regime right now -------------------------------------
     if (q.contains("how many") || q.contains("anything") || q.contains("any market"))
@@ -351,7 +358,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
     // --- shape 2: what was the regime on a given date ---------------------------------------------
     let (day, month, year) = detect_date(q);
     if let Some(date) = day.clone() {
-        let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+        let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
         if let Some(hist) = archive.pairs.get(&pair) {
             if let Some(regime) = hist.daily.get(&date) {
                 let risk = hist.daily_risk.get(&date).and_then(|v| *v);
@@ -385,7 +395,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
     // --- shape 3: days in a regime over a month or a year -----------------------------------------
     if q.contains("how many") && mentions_days(q) {
         if let Some(regime) = detect_regime(q) {
-            let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+            let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
             if let Some(hist) = archive.pairs.get(&pair) {
                 if let Some(m) = month.clone() {
                     let n = hist
@@ -470,7 +483,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
             || detect_regime(q).is_some())
     {
         if let Some(regime) = detect_regime(q) {
-            let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+            let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
             if let Some(stats) = archive.runs.get(&pair).and_then(|m| m.get(regime)) {
                 return Some(ArchiveAnswer {
                     text: format!(
@@ -491,7 +507,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
     for (name, stats) in &archive.events {
         let lower = name.to_lowercase();
         if q.contains(&lower) {
-            let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+            let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
             // "how do markets behave on CPI days" names no market; averaging across the ones we
             // have beats falling through to a card about today.
             let fallback = stats.pairs.values().next();
@@ -698,7 +717,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
     if (q.contains("what was") || q.contains("what were") || q.contains("was the"))
         && (q.contains("risk") || q.contains("siren") || q.contains("regime"))
     {
-        let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+        let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
         if let Some(hist) = archive.pairs.get(&pair) {
             let mut dates: Vec<&String> = hist.daily.keys().collect();
             dates.sort();
@@ -749,7 +771,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
         if !hit || ep.start.is_empty() {
             continue;
         }
-        let pair = detect_pair(q).unwrap_or_else(|| ep.pair.clone());
+        let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| ep.pair.clone());
         if let Some(hist) = archive.pairs.get(&pair) {
             let mut counts: HashMap<&str, i64> = HashMap::new();
             let mut peak = 0.0_f64;
@@ -792,7 +817,10 @@ pub fn answer(archive: &Archive, q_lower: &str) -> Option<ArchiveAnswer> {
         || q.contains("than last month"))
         && (q.contains("risk") || q.contains("siren") || q.contains("regime"))
     {
-        let pair = detect_pair(q).unwrap_or_else(|| "EURUSD".into());
+        let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
         if let Some(hist) = archive.pairs.get(&pair) {
             let mut dates: Vec<&String> = hist.daily_risk.keys().collect();
             dates.sort();
@@ -946,14 +974,14 @@ mod tests {
 
     #[test]
     fn counts_markets_in_a_regime_today() {
-        let a = answer(&archive(), "how many of the markets are calm today").unwrap();
+        let a = answer(&archive(), "how many of the markets are calm today", None).unwrap();
         assert_eq!(a.shape, "count_today");
         assert!(a.text.contains("2 of 20"), "{}", a.text);
     }
 
     #[test]
     fn reads_a_specific_historical_date() {
-        let a = answer(&archive(), "what was the regime for usdchf on 2015-01-15").unwrap();
+        let a = answer(&archive(), "what was the regime for usdchf on 2015-01-15", None).unwrap();
         assert_eq!(a.shape, "regime_on_date");
         assert!(
             a.text.contains("crisis") && a.text.contains("2015-01-15"),
@@ -964,27 +992,27 @@ mod tests {
 
     #[test]
     fn parses_a_spoken_date() {
-        let a = answer(&archive(), "what was the franc doing on 15 january 2015").unwrap();
+        let a = answer(&archive(), "what was the franc doing on 15 january 2015", None).unwrap();
         assert!(a.text.contains("crisis"), "{}", a.text);
     }
 
     #[test]
     fn a_date_outside_the_archive_says_so_instead_of_guessing() {
-        let a = answer(&archive(), "what was usdchf on 1999-05-05").unwrap();
+        let a = answer(&archive(), "what was usdchf on 1999-05-05", None).unwrap();
         assert_eq!(a.shape, "regime_on_date_missing");
         assert!(a.text.contains("do not hold"), "{}", a.text);
     }
 
     #[test]
     fn counts_days_in_a_regime_over_a_year() {
-        let a = answer(&archive(), "how many crisis days did usdchf have in 2015").unwrap();
+        let a = answer(&archive(), "how many crisis days did usdchf have in 2015", None).unwrap();
         assert_eq!(a.shape, "regime_days_year");
         assert!(a.text.contains("9 of 249"), "{}", a.text);
     }
 
     #[test]
     fn zero_is_reported_as_a_finding_not_an_error() {
-        let a = answer(&archive(), "how many trend days did usdchf have in 2015").unwrap();
+        let a = answer(&archive(), "how many trend days did usdchf have in 2015", None).unwrap();
         assert_eq!(a.shape, "regime_days_year_zero");
         assert!(a.text.starts_with("None:"), "{}", a.text);
         assert!(!a.text.to_lowercase().contains("error"), "{}", a.text);
@@ -995,6 +1023,7 @@ mod tests {
         let a = answer(
             &archive(),
             "how long does a chop regime usually last on usdchf",
+            None,
         )
         .unwrap();
         assert_eq!(a.shape, "regime_duration");
@@ -1010,6 +1039,7 @@ mod tests {
         let a = answer(
             &archive(),
             "what usually happens around snb meetings for usdchf",
+            None,
         )
         .unwrap();
         assert_eq!(a.shape, "event_window");
@@ -1027,6 +1057,7 @@ mod tests {
         let a = answer(
             &archive(),
             "which market has the highest siren and is it also the riskiest",
+            None,
         )
         .unwrap();
         assert_eq!(a.shape, "extreme_today");
@@ -1043,6 +1074,7 @@ mod tests {
         let a = answer(
             &archive(),
             "what is the average change risk across the markets",
+            None,
         )
         .unwrap();
         assert_eq!(a.shape, "average_today");
@@ -1056,7 +1088,8 @@ mod tests {
         // the unfiltered ranking, which answers an easier question than the one asked.
         assert!(answer(
             &archive(),
-            "of the markets with an event within 10 days which is least calm"
+            "of the markets with an event within 10 days which is least calm",
+            None,
         )
         .is_none());
     }
@@ -1064,9 +1097,9 @@ mod tests {
     #[test]
     fn a_named_market_is_not_a_ranking_question() {
         // "which state is GBPUSD most likely in" asks about GBPUSD, not for a league table.
-        assert!(answer(&archive(), "which state is gbpusd most likely in right now").is_none());
+        assert!(answer(&archive(), "which state is gbpusd most likely in right now", None).is_none());
         // ...while an explicitly cross-market question still ranks.
-        assert!(answer(&archive(), "which market has the highest risk today").is_some());
+        assert!(answer(&archive(), "which market has the highest risk today", None).is_some());
     }
 
     #[test]
@@ -1074,7 +1107,7 @@ mod tests {
         // Regression guard: adding the archive briefly BROKE this question, because "how many"
         // routed it to a room that had no shape for it. A new capability that removes an old
         // answer is a net loss, whatever the aggregate metrics say.
-        let a = answer(&archive(), "how many forecasts have you sealed so far").unwrap();
+        let a = answer(&archive(), "how many forecasts have you sealed so far", None).unwrap();
         assert_eq!(a.shape, "ledger_totals");
         assert!(a.text.contains("12 forecasts"), "{}", a.text);
     }
@@ -1084,10 +1117,11 @@ mod tests {
         // Deliberately outside every shape: the archive must not improvise an adjacent number.
         assert!(answer(
             &archive(),
-            "what is the correlation between usdchf and gold"
+            "what is the correlation between usdchf and gold",
+            None,
         )
         .is_none());
-        assert!(answer(&archive(), "show me the worst week for usdchf this year").is_none());
+        assert!(answer(&archive(), "show me the worst week for usdchf this year", None).is_none());
     }
 
     #[test]
@@ -1102,4 +1136,39 @@ mod tests {
         ));
         assert!(!looks_historical("how many tiers are there"));
     }
+    #[test]
+    fn a_named_covered_market_never_falls_through_to_eurusd_history() {
+        // Audit AE-01: "how many crisis days did the yen have in 2015" used to answer from
+        // EUR/USD's history because the archive's own detector knows only the three majors.
+        // With the canonical hint, the history shapes miss and the caller refuses honestly.
+        let out = answer(
+            &archive(),
+            "how many crisis days did the yen have in 2015",
+            Some("USDJPY"),
+        );
+        if let Some(a) = &out {
+            assert!(
+                !a.text.contains("EUR/USD"),
+                "wrong-market substitution: {}",
+                a.text
+            );
+        }
+        let dated = answer(&archive(), "what was the regime on 2015-01-15", Some("BTC-USD"));
+        if let Some(a) = &dated {
+            assert!(
+                !a.text.contains("EUR/USD"),
+                "wrong-market substitution: {}",
+                a.text
+            );
+        }
+    }
+
+    #[test]
+    fn the_hint_outranks_the_local_detector_and_the_default() {
+        // The question names no market word the local detector knows; the hint decides.
+        let a = answer(&archive(), "how many crisis days in 2015", Some("USDCHF")).unwrap();
+        assert!(a.text.contains("USD/CHF"), "{}", a.text);
+        assert!(!a.text.contains("EUR/USD"), "{}", a.text);
+    }
+
 }

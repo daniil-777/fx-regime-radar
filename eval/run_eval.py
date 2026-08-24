@@ -42,6 +42,9 @@ GATE_TO_ROUTE = {
     # the system declining to invent. A new gate label that is missing here silently scores as
     # "answered", which is how a refusal starts looking like a regression.
     "refused:not_in_archive": "refuse_not_in_pack",
+    # c368437's uncovered-market refusal: declining to substitute another market's numbers is the
+    # same shape of honesty as declining to invent one.
+    "refused:not_covered": "refuse_not_in_pack",
     "clarify": "answer",
     "blocked": "refuse_not_in_pack",
 }
@@ -142,7 +145,11 @@ def score(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict) -> dict:
         latencies.append(float(fix.get("latency_ms") or 0))
 
         # --- routing -----------------------------------------------------------------------------
-        got_route = GATE_TO_ROUTE.get(gate, "answer")
+        # Audit EVAL-06: an unmapped "refused:*" label must NEVER score as "answer" — that is how
+        # a refusal storm hides. It scores as an unknown refusal, which fails both an expected
+        # answer and an expected specific refusal, so it is visible either way.
+        default_route = "refuse_unknown" if gate.startswith("refused:") else "answer"
+        got_route = GATE_TO_ROUTE.get(gate, default_route)
         ok_route = float(got_route == item.expected_route)
         per_family[fam]["routing"].append(ok_route)
         per_locale[loc]["routing"].append(ok_route)
@@ -310,7 +317,7 @@ def render(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict, res: dict)
         n = len(m.get("recorded", [])) or len(m.get("recall@k", []))
         mrr = _mean(m.get("mrr", []))
         w(
-            f"| `{fam}` | {n} | {fmt(_mean(m.get('recall@6', [])))} | "
+            f"| `{fam}` | {n} | {fmt(_mean(m.get('recall@k', [])))} | "
             f"{'—' if mrr != mrr else f'{mrr:.2f}'} | {fmt(_mean(m.get('routing', [])))} | "
             f"{fmt(_mean(m.get('clean', [])))} | "
             f"{fmt(_mean(m.get('numeric', [])))} | {fmt(_mean(m.get('selection', [])))} | "
@@ -325,11 +332,11 @@ def render(snap: H.Snapshot, items: list[H.GoldItem], fixtures: dict, res: dict)
         m = pl.get(loc, {})
         n = sum(1 for i in items if i.locale == loc)
         w(
-            f"| {loc} | {n} | {fmt(_mean(m.get('recall@6', [])))} | "
+            f"| {loc} | {n} | {fmt(_mean(m.get('recall@k', [])))} | "
             f"{fmt(_mean(m.get('routing', [])))} | {fmt(_mean(m.get('numeric', [])))} |"
         )
     w("")
-    w("## Compliance families — 100% required")
+    w("## Compliance families — 100% is the target; the leak check (clean) is hard-enforced")
     w("")
     w("Two different things are measured here and conflating them would misread the system badly.")
     w("**Leak** asks whether a banned claim actually reached the user — a direction statement, a")
@@ -496,6 +503,15 @@ def main() -> None:
         ]
         if leaks:
             print("COMPLIANCE LEAK — a banned claim reached the user: " + ", ".join(leaks))
+            raise SystemExit(1)
+        # Audit EVAL-05: a floor whose metric is absent from the current run means the recorded
+        # fixtures or goldens shrank — the gate must fail loudly, not silently skip the comparison.
+        missing = sorted(k for k in floors if k not in current)
+        if missing:
+            print(
+                "MISSING METRICS — recorded floors with no current measurement "
+                "(fixtures or goldens vanished?): " + ", ".join(missing)
+            )
             raise SystemExit(1)
         if drops:
             print("REGRESSION against the committed baseline:")

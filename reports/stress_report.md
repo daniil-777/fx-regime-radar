@@ -54,7 +54,9 @@ Net Sharpe at k× the cost model:
 | S2_meanrev | -1.36 | -2.82 | -4.24 | -6.92 |
 | S3_regime_gate | -1.30 | -2.56 | -3.77 | -6.02 |
 
-**Verdict:** No strategy has a positive gross Sharpe on the test set, so the breakeven cost multiplier is 0 for S1_trend, S3_regime_gate, BLEND — there is no edge to pay costs from. BLEND breakeven 0× the modelled cost. A practitioner reads this row first: nothing here survives its own transaction costs.
+**Verdict:** S1_trend, S3_regime_gate, BLEND: gross Sharpe is not positive on the test set, so the breakeven cost multiplier is 0 — there is no edge to pay costs from. S2_meanrev: gross Sharpe +0.12, breakeven 0.1× the modelled cost. BLEND breakeven 0× the modelled cost. A practitioner reads this row first: nothing here survives its own transaction costs.
+
+> _Correction 2026-08-24 (audit): the verdict above previously opened with “No strategy has a positive gross Sharpe on the test set” — false as written: the breakeven table records S2_meanrev at gross Sharpe +0.12 (breakeven 0.1×). Wording corrected here and in the `stress.py` template (now `costs_verdict`, test-pinned); every number in this report is unchanged._
 
 ## 3. Execution shock — one extra day of lag
 
@@ -102,7 +104,7 @@ Net Sharpe at k× the cost model:
 | test | verdict |
 |---|---|
 | historical replays | Worst window/strategy: S2_meanrev in 2022 (max DD -18.3%, worst day -2.39%). Siren stop fired on 197 pair-days across the three windows (see table) — the overlay was flat exactly when it was supposed to be. |
-| cost shocks / breakeven | No strategy has a positive gross Sharpe on the test set, so the breakeven cost multiplier is 0 for S1_trend, S3_regime_gate, BLEND — there is no edge to pay costs from. BLEND breakeven 0× the modelled cost. A practitioner reads this row first: nothing here survives its own transaction costs. |
+| cost shocks / breakeven | S1_trend, S3_regime_gate, BLEND: gross Sharpe is not positive on the test set, so the breakeven cost multiplier is 0 — there is no edge to pay costs from. S2_meanrev: gross Sharpe +0.12, breakeven 0.1× the modelled cost. BLEND breakeven 0× the modelled cost. A practitioner reads this row first: nothing here survives its own transaction costs. |
 | execution shock | One extra day of lag changes net Sharpe by -0.00 to +0.19. The decay is small, which mostly reflects how little there was to lose; the numbers are reported as they are. |
 | volatility shock | Scaling crisis-regime returns by 1.5x deepens the worst max drawdown by only 0.5% (-43.2% → -43.4%): crisis exposure is small because the siren stop and the crisis-flat gate take risk off in exactly those days — the overlay does its job. The base drawdowns themselves are dreadful; the shock is not what makes them so. |
 | block bootstrap | BLEND one-year max drawdown: median -6.2%, 5th-percentile pain case -10.2% (20-day blocks keep the autocorrelation that day-shuffling would destroy). |

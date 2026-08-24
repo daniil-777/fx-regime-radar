@@ -62,3 +62,25 @@ def test_window_stats() -> None:
     assert w["days"] == 3 and w["worst_day"] == -0.02
     assert w["return"] == pytest.approx((1.01 * 0.98 * 1.005) - 1)
     assert w["max_drawdown"] == pytest.approx(-0.02)
+
+
+def test_costs_verdict_never_makes_the_false_universal_claim() -> None:
+    """Audit correction: with one positive-gross strategy (the committed artifact's S2_meanrev),
+    the verdict must not open with 'No strategy has a positive gross Sharpe'."""
+    be = pd.DataFrame(
+        {
+            "strategy": ["S1_trend", "S2_meanrev", "S3_regime_gate", "BLEND"],
+            "gross_sharpe": [-0.30, 0.12, -0.03, -0.13],
+            "sharpe_at_1x": [-1.23, -1.36, -1.30, -2.18],
+            "breakeven_cost_mult": [0.0, 0.1, 0.0, 0.0],
+        }
+    )
+    text = stress.costs_verdict(be)
+    assert "No strategy has a positive gross Sharpe" not in text
+    assert (
+        "S2_meanrev" in text and "0.1" in text
+    )  # the positive-gross strategy is named with its multiplier
+    assert "S1_trend" in text and "S3_regime_gate" in text
+    # and when every strategy is truly negative-gross, the universal wording is allowed again
+    all_neg = be.assign(gross_sharpe=[-0.3, -0.1, -0.03, -0.13], breakeven_cost_mult=0.0)
+    assert "no edge to pay costs from" in stress.costs_verdict(all_neg)
