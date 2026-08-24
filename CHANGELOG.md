@@ -36,11 +36,21 @@ official documents.
   keys sorted, no raw text.
 - 30-question pre-registered route set (10/8/8/4 across the four kinds, 9 in DE/FR) runs in CI
   with fakes and the socket blocker: **30/30 routes, zero gate violations**.
-- **Pre-registered live targets, recorded before any run**: ≥27/30 routes · 0 gate violations ·
-  rules p50 < 5 ms · model p50 < 1.5 s · official_fact end-to-end p50 < 3 s. `make ask-eval`
-  could not run in this session — **no NEBIUS_API_KEY / TAVILY_API_KEY available** — so there is
-  no live number to report yet; the harness and `docs/ask-eval.md` writer are committed, and the
-  first keyed run's tables belong here, untuned, whatever they say.
+- **No Token Factory account needed (owner constraint, designed around, not patched around):**
+  rule (d) routes institution + document-verb questions ("Did the SNB…", "What did the ECB
+  decide…") deterministically, so ALL five outcomes work with zero model keys; the model lane
+  remains as an optional tail (Nebius if a key exists, else the narrator's Anthropic SDK with
+  `claude-haiku-4-5`, else fail-closed `unclear`). The Tavily key lives in the gitignored
+  Streamlit secrets, never in git.
+- **Live evaluation run (Tavily live, model lane keyless — recorded untuned):**
+  route accuracy **30/30** (target ≥ 27, perfect confusion diagonal) · gate violations **0** ·
+  rules p50 **0.03 ms** / p95 0.22 ms (target < 5 ms) · model p50 **not run** (no model key; the
+  registered shapes never call one) · official_fact end-to-end p50 **3,493 ms / p95 5,017 ms —
+  FAIL against the pre-registered 3,000 ms** (eight cold live search+extract round-trips; the
+  per-day cache serves repeats in < 1 ms). The number is the point: recorded, not tuned.
+  Full tables in `docs/ask-eval.md`. Live receipt spot-check: SNB slip → bis.org document,
+  receipt `8dbb1ce1`, sha `f829d4bb`, 1 credit; second ask 0.6 ms, `cache_hit=true`, 0 credits,
+  identical sha.
 - Known deviation, recorded in IDEAS.md (dated): this page lives in the Streamlit console for
   speed; the static customer-surface version with one endpoint belongs to phase 44's surface.
   Second recorded deviation: the spec's refusal sentence "we don't say what to buy" cannot pass

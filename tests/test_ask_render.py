@@ -143,11 +143,25 @@ def test_thirty_pre_registered_routes_and_zero_gate_violations(cache_tmp) -> Non
 
 
 def test_did_and_will_route_differently() -> None:
-    fake = FakeModel()
-    did = route("Did the SNB cut rates in June?", model=fake)
-    assert did.kind == "official_fact" and did.router == "model"
+    # Rule (d) decides the past-tense fact question deterministically (no model key needed);
+    # the advice-modality rule (b) still outranks it on the future-tense twin.
+    did = pre_route("Did the SNB cut rates in June?")
+    assert did is not None and did.kind == "official_fact" and did.router == "rules"
+    assert did.institution == "SNB"
     will = pre_route("Will the SNB cut rates in September?")
     assert will is not None and will.kind == "direction_or_advice" and will.router == "rules"
+
+
+def test_keyless_model_lane_fails_closed() -> None:
+    # No NEBIUS/ANTHROPIC key and no injected model: the router answers "unclear", never raises.
+    import ask.config as C
+
+    if C.nebius_key() or C.anthropic_key():
+        import pytest as _pytest
+
+        _pytest.skip("a live model key is configured in this environment")
+    routed, meta = route_with_meta("tell me a story about markets")
+    assert routed.kind == "unclear" and meta["model_id"] == "none"
 
 
 def test_search_payload_is_slip_only() -> None:

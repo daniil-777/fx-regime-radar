@@ -104,6 +104,67 @@ _CONDITION_TERMS = [
     "calme",
 ]
 
+# (d) institution + document verb -> official_fact, decided by rules so the page needs no model
+# key at all for its five outcomes (owner constraint: no Token Factory account; the model lane
+# stays as an optional tail). Both signals are required: an institution alone is context.
+_INSTITUTION_WORDS = [
+    ("bank of england", "BoE"),
+    ("federal reserve", "Fed"),
+    ("snb", "SNB"),
+    ("ezb", "ECB"),
+    ("bce", "ECB"),
+    ("ecb", "ECB"),
+    ("fed", "Fed"),
+    ("boe", "BoE"),
+    ("bis", "BIS"),
+]
+_DOC_VERBS = [
+    "did",
+    "decide",
+    "decided",
+    "say",
+    "said",
+    "announce",
+    "announced",
+    "publish",
+    "published",
+    "minutes",
+    "press release",
+    "statement",
+    "speech",
+    "gesagt",
+    "entschieden",
+    "beschlossen",
+    "angekündigt",
+    "veröffentlicht",
+    "décidé",
+    "dit",
+    "annoncé",
+    "publié",
+]
+
+
+def _fact_slip(q: str, lang: str) -> Route | None:
+    inst = next((code for word, code in _INSTITUTION_WORDS if word in q), None)
+    if inst is None or not any(v in q for v in _DOC_VERBS):
+        return None
+    doc = (
+        "minutes"
+        if "minutes" in q
+        else "press_release" if "press release" in q else "speech" if "speech" in q else "decision"
+    )
+    window = (
+        "month"
+        if any(w in q for w in ("month", "monat", "mois"))
+        else (
+            "week"
+            if any(w in q for w in ("week", "woche", "semaine"))
+            else "today" if any(w in q for w in ("today", "heute", "aujourd'hui")) else "none"
+        )
+    )
+    return Route(kind="official_fact", institution=inst, doc_type=doc, window=window, language=lang)
+
+
 _DE_HINTS = (
     "soll ich",
     "kaufen",
@@ -160,6 +221,10 @@ def pre_route(question: str) -> Route | None:
     # (b) direction/advice modality.
     if any(rx.search(q) for rx in _ADVICE_RES):
         return Route(kind="direction_or_advice", asset="fx_pair", language=lang)
+    # (d) institution + document verb: a past-tense fact question, answered with receipts.
+    fact = _fact_slip(q, lang)
+    if fact is not None:
+        return fact
     # (c) conditions vocabulary, incl. the pairs the pipeline tracks.
     if any(t in q for t in _CONDITION_TERMS + _pair_terms()):
         return Route(kind="conditions", asset="fx_pair", window="today", language=lang)

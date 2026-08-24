@@ -83,6 +83,41 @@ def parse_model_slip(payload: object) -> Route:
     return Route(router="model", **{k: payload[k] for k in _ENUMS})
 
 
+def _call_anthropic(question: str) -> dict:
+    """Optional tail lane via the SDK the narrator already depends on (no new dependency).
+
+    Used only when no NEBIUS_API_KEY exists but an ANTHROPIC_API_KEY does. Same contract as the
+    Token Factory call: enum JSON in the reply text, and the strict parser fails closed on
+    anything else (Haiku has no JSON mode; the parser IS the guarantee).
+    """
+    import anthropic
+
+    key = askcfg.anthropic_key()
+    if not key:
+        raise RuntimeError("no ANTHROPIC_API_KEY")
+    client = anthropic.Anthropic(api_key=key, max_retries=0, timeout=askcfg.MODEL_TIMEOUT_S)
+    response = client.messages.create(
+        model=askcfg.ASK_MODEL_ANTHROPIC,
+        max_tokens=120,
+        temperature=0,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": question}],
+    )
+    text = " ".join(b.text for b in response.content if b.type == "text").strip()
+    if text.startswith("```"):
+        text = text.strip("`").removeprefix("json").strip()
+    return json.loads(text)
+
+
+def default_model_lane() -> tuple[str, Callable[[str], dict]] | None:
+    """(model_id, callable) for the best available lane, or None when keyless."""
+    if askcfg.nebius_key():
+        return askcfg.ASK_MODEL, _call_token_factory
+    if askcfg.anthropic_key():
+        return askcfg.ASK_MODEL_ANTHROPIC, _call_anthropic
+    return None
+
+
 def route_with_meta(
     question: str, model: Callable[[str], dict] | None = None
 ) -> tuple[Route, dict]:
@@ -98,8 +133,18 @@ def route_with_meta(
     meta["latency_rules_ms"] = round((time.perf_counter() - t0) * 1000, 2)
     if ruled is not None:
         return ruled, meta
-    call = model or _call_token_factory
-    meta["model_id"] = askcfg.ASK_MODEL
+    if model is not None:
+        call: Callable[[str], dict] = model
+        meta["model_id"] = "injected"
+    else:
+        lane = default_model_lane()
+        if lane is None:
+            # Keyless: the enum-only contract fails closed to "unclear" — never an exception.
+            return (
+                Route(kind="unclear", language=detect_language(question.lower()), router="model"),
+                meta,
+            )
+        meta["model_id"], call = lane
     t1 = time.perf_counter()
     try:
         decided = parse_model_slip(call(question))

@@ -14,6 +14,9 @@ from fxradar import config as fxconfig
 # chat completions). The live eval records the id it actually ran with; if the catalogue rotates,
 # `make ask-eval` fails fast with the server's message rather than guessing a replacement.
 ASK_MODEL = "meta-llama/Meta-Llama-3.1-8B-Instruct-fast"
+# The optional Anthropic lane (the narrator's SDK is already a dependency): used only when no
+# NEBIUS_API_KEY exists but an ANTHROPIC_API_KEY does. Haiku is the classification tier.
+ASK_MODEL_ANTHROPIC = "claude-haiku-4-5"
 PROMPT_VERSION = "ask-route-v1"
 
 NEBIUS_URL = "https://api.tokenfactory.nebius.com/v1/chat/completions"
@@ -47,3 +50,7 @@ def nebius_key() -> str | None:
 
 def tavily_key() -> str | None:
     return _key("TAVILY_API_KEY")
+
+
+def anthropic_key() -> str | None:
+    return _key("ANTHROPIC_API_KEY")
