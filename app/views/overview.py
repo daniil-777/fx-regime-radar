@@ -192,6 +192,10 @@ ui.condition_banner(
     trace,
     eyebrow_extra=" · time machine" if time_machine else "",
 )
+try:  # inside the app's navigation this is a real page link ...
+    st.page_link(str(Path(__file__).with_name("ask.py")), label="Ask →")
+except Exception:  # ... and a page run standalone (tests, direct run) gets a plain link
+    st.markdown('<a href="ask" target="_self">Ask →</a>', unsafe_allow_html=True)
 if trace:
     st.markdown(
         '<div class="fx-dim" style="font-size:0.72rem;margin:-6px 0 6px 0">90-day change-risk trace · shaded = 90 % conformal band · regime word and dot carry the state, colour only repeats it</div>',

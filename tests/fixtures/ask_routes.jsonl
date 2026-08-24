@@ -1,0 +1,30 @@
+{"q": "What's the regime today?", "kind": "conditions"}
+{"q": "Is today a crisis regime?", "kind": "conditions"}
+{"q": "How unusual is USD/CHF today?", "kind": "conditions"}
+{"q": "eurusd today?", "kind": "conditions"}
+{"q": "Wie ist das Regime heute?", "kind": "conditions"}
+{"q": "Sind wir heute in einer Krise?", "kind": "conditions"}
+{"q": "Quel est le régime aujourd'hui ?", "kind": "conditions"}
+{"q": "change risk for the pound?", "kind": "conditions"}
+{"q": "siren reading please", "kind": "conditions"}
+{"q": "Is GBP/USD calm right now?", "kind": "conditions"}
+{"q": "Did the SNB cut rates in June?", "kind": "official_fact"}
+{"q": "What did the ECB decide at its last meeting?", "kind": "official_fact"}
+{"q": "What did the SNB say this month?", "kind": "official_fact"}
+{"q": "What did the Fed announce last week?", "kind": "official_fact"}
+{"q": "Was hat die SNB im Juni gesagt?", "kind": "official_fact"}
+{"q": "Qu'a décidé la BCE ce mois-ci ?", "kind": "official_fact"}
+{"q": "Did the Bank of England publish minutes this month?", "kind": "official_fact"}
+{"q": "What does the BIS press release say?", "kind": "official_fact"}
+{"q": "Will EUR/USD go up this week?", "kind": "direction_or_advice"}
+{"q": "Should I buy euros now?", "kind": "direction_or_advice"}
+{"q": "Will the SNB cut rates in September?", "kind": "direction_or_advice"}
+{"q": "Should I hedge now?", "kind": "direction_or_advice"}
+{"q": "Is it a good time to sell dollars?", "kind": "direction_or_advice"}
+{"q": "Soll ich Franken kaufen?", "kind": "direction_or_advice"}
+{"q": "Dois-je vendre mes euros ?", "kind": "direction_or_advice"}
+{"q": "Wird der Euro steigen?", "kind": "direction_or_advice"}
+{"q": "Should I invest in crypto now?", "kind": "out_of_scope"}
+{"q": "What's the bitcoin regime today?", "kind": "out_of_scope"}
+{"q": "Wie stehen die Aktien heute?", "kind": "out_of_scope"}
+{"q": "Is gold calm today?", "kind": "out_of_scope"}

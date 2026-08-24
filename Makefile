@@ -7,7 +7,7 @@ PYTHON  := $(BIN)/python
 EVAL_BASE ?= http://127.0.0.1:8090
 AVATAR_BASE ?= http://127.0.0.1:8080
 
-.PHONY: setup test lint fmt run pipeline refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate avatar model-lab treasury weekly metrics storms verify-ledger
+.PHONY: setup test lint fmt run pipeline ask-eval refit train-universe set-repo ledger viz3d gif docker docker-down lint-ui tokens rust-keys features-ext challenger event-study cb-fetch cb-features cb-gate avatar model-lab treasury weekly metrics storms verify-ledger
 
 setup:            ## create venv and install everything (idempotent)
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -86,6 +86,9 @@ avatar:           ## start the AI presenter (open mode, dev) → http://localhos
 
 model-lab:        ## race every regime model (hmm/jump/gmm) + forecaster engine (xgb/histgb/logistic) -> reports/model_lab.md
 	FXRADAR_UNIVERSE=$(UNIVERSE) $(PYTHON) -m fxradar.model_lab
+
+ask-eval:         ## phase 46: live router eval (needs NEBIUS_API_KEY + TAVILY_API_KEY; never in CI)
+	$(PYTHON) scripts/ask_eval.py
 
 verify-ledger:    ## public proof: recompute the ledger hash chain with the standard library only
 	python3 scripts/verify_ledger.py

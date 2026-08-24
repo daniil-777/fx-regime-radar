@@ -26,6 +26,7 @@ VIEWS = Path(__file__).resolve().parent / "views"
 pages = {
     "Radar": [
         st.Page(str(VIEWS / "overview.py"), title="Overview", default=True),
+        st.Page(str(VIEWS / "ask.py"), title="Ask"),
         st.Page(str(VIEWS / "pairs.py"), title="Pairs"),
         st.Page(str(VIEWS / "treasury.py"), title="Treasury"),
         st.Page(str(VIEWS / "storms.py"), title="Storms"),
