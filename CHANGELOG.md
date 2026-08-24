@@ -2,6 +2,27 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.41.1 — ask: the advice question gets the sanctioned answer (2026-08-24)
+
+"Should I buy euros now?" still refuses the direction call — rule 5 is not negotiable — but the
+refusal card now carries the **deterministic decision-support panel** when the owner turns it on
+(`FXRADAR_ASK_ADVICE=1`, or the avatar's existing `FXRADAR_AVATAR_ADVICE`; off by default). This
+is rule 4's amendment applied to the Ask page: the panel VOICES `data/decision_table.json` — the
+traffic light (hedge/wait/ladder in the Treasury page's own colours), the balanced-tolerance hedge
+ratio, the published one-week 99% VaR and expected shortfall, the review trigger, and the table's
+own disclosure line, with a link to the full ladder on Treasury. No model writes a word of it.
+
+- The pair is resolved from currency words ("euros" → EUR/USD, "francs" → USD/CHF, "pound" →
+  GBP/USD) via a shared, tested detector — the audit's wrong-market lesson applied before it
+  could recur; the default pair is always named on the card.
+- The panel text passes all five gates; gate G4 earned its keep during the build by rejecting the
+  first draft ("one-week downside" — "downside" is banned vocabulary; reworded to "risk numbers").
+- Flag off, nothing changes: the card is byte-identical to the plain refusal, so the committed
+  eval fixtures, the 30-route set and the public default are untouched. Tests assert the gate
+  verdict BEFORE any skip, so a tripped gate can never hide again.
+
+Gate: 391 tests green (+2), ruff/black/lint-ui/lint-vocabulary green.
+
 ## v2.41.0 — phase 46: ask-with-receipts (2026-08-24)
 
 One public **Ask** page: one input, five possible outcomes, every outcome decided by an enum and

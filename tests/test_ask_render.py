@@ -238,3 +238,44 @@ def test_fail_closed_and_defence_in_depth() -> None:
     finally:
         route_mod.pre_route = orig
     assert routed.kind == "direction_or_advice" and meta["override"] == "rules"
+
+
+def test_decision_support_panel_is_flag_gated_and_gate_clean(monkeypatch) -> None:
+    """Rule 4's amendment on the Ask page: with the flag OFF the refusal card is unchanged;
+    with it ON, the deterministic decision table is voiced — templated, gated, never a model."""
+    r = pre_route("Should I buy euros now?")
+    assert r is not None and r.kind == "direction_or_advice"
+    # default: no panel, card identical to before
+    monkeypatch.delenv("FXRADAR_ASK_ADVICE", raising=False)
+    monkeypatch.delenv("FXRADAR_AVATAR_ADVICE", raising=False)
+    plain = R.render(r, None, STATS, list(PAIRS), TAG)
+    assert plain.advice == {}
+    # flag on: the published row is voiced, and every gate still passes
+    monkeypatch.setenv("FXRADAR_ASK_ADVICE", "1")
+    card = R.apply_gates(r, R.render(r, None, STATS, list(PAIRS), TAG), None, STATS, TAG)
+    # gate verdict FIRST: a tripped gate must fail the test, never hide behind the skip
+    assert card.gate == "none", f"gate {card.gate} tripped on the decision panel"
+    if not card.advice:
+        pytest.skip("decision_table.json not present in this checkout")
+    assert card.advice["light"] in {"hedge", "wait", "ladder"}
+    assert "EUR/USD" in card.advice["text"]
+    assert "decision support" in card.advice["disclosure"]
+    from fxradar.narrate import DIRECTION_WORDS
+
+    assert not DIRECTION_WORDS.search(card.advice["text"] + " " + card.advice["review"])
+
+
+def test_decision_support_names_the_asked_market(monkeypatch) -> None:
+    """The audit's wrong-market lesson: francs get USD/CHF's row, never the euro default."""
+    monkeypatch.setenv("FXRADAR_ASK_ADVICE", "1")
+    from ask.rules import detect_pair_word
+
+    pair = detect_pair_word("should i sell my francs now?")
+    assert pair == "USDCHF"
+    chf_stats = {**STATS, "pair": "USDCHF"}
+    r = pre_route("should i sell my francs now?")
+    card = R.apply_gates(r, R.render(r, None, chf_stats, list(PAIRS), TAG), None, chf_stats, TAG)
+    assert card.gate == "none", f"gate {card.gate} tripped on the decision panel"
+    if not card.advice:
+        pytest.skip("decision_table.json not present in this checkout")
+    assert "USD/CHF" in card.advice["text"] and "EUR/USD" not in card.advice["text"]

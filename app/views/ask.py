@@ -69,13 +69,13 @@ def _latest_stats(mtime: float) -> dict:
 
 
 def _stats_for(question: str) -> dict:
-    """The pair the question names, else the lead pair — always named on the card."""
+    """The pair the question names (codes or currency words), else the lead pair — always
+    named on the card, so the default is disclosed, never silent."""
+    from ask.rules import detect_pair_word
+
     stats = _latest_stats(config.REGIMES_PATH.stat().st_mtime)
-    q = question.lower()
-    for p in config.PAIRS:
-        if p.lower() in q.replace("/", ""):
-            return stats[p]
-    return stats[config.PAIRS[0]]
+    named = detect_pair_word(question)
+    return stats[named] if named in stats else stats[config.PAIRS[0]]
 
 
 def _chip(text: str) -> str:
@@ -106,6 +106,27 @@ def _card_html(card) -> str:
         if chips or src
         else ""
     )
+    advice_html = ""
+    if card.advice:
+        from fxradar import treasury as _tre
+
+        a = card.advice
+        lcolor = ui.REGIME_COLORS.get(_tre.LIGHT_COLOR_REGIME.get(a["light"], ""), ui.TEXT)
+        advice_html = (
+            f'<div style="border-top:1px solid {ui.LINE};margin-top:14px;padding-top:12px;">'
+            f'<div style="font-family:{ui.FONT_MONO};font-size:10.5px;letter-spacing:.12em;'
+            f'text-transform:uppercase;color:{ui.DIM};">{html.escape(a["heading"])}</div>'
+            f'<div style="margin:8px 0 6px;"><span style="color:{lcolor};font-weight:500;'
+            f'font-size:17px;">{html.escape(a["light"].upper())}</span>'
+            f'<span style="font-family:{ui.FONT_MONO};font-size:12px;color:{ui.MUTED};"> · balanced tolerance</span></div>'
+            f'<div style="color:{ui.MUTED};max-width:70ch;">{html.escape(a["text"])}</div>'
+            f'<div style="color:{ui.DIM};font-size:12.5px;margin-top:6px;max-width:70ch;">'
+            f'Review: {html.escape(a["review"])} · <a href="treasury" target="_self" '
+            f'style="color:{ui.ACCENT};">full ladder on Treasury →</a></div>'
+            f'<div style="font-family:{ui.FONT_MONO};font-size:11px;color:{ui.DIM};margin-top:8px;'
+            f'max-width:70ch;">{html.escape(a["disclosure"])}</div>'
+            f"</div>"
+        )
     strip_html = (
         f'<div style="border-top:1px solid {ui.LINE};margin-top:14px;padding-top:10px;">'
         f'<span style="color:{color};font-weight:500;">{html.escape(regime)}</span>'
@@ -117,7 +138,7 @@ def _card_html(card) -> str:
         f'<div style="font-size:17px;color:{ui.TEXT};">{html.escape(card.verdict)}</div>'
         f'<div style="font-family:{ui.FONT_MONO};font-size:11.5px;color:{ui.DIM};margin:2px 0 10px;">{html.escape(card.subline)}</div>'
         f'<div style="color:{ui.MUTED};max-width:70ch;">{html.escape(card.body)}</div>'
-        f"{quote}{receipts}{strip_html}"
+        f"{quote}{receipts}{advice_html}{strip_html}"
         f'<div style="font-size:12px;color:{ui.DIM};margin-top:12px;">{html.escape(card.footer_note)}</div>'
         f'<div style="font-family:{ui.FONT_MONO};font-size:11.5px;color:{ui.DIM};margin-top:4px;">{html.escape(card.trust_line)}</div>'
         f"</div>"

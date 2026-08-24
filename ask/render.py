@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from dataclasses import dataclass, field
 
@@ -36,6 +37,47 @@ _ASSET_WORDS = {
 
 SORTED_NOTE = "Questions are sorted by an AI model; answers are templated from data."
 FOOTER = f"{DISCLAIMER} {SORTED_NOTE}"
+
+
+def advice_enabled() -> bool:
+    """Rule 4's amendment, applied to this page: decision support is an owner decision, off by
+    default (FinSA note in the table's compliance field). Honors the avatar's flag too."""
+    return "1" in {os.environ.get("FXRADAR_ASK_ADVICE"), os.environ.get("FXRADAR_AVATAR_ADVICE")}
+
+
+def decision_support(pair: str) -> dict:
+    """The deterministic decision engine's published row for `pair`, ready to render.
+
+    Golden rule 4 (amended): decision support may be VOICED but never generated — every word
+    here is a template over data/decision_table.json, which the pipeline computed. Returns {}
+    when the flag is off, the artifact is missing, or the pair has no row: the card then stays
+    exactly the plain refusal, so nothing new can break the default path.
+    """
+    if not advice_enabled():
+        return {}
+    try:
+        table = json.loads((fxconfig.DATA_DIR / "decision_table.json").read_text())
+        row = table["pairs"][pair]["balanced"]
+    except Exception:
+        return {}
+    pretty = f"{pair[:3]}/{pair[3:]}"
+    ratio = f"{float(row['hedge_ratio']) * 100:.0f}"
+    var = f"{float(row['var_99_1w']) * 100:.1f}"
+    es = f"{float(row['es_99_1w']) * 100:.1f}"
+    light = str(row["light"])
+    text = (
+        f"For {pretty} today the published decision table reads {light.upper()} "
+        f"(balanced tolerance): hedge ratio {ratio}%, regime {row['regime']}. "
+        f"The published one-week risk numbers behind it: 99% VaR {var}%, expected shortfall {es}%."
+    )
+    return {
+        "heading": "Decision support — computed, not advised",
+        "light": light,
+        "text": text,
+        "review": str(row.get("review_trigger", "")),
+        "disclosure": str(table.get("disclosure", "")),
+        "numbers": [ratio, var, es, "99", "1"],
+    }
 
 
 def _refusals() -> dict:
@@ -80,6 +122,7 @@ class Card:
     quote: str = ""  # verbatim passage; the ONLY non-templated text; rendered as quotation
     receipts: list = field(default_factory=list)
     source_url: str = ""
+    advice: dict = field(default_factory=dict)  # the deterministic decision panel; {} = none
     strip: dict = field(default_factory=dict)
     footer_note: str = FOOTER
     trust_line: str = ""
@@ -148,6 +191,7 @@ def render(
             "sorted by rule, no model call" if route.router == "rules" else "sorted by the model",
             f"{first} Here's what's true today.",
             receipts=_borrowed_receipts(route),
+            advice=decision_support(str(stats["pair"])),
             strip=strip,
             trust_line=trust,
         )
@@ -234,7 +278,16 @@ def g3_passage_hash(card: Card, evidence: Evidence | None) -> str | None:
 
 def g4_words(card: Card) -> str | None:
     """Product-authored strings pass the direction-word gate; the quotation is document text."""
-    authored = " ".join([card.verdict, card.body, card.strip.get("text", ""), card.footer_note])
+    authored = " ".join(
+        [
+            card.verdict,
+            card.body,
+            card.strip.get("text", ""),
+            card.footer_note,
+            card.advice.get("text", ""),
+            card.advice.get("review", ""),
+        ]
+    )
     return "G4" if DIRECTION_WORDS.search(authored) else None
 
 
@@ -247,7 +300,16 @@ def g5_numbers(card: Card, stats: dict, evidence: Evidence | None) -> str | None
     allowed = {f["risk"], f["lo"], f["hi"], f["siren"], "5", "100"}  # 5-day horizon, siren scale
     if evidence is not None:
         allowed |= set(_NUM_RE.findall(evidence.seen_date))
-    claimed = " ".join([card.verdict, card.subline, card.body, card.strip.get("text", "")])
+    allowed |= set(card.advice.get("numbers", []))  # the decision table's own published values
+    claimed = " ".join(
+        [
+            card.verdict,
+            card.subline,
+            card.body,
+            card.strip.get("text", ""),
+            card.advice.get("text", ""),
+        ]
+    )
     return None if set(_NUM_RE.findall(claimed)) <= allowed else "G5"
 
 

@@ -208,6 +208,40 @@ def _pair_terms() -> list[str]:
     return terms
 
 
+_PAIR_WORDS = [
+    ("euro", "EURUSD"),
+    ("euros", "EURUSD"),
+    ("eur", "EURUSD"),
+    ("franc", "USDCHF"),
+    ("francs", "USDCHF"),
+    ("swissie", "USDCHF"),
+    ("chf", "USDCHF"),
+    ("pound", "GBPUSD"),
+    ("pounds", "GBPUSD"),
+    ("sterling", "GBPUSD"),
+    ("cable", "GBPUSD"),
+    ("gbp", "GBPUSD"),
+]
+
+
+def detect_pair_word(question: str) -> str | None:
+    """The pair a question names in words ("euros", "franc") or codes; None when unnamed.
+
+    The audit's wrong-market lesson applies here too: a question about francs must never get
+    the euro's numbers by default. Codes first, then currency words, whole-word matched.
+    """
+    q = question.lower()
+    compact = "".join(c for c in q if c.isalnum())
+    for pair in fxconfig.PAIRS:
+        if pair.lower() in compact:
+            return pair
+    words = set(re.split(r"[^a-z]+", q))
+    for word, pair in _PAIR_WORDS:
+        if word in words and pair in fxconfig.PAIRS:
+            return pair
+    return None
+
+
 def pre_route(question: str) -> Route | None:
     """Ordered rules on the lower-cased question; under 1 ms; None means 'ask the model'."""
     q = question.lower().strip()
