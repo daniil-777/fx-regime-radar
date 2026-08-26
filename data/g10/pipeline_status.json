@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-08-25T06:51:15Z",
-  "data_through": "2026-08-24",
+  "last_run_utc": "2026-08-26T06:53:15Z",
+  "data_through": "2026-08-25",
   "rows": {
-    "prices": 55846,
-    "features": 55246,
-    "regimes": 55246
+    "prices": 55856,
+    "features": 55256,
+    "regimes": 55256
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -14,70 +14,70 @@
   },
   "ecb_check": {
     "EURUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.20003727121625983,
+      "n_compared": 765,
+      "mean_abs_pct": 0.1998468357038535,
       "max_abs_pct": 2.2389805612301137
     },
     "USDJPY": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.2973865499241597,
+      "n_compared": 765,
+      "mean_abs_pct": 0.29708071328635677,
       "max_abs_pct": 2.3509558730238003
     },
     "GBPUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.21978629400395883,
+      "n_compared": 765,
+      "mean_abs_pct": 0.21955926313162327,
       "max_abs_pct": 1.498653615794665
     },
     "USDCAD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.13733626169377644,
+      "n_compared": 765,
+      "mean_abs_pct": 0.1373378147629491,
       "max_abs_pct": 0.9995194152126561
     },
     "AUDUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.2941409594356069,
+      "n_compared": 765,
+      "mean_abs_pct": 0.293784160956037,
       "max_abs_pct": 3.502911996096069
     },
     "USDCHF": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.23070722393760495,
+      "n_compared": 765,
+      "mean_abs_pct": 0.2305180153821656,
       "max_abs_pct": 2.010446310950397
     },
     "NZDUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.3137648197244834,
+      "n_compared": 765,
+      "mean_abs_pct": 0.31335646973216036,
       "max_abs_pct": 2.6430023601245556
     },
     "EURGBP": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.14379530501387194,
+      "n_compared": 765,
+      "mean_abs_pct": 0.1436119209848198,
       "max_abs_pct": 1.1702174665456522
     },
     "EURJPY": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.27701103190224546,
+      "n_compared": 765,
+      "mean_abs_pct": 0.276667230875273,
       "max_abs_pct": 2.481091231898728
     },
     "USDSEK": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.32156321936952004,
+      "n_compared": 765,
+      "mean_abs_pct": 0.32115596208081765,
       "max_abs_pct": 2.076458936151872
     }
   },
   "stage_seconds": {
-    "data": 6.68,
-    "features": 0.28,
-    "hmm": 12.14,
+    "data": 6.95,
+    "features": 0.24,
+    "hmm": 7.65,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 2.7,
+    "forecaster": 2.3,
     "challenger": 0.0,
-    "siren": 1.97,
-    "bocpd": 4.76,
-    "conformal": 0.09,
-    "drift": 27.66,
+    "siren": 1.7,
+    "bocpd": 3.52,
+    "conformal": 0.08,
+    "drift": 20.39,
     "ledger": 0.08,
-    "narrator": 0.96,
+    "narrator": 0.8,
     "postmortem": 0.02,
     "advisor": 0.23,
     "treasury": 0.0,
