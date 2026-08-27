@@ -1343,7 +1343,7 @@ fn state_cue_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
         Regex::new(
-            r"\b(how (is|are|does|do|s)|hows|what (is|are|about)|whats|look|looks|looking|doing|today|right now|currently|current|regime|condition|conditions|state of|situation|siren|read on|tell me about|status)\b",
+            r"\b(how (is|are|does|do|s)|hows|what (is|are|about)|whats|look|looks|looking|doing|today|right now|currently|current|regime|condition|conditions|state of|situation|siren|read on|tell me about|status|change risk|band|volatil\w*|consensus|probabilit\w*|confiden\w*)\b",
         )
         .expect("static regex")
     })
@@ -1388,6 +1388,13 @@ pub fn market_lookup_pair<'a>(
     q_lower: &str,
 ) -> Option<(&'a MarketUniverse, &'a MarketPair, String)> {
     if out_of_scope_re().is_match(q_lower) {
+        return None;
+    }
+    // "what's the average change risk across the three?" asks for a COMPUTED number. The rule is
+    // "we compute nothing in conversation": aggregates belong to the archive's average shape (which
+    // itself declines when the user supplies the numbers) or to an honest refusal — never to a
+    // single market's condition read that merely sounds responsive.
+    if q_lower.contains("average") || q_lower.contains(" mean ") {
         return None;
     }
     let words = q_lower.split_whitespace().count();
@@ -2151,13 +2158,21 @@ pub fn replay_deterministic(st: &AppState, question: &str) -> ReplayOutcome {
         .archive()
         .and_then(|a| crate::archive::answer(&a, &q_lower, named_code.as_deref()))
     {
-        step("archive", "pass", found.text)
+        Step {
+            route: "archive",
+            gate_label: "pass",
+            forced_card: crate::archive::card_for_shape(found.shape).map(str::to_string),
+            text: found.text,
+        }
     } else if let Some((uni, blk, pair)) = market_lookup_pair(&pack, &q_lower) {
         check(Step {
             route: "template",
             gate_label: "pass",
             text: market_answer(uni, blk),
-            forced_card: Some(format!("condition_card|pair={pair}")),
+            forced_card: Some(format!(
+                "{}|pair={pair}",
+                if q_lower.contains("volatil") { "vol_trace" } else { "condition_card" }
+            )),
         })
     } else {
         match faq_best(&pack.faq, question) {
@@ -2559,7 +2574,7 @@ async fn brain_inner(
             } else if found.shape.ends_with("_empty") || found.shape.ends_with("_missing") {
                 m::empty_result("no_data_yet");
             }
-            return Ok(finish(
+            return Ok(finish_with(
                 &st,
                 &req.session_id,
                 &question,
@@ -2567,6 +2582,7 @@ async fn brain_inner(
                 "archive",
                 "pass",
                 t0,
+                crate::archive::card_for_shape(found.shape),
             ));
         }
     }
@@ -2616,7 +2632,10 @@ async fn brain_inner(
                 Some((uni, blk, pair)) => {
                     candidate = market_answer(uni, blk);
                     source = "template";
-                    forced_card = Some(format!("condition_card|pair={pair}"));
+                    forced_card = Some(format!(
+                        "{}|pair={pair}",
+                        if q_lower.contains("volatil") { "vol_trace" } else { "condition_card" }
+                    ));
                 }
                 None => match faq_best(&pack.faq, &effective) {
                     // A definition is not an answer to "what was the change risk a month ago". If

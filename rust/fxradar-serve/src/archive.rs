@@ -100,6 +100,16 @@ pub struct LedgerTotals {
 }
 
 #[derive(Deserialize, Clone, Debug, Default)]
+pub struct NextEvent {
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub date: String,
+    #[serde(default)]
+    pub days: i64,
+}
+
+#[derive(Deserialize, Clone, Debug, Default)]
 pub struct Archive {
     #[serde(default)]
     pub ledger: LedgerTotals,
@@ -109,6 +119,8 @@ pub struct Archive {
     pub data_through: String,
     #[serde(default)]
     pub daily_pairs: Vec<String>,
+    #[serde(default)]
+    pub next_events: Vec<NextEvent>,
     #[serde(default)]
     pub markets_total: i64,
     #[serde(default)]
@@ -203,8 +215,7 @@ pub fn detect_pair_public(q: &str) -> Option<String> {
     detect_pair(q)
 }
 
-fn detect_pair(q: &str) -> Option<String> {
-    const WORDS: [(&str, &str); 14] = [
+const PAIR_WORDS: [(&str, &str); 14] = [
         ("eurusd", "EURUSD"),
         ("eur/usd", "EURUSD"),
         ("euro", "EURUSD"),
@@ -219,15 +230,34 @@ fn detect_pair(q: &str) -> Option<String> {
         ("cable", "GBPUSD"),
         ("pound", "GBPUSD"),
         ("livre", "GBPUSD"),
-    ];
+];
+
+fn detect_pair(q: &str) -> Option<String> {
     let compact: String = q.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
-    for (word, code) in WORDS {
+    for (word, code) in PAIR_WORDS {
         let w: String = word.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
         if compact.contains(&w) {
             return Some(code.to_string());
         }
     }
     None
+}
+
+/// Every distinct market the question names, in order of appearance — the compare shape needs
+/// two, and "is the euro more risky than the pound" must never collapse to the EUR/GBP cross.
+fn detect_pairs(q: &str) -> Vec<String> {
+    let compact: String = q.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
+    let mut found: Vec<(usize, String)> = Vec::new();
+    for (word, code) in PAIR_WORDS {
+        let w: String = word.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
+        if let Some(i) = compact.find(&w) {
+            if !found.iter().any(|(_, c)| c == code) {
+                found.push((i, code.to_string()));
+            }
+        }
+    }
+    found.sort_by_key(|(i, _)| *i);
+    found.into_iter().map(|(_, c)| c).collect()
 }
 
 /// Is the question about a NUMBER OF DAYS, rather than merely containing the word "today"?
@@ -294,6 +324,27 @@ fn detect_date(q: &str) -> (Option<String>, Option<String>, Option<String>) {
     }
 }
 
+/// The board card that best illustrates each shape — before this existed, a date question
+/// rendered VaR bars beside a perfectly good sentence. None lets the selector decide.
+pub fn card_for_shape(shape: &str) -> Option<&'static str> {
+    match shape {
+        "regime_on_date" | "regime_on_date_missing" | "value_in_past" => {
+            Some("regime_timeline_ribbon")
+        }
+        "regime_days_month" | "regime_days_year" | "regime_days_year_zero"
+        | "regime_days_year_empty" => Some("move_frequency_bars"),
+        "regime_duration" => Some("regime_timeline_ribbon"),
+        "metric_week_change" => Some("risk_trace"),
+        "compare_two_markets" | "extreme_today" | "average_today" => Some("pair_compare_table"),
+        "next_event" => Some("event_countdown_strip"),
+        "compare_period" => Some("risk_trace"),
+        "episode_summary" => Some("storm_replay_mini"),
+        // event_window deliberately unmapped: "how does today compare with the SNB week" deserves
+        // the storm replay the selector already picks, not a countdown to the next meeting.
+        _ => None,
+    }
+}
+
 /// The answer, plus the shape that produced it, so the caller can record provenance.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ArchiveAnswer {
@@ -313,7 +364,12 @@ pub fn answer(archive: &Archive, q_lower: &str, named: Option<&str>) -> Option<A
     let hint: Option<String> = named.map(|s| s.to_string());
 
     // --- shape 1: how many markets are in a regime right now -------------------------------------
-    if (q.contains("how many") || q.contains("anything") || q.contains("any market"))
+    if (q.contains("how many")
+        || q.contains("anything")
+        || q.contains("any market")
+        || q.contains("which market")
+        || q.contains("which pairs")
+        || q.contains("which of"))
         && (q.contains("market")
             || q.contains("pair")
             || q.contains("board")
@@ -351,6 +407,121 @@ pub fn answer(archive: &Archive, q_lower: &str, named: Option<&str>) -> Option<A
                     }
                 ),
                 shape: "count_today",
+            });
+        }
+    }
+
+    // --- shape 1b: compare two named markets, today ------------------------------------------------
+    let comparative = q.contains(" than ")
+        || q.contains(" versus ")
+        || q.contains(" vs ")
+        || q.contains("riskier")
+        || q.contains("more risky")
+        || q.contains("safer")
+        || q.contains("calmer");
+    if comparative {
+        let named = detect_pairs(q);
+        if named.len() >= 2 {
+            if let (Some(a), Some(b)) = (archive.today.get(&named[0]), archive.today.get(&named[1]))
+            {
+                let (pa, pb) = (pretty(&named[0]), pretty(&named[1]));
+                let (ra, rb) = (a.risk.unwrap_or(f64::NAN), b.risk.unwrap_or(f64::NAN));
+                let lead = if ra > rb {
+                    format!("{pa} carries the higher change risk today")
+                } else if rb > ra {
+                    format!("{pb} carries the higher change risk today")
+                } else {
+                    "they read the same change risk today".to_string()
+                };
+                return Some(ArchiveAnswer {
+                    text: format!(
+                        "{pa} reads {} with change risk {:.2}; {pb} reads {} with change risk \
+                         {:.2} — {}. That is a reading of conditions, not a forecast.",
+                        a.regime, ra, b.regime, rb, lead
+                    ),
+                    shape: "compare_two_markets",
+                });
+            }
+        }
+    }
+
+    // --- shape 1c: how a published metric moved this week (the majors' daily maps) ----------------
+    if (q.contains("this week")
+        || q.contains("past week")
+        || q.contains("over the week")
+        || q.contains("last 5 days")
+        || q.contains("recent days"))
+        && (q.contains("risk") || q.contains("siren"))
+    {
+        let pair = hint
+            .clone()
+            .or_else(|| detect_pair(q))
+            .unwrap_or_else(|| "EURUSD".into());
+        if let Some(h) = archive.pairs.get(&pair) {
+            let wants_siren = q.contains("siren");
+            let map = if wants_siren { &h.daily_siren } else { &h.daily_risk };
+            let mut dates: Vec<&String> = map.keys().collect();
+            dates.sort();
+            if dates.len() >= 6 {
+                let (then_d, now_d) = (dates[dates.len() - 6], dates[dates.len() - 1]);
+                if let (Some(Some(then)), Some(Some(now))) = (map.get(then_d), map.get(now_d)) {
+                    let name = if wants_siren { "siren" } else { "change risk" };
+                    let (f_then, f_now) = if wants_siren {
+                        (format!("{then:.0}"), format!("{now:.0}"))
+                    } else {
+                        (format!("{then:.2}"), format!("{now:.2}"))
+                    };
+                    let verdict = if now > then {
+                        "has picked up"
+                    } else if now < then {
+                        "has eased"
+                    } else {
+                        "is unchanged"
+                    };
+                    return Some(ArchiveAnswer {
+                        text: format!(
+                            "{} {name} read {f_then} on {then_d} and {f_now} on {now_d} — over \
+                             the last five trading days it {verdict}.",
+                            pretty(&pair)
+                        ),
+                        shape: "metric_week_change",
+                    });
+                }
+            }
+        }
+    }
+
+    // --- shape 1d: when is the next scheduled event ------------------------------------------------
+    if (q.contains("when") || q.contains("next"))
+        && (q.contains("meeting")
+            || q.contains("decision")
+            || q.contains("announce")
+            || q.contains("ecb")
+            || q.contains("fed")
+            || q.contains("snb")
+            || q.contains("boe")
+            || q.contains("nfp"))
+    {
+        let wanted = ["ecb", "fed", "fomc", "snb", "boe", "nfp"]
+            .iter()
+            .find(|w| q.contains(**w))
+            .copied();
+        let hit = archive.next_events.iter().find(|e| match wanted {
+            Some(w) => e.name.to_lowercase().contains(w),
+            None => true, // no institution named: the nearest scheduled event is the answer
+        });
+        if let Some(e) = hit {
+            return Some(ArchiveAnswer {
+                text: format!(
+                    "The next scheduled {} date on the calendar is {}, {} trading day{} after the \
+                     {} data cut.",
+                    e.name,
+                    e.date,
+                    e.days,
+                    if e.days == 1 { "" } else { "s" },
+                    archive.data_through
+                ),
+                shape: "next_event",
             });
         }
     }
@@ -690,7 +861,10 @@ pub fn answer(archive: &Archive, q_lower: &str, named: Option<&str>) -> Option<A
             || q.contains("you said")
             || q.contains("at 0.")
             || q.contains("is 0."));
-    if (q.contains("average") || q.contains("mean ")) && !user_supplied_numbers {
+    let asks_definition =
+        q.contains("what does") || q.contains("mean for") || q.contains("meaning");
+    if (q.contains("average") || q.contains("mean ")) && !user_supplied_numbers && !asks_definition
+    {
         let metric = if q.contains("siren") { "siren" } else { "risk" };
         let majors = ["EURUSD", "USDCHF", "GBPUSD"];
         let only_majors = q.contains("major");
@@ -794,7 +968,7 @@ pub fn answer(archive: &Archive, q_lower: &str, named: Option<&str>) -> Option<A
                     parts.iter().map(|(r, n)| format!("{n} {r}")).collect();
                 return Some(ArchiveAnswer {
                     text: format!(
-                        "Through {} ({} to {}), {} recorded {total} trading days: {}. The siren                          peaked at {peak:.0}.",
+                        "Through {} ({} to {}), {} recorded {total} trading days: {}. The siren peaked at {peak:.0}.",
                         ep.title,
                         ep.start,
                         ep.end,
@@ -874,6 +1048,21 @@ mod tests {
             daily_risk.insert(d.to_string(), Some(0.10 + i as f64 * 0.1));
             daily_siren.insert(d.to_string(), Some(50.0 + i as f64));
         }
+        for (i, d) in [
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+        ]
+        .iter()
+        .enumerate()
+        {
+            daily_risk.insert(d.to_string(), Some(0.40 + i as f64 * 0.03));
+            daily_siren.insert(d.to_string(), Some(80.0 + i as f64));
+        }
         let mut months = HashMap::new();
         months.insert(
             "2015-01".to_string(),
@@ -933,6 +1122,11 @@ mod tests {
             ]),
             data_through: "2026-08-20".into(),
             daily_pairs: vec!["USDCHF".into()],
+            next_events: vec![NextEvent {
+                name: "ECB".into(),
+                date: "2026-09-10".into(),
+                days: 15,
+            }],
             markets_total: 20,
             counts_today: HashMap::from([("calm".to_string(), 16_i64), ("crisis".to_string(), 1)]),
             by_regime_today: HashMap::from([
@@ -1169,6 +1363,63 @@ mod tests {
         let a = answer(&archive(), "how many crisis days in 2015", Some("USDCHF")).unwrap();
         assert!(a.text.contains("USD/CHF"), "{}", a.text);
         assert!(!a.text.contains("EUR/USD"), "{}", a.text);
+    }
+
+    #[test]
+    fn compares_two_named_markets_instead_of_collapsing_to_a_cross() {
+        let a = answer(&archive(), "is the euro more risky than the franc right now", None).unwrap();
+        assert_eq!(a.shape, "compare_two_markets");
+        assert!(a.text.contains("EUR/USD") && a.text.contains("USD/CHF"), "{}", a.text);
+        assert!(
+            a.text.contains("USD/CHF carries the higher change risk"),
+            "{}",
+            a.text
+        );
+        assert!(a.text.contains("not a forecast"), "{}", a.text);
+    }
+
+    #[test]
+    fn which_markets_are_calm_lists_them() {
+        let a = answer(&archive(), "which markets are calm today", None).unwrap();
+        assert_eq!(a.shape, "count_today");
+        assert!(a.text.contains("EUR/USD"), "{}", a.text);
+    }
+
+    #[test]
+    fn a_weeks_move_in_risk_is_read_from_the_daily_map() {
+        let a = answer(&archive(), "how has franc risk changed this week", None).unwrap();
+        assert_eq!(a.shape, "metric_week_change");
+        assert!(a.text.contains("USD/CHF"), "{}", a.text);
+        assert!(a.text.contains("has picked up"), "{}", a.text);
+    }
+
+    #[test]
+    fn the_next_scheduled_event_is_a_date_not_a_statistic() {
+        let a = answer(&archive(), "when is the next ecb meeting", None).unwrap();
+        assert_eq!(a.shape, "next_event");
+        assert!(a.text.contains("2026-09-10") && a.text.contains("15 trading days"), "{}", a.text);
+    }
+
+    #[test]
+    fn a_definition_question_is_never_hijacked_by_the_average_shape() {
+        let out = answer(
+            &archive(),
+            "what does high change risk mean for my hedging",
+            None,
+        );
+        assert_ne!(
+            out.as_ref().map(|a| a.shape),
+            Some("average_today"),
+            "definition questions belong to the FAQ, not an aggregate"
+        );
+    }
+
+    #[test]
+    fn shapes_carry_sensible_board_cards() {
+        assert_eq!(card_for_shape("regime_on_date"), Some("regime_timeline_ribbon"));
+        assert_eq!(card_for_shape("metric_week_change"), Some("risk_trace"));
+        assert_eq!(card_for_shape("next_event"), Some("event_countdown_strip"));
+        assert_eq!(card_for_shape("count_today"), None);
     }
 
 }

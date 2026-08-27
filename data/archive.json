@@ -101,6 +101,38 @@
    "siren": 97.0
   }
  },
+ "next_events": [
+  {
+   "name": "NFP",
+   "date": "2026-09-04",
+   "days": 11
+  },
+  {
+   "name": "ECB",
+   "date": "2026-09-10",
+   "days": 15
+  },
+  {
+   "name": "CPI",
+   "date": "2026-09-11",
+   "days": 16
+  },
+  {
+   "name": "FOMC",
+   "date": "2026-09-16",
+   "days": 19
+  },
+  {
+   "name": "BOE",
+   "date": "2026-09-17",
+   "days": 20
+  },
+  {
+   "name": "SNB",
+   "date": "2026-09-24",
+   "days": 25
+  }
+ ],
  "ledger": {
   "days_live": 4,
   "n_forecasts": 12,
@@ -109,7 +141,7 @@
   "live_brier": null,
   "frozen_brier": 0.102
  },
- "generated_at_utc": "2026-08-23T09:55:22Z",
+ "generated_at_utc": "2026-08-27T09:48:07Z",
  "data_through": "2026-08-20",
  "note": "A closed set of shapes, not a query engine. The serving side may count today's regimes, look up a date, quote a typical duration, compare two periods and read an event window \u2014 and must refuse anything else rather than answer with an adjacent number.",
  "daily_pairs": [

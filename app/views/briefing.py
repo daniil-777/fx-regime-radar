@@ -58,7 +58,7 @@ if AVATAR_URL:
     # a hand-rolled iframe: st.components.v1.iframe cannot grant microphone permission,
     # which silently killed voice conversation inside this page
     st.markdown(
-        f'<iframe src="{AVATAR_URL}" style="width:100%;height:820px;border:0;border-radius:12px" '
+        f'<iframe src="{AVATAR_URL}" style="width:100%;height:880px;border:0;border-radius:12px" '
         'allow="microphone; autoplay" title="AI presenter"></iframe>',
         unsafe_allow_html=True,
     )

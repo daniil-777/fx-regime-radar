@@ -2,6 +2,38 @@
 
 All notable changes to FX Regime Radar. Versions follow the phase plan in USAGE.md.
 
+## v2.41.2 — the presenter answers more of finance, and shows its face properly (2026-08-27)
+
+A 30-question quality battery against the live keyless brain found nine answers that were honest
+but not helpful — right gates, wrong usefulness. All nine are fixed, test-pinned, and the eval
+gate confirms **no regression on any of the 79 floors** (total failures down 203 → 201).
+
+### The answers
+- **"Which markets are calm?"** now lists them (14 of 20, by name) instead of reciting the
+  markets-block boilerplate; **"euro vs pound risk?"** now genuinely compares the two majors
+  ("GBP/USD carries the higher change risk today — a reading, not a forecast") instead of quietly
+  answering about the EUR/GBP cross; **"how has risk changed this week?"** reads the real week from
+  the daily archive ("0.01 on 08-13 → 0.03 on 08-20 — it has picked up"); **"when is the next ECB
+  meeting?"** answers with the date (2026-09-10, 15 trading days after the data cut) from a new
+  `next_events` block the pipeline builds from the committed calendar; **"the change-risk band for
+  the pound?"** gets the pound's numbers instead of a glossary entry (the state-cue vocabulary
+  learned the metric words); **volatility questions** get the volatility picture (vol_trace card);
+  **"what does high risk mean for…"** goes to the definition, never the average shape; date
+  questions get matching media (timeline ribbon, not VaR bars); a whitespace artifact in the COVID
+  episode text is gone.
+- **Guard hardened while widening**: "what's the average change risk across the three?" still
+  refuses — a computed mean is not a published number, and the new metric cues explicitly exclude
+  aggregate asks. The eval caught two first-draft regressions (that refusal, and two worse board
+  picks) and both were fixed against the floors rather than re-baselined away.
+
+### The face
+- The presenter-left two-pane layout now activates at 860 px — which includes the Briefing iframe
+  on a desktop — so the photoreal video gets a full-height left column instead of a cropped 42 vh
+  strip; the compact layout's stage grew to 4:3 / 56 vh with face-safe framing. Display-only.
+
+Gate: 391 Python + 87 Rust lib tests green (+6 new shape tests), clippy -D warnings clean,
+replay parity held, eval `--check` green, fixtures + baseline re-recorded via the documented path.
+
 ## v2.41.1 — ask: the advice question gets the sanctioned answer (2026-08-24)
 
 "Should I buy euros now?" still refuses the direction call — rule 5 is not negotiable — but the

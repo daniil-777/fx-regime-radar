@@ -150,8 +150,22 @@ def build(
             )
 
     led = pack.get("ledger") or {}
+    next_events = []
+    events_path = config.DATA_DIR / "events.csv"
+    if events_path.exists():
+        ev = pd.read_csv(events_path)
+        ev["date"] = pd.to_datetime(ev["date"])
+        cut = df["date"].max()
+        future = ev[ev["date"] > cut].sort_values("date")
+        for name, g in future.groupby("type", sort=False):
+            d = g["date"].iloc[0]
+            days = max(0, len(pd.bdate_range(cut, d)) - 1)
+            next_events.append({"name": str(name), "date": str(d.date()), "days": int(days)})
+        next_events.sort(key=lambda e: e["date"])
+
     return {
         "today": today,
+        "next_events": next_events,
         "ledger": {
             "days_live": led.get("days_live"),
             "n_forecasts": led.get("n_forecasts"),

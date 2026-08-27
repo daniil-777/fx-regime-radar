@@ -238,12 +238,14 @@ impl Lane {
 /// point: a pack is a snapshot of today, so a question naming a date, a count or a comparison is
 /// asking for something no pack can hold, however confidently an intent was recognised.
 pub fn pre_router_wants_archive(q_lower: &str) -> bool {
-    const PATTERNS: [&str; 14] = [
+    const PATTERNS: [&str; 16] = [
         "how many",
         "compare",
         "since",
         "last year",
         "last month",
+        "this week",
+        "past week",
         "what did you say",
         "during",
         "in 20",

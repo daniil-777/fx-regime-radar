@@ -1,6 +1,6 @@
 # Evaluation baseline
 
-_Generated 2026-08-24 05:28Z from `eval/snapshot/2026-08-23`. Scored over recorded outputs — hermetic, no network._
+_Generated 2026-08-27 09:55Z from `eval/snapshot/2026-08-23`. Scored over recorded outputs — hermetic, no network._
 
 ## Pinned versions
 
@@ -16,7 +16,7 @@ A change to any field below invalidates comparison: re-baseline before reading a
 | registry_version | `3.0.0` |
 | snapshot | `2026-08-23` |
 | snapshot_hash | `df5c4abc30217540` |
-| git_sha | `c368437` |
+| git_sha | `d2ce8fa` |
 | seed | `0 (deterministic: no sampling in the scored path)` |
 
 **280 golden items**, 280 with recorded outputs (100%). 98 computed gold values across 81 items.
@@ -25,12 +25,12 @@ A change to any field below invalidates comparison: re-baseline before reading a
 
 | family | n | recall@k | MRR | routing | no banned words | numeric | selection | coverage | provenance |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `today_state` | 86 | 98% | 0.85 | 91% | 100% | 53% | 44% | 71% | 100% |
+| `today_state` | 86 | 98% | 0.85 | 91% | 100% | 58% | 42% | 71% | 100% |
 | `knowledge_methodology` | 20 | 94% | 0.64 | 85% | 100% | — | 37% | 95% | 100% |
 | `multi_hop` | 16 | 77% | 0.49 | 88% | 100% | — | 38% | 81% | 100% |
 | `ledger_historical` | 21 | 100% | 0.95 | 86% | 100% | 42% | 63% | 86% | 100% |
 | `aggregation` | 12 | 55% | 0.44 | 92% | 100% | — | 27% | 92% | 100% |
-| `comparative_temporal` | 17 | 94% | 0.69 | 88% | 100% | 20% | 56% | 82% | 100% |
+| `comparative_temporal` | 17 | 94% | 0.69 | 88% | 100% | 40% | 56% | 82% | 100% |
 | `causal_explanatory` | 11 | 78% | 0.56 | 82% | 100% | 43% | 36% | 91% | 100% |
 | `product_faq` | 11 | 100% | 0.81 | 73% | 100% | — | 67% | 82% | 100% |
 | `multi_turn_followup` | 21 | 94% | 0.65 | 86% | 100% | 32% | 47% | 81% | 100% |
@@ -46,8 +46,8 @@ A change to any field below invalidates comparison: re-baseline before reading a
 
 | locale | n | recall@k | routing | numeric |
 |---|---:|---:|---:|---:|
-| en | 200 | 93% | 90% | 48% |
-| de | 49 | 86% | 84% | 36% |
+| en | 200 | 93% | 90% | 52% |
+| de | 49 | 86% | 84% | 40% |
 | fr | 31 | 100% | 90% | 35% |
 
 ## Compliance families — 100% is the target; the leak check (clean) is hard-enforced
@@ -70,8 +70,8 @@ A leak is a compliance failure; an unnamed refusal is a quality failure that rea
 |---|---:|
 | p50 | 4 |
 | p95 | 11 |
-| p99 | 13 |
-| max | 14 |
+| p99 | 14 |
+| max | 15 |
 
 _Server-side answer latency only, keyless path. Cost is CHF 0 per answer in this configuration: no model call is made. Both figures move once a key is configured, which is itself a pinned-field change requiring a re-baseline._
 
@@ -83,8 +83,8 @@ Not run. The judge metric is bounded to phrasing and relevance and requires a se
 
 | cause | count |
 |---|---:|
-| selection | 93 |
-| generation/missing data | 56 |
+| selection | 94 |
+| generation/missing data | 53 |
 | routing | 32 |
 | retrieval | 14 |
 | reference resolution | 8 |
