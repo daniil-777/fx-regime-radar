@@ -1,15 +1,15 @@
 {
- "generated_at_utc": "2026-08-27T17:25:54Z",
- "data_through": "2026-08-26",
+ "generated_at_utc": "2026-08-28T18:18:47Z",
+ "data_through": "2026-08-27",
  "disclosure": "Before I answer: this is software-generated decision support computed from the radar's published risk numbers and your stated inputs \u2014 not advice from a licensed adviser, and never a view on direction.",
  "method": "deterministic: treasury light -> base hedge ratio (hedge 0.75 / ladder 0.50 / wait 0.25), risk tolerance +/-0.15, consensus >=2/3 +0.05, clipped to [0.10, 0.95] in 5% steps; tranches front-loaded under 'hedge', equal weekly under 'ladder'; price tag = ES of the UNCOVERED share, sqrt-of-time scaled (an approximation)",
  "fx": {
-  "EURUSD": 1.1674741506576538,
-  "USDCHF": 0.8017200231552124,
-  "GBPUSD": 1.3647032976150513,
-  "EURCHF": 0.9359874030983661,
-  "GBPCHF": 1.0941099593639336,
-  "EURGBP": 0.8554783685933242
+  "EURUSD": 1.1654876470565796,
+  "USDCHF": 0.8050500154495239,
+  "GBPUSD": 1.3596932888031006,
+  "EURCHF": 0.9382758482691287,
+  "GBPCHF": 1.0946211031575501,
+  "EURGBP": 0.8571695224608524
  },
  "pairs": {
   "EURUSD": {
@@ -273,76 +273,76 @@
     "light": "ladder",
     "regime": "calm",
     "tolerance": "conservative",
-    "hedge_ratio": 0.7,
+    "hedge_ratio": 0.65,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.7
+       "fraction": 0.65
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.35
+       "fraction": 0.325
       },
       {
        "week": 1,
-       "fraction": 0.35
+       "fraction": 0.325
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 1,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 2,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 3,
-       "fraction": 0.175
+       "fraction": 0.163
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 1,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 2,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 3,
-       "fraction": 0.175
+       "fraction": 0.163
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 1,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 2,
-       "fraction": 0.175
+       "fraction": 0.163
       },
       {
        "week": 3,
-       "fraction": 0.175
+       "fraction": 0.163
       }
      ]
     },
@@ -355,76 +355,76 @@
     "light": "ladder",
     "regime": "calm",
     "tolerance": "balanced",
-    "hedge_ratio": 0.55,
+    "hedge_ratio": 0.5,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.55
+       "fraction": 0.5
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.275
+       "fraction": 0.25
       },
       {
        "week": 1,
-       "fraction": 0.275
+       "fraction": 0.25
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 1,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 2,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 3,
-       "fraction": 0.138
+       "fraction": 0.125
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 1,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 2,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 3,
-       "fraction": 0.138
+       "fraction": 0.125
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 1,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 2,
-       "fraction": 0.138
+       "fraction": 0.125
       },
       {
        "week": 3,
-       "fraction": 0.138
+       "fraction": 0.125
       }
      ]
     },
@@ -437,76 +437,76 @@
     "light": "ladder",
     "regime": "calm",
     "tolerance": "aggressive",
-    "hedge_ratio": 0.4,
+    "hedge_ratio": 0.35,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.4
+       "fraction": 0.35
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.2
+       "fraction": 0.175
       },
       {
        "week": 1,
-       "fraction": 0.2
+       "fraction": 0.175
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 1,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 2,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 3,
-       "fraction": 0.1
+       "fraction": 0.087
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 1,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 2,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 3,
-       "fraction": 0.1
+       "fraction": 0.087
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 1,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 2,
-       "fraction": 0.1
+       "fraction": 0.087
       },
       {
        "week": 3,
-       "fraction": 0.1
+       "fraction": 0.087
       }
      ]
     },

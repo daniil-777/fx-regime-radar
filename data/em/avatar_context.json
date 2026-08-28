@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-08-27T17:26:53Z",
+ "generated_at_utc": "2026-08-28T18:20:22Z",
  "universe": "em",
- "data_through": "2026-08-26",
+ "data_through": "2026-08-27",
  "system_prompt_version": "v1",
  "disclosure": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today.",
  "pairs": {
@@ -9,11 +9,11 @@
    "label": "USD/PLN",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 92,
+   "days_in_regime": 93,
    "change_risk_5d": 0.02,
    "risk_lo": 0.0,
    "risk_hi": 0.63,
-   "anomaly_pct": 76.0,
+   "anomaly_pct": 84.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -21,8 +21,8 @@
    "label": "USD/MXN",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 26,
-   "change_risk_5d": 0.0,
+   "days_in_regime": 27,
+   "change_risk_5d": 0.01,
    "risk_lo": 0.0,
    "risk_hi": 0.62,
    "anomaly_pct": 78.0,
@@ -32,9 +32,9 @@
   "USDRUB": {
    "label": "USD/RUB",
    "regime": "crisis",
-   "regime_prob": 0.99,
-   "days_in_regime": 13,
-   "change_risk_5d": 0.29,
+   "regime_prob": 0.97,
+   "days_in_regime": 14,
+   "change_risk_5d": 0.36,
    "risk_lo": 0.0,
    "risk_hi": 1.0,
    "anomaly_pct": 100.0,
@@ -45,11 +45,11 @@
    "label": "USD/BRL",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 37,
+   "days_in_regime": 38,
    "change_risk_5d": 0.04,
    "risk_lo": 0.0,
    "risk_hi": 0.66,
-   "anomaly_pct": 16.0,
+   "anomaly_pct": 29.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -57,11 +57,11 @@
    "label": "USD/ZAR",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 4,
-   "change_risk_5d": 0.03,
+   "days_in_regime": 5,
+   "change_risk_5d": 0.04,
    "risk_lo": 0.0,
-   "risk_hi": 0.65,
-   "anomaly_pct": 84.0,
+   "risk_hi": 0.66,
+   "anomaly_pct": 82.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   }
@@ -70,46 +70,46 @@
   {
    "type": "NFP",
    "date": "2026-09-04",
-   "days": 9
+   "days": 8
   },
   {
    "type": "ECB",
    "date": "2026-09-10",
-   "days": 15
+   "days": 14
   },
   {
    "type": "CPI",
    "date": "2026-09-11",
-   "days": 16
+   "days": 15
   },
   {
    "type": "FOMC",
    "date": "2026-09-16",
-   "days": 21
+   "days": 20
   },
   {
    "type": "BOE",
    "date": "2026-09-17",
-   "days": 22
+   "days": 21
   },
   {
    "type": "SNB",
    "date": "2026-09-24",
-   "days": 29
+   "days": 28
   }
  ],
  "treasury": {},
  "ledger": {
-  "days_live": 7,
-  "n_forecasts": 35,
-  "n_resolved": 10,
+  "days_live": 8,
+  "n_forecasts": 40,
+  "n_resolved": 15,
   "since": "2026-08-18",
   "live_brier": null,
   "frozen_brier": 0.135,
   "frozen_pr_auc": 0.548,
   "coverage_live": 1.0,
   "coverage_frozen": 0.89,
-  "chain_head_short": "27d805dc",
+  "chain_head_short": "4e1f2e07",
   "chain_ok": true
  },
  "drift": {
@@ -317,36 +317,34 @@
   }
  ],
  "knowledge_pack": "docs/avatar_knowledge.md",
- "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-08-26 close, USD/PLN is calm — change risk 0.02, band 0.00 to 0.63, siren 76 of 100. Elsewhere: USD/MXN calm, USD/RUB crisis, USD/BRL calm, USD/ZAR calm. The forward test is on day 7, every forecast hash-chained before its outcome. Ask me anything about the radar.",
+ "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-08-27 close, USD/PLN is calm — change risk 0.02, band 0.00 to 0.63, siren 84 of 100. Elsewhere: USD/MXN calm, USD/RUB crisis, USD/BRL calm, USD/ZAR calm. The forward test is on day 8, every forecast hash-chained before its outcome. Ask me anything about the radar.",
  "allowed_numbers": [
   "0",
+  "0.01",
   "0.02",
-  "0.03",
   "0.04",
   "0.1",
   "0.102",
   "0.135",
   "0.14",
   "0.162",
-  "0.29",
-  "0.3",
+  "0.36",
+  "0.4",
   "0.5",
   "0.548",
   "0.55",
   "0.6",
   "0.62",
   "0.63",
-  "0.65",
   "0.66",
   "0.7",
   "0.89",
   "0.9",
-  "0.99",
+  "0.97",
   "1",
   "10",
   "100",
   "11",
-  "13",
   "13.5",
   "14",
   "15",
@@ -354,6 +352,7 @@
   "17",
   "18",
   "2",
+  "20",
   "2005",
   "2016",
   "2017",
@@ -364,35 +363,33 @@
   "22",
   "23",
   "24",
-  "26",
   "27",
+  "28",
   "29",
   "3",
-  "35",
-  "37",
+  "36",
+  "38",
   "4",
+  "40",
   "5",
   "500",
-  "53",
   "54.8",
   "55",
   "62",
   "63",
-  "65",
   "66",
   "7",
-  "76",
   "78",
   "79",
   "8",
-  "805",
+  "82",
   "84",
   "89",
   "9",
   "90",
   "91.6",
-  "92",
-  "98",
-  "99"
+  "93",
+  "97",
+  "98"
  ]
 }

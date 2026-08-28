@@ -1,6 +1,6 @@
 {
  "definition_version": "1.0.0",
- "generated_at_utc": "2026-08-27T17:26:04Z",
+ "generated_at_utc": "2026-08-28T18:19:01Z",
  "note": "Every cube row carries `rollup` and `definition_version`; this file is the recipe each name refers to, so a number quoted from the cube can be traced to how it was computed rather than to the cube itself.",
  "definitions": {
   "regime_month": {

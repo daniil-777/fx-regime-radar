@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-08-27T17:26:37Z",
-  "data_through": "2026-08-26",
+  "last_run_utc": "2026-08-28T18:19:56Z",
+  "data_through": "2026-08-27",
   "rows": {
-    "prices": 55866,
-    "features": 55266,
-    "regimes": 55266
+    "prices": 55876,
+    "features": 55276,
+    "regimes": 55276
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -15,73 +15,73 @@
   "ecb_check": {
     "EURUSD": {
       "n_compared": 766,
-      "mean_abs_pct": 0.1996501728281286,
+      "mean_abs_pct": 0.19965382967592404,
       "max_abs_pct": 2.2389805612301137
     },
     "USDJPY": {
       "n_compared": 766,
-      "mean_abs_pct": 0.29681845203868024,
+      "mean_abs_pct": 0.2968333164927773,
       "max_abs_pct": 2.3509558730238003
     },
     "GBPUSD": {
       "n_compared": 766,
-      "mean_abs_pct": 0.21943577428891214,
+      "mean_abs_pct": 0.21929868395549745,
       "max_abs_pct": 1.498653615794665
     },
     "USDCAD": {
       "n_compared": 766,
-      "mean_abs_pct": 0.13740149727274814,
+      "mean_abs_pct": 0.1373445001065698,
       "max_abs_pct": 0.9995194152126561
     },
     "AUDUSD": {
       "n_compared": 766,
-      "mean_abs_pct": 0.293756288855559,
+      "mean_abs_pct": 0.2935869534125496,
       "max_abs_pct": 3.502911996096069
     },
     "USDCHF": {
       "n_compared": 766,
-      "mean_abs_pct": 0.23056137462560708,
+      "mean_abs_pct": 0.2305480794633535,
       "max_abs_pct": 2.010446310950397
     },
     "NZDUSD": {
       "n_compared": 766,
-      "mean_abs_pct": 0.3133198293687114,
+      "mean_abs_pct": 0.31332083304633923,
       "max_abs_pct": 2.6430023601245556
     },
     "EURGBP": {
       "n_compared": 766,
-      "mean_abs_pct": 0.14354185703861078,
+      "mean_abs_pct": 0.1434152995719581,
       "max_abs_pct": 1.1702174665456522
     },
     "EURJPY": {
       "n_compared": 766,
-      "mean_abs_pct": 0.27648891039576073,
+      "mean_abs_pct": 0.27647455791963194,
       "max_abs_pct": 2.481091231898728
     },
     "USDSEK": {
       "n_compared": 766,
-      "mean_abs_pct": 0.3213121567602031,
+      "mean_abs_pct": 0.32137576277323027,
       "max_abs_pct": 2.076458936151872
     }
   },
   "stage_seconds": {
-    "data": 9.76,
-    "features": 0.14,
-    "hmm": 4.02,
+    "data": 7.92,
+    "features": 0.26,
+    "hmm": 9.36,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 1.64,
+    "forecaster": 2.86,
     "challenger": 0.0,
-    "siren": 1.11,
-    "bocpd": 2.26,
-    "conformal": 0.05,
-    "drift": 11.98,
-    "ledger": 0.06,
-    "narrator": 0.58,
-    "postmortem": 0.01,
-    "advisor": 0.12,
+    "siren": 1.89,
+    "bocpd": 4.45,
+    "conformal": 0.09,
+    "drift": 24.82,
+    "ledger": 0.09,
+    "narrator": 0.83,
+    "postmortem": 0.02,
+    "advisor": 0.24,
     "treasury": 0.0,
-    "avatar": 0.01,
+    "avatar": 0.02,
     "decision": 0.0,
     "visuals": 0.0,
     "packs": 0.0,
