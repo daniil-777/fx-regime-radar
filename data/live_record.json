@@ -1,13 +1,13 @@
 {
- "generated_at_utc": "2026-08-28T18:18:46Z",
+ "generated_at_utc": "2026-08-31T12:55:24Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-08-27",
- "days_recorded": 9,
- "n_forecasts": 27,
- "n_resolved": 12,
+ "through": "2026-08-28",
+ "days_recorded": 10,
+ "n_forecasts": 30,
+ "n_resolved": 15,
  "n_pending": 15,
- "n_all_segments": 51,
+ "n_all_segments": 57,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
@@ -32,9 +32,9 @@
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-08-27",
-   "n_forecasts": 27,
-   "n_resolved": 12,
+   "through": "2026-08-28",
+   "n_forecasts": 30,
+   "n_resolved": 15,
    "brier": null,
    "pr_auc": null,
    "precision": null,
@@ -45,9 +45,9 @@
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-08-27",
-   "n_forecasts": 24,
-   "n_resolved": 9,
+   "through": "2026-08-28",
+   "n_forecasts": 27,
+   "n_resolved": 12,
    "brier": null,
    "pr_auc": null,
    "precision": null,
@@ -55,5 +55,5 @@
    "base_rate_brier": null
   }
  ],
- "head_hash": "7d335051d8c80defd88f38733ab8a532f1b99c2d4760f2eb13b713b939f51b8f"
+ "head_hash": "bb1544b2c6dd2d8d4f80db8f523263c60d8584109910a4fa394efce17a814511"
 }
