@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-09-01T11:16:25Z",
-  "data_through": "2026-08-31",
+  "last_run_utc": "2026-09-02T10:49:44Z",
+  "data_through": "2026-09-01",
   "rows": {
-    "prices": 55896,
-    "features": 55296,
-    "regimes": 55296
+    "prices": 55906,
+    "features": 55306,
+    "regimes": 55306
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -13,73 +13,24 @@
     "siren": "1.2.0"
   },
   "ecb_check": {
-    "EURUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.1990251516655157,
-      "max_abs_pct": 2.2389805612301137
-    },
-    "USDJPY": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.2971922304438587,
-      "max_abs_pct": 2.3509558730238003
-    },
-    "GBPUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.21898268666641563,
-      "max_abs_pct": 1.498653615794665
-    },
-    "USDCAD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.13745951767961073,
-      "max_abs_pct": 0.9995194152126561
-    },
-    "AUDUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.29401793305569934,
-      "max_abs_pct": 3.502911996096069
-    },
-    "USDCHF": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.23049249522353799,
-      "max_abs_pct": 2.010446310950397
-    },
-    "NZDUSD": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.31420258164327663,
-      "max_abs_pct": 2.6430023601245556
-    },
-    "EURGBP": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.14325988948992818,
-      "max_abs_pct": 1.1702174665456522
-    },
-    "EURJPY": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.27582365384617724,
-      "max_abs_pct": 2.481091231898728
-    },
-    "USDSEK": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.321131024826558,
-      "max_abs_pct": 2.076458936151872
-    }
+    "skipped": "HTTPSConnectionPool(host='api.frankfurter.dev', port=443): Max retries exceeded with url: /v1/2023-09-02..2026-09-01?from=AUD&to=USD (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))"
   },
   "stage_seconds": {
-    "data": 6.36,
-    "features": 0.28,
-    "hmm": 11.78,
+    "data": 22.41,
+    "features": 0.26,
+    "hmm": 5.97,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 2.67,
+    "forecaster": 2.2,
     "challenger": 0.0,
-    "siren": 1.96,
-    "bocpd": 4.71,
-    "conformal": 0.08,
-    "drift": 27.62,
-    "ledger": 0.1,
-    "narrator": 0.94,
-    "postmortem": 0.02,
-    "advisor": 0.22,
+    "siren": 1.52,
+    "bocpd": 3.08,
+    "conformal": 0.06,
+    "drift": 28.67,
+    "ledger": 0.08,
+    "narrator": 0.75,
+    "postmortem": 0.01,
+    "advisor": 0.18,
     "treasury": 0.0,
     "avatar": 0.02,
     "decision": 0.0,

@@ -1,107 +1,107 @@
 {
   "USDMXN": {
-    "text": "USD/MXN is in a calm regime (calm) with 100% confidence, now on day 29 of this regime. The model puts the chance of a regime change within five trading days at 0%, which is low, driven mainly by how unsure the regime model is, recent volatility and the three-month volatility backdrop. Nothing looks unusual today compared with calm history (anomaly percentile 76).",
-    "generated_at": "2026-09-01T11:16:51Z",
+    "text": "USD/MXN is in a calm regime (calm) with 100% confidence, now on day 30 of this regime. The model puts the chance of a regime change within five trading days at 0%, which is low, driven mainly by how unsure the regime model is, recent volatility and the three-month volatility backdrop. Nothing looks unusual today compared with calm history (anomaly percentile 59).",
+    "generated_at": "2026-09-02T10:50:04Z",
     "source": "template",
     "stats": {
       "pair": "USDMXN",
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 29,
-      "change_risk_5d": 0.005,
+      "days_in_regime": 30,
+      "change_risk_5d": 0.004,
       "top_drivers": [
         "hmm_entropy",
         "vol_20",
         "vol_60"
       ],
-      "anomaly_pct": 75.7,
-      "nearest_neighbor_date": "2008-02-04",
-      "ret_5d_pct": 0.68
+      "anomaly_pct": 59.3,
+      "nearest_neighbor_date": "2008-02-18",
+      "ret_5d_pct": 0.32
     }
   },
   "USDBRL": {
-    "text": "USD/BRL is in a calm regime (calm) with 100% confidence, now on day 40 of this regime. The model puts the chance of a regime change within five trading days at 9%, which is low, driven mainly by how unsure the regime model is, how fast volatility is rising and the direction of volatility. Nothing looks unusual today compared with calm history (anomaly percentile 18).",
-    "generated_at": "2026-09-01T11:16:51Z",
+    "text": "USD/BRL is in a calm regime (calm) with 100% confidence, now on day 41 of this regime. The model puts the chance of a regime change within five trading days at 8%, which is low, driven mainly by how unsure the regime model is, the direction of volatility and how fast volatility is rising. Nothing looks unusual today compared with calm history (anomaly percentile 45).",
+    "generated_at": "2026-09-02T10:50:04Z",
     "source": "template",
     "stats": {
       "pair": "USDBRL",
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 40,
-      "change_risk_5d": 0.086,
-      "top_drivers": [
-        "hmm_entropy",
-        "vol_ratio",
-        "vol_trend"
-      ],
-      "anomaly_pct": 17.7,
-      "nearest_neighbor_date": "2014-08-26",
-      "ret_5d_pct": 1.05
-    }
-  },
-  "USDZAR": {
-    "text": "USD/ZAR is in a calm regime (calm) with 100% confidence, now on day 7 of this regime. The model puts the chance of a regime change within five trading days at 3%, which is low, driven mainly by how unsure the regime model is, the direction of volatility and how fast volatility is rising. Nothing looks unusual today compared with calm history (anomaly percentile 88).",
-    "generated_at": "2026-09-01T11:16:51Z",
-    "source": "template",
-    "stats": {
-      "pair": "USDZAR",
-      "date": "2026-08-31",
-      "regime": "calm",
-      "regime_prob": 1.0,
-      "days_in_regime": 7,
-      "change_risk_5d": 0.03,
+      "days_in_regime": 41,
+      "change_risk_5d": 0.08,
       "top_drivers": [
         "hmm_entropy",
         "vol_trend",
         "vol_ratio"
       ],
-      "anomaly_pct": 88.3,
-      "nearest_neighbor_date": "2012-03-05",
-      "ret_5d_pct": 1.09
+      "anomaly_pct": 44.6,
+      "nearest_neighbor_date": "2013-05-06",
+      "ret_5d_pct": 0.53
+    }
+  },
+  "USDZAR": {
+    "text": "USD/ZAR is in a calm regime (calm) with 100% confidence, now on day 8 of this regime. The model puts the chance of a regime change within five trading days at 3%, which is low, driven mainly by how unsure the regime model is, the direction of volatility and how fast volatility is rising. Nothing looks unusual today compared with calm history (anomaly percentile 67).",
+    "generated_at": "2026-09-02T10:50:04Z",
+    "source": "template",
+    "stats": {
+      "pair": "USDZAR",
+      "date": "2026-09-01",
+      "regime": "calm",
+      "regime_prob": 1.0,
+      "days_in_regime": 8,
+      "change_risk_5d": 0.031,
+      "top_drivers": [
+        "hmm_entropy",
+        "vol_trend",
+        "vol_ratio"
+      ],
+      "anomaly_pct": 67.0,
+      "nearest_neighbor_date": "2014-08-14",
+      "ret_5d_pct": 0.62
     }
   },
   "USDPLN": {
-    "text": "USD/PLN is in a calm regime (calm) with 100% confidence, now on day 95 of this regime. The model puts the chance of a regime change within five trading days at 2%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the direction of volatility. Nothing looks unusual today compared with calm history (anomaly percentile 83).",
-    "generated_at": "2026-09-01T11:16:51Z",
+    "text": "USD/PLN is in a calm regime (calm) with 100% confidence, now on day 96 of this regime. The model puts the chance of a regime change within five trading days at 1%, which is low, driven mainly by how unsure the regime model is, how fast volatility is rising and the direction of volatility. Nothing looks unusual today compared with calm history (anomaly percentile 72).",
+    "generated_at": "2026-09-02T10:50:04Z",
     "source": "template",
     "stats": {
       "pair": "USDPLN",
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 95,
-      "change_risk_5d": 0.015,
+      "days_in_regime": 96,
+      "change_risk_5d": 0.013,
       "top_drivers": [
         "hmm_entropy",
-        "vol_60",
+        "vol_ratio",
         "vol_trend"
       ],
-      "anomaly_pct": 83.1,
-      "nearest_neighbor_date": "2007-06-07",
-      "ret_5d_pct": 1.54
+      "anomaly_pct": 72.3,
+      "nearest_neighbor_date": "2007-06-27",
+      "ret_5d_pct": 0.95
     }
   },
   "USDRUB": {
-    "text": "USD/RUB is in a crisis regime (crisis) with 100% confidence, now on day 16 of this regime. The model puts the chance of a regime change within five trading days at 20%, which is moderate, driven mainly by how unsure the regime model is, how long the current regime has lasted and being in a crisis regime. Today looks highly unusual compared with calm history (anomaly percentile 100); the closest historical match is 2015-07-01.",
-    "generated_at": "2026-09-01T11:16:51Z",
+    "text": "USD/RUB is in a crisis regime (crisis) with 98% confidence, now on day 17 of this regime. The model puts the chance of a regime change within five trading days at 52%, which is elevated, driven mainly by how unsure the regime model is, how long the current regime has lasted and being in a crisis regime. Today looks highly unusual compared with calm history (anomaly percentile 99); the closest historical match is 2015-07-31.",
+    "generated_at": "2026-09-02T10:50:04Z",
     "source": "template",
     "stats": {
       "pair": "USDRUB",
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "regime": "crisis",
-      "regime_prob": 0.998,
-      "days_in_regime": 16,
-      "change_risk_5d": 0.2,
+      "regime_prob": 0.975,
+      "days_in_regime": 17,
+      "change_risk_5d": 0.525,
       "top_drivers": [
         "hmm_entropy",
         "days_in_regime",
         "regime_crisis"
       ],
-      "anomaly_pct": 100.0,
-      "nearest_neighbor_date": "2015-07-01",
-      "ret_5d_pct": 2.9
+      "anomaly_pct": 98.9,
+      "nearest_neighbor_date": "2015-07-31",
+      "ret_5d_pct": 2.92
     }
   }
 }
