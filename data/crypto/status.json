@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-02T10:50:15Z",
- "data_through": "2026-09-01",
+ "generated_at_utc": "2026-09-03T10:50:57Z",
+ "data_through": "2026-09-02",
  "window_days": 60,
  "train_end": "2020-12-31",
  "thresholds": {
@@ -10,7 +10,7 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.4803,
+   "psi": 0.4904,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.3965,
@@ -18,97 +18,97 @@
    "ks": 0.1477
   },
   "vol_20": {
-   "psi": 3.2806,
+   "psi": 3.2639,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.1091,
    "train_p95": 5.8663,
-   "ks": 0.5643
+   "ks": 0.5576
   },
   "vol_60": {
-   "psi": 4.4574,
+   "psi": 4.4499,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 6.1136,
    "train_p95": 7.1872,
-   "ks": 0.6143
+   "ks": 0.611
   },
   "vol_ratio": {
-   "psi": 0.0466,
+   "psi": 0.0501,
    "status": "stable",
    "textbook": "stable",
    "train_p75": 1.0197,
    "train_p95": 1.698,
-   "ks": 0.0838
+   "ks": 0.0938
   },
   "mom_20": {
-   "psi": 1.8952,
+   "psi": 1.8805,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.5353,
    "train_p95": 3.5109,
-   "ks": 0.3244
+   "ks": 0.3277
   },
   "rng_hl": {
-   "psi": 1.3173,
+   "psi": 1.3012,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 3.3326,
    "train_p95": 5.153,
-   "ks": 0.4455
+   "ks": 0.4488
   },
   "corr_20": {
-   "psi": 0.5353,
+   "psi": 0.5324,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 3.1015,
    "train_p95": 4.2926,
-   "ks": 0.169
+   "ks": 0.1657
   },
   "ret_5d_abs": {
-   "psi": 0.3384,
+   "psi": 0.3711,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 0.739,
    "train_p95": 1.3452,
-   "ks": 0.2747
+   "ks": 0.288
   },
   "hmm_entropy": {
-   "psi": 1.0078,
+   "psi": 1.0134,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 1.8277,
    "train_p95": 3.553,
-   "ks": 0.1645
+   "ks": 0.1679
   }
  },
  "hmm": {
   "BTC-USD": {
-   "recent_mean_loglik": -0.9814,
+   "recent_mean_loglik": -1.0098,
    "train_p5": -4.7047,
    "train_median": -2.1877,
    "stale": false
   },
   "ETH-USD": {
-   "recent_mean_loglik": -2.2368,
+   "recent_mean_loglik": -2.2599,
    "train_p5": -4.0582,
    "train_median": -2.5703,
    "stale": false
   },
   "XRP-USD": {
-   "recent_mean_loglik": -1.7424,
+   "recent_mean_loglik": -1.799,
    "train_p5": -3.4827,
    "train_median": -1.8785,
    "stale": false
   },
   "BNB-USD": {
-   "recent_mean_loglik": -3.456,
+   "recent_mean_loglik": -3.4433,
    "train_p5": -4.1398,
    "train_median": -2.3458,
    "stale": false
   },
   "ADA-USD": {
-   "recent_mean_loglik": -2.1081,
+   "recent_mean_loglik": -2.109,
    "train_p5": -4.3766,
    "train_median": -2.5532,
    "stale": false
@@ -117,5 +117,5 @@
  "drifted_features": [],
  "stale_pairs": [],
  "model_stale": false,
- "worst_psi": 4.4574
+ "worst_psi": 4.4499
 }
