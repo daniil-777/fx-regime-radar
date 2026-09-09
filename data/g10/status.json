@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-08T10:46:21Z",
- "data_through": "2026-09-07",
+ "generated_at_utc": "2026-09-09T10:55:04Z",
+ "data_through": "2026-09-08",
  "window_days": 60,
  "train_end": "2016-12-31",
  "thresholds": {
@@ -10,7 +10,7 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.3957,
+   "psi": 0.3829,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 0.4279,
@@ -18,63 +18,63 @@
    "ks": 0.1431
   },
   "vol_20": {
-   "psi": 3.0386,
+   "psi": 3.0104,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 5.0313,
    "train_p95": 7.386,
-   "ks": 0.5016
+   "ks": 0.4983
   },
   "vol_60": {
-   "psi": 3.686,
+   "psi": 3.6988,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 6.8633,
    "train_p95": 8.2828,
-   "ks": 0.5473
+   "ks": 0.5505
   },
   "vol_ratio": {
-   "psi": 0.0393,
+   "psi": 0.034,
    "status": "stable",
    "textbook": "stable",
    "train_p75": 0.9011,
    "train_p95": 1.6181,
-   "ks": 0.0792
+   "ks": 0.0695
   },
   "mom_20": {
-   "psi": 0.4322,
+   "psi": 0.4273,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.3948,
    "train_p95": 3.5125,
-   "ks": 0.1268
+   "ks": 0.1235
   },
   "rng_hl": {
-   "psi": 2.9217,
+   "psi": 2.9153,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 5.0688,
    "train_p95": 7.4687,
-   "ks": 0.567
+   "ks": 0.5653
   },
   "corr_20": {
-   "psi": 0.3665,
+   "psi": 0.3586,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.8744,
    "train_p95": 6.8234,
-   "ks": 0.2491
+   "ks": 0.2474
   },
   "ret_5d_abs": {
-   "psi": 0.3316,
+   "psi": 0.3151,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 0.8552,
    "train_p95": 1.7308,
-   "ks": 0.2239
+   "ks": 0.2206
   },
   "hmm_entropy": {
-   "psi": 1.0123,
+   "psi": 0.9974,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.3028,
@@ -84,61 +84,61 @@
  },
  "hmm": {
   "EURUSD": {
-   "recent_mean_loglik": -1.6496,
+   "recent_mean_loglik": -1.6443,
    "train_p5": -4.6772,
    "train_median": -2.5773,
    "stale": false
   },
   "USDJPY": {
-   "recent_mean_loglik": -3.0894,
+   "recent_mean_loglik": -3.1087,
    "train_p5": -4.6372,
    "train_median": -2.8126,
    "stale": false
   },
   "GBPUSD": {
-   "recent_mean_loglik": -1.8568,
+   "recent_mean_loglik": -1.8575,
    "train_p5": -5.1915,
    "train_median": -2.4399,
    "stale": false
   },
   "USDCAD": {
-   "recent_mean_loglik": -3.2466,
+   "recent_mean_loglik": -3.1433,
    "train_p5": -4.9316,
    "train_median": -2.3361,
    "stale": false
   },
   "AUDUSD": {
-   "recent_mean_loglik": -1.0078,
+   "recent_mean_loglik": -1.0304,
    "train_p5": -5.2815,
    "train_median": -2.0132,
    "stale": false
   },
   "USDCHF": {
-   "recent_mean_loglik": -1.5746,
+   "recent_mean_loglik": -1.5714,
    "train_p5": -4.5383,
    "train_median": -2.2732,
    "stale": false
   },
   "NZDUSD": {
-   "recent_mean_loglik": -1.6903,
+   "recent_mean_loglik": -1.6643,
    "train_p5": -5.254,
    "train_median": -2.5585,
    "stale": false
   },
   "EURGBP": {
-   "recent_mean_loglik": -3.4379,
+   "recent_mean_loglik": -3.4599,
    "train_p5": -4.9688,
    "train_median": -2.6824,
    "stale": false
   },
   "EURJPY": {
-   "recent_mean_loglik": -1.3459,
+   "recent_mean_loglik": -1.3675,
    "train_p5": -4.8999,
    "train_median": -2.5843,
    "stale": false
   },
   "USDSEK": {
-   "recent_mean_loglik": -1.7174,
+   "recent_mean_loglik": -1.7162,
    "train_p5": -5.1536,
    "train_median": -2.4628,
    "stale": false
@@ -147,5 +147,5 @@
  "drifted_features": [],
  "stale_pairs": [],
  "model_stale": false,
- "worst_psi": 3.686
+ "worst_psi": 3.6988
 }

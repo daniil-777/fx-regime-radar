@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-09-08T10:47:03Z",
-  "data_through": "2026-09-07",
+  "last_run_utc": "2026-09-09T10:55:48Z",
+  "data_through": "2026-09-08",
   "rows": {
-    "prices": 16124,
-    "features": 15824,
-    "regimes": 15824
+    "prices": 16129,
+    "features": 15829,
+    "regimes": 15829
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -14,19 +14,19 @@
   },
   "ecb_check": {},
   "stage_seconds": {
-    "data": 1.06,
+    "data": 1.53,
     "features": 0.08,
-    "hmm": 3.37,
+    "hmm": 3.41,
     "cb_features": 0.0,
     "features_ext": 0.0,
     "forecaster": 1.1,
     "challenger": 0.0,
     "siren": 0.45,
-    "bocpd": 1.16,
+    "bocpd": 1.18,
     "conformal": 0.04,
-    "drift": 4.03,
+    "drift": 4.1,
     "ledger": 0.08,
-    "narrator": 0.86,
+    "narrator": 0.87,
     "postmortem": 0.01,
     "advisor": 0.06,
     "treasury": 0.0,

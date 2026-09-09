@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-08T10:45:08Z",
- "as_of": "2026-09-07",
+ "generated_at_utc": "2026-09-09T10:53:49Z",
+ "as_of": "2026-09-08",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999999840071664,
-   "days_in_regime": 94,
+   "regime_prob": 0.9999999894046837,
+   "days_in_regime": 95,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: ECB is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: ECB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.018536610570408455,
+    "change_risk_5d": 0.008320536325520649,
     "risk_lo": 0.0,
-    "risk_hi": 0.5113843426072858,
+    "risk_hi": 0.501168268362398,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "ECB"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999990103372256,
-   "days_in_regime": 17,
+   "regime_prob": 0.9999986404142539,
+   "days_in_regime": 18,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: ECB is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: ECB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.019304384033651784,
+    "change_risk_5d": 0.018815068941009472,
     "risk_lo": 0.0,
-    "risk_hi": 0.5121521160705291,
+    "risk_hi": 0.5116628009778869,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "ECB"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9990719016997655,
-   "days_in_regime": 139,
+   "regime_prob": 0.9991688711036946,
+   "days_in_regime": 140,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: ECB is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
+   "light_reason": "Neither clear-cut: ECB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.03545013649967769,
+    "change_risk_5d": 0.037120414342530994,
     "risk_lo": 0.0,
-    "risk_hi": 0.528297868536555,
+    "risk_hi": 0.5299681463794084,
     "agreement": 1,
     "consensus_text": "1/3 \u2014 likely a one-day spike; one voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "ECB"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1613997220993042,
-  "USDCHF": 0.8099300265312195,
-  "GBPUSD": 1.3517167568206787,
-  "EURCHF": 0.9406525077332404,
-  "GBPCHF": 1.0947959887144663,
-  "EURGBP": 0.8592034656957187
+  "EURUSD": 1.1627637147903442,
+  "USDCHF": 0.8089900016784668,
+  "GBPUSD": 1.3546831607818604,
+  "EURCHF": 0.9406642195799009,
+  "GBPCHF": 1.095925132514708,
+  "EURGBP": 0.8583289055717286
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
