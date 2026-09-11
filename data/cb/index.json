@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-09-10T10:47:43Z",
- "n_docs": 184,
+ "generated_at_utc": "2026-09-11T10:45:47Z",
+ "n_docs": 185,
  "per_bank": {
   "FOMC": 55,
-  "ECB": 53,
+  "ECB": 54,
   "SNB": 26,
   "BOE": 50
  },
  "first": "2020-01-23T14:15:00+01:00",
- "last": "2026-07-30T12:00:00+01:00",
+ "last": "2026-09-10T14:15:00+02:00",
  "docs": [
   {
    "bank": "ECB",
@@ -1297,6 +1297,13 @@
    "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/july-2026",
    "published_at": "2026-07-30T12:00:00+01:00",
    "sha256": "16b8c1f339f9cb27031cd53a99ab1c18f4b21073708bf43b699b211eba892469"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260910~314e508016.en.html",
+   "published_at": "2026-09-10T14:15:00+02:00",
+   "sha256": "167a2bf9ce5b766780dc1c655058ad30a1dc85a87948a1ec7b23c650b6c6a74a"
   }
  ]
 }
