@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-16T10:59:30Z",
- "as_of": "2026-09-15",
+ "generated_at_utc": "2026-09-17T11:08:03Z",
+ "as_of": "2026-09-16",
  "levels": [
   0.95,
   0.99
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668234,
+  "low_risk": 0.09028702194668232,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999998064508663,
-   "days_in_regime": 100,
+   "regime_prob": 0.9999998273911305,
+   "days_in_regime": 101,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: FOMC is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: FOMC is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.01769172182324494,
+    "change_risk_5d": 0.01805008257215786,
     "risk_lo": 0.0,
-    "risk_hi": 0.5105394538601223,
+    "risk_hi": 0.5108978146090353,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 1,
+    "days_to_next_event": 0,
     "next_event": "FOMC"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999982713769829,
-   "days_in_regime": 23,
+   "regime_prob": 0.99999754558646,
+   "days_in_regime": 24,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: FOMC is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: FOMC is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.020575782559114995,
+    "change_risk_5d": 0.027259051642279312,
     "risk_lo": 0.0,
-    "risk_hi": 0.5134235145959923,
+    "risk_hi": 0.5201067836791566,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 1,
+    "days_to_next_event": 0,
     "next_event": "FOMC"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.999296649261725,
-   "days_in_regime": 145,
+   "regime_prob": 0.999258394274499,
+   "days_in_regime": 146,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: FOMC is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
+   "light_reason": "Neither clear-cut: FOMC is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.04356623525259783,
+    "change_risk_5d": 0.03752642170947917,
     "risk_lo": 0.0,
-    "risk_hi": 0.5364139672894752,
+    "risk_hi": 0.5303741537463565,
     "agreement": 1,
     "consensus_text": "1/3 \u2014 likely a one-day spike; one voter sees stress",
-    "days_to_next_event": 1,
+    "days_to_next_event": 0,
     "next_event": "FOMC"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.154854416847229,
-  "USDCHF": 0.8170999884605408,
-  "GBPUSD": 1.3500925302505493,
-  "EURCHF": 0.9436315306794754,
-  "GBPCHF": 1.1031605908883861,
-  "EURGBP": 0.8553890870227331
+  "EURUSD": 1.153761863708496,
+  "USDCHF": 0.8190659880638123,
+  "GBPUSD": 1.3473457098007202,
+  "EURCHF": 0.9450071008887448,
+  "GBPCHF": 1.1035650450614654,
+  "EURGBP": 0.8563220673921497
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
