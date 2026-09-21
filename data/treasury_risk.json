@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-18T10:43:33Z",
- "as_of": "2026-09-17",
+ "generated_at_utc": "2026-09-21T12:11:38Z",
+ "as_of": "2026-09-18",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999999642345874,
-   "days_in_regime": 102,
+   "regime_prob": 0.9999999807766577,
+   "days_in_regime": 103,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.0152604416735265,
+    "change_risk_5d": 0.015086245656369327,
     "risk_lo": 0.0,
-    "risk_hi": 0.5081081737104038,
+    "risk_hi": 0.5079339776932467,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "BOE"
+    "days_to_next_event": 4,
+    "next_event": "SNB"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999360924635711,
-   "days_in_regime": 25,
+   "regime_prob": 0.9999817076925327,
+   "days_in_regime": 26,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.030708379762516932,
+    "change_risk_5d": 0.026646630258810422,
     "risk_lo": 0.0,
-    "risk_hi": 0.5235561117993943,
-    "agreement": 1,
-    "consensus_text": "1/3 \u2014 likely a one-day spike; one voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "BOE"
+    "risk_hi": 0.5194943622956878,
+    "agreement": 0,
+    "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
+    "days_to_next_event": 4,
+    "next_event": "SNB"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999246828398622,
-   "days_in_regime": 147,
+   "regime_prob": 0.9999550244271314,
+   "days_in_regime": 148,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.027628986498905796,
+    "change_risk_5d": 0.022432887427499527,
     "risk_lo": 0.0,
-    "risk_hi": 0.5204767185357831,
+    "risk_hi": 0.5152806194643769,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "BOE"
+    "days_to_next_event": 4,
+    "next_event": "SNB"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1469862461090088,
-  "USDCHF": 0.8253200054168701,
-  "GBPUSD": 1.3382940292358398,
-  "EURCHF": 0.9466306948517627,
-  "GBPCHF": 1.1045208354582883,
-  "EURGBP": 0.8570510075158394
+  "EURUSD": 1.1476049423217773,
+  "USDCHF": 0.8248800039291382,
+  "GBPUSD": 1.335800051689148,
+  "EURCHF": 0.9466363693314861,
+  "GBPCHF": 1.1018747518858873,
+  "EURGBP": 0.8591143119590436
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
