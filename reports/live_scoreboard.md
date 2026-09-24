@@ -7,5 +7,5 @@ Frozen test (2019+, scored once): PR-AUC 0.548 · Brier 0.102 (base rate 0.136) 
 
 | model version | family | since | through | forecasts | resolved | Brier ↓ | base-rate Brier | PR-AUC ↑ | precision | recall |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `hmm=0.4.0|fc=1.1.0|siren=1.2.0` | champion | 2026-08-17 | 2026-09-22 | 81 | 66 | 0.025 | 0.029 | — | — | — |
-| `challenger=1.0.0` | challenger | 2026-08-18 | 2026-09-22 | 78 | 63 | 0.044 | 0.029 | — | — | — |
+| `hmm=0.4.0|fc=1.1.0|siren=1.2.0` | champion | 2026-08-17 | 2026-09-23 | 84 | 69 | 0.024 | 0.029 | — | — | — |
+| `challenger=1.0.0` | challenger | 2026-08-18 | 2026-09-23 | 81 | 66 | 0.043 | 0.029 | — | — | — |

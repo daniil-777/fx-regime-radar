@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-09-23T10:56:00Z",
- "n_docs": 187,
+ "generated_at_utc": "2026-09-24T11:15:19Z",
+ "n_docs": 188,
  "per_bank": {
   "FOMC": 56,
   "ECB": 54,
-  "SNB": 26,
+  "SNB": 27,
   "BOE": 51
  },
  "first": "2020-01-23T14:15:00+01:00",
- "last": "2026-09-17T12:00:00+01:00",
+ "last": "2026-09-24T09:30:00+02:00",
  "docs": [
   {
    "bank": "ECB",
@@ -1318,6 +1318,13 @@
    "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/september-2026",
    "published_at": "2026-09-17T12:00:00+01:00",
    "sha256": "bf5711301a95d408169f729a5f789cc3807de2cf0be2b57a4f9d150c5da13cb3"
+  },
+  {
+   "bank": "SNB",
+   "type": "monetary_policy_assessment",
+   "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20260924",
+   "published_at": "2026-09-24T09:30:00+02:00",
+   "sha256": "11a46dabb644fa30b806e8aa677f9389738e4a9760509157773c726481c179b6"
   }
  ]
 }

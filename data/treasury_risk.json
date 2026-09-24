@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-23T10:56:20Z",
- "as_of": "2026-09-22",
+ "generated_at_utc": "2026-09-24T11:15:36Z",
+ "as_of": "2026-09-23",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999999808720414,
-   "days_in_regime": 105,
+   "regime_prob": 0.999999977804235,
+   "days_in_regime": 106,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: SNB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.015068664309148149,
+    "change_risk_5d": 0.013812725924994395,
     "risk_lo": 0.0,
-    "risk_hi": 0.5079163963460255,
+    "risk_hi": 0.5066604579618718,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 2,
+    "days_to_next_event": 1,
     "next_event": "SNB"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999724348547685,
-   "days_in_regime": 28,
+   "regime_prob": 0.9999627648069354,
+   "days_in_regime": 29,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: SNB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.02820255761181853,
+    "change_risk_5d": 0.02854295031094147,
     "risk_lo": 0.0,
-    "risk_hi": 0.5210502896486959,
+    "risk_hi": 0.5213906823478188,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 2,
+    "days_to_next_event": 1,
     "next_event": "SNB"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999717854406215,
-   "days_in_regime": 150,
+   "regime_prob": 0.9999776984110311,
+   "days_in_regime": 151,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: SNB is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: SNB is 1 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.015939365873017784,
+    "change_risk_5d": 0.01149173498715511,
     "risk_lo": 0.0,
-    "risk_hi": 0.5087870979098952,
+    "risk_hi": 0.5043394670240324,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 2,
+    "days_to_next_event": 1,
     "next_event": "SNB"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1464602947235107,
-  "USDCHF": 0.8208000063896179,
-  "GBPUSD": 1.3370896577835083,
-  "EURCHF": 0.9410146172345009,
-  "GBPCHF": 1.0974831996521957,
-  "EURGBP": 0.8574296331212347
+  "EURUSD": 1.1447935104370117,
+  "USDCHF": 0.8208199739456177,
+  "GBPUSD": 1.3343117237091064,
+  "EURCHF": 0.9396693794100202,
+  "GBPCHF": 1.095229714290241,
+  "EURGBP": 0.8579655638899178
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
