@@ -42,6 +42,22 @@ data/keys.db-shm
 /.claude.zip
 /claude 2.zip
 /.claude/commands.zip
+/0-45.zip
+/.claude/commands/fxradar-direction-lab-32-34.zip
+# ...and the pack's extracted folder: byte-identical copies of .claude/commands/phase-32..34
+/.claude/commands/fxradar-direction-lab-32-34/
+
+# local agent-tooling state (ruflo / claude-flow / agentdb) — machine-local, never an artifact
+.claude-flow/
+.swarm/
+ruvector.db
+agentdb.rvf
+agentdb.rvf.lock
+.claude/proven-config.json
+.claude/.proven-config-version
+
+# /brag launch-video renders (mp4 + composition, ~15 MB per run) — regenerated, not versioned
+brag-output*/
 
 # eval fixtures are committed; scratch reports are not
 reports/eval_ci.md
