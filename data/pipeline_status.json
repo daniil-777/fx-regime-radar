@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-09-28T13:07:16Z",
-  "data_through": "2026-09-25",
+  "last_run_utc": "2026-09-29T12:17:56Z",
+  "data_through": "2026-09-28",
   "rows": {
-    "prices": 16927,
-    "features": 16747,
-    "regimes": 16747
+    "prices": 16930,
+    "features": 16750,
+    "regimes": 16750
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -15,36 +15,36 @@
   },
   "ecb_check": {
     "EURUSD": {
-      "n_compared": 766,
-      "mean_abs_pct": 0.19852210333377912,
+      "n_compared": 764,
+      "mean_abs_pct": 0.1980427145501606,
       "max_abs_pct": 2.2389805612301137
     },
     "USDCHF": {
-      "n_compared": 766,
-      "mean_abs_pct": 0.23102088788517455,
+      "n_compared": 764,
+      "mean_abs_pct": 0.23113165356495158,
       "max_abs_pct": 2.010446310950397
     }
   },
   "stage_seconds": {
-    "data": 2.08,
+    "data": 2.24,
     "features": 0.05,
-    "hmm": 2.33,
-    "cb_features": 0.28,
-    "features_ext": 4.39,
-    "forecaster": 2.15,
-    "challenger": 0.53,
+    "hmm": 2.32,
+    "cb_features": 0.3,
+    "features_ext": 1.27,
+    "forecaster": 2.94,
+    "challenger": 0.54,
     "siren": 0.57,
-    "bocpd": 1.09,
+    "bocpd": 1.1,
     "conformal": 0.04,
-    "drift": 3.89,
-    "ledger": 0.09,
-    "narrator": 0.82,
+    "drift": 3.88,
+    "ledger": 0.1,
+    "narrator": 0.88,
     "postmortem": 0.01,
     "advisor": 0.05,
-    "treasury": 0.04,
-    "avatar": 0.11,
+    "treasury": 0.05,
+    "avatar": 0.12,
     "decision": 0.0,
-    "visuals": 12.35,
+    "visuals": 12.78,
     "packs": 0.05,
     "rollups": 0.74,
     "archive": 0.25,

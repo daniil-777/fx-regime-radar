@@ -3,26 +3,26 @@
   "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
   "family": "champion",
   "since": "2026-08-17",
-  "through": "2026-09-25",
-  "n_forecasts": 90,
-  "n_resolved": 75,
-  "brier": 0.02198477446208492,
+  "through": "2026-09-28",
+  "n_forecasts": 93,
+  "n_resolved": 78,
+  "brier": 0.021159312913811925,
   "pr_auc": null,
   "precision": null,
   "recall": null,
-  "base_rate_brier": 0.028932758840145876
+  "base_rate_brier": 0.02893275884014588
  },
  {
   "model_version": "challenger=1.0.0",
   "family": "challenger",
   "since": "2026-08-18",
-  "through": "2026-09-25",
-  "n_forecasts": 87,
-  "n_resolved": 72,
-  "brier": 0.0392247654744946,
+  "through": "2026-09-28",
+  "n_forecasts": 90,
+  "n_resolved": 75,
+  "brier": 0.037722938164963714,
   "pr_auc": null,
   "precision": null,
   "recall": null,
-  "base_rate_brier": 0.02893275884014587
+  "base_rate_brier": 0.028932758840145876
  }
 ]
