@@ -1,10 +1,10 @@
 {
-  "last_run_utc": "2026-09-29T12:19:04Z",
-  "data_through": "2026-09-28",
+  "last_run_utc": "2026-09-30T12:04:56Z",
+  "data_through": "2026-09-29",
   "rows": {
-    "prices": 27787,
-    "features": 27487,
-    "regimes": 27487
+    "prices": 27792,
+    "features": 27492,
+    "regimes": 27492
   },
   "model_versions": {
     "regime_model": "hmm",
@@ -14,42 +14,42 @@
   },
   "ecb_check": {
     "USDMXN": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.27067160810025476,
+      "n_compared": 765,
+      "mean_abs_pct": 0.2708658097205412,
       "max_abs_pct": 3.231024402971341
     },
     "USDBRL": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.304790372984803,
+      "n_compared": 765,
+      "mean_abs_pct": 0.3046778958273787,
       "max_abs_pct": 2.2955140365220545
     },
     "USDZAR": {
-      "n_compared": 761,
-      "mean_abs_pct": 0.40480933802791197,
+      "n_compared": 762,
+      "mean_abs_pct": 0.40455914587006275,
       "max_abs_pct": 2.1452946218449327
     },
     "USDPLN": {
-      "n_compared": 764,
-      "mean_abs_pct": 0.30898300368452086,
+      "n_compared": 765,
+      "mean_abs_pct": 0.3086647876399371,
       "max_abs_pct": 2.1445892586877964
     }
   },
   "stage_seconds": {
-    "data": 3.39,
+    "data": 3.18,
     "features": 0.09,
-    "hmm": 3.77,
+    "hmm": 3.81,
     "cb_features": 0.0,
     "features_ext": 0.0,
-    "forecaster": 1.55,
+    "forecaster": 1.73,
     "challenger": 0.0,
-    "siren": 0.86,
-    "bocpd": 1.7,
+    "siren": 0.95,
+    "bocpd": 2.03,
     "conformal": 0.05,
-    "drift": 7.22,
+    "drift": 6.94,
     "ledger": 0.09,
-    "narrator": 0.89,
+    "narrator": 0.99,
     "postmortem": 0.01,
-    "advisor": 0.1,
+    "advisor": 0.09,
     "treasury": 0.0,
     "avatar": 0.01,
     "decision": 0.0,

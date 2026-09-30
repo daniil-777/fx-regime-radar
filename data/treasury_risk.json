@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-09-29T12:17:42Z",
- "as_of": "2026-09-28",
+ "generated_at_utc": "2026-09-30T12:03:27Z",
+ "as_of": "2026-09-29",
  "levels": [
   0.95,
   0.99
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668234,
+  "low_risk": 0.09028702194668232,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999999821481317,
-   "days_in_regime": 109,
+   "regime_prob": 0.9999999925025853,
+   "days_in_regime": 110,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: NFP is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.013900656311459128,
+    "change_risk_5d": 0.006473428362825826,
     "risk_lo": 0.0,
-    "risk_hi": 0.5067483883483365,
+    "risk_hi": 0.4993211603997032,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "NFP"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9993264830531476,
-   "days_in_regime": 32,
+   "regime_prob": 0.9991337067318568,
+   "days_in_regime": 33,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: NFP is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.04845474665061564,
+    "change_risk_5d": 0.040922085942606594,
     "risk_lo": 0.0,
-    "risk_hi": 0.541302478687493,
+    "risk_hi": 0.533769817979484,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "NFP"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999729366191223,
-   "days_in_regime": 154,
+   "regime_prob": 0.9999680214521492,
+   "days_in_regime": 155,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: NFP is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.01623479558275032,
+    "change_risk_5d": 0.01625454208218832,
     "risk_lo": 0.0,
-    "risk_hi": 0.5090825276196277,
+    "risk_hi": 0.5091022741190657,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "NFP"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.13779878616333,
-  "USDCHF": 0.8297200202941895,
-  "GBPUSD": 1.3229262828826904,
-  "EURCHF": 0.9440544319461424,
-  "GBPCHF": 1.0976584222811425,
-  "EURGBP": 0.8600621220435936
+  "EURUSD": 1.137268304824829,
+  "USDCHF": 0.8317199945449829,
+  "GBPUSD": 1.3254337310791016,
+  "EURCHF": 0.9458887882850888,
+  "GBPCHF": 1.1023897355828467,
+  "EURGBP": 0.8580348290207782
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
