@@ -343,11 +343,13 @@ register(
     "archive", fx_only(archive.stage)
 )  # the archive room: history and aggregates the serving side answers from
 register("arcade", stage_arcade)  # resolves matured calls (writes happen in the write stage)
+# fx_only: public/ is shared by every universe, and only the FX pack carries all four markets —
+# a later universe run (crypto is last in daily.yml) would otherwise publish an empty site
 register(
-    "public_state", public_state.stage
+    "public_state", fx_only(public_state.stage)
 )  # phase 44: the one file the static customer surface fetches → public/state.json
 register(
-    "static_site", static_site_stage
+    "static_site", fx_only(static_site_stage)
 )  # phase 44: rebuild the five customer pages with today's numbers baked in
 
 

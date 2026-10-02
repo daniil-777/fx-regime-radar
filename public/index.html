@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Overview · FX Regime Radar</title>
-<meta name="description" content="Current market regime, 5-day change risk and anomaly readings for 0 markets. Educational tool. Not investment advice.">
+<meta name="description" content="Current market regime, 5-day change risk and anomaly readings for 20 markets. Educational tool. Not investment advice.">
 <meta name="theme-color" content="#0E1420">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -114,21 +114,41 @@ footer p{margin:0 0 6px}
 
 
 <section class="banner">
-<p class="eyebrow"> · through 2026-10-01</p>
-<p class="word unknown">unknown</p>
-<p class="gloss"> — day — of this regime.</p>
+<p class="eyebrow">EUR/USD · through 2026-10-01</p>
+<p class="word calm">calm</p>
+<p class="gloss">quiet conditions, moves within the usual range — day 111 of this regime.</p>
 <div class="metrics">
-<div><span class="mlabel">change risk, 5 day</span><span class="mval">—</span><span class="tx3">band —</span></div>
-<div><span class="mlabel">siren</span><span class="mval">—<span class="tx3" style="font-size:13px"> of 100</span></span><span class="tx3">how unusual today is</span></div>
-<div><span class="mlabel">model agreement</span><span class="mval">—<span class="tx3" style="font-size:13px"> of 3</span></span><span class="tx3">independent voters</span></div>
+<div><span class="mlabel">change risk, 5 day</span><span class="mval">0.01</span><span class="tx3">band 0.00 to 0.50</span></div>
+<div><span class="mlabel">siren</span><span class="mval">73<span class="tx3" style="font-size:13px"> of 100</span></span><span class="tx3">how unusual today is</span></div>
+<div><span class="mlabel">model agreement</span><span class="mval">0<span class="tx3" style="font-size:13px"> of 3</span></span><span class="tx3">independent voters</span></div>
 </div>
 </section>
-<h2>Today across every board</h2><div class="grid"></div>
+<h2>Today across every board</h2><div class="grid"><div class="card"><h3>calm</h3><p class="mono" style="font-size:30px;margin:0;color:var(--calm)">15</p><p class="tx3" style="margin:4px 0 0;font-size:13px">of 20 markets</p></div><div class="card"><h3>chop</h3><p class="mono" style="font-size:30px;margin:0;color:var(--chop)">3</p><p class="tx3" style="margin:4px 0 0;font-size:13px">of 20 markets</p></div><div class="card"><h3>trend</h3><p class="mono" style="font-size:30px;margin:0;color:var(--trend)">1</p><p class="tx3" style="margin:4px 0 0;font-size:13px">of 20 markets</p></div><div class="card"><h3>crisis</h3><p class="mono" style="font-size:30px;margin:0;color:var(--crisis)">1</p><p class="tx3" style="margin:4px 0 0;font-size:13px">of 20 markets</p></div></div>
+<h2>Crypto majors</h2>
+<div class="card scroll"><table>
+<thead><tr><th>market</th><th>regime</th><th class=num>change risk</th><th class=num>band</th>
+<th class=num>siren</th><th class=num>days</th><th class=num>agree</th></tr></thead>
+<tbody><tr><td>ADA/USD</td><td><span class="pill"><span class="dot bg-trend"></span><span class="trend">trend</span></span></td><td class=num>0.54</td><td class='num tx3'>0.00–1.00</td><td class=num>83</td><td class=num>10</td><td class=num>0/3</td></tr><tr><td>BNB/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.10</td><td class='num tx3'>0.00–0.74</td><td class=num>8</td><td class=num>220</td><td class=num>0/3</td></tr><tr><td>BTC/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.49</td><td class='num tx3'>0.00–1.00</td><td class=num>59</td><td class=num>7</td><td class=num>0/3</td></tr><tr><td>ETH/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.32</td><td class='num tx3'>0.00–0.96</td><td class=num>40</td><td class=num>22</td><td class=num>0/3</td></tr><tr><td>XRP/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.21</td><td class='num tx3'>0.00–0.84</td><td class=num>70</td><td class=num>21</td><td class=num>0/3</td></tr></tbody></table></div>
+<h2>EM majors</h2>
+<div class="card scroll"><table>
+<thead><tr><th>market</th><th>regime</th><th class=num>change risk</th><th class=num>band</th>
+<th class=num>siren</th><th class=num>days</th><th class=num>agree</th></tr></thead>
+<tbody><tr><td>USD/BRL</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.64</td><td class=num>67</td><td class=num>62</td><td class=num>0/3</td></tr><tr><td>USD/MXN</td><td><span class="pill"><span class="dot bg-chop"></span><span class="chop">chop</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.75</td><td class=num>100</td><td class=num>5</td><td class=num>0/3</td></tr><tr><td>USD/PLN</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.02</td><td class='num tx3'>0.00–0.64</td><td class=num>77</td><td class=num>117</td><td class=num>0/3</td></tr><tr><td>USD/RUB</td><td><span class="pill"><span class="dot bg-crisis"></span><span class="crisis">crisis</span></span></td><td class=num>0.06</td><td class='num tx3'>0.00–0.91</td><td class=num>100</td><td class=num>8</td><td class=num>2/3</td></tr><tr><td>USD/ZAR</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.05</td><td class='num tx3'>0.00–0.66</td><td class=num>73</td><td class=num>29</td><td class=num>0/3</td></tr></tbody></table></div>
+<h2>FX majors</h2>
+<div class="card scroll"><table>
+<thead><tr><th>market</th><th>regime</th><th class=num>change risk</th><th class=num>band</th>
+<th class=num>siren</th><th class=num>days</th><th class=num>agree</th></tr></thead>
+<tbody><tr><td>EUR/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.01</td><td class='num tx3'>0.00–0.50</td><td class=num>73</td><td class=num>111</td><td class=num>0/3</td></tr><tr><td>GBP/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.53</td><td class=num>47</td><td class=num>34</td><td class=num>0/3</td></tr><tr><td>USD/CHF</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.01</td><td class='num tx3'>0.00–0.51</td><td class=num>67</td><td class=num>156</td><td class=num>0/3</td></tr></tbody></table></div>
+<h2>FX G10</h2>
+<div class="card scroll"><table>
+<thead><tr><th>market</th><th>regime</th><th class=num>change risk</th><th class=num>band</th>
+<th class=num>siren</th><th class=num>days</th><th class=num>agree</th></tr></thead>
+<tbody><tr><td>AUD/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.63</td><td class=num>76</td><td class=num>101</td><td class=num>0/3</td></tr><tr><td>EUR/GBP</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.23</td><td class='num tx3'>0.00–0.82</td><td class=num>24</td><td class=num>356</td><td class=num>0/3</td></tr><tr><td>EUR/JPY</td><td><span class="pill"><span class="dot bg-chop"></span><span class="chop">chop</span></span></td><td class=num>0.28</td><td class='num tx3'>0.00–1.00</td><td class=num>96</td><td class=num>19</td><td class=num>1/3</td></tr><tr><td>EUR/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.01</td><td class='num tx3'>0.00–0.61</td><td class=num>60</td><td class=num>111</td><td class=num>0/3</td></tr><tr><td>GBP/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.02</td><td class='num tx3'>0.00–0.62</td><td class=num>17</td><td class=num>34</td><td class=num>0/3</td></tr><tr><td>NZD/USD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.63</td><td class=num>74</td><td class=num>67</td><td class=num>0/3</td></tr><tr><td>USD/CAD</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.02</td><td class='num tx3'>0.00–0.62</td><td class=num>75</td><td class=num>155</td><td class=num>0/3</td></tr><tr><td>USD/CHF</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.02</td><td class='num tx3'>0.00–0.62</td><td class=num>77</td><td class=num>156</td><td class=num>0/3</td></tr><tr><td>USD/JPY</td><td><span class="pill"><span class="dot bg-chop"></span><span class="chop">chop</span></span></td><td class=num>0.74</td><td class='num tx3'>0.01–1.00</td><td class=num>100</td><td class=num>9</td><td class=num>1/3</td></tr><tr><td>USD/SEK</td><td><span class="pill"><span class="dot bg-calm"></span><span class="calm">calm</span></span></td><td class=num>0.03</td><td class='num tx3'>0.00–0.63</td><td class=num>49</td><td class=num>102</td><td class=num>0/3</td></tr></tbody></table></div>
 </main>
 <footer class="wrap">
 <p><strong>Educational tool. Not investment advice.</strong></p>
 <p>Regimes, change risk and anomaly scores only. This system models no price direction and gives no personal recommendation.</p>
-<p class="mono tx3">data through 2026-10-01 · built 2026-10-02T07:25:00Z · <a href="state.json">state.json</a></p>
+<p class="mono tx3">data through 2026-10-01 · built 2026-10-02T08:01:38Z · <a href="state.json">state.json</a></p>
 </footer>
 <script src="app.js" defer></script>
 </body>

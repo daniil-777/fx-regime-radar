@@ -77,6 +77,19 @@ def test_registered_stage_order() -> None:
     assert [n for n, _ in run_daily.STAGES][:3] == ["data", "features", "hmm"]
 
 
+def test_public_surface_stages_skip_non_fx_universes(monkeypatch) -> None:
+    """public/state.json and public/*.html are shared by every universe, but only the FX run's pack
+    carries all four markets. The crypto run goes last in daily.yml, so without this guard it
+    republished the site with zero markets (live 2026-10-02: 'unknown', every number a dash)."""
+    stages = dict(run_daily.STAGES)
+    monkeypatch.setattr(config, "UNIVERSE_NAME", "crypto")
+    ctx = {"avatar_context": {"data_through": "2026-10-01", "pairs": {}}}
+    stages["public_state"](ctx)
+    stages["static_site"](ctx)
+    assert "public_state" not in ctx
+    assert not ctx.get("extra_writers")
+
+
 def test_ledger_stage_runs_after_siren_and_before_narrator() -> None:
     names = [n for n, _ in run_daily.STAGES]
     assert names.index("siren") < names.index("ledger") < names.index("narrator")
