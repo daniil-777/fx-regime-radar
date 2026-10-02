@@ -19,7 +19,7 @@ changes (with SHAP explanations), and a tiny autoencoder *detects* days that loo
 day it has seen. A short LLM call then narrates the computed numbers in plain English. Nothing
 here predicts price direction — by design.
 
-**Live app:** https://fx-regime-radar.streamlit.app · **Code:** https://github.com/daniil-777/fx-regime-radar
+**Live app:** https://fx-regime-radar.fly.dev · **AI presenter:** https://fx-regime-radar-presenter.fly.dev/avatar · **Static site:** https://daniil-777.github.io/fx-regime-radar/ · **Code:** https://github.com/daniil-777/fx-regime-radar
 
 > **Technical report (53 pages, PDF):** [docs/paper/FX_Regime_Radar_Report.pdf](docs/paper/FX_Regime_Radar_Report.pdf) — methods, mathematics, results, failures, engineering, design and go-to-market in one document.
 >

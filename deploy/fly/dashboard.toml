@@ -1,0 +1,29 @@
+# Fly.io — the Streamlit console (deploy/Dockerfile; reads artifacts only, rule 8).
+# Deploy from the repo root:
+#   fly deploy --config deploy/fly/dashboard.toml --dockerfile deploy/Dockerfile --remote-only
+# Machines stop when idle and start on the next request (first visit after idle waits a few s).
+app = "fx-regime-radar"
+primary_region = "fra"
+
+[env]
+  PORT = "8501"
+  STREAMLIT_SERVER_HEADLESS = "true"
+  FXRADAR_AVATAR_URL = "https://fx-regime-radar-presenter.fly.dev/avatar"
+
+[http_service]
+  internal_port = 8501
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "90s"
+    method = "GET"
+    path = "/_stcore/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"

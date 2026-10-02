@@ -1,0 +1,37 @@
+# Fly.io — the Rust service: AI presenter (/avatar), scoring API, widget, artifacts baked in.
+# Deploy from the repo root:
+#   fly deploy --config deploy/fly/presenter.toml --dockerfile deploy/render/serve.Dockerfile --remote-only
+# Keys are Fly secrets (fly secrets set ANAM_API_KEY=... -a fx-regime-radar-presenter), never here.
+app = "fx-regime-radar-presenter"
+primary_region = "fra"
+
+[env]
+  PORT = "8080"
+  FXRADAR_AVATAR = "on"
+  FXRADAR_AVATAR_VENDOR = "anam"
+  # Owner decision 2026-10-02: public visitors may start sessions without an API key. Caps below
+  # live in an ephemeral sqlite file; the vendor dashboards' spend limits are the real backstop.
+  FXRADAR_AVATAR_DEV = "1"
+  FXRADAR_AVATAR_OPEN = "1"
+  FXRADAR_AVATAR_MAX_SESSIONS_MONTH = "300"
+  FXRADAR_AVATAR_MAX_MINUTES_MONTH = "600"
+  FXRADAR_AVATAR_MAX_TTS_CHARS_MONTH = "100000"
+  # FXRADAR_AVATAR_ADVICE stays unset (off) on a public site — FinSA (docs/AVATAR.md)
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "60s"
+    method = "GET"
+    path = "/api/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
