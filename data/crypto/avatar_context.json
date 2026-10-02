@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-10-01T12:38:28Z",
+ "generated_at_utc": "2026-10-02T07:25:00Z",
  "universe": "crypto",
- "data_through": "2026-09-30",
+ "data_through": "2026-10-01",
  "system_prompt_version": "v1",
  "disclosure": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today.",
  "pairs": {
@@ -9,11 +9,11 @@
    "label": "ETH/USD",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 22,
-   "change_risk_5d": 0.32,
+   "days_in_regime": 23,
+   "change_risk_5d": 0.26,
    "risk_lo": 0.0,
-   "risk_hi": 0.96,
-   "anomaly_pct": 40.0,
+   "risk_hi": 0.9,
+   "anomaly_pct": 30.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -21,10 +21,10 @@
    "label": "BNB/USD",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 220,
-   "change_risk_5d": 0.1,
+   "days_in_regime": 221,
+   "change_risk_5d": 0.08,
    "risk_lo": 0.0,
-   "risk_hi": 0.74,
+   "risk_hi": 0.72,
    "anomaly_pct": 8.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
@@ -32,24 +32,24 @@
   "BTC-USD": {
    "label": "BTC/USD",
    "regime": "calm",
-   "regime_prob": 0.98,
-   "days_in_regime": 7,
+   "regime_prob": 0.97,
+   "days_in_regime": 8,
    "change_risk_5d": 0.49,
    "risk_lo": 0.0,
    "risk_hi": 1.0,
-   "anomaly_pct": 59.0,
+   "anomaly_pct": 64.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
   "ADA-USD": {
    "label": "ADA/USD",
    "regime": "trend",
-   "regime_prob": 0.97,
-   "days_in_regime": 10,
+   "regime_prob": 0.98,
+   "days_in_regime": 11,
    "change_risk_5d": 0.54,
    "risk_lo": 0.0,
    "risk_hi": 1.0,
-   "anomaly_pct": 83.0,
+   "anomaly_pct": 84.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -57,11 +57,11 @@
    "label": "XRP/USD",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 21,
-   "change_risk_5d": 0.21,
+   "days_in_regime": 22,
+   "change_risk_5d": 0.28,
    "risk_lo": 0.0,
-   "risk_hi": 0.84,
-   "anomaly_pct": 70.0,
+   "risk_hi": 0.92,
+   "anomaly_pct": 59.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   }
@@ -70,38 +70,38 @@
   {
    "type": "NFP",
    "date": "2026-10-02",
-   "days": 2
+   "days": 1
   },
   {
    "type": "CPI",
    "date": "2026-10-14",
-   "days": 14
+   "days": 13
   },
   {
    "type": "FOMC",
    "date": "2026-10-28",
-   "days": 28
+   "days": 27
   },
   {
    "type": "ECB",
    "date": "2026-10-29",
-   "days": 29
+   "days": 28
   },
   {
    "type": "BOE",
    "date": "2026-11-05",
-   "days": 36
+   "days": 35
   },
   {
    "type": "SNB",
    "date": "2026-12-10",
-   "days": 71
+   "days": 70
   }
  ],
  "treasury": {},
  "ledger": {
-  "days_live": 30,
-  "n_forecasts": 148,
+  "days_live": 31,
+  "n_forecasts": 153,
   "n_resolved": 128,
   "since": "2026-08-18",
   "live_brier": 0.174,
@@ -109,7 +109,7 @@
   "frozen_pr_auc": 0.574,
   "coverage_live": 0.854,
   "coverage_frozen": 0.929,
-  "chain_head_short": "c3519f5f",
+  "chain_head_short": "be8f6134",
   "chain_ok": true
  },
  "drift": {
@@ -245,6 +245,75 @@
    "answer": "Three rules, enforced by tests. Every feature at day t uses only data up to day t, the regime probabilities are filtered rather than smoothed, and the splits are strictly time-ordered with a 5-day embargo at each boundary. Each feature module also has a truncation-invariance test: recompute on a shortened history and the overlapping rows must match exactly."
   },
   {
+   "q": "How does the HMM work?",
+   "keywords": [
+    "hmm",
+    "work"
+   ],
+   "answer": "The HMM — a hidden Markov model — assumes the market is in one of four unobserved states and that each state produces returns with its own character. It never sees the state directly; it infers how likely each one is from what the prices did. The forward algorithm updates that belief one day at a time using only days already past, which is what makes the output usable in real time rather than only in hindsight."
+  },
+  {
+   "q": "How many states does the regime model have?",
+   "keywords": [
+    "many",
+    "states",
+    "regime",
+    "model",
+    "have"
+   ],
+   "answer": "Four: calm, trend, chop and crisis. The number was fixed before the model was fitted and has not been tuned to make results look better, which matters because adding states almost always improves the fit and almost never improves the honesty."
+  },
+  {
+   "q": "What is XGBoost doing in the pipeline?",
+   "keywords": [
+    "xgboost",
+    "doing",
+    "in",
+    "pipeline"
+   ],
+   "answer": "XGBoost is the gradient-boosting model that produces the 5-day change risk — the probability that the regime label will be different a week from now. It is scored against a persistence base rate, a logistic regression and a one-feature rule, because a model that cannot beat those three has not earned its complexity."
+  },
+  {
+   "q": "How is the model trained?",
+   "keywords": [
+    "model",
+    "trained"
+   ],
+   "answer": "On history up to the end of 2016, validated on 2017 and 2018, and tested once on 2019 onward. The test result was recorded and then frozen. Retraining happens on a schedule rather than whenever a number disappoints, and every fit is written down with the data that produced it."
+  },
+  {
+   "q": "What is the embargo gap?",
+   "keywords": [
+    "embargo",
+    "gap"
+   ],
+   "answer": "A 5-trading-day hole left at every boundary between training, validation and test. Without it a label built from a forward window can overlap the next period's features, and the model scores better than it deserves. The gap costs a few days of data and removes that particular way of fooling yourself."
+  },
+  {
+   "q": "How long has the forward test been running, and what is the track record?",
+   "keywords": [
+    "long",
+    "has",
+    "forward",
+    "test",
+    "been",
+    "running",
+    "and",
+    "track",
+    "record"
+   ],
+   "answer": "Every forecast has been written to a sealed, hash-chained ledger since the record opened. The live count of days, of forecasts and of resolved outcomes, together with the live score beside the frozen one, is on the Proof page — I quote it from there rather than from memory, and the chain head is published so you can recompute it yourself."
+  },
+  {
+   "q": "When does the pipeline run?",
+   "keywords": [
+    "when",
+    "pipeline",
+    "run"
+   ],
+   "answer": "Every weekday around 06:00 UTC. It downloads the daily bars, rebuilds the features, scores the models, writes the forecasts to the ledger and publishes the artifacts. Every surface carries the date its data runs through, and if a build does not finish you see yesterday's reading behind a stale badge rather than a blank page."
+  },
+  {
    "q": "What markets do you cover?",
    "keywords": [
     "markets",
@@ -317,9 +386,10 @@
   }
  ],
  "knowledge_pack": "docs/avatar_knowledge.md",
- "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-09-30 close, ETH/USD is calm — change risk 0.32, band 0.00 to 0.96, siren 40 of 100. Elsewhere: BNB/USD calm, BTC/USD calm, ADA/USD trend, XRP/USD calm. The forward test is on day 30, every forecast hash-chained before its outcome. Ask me anything about the radar.",
+ "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-10-01 close, ETH/USD is calm — change risk 0.26, band 0.00 to 0.90, siren 30 of 100. Elsewhere: BNB/USD calm, BTC/USD calm, ADA/USD trend, XRP/USD calm. The forward test is on day 31, every forecast hash-chained before its outcome. Ask me anything about the radar.",
  "allowed_numbers": [
   "0",
+  "0.08",
   "0.1",
   "0.102",
   "0.11",
@@ -327,9 +397,9 @@
   "0.17",
   "0.174",
   "0.2",
-  "0.21",
+  "0.26",
+  "0.28",
   "0.3",
-  "0.32",
   "0.49",
   "0.5",
   "0.54",
@@ -338,15 +408,13 @@
   "0.574",
   "0.6",
   "0.7",
-  "0.74",
-  "0.8",
-  "0.84",
+  "0.72",
   "0.85",
   "0.854",
   "0.9",
+  "0.92",
   "0.929",
   "0.93",
-  "0.96",
   "0.97",
   "0.98",
   "1",
@@ -355,8 +423,9 @@
   "11",
   "12",
   "128",
+  "13",
   "14",
-  "148",
+  "153",
   "17",
   "17.4",
   "18",
@@ -367,20 +436,19 @@
   "2018",
   "2019",
   "2026",
-  "21",
   "22",
-  "220",
+  "221",
   "23",
+  "25",
+  "26",
+  "27",
   "28",
   "29",
   "3",
   "30",
-  "32",
-  "3519",
-  "36",
-  "38",
+  "31",
+  "35",
   "4",
-  "40",
   "49",
   "5",
   "500",
@@ -388,22 +456,22 @@
   "57",
   "57.4",
   "59",
+  "6",
+  "6134",
+  "64",
   "7",
   "70",
-  "71",
-  "74",
+  "72",
   "79",
   "8",
-  "83",
   "84",
   "85",
   "85.4",
-  "9",
   "90",
   "91.6",
+  "92",
   "92.9",
   "93",
-  "96",
   "97",
   "98"
  ]

@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-10-01T12:38:14Z",
+ "generated_at_utc": "2026-10-02T07:24:45Z",
  "universe": "em",
- "data_through": "2026-09-30",
+ "data_through": "2026-10-01",
  "system_prompt_version": "v1",
  "disclosure": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today.",
  "pairs": {
@@ -9,11 +9,11 @@
    "label": "USD/PLN",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 117,
-   "change_risk_5d": 0.02,
+   "days_in_regime": 118,
+   "change_risk_5d": 0.04,
    "risk_lo": 0.0,
-   "risk_hi": 0.64,
-   "anomaly_pct": 77.0,
+   "risk_hi": 0.66,
+   "anomaly_pct": 82.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -21,7 +21,7 @@
    "label": "USD/MXN",
    "regime": "chop",
    "regime_prob": 1.0,
-   "days_in_regime": 5,
+   "days_in_regime": 6,
    "change_risk_5d": 0.03,
    "risk_lo": 0.0,
    "risk_hi": 0.75,
@@ -33,7 +33,7 @@
    "label": "USD/RUB",
    "regime": "crisis",
    "regime_prob": 1.0,
-   "days_in_regime": 8,
+   "days_in_regime": 9,
    "change_risk_5d": 0.06,
    "risk_lo": 0.0,
    "risk_hi": 0.91,
@@ -45,11 +45,11 @@
    "label": "USD/BRL",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 62,
-   "change_risk_5d": 0.03,
+   "days_in_regime": 63,
+   "change_risk_5d": 0.06,
    "risk_lo": 0.0,
-   "risk_hi": 0.64,
-   "anomaly_pct": 67.0,
+   "risk_hi": 0.67,
+   "anomaly_pct": 71.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   },
@@ -57,11 +57,11 @@
    "label": "USD/ZAR",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 29,
-   "change_risk_5d": 0.05,
+   "days_in_regime": 30,
+   "change_risk_5d": 0.03,
    "risk_lo": 0.0,
-   "risk_hi": 0.66,
-   "anomaly_pct": 73.0,
+   "risk_hi": 0.65,
+   "anomaly_pct": 74.0,
    "agreement": 0,
    "consensus_text": "0/3 agree: quiet conditions — no voter sees stress"
   }
@@ -70,46 +70,46 @@
   {
    "type": "NFP",
    "date": "2026-10-02",
-   "days": 2
+   "days": 1
   },
   {
    "type": "CPI",
    "date": "2026-10-14",
-   "days": 14
+   "days": 13
   },
   {
    "type": "FOMC",
    "date": "2026-10-28",
-   "days": 28
+   "days": 27
   },
   {
    "type": "ECB",
    "date": "2026-10-29",
-   "days": 29
+   "days": 28
   },
   {
    "type": "BOE",
    "date": "2026-11-05",
-   "days": 36
+   "days": 35
   },
   {
    "type": "SNB",
    "date": "2026-12-10",
-   "days": 71
+   "days": 70
   }
  ],
  "treasury": {},
  "ledger": {
-  "days_live": 32,
-  "n_forecasts": 160,
-  "n_resolved": 135,
+  "days_live": 33,
+  "n_forecasts": 165,
+  "n_resolved": 140,
   "since": "2026-08-18",
-  "live_brier": 0.08,
+  "live_brier": 0.078,
   "frozen_brier": 0.135,
   "frozen_pr_auc": 0.548,
-  "coverage_live": 0.938,
+  "coverage_live": 0.933,
   "coverage_frozen": 0.89,
-  "chain_head_short": "a244cda6",
+  "chain_head_short": "8c883cc4",
   "chain_ok": true
  },
  "drift": {
@@ -245,6 +245,75 @@
    "answer": "Three rules, enforced by tests. Every feature at day t uses only data up to day t, the regime probabilities are filtered rather than smoothed, and the splits are strictly time-ordered with a 5-day embargo at each boundary. Each feature module also has a truncation-invariance test: recompute on a shortened history and the overlapping rows must match exactly."
   },
   {
+   "q": "How does the HMM work?",
+   "keywords": [
+    "hmm",
+    "work"
+   ],
+   "answer": "The HMM — a hidden Markov model — assumes the market is in one of four unobserved states and that each state produces returns with its own character. It never sees the state directly; it infers how likely each one is from what the prices did. The forward algorithm updates that belief one day at a time using only days already past, which is what makes the output usable in real time rather than only in hindsight."
+  },
+  {
+   "q": "How many states does the regime model have?",
+   "keywords": [
+    "many",
+    "states",
+    "regime",
+    "model",
+    "have"
+   ],
+   "answer": "Four: calm, trend, chop and crisis. The number was fixed before the model was fitted and has not been tuned to make results look better, which matters because adding states almost always improves the fit and almost never improves the honesty."
+  },
+  {
+   "q": "What is XGBoost doing in the pipeline?",
+   "keywords": [
+    "xgboost",
+    "doing",
+    "in",
+    "pipeline"
+   ],
+   "answer": "XGBoost is the gradient-boosting model that produces the 5-day change risk — the probability that the regime label will be different a week from now. It is scored against a persistence base rate, a logistic regression and a one-feature rule, because a model that cannot beat those three has not earned its complexity."
+  },
+  {
+   "q": "How is the model trained?",
+   "keywords": [
+    "model",
+    "trained"
+   ],
+   "answer": "On history up to the end of 2016, validated on 2017 and 2018, and tested once on 2019 onward. The test result was recorded and then frozen. Retraining happens on a schedule rather than whenever a number disappoints, and every fit is written down with the data that produced it."
+  },
+  {
+   "q": "What is the embargo gap?",
+   "keywords": [
+    "embargo",
+    "gap"
+   ],
+   "answer": "A 5-trading-day hole left at every boundary between training, validation and test. Without it a label built from a forward window can overlap the next period's features, and the model scores better than it deserves. The gap costs a few days of data and removes that particular way of fooling yourself."
+  },
+  {
+   "q": "How long has the forward test been running, and what is the track record?",
+   "keywords": [
+    "long",
+    "has",
+    "forward",
+    "test",
+    "been",
+    "running",
+    "and",
+    "track",
+    "record"
+   ],
+   "answer": "Every forecast has been written to a sealed, hash-chained ledger since the record opened. The live count of days, of forecasts and of resolved outcomes, together with the live score beside the frozen one, is on the Proof page — I quote it from there rather than from memory, and the chain head is published so you can recompute it yourself."
+  },
+  {
+   "q": "When does the pipeline run?",
+   "keywords": [
+    "when",
+    "pipeline",
+    "run"
+   ],
+   "answer": "Every weekday around 06:00 UTC. It downloads the daily bars, rebuilds the features, scores the models, writes the forecasts to the ledger and publishes the artifacts. Every surface carries the date its data runs through, and if a build does not finish you see yesterday's reading behind a stale badge rather than a blank page."
+  },
+  {
    "q": "What markets do you cover?",
    "keywords": [
     "markets",
@@ -317,13 +386,13 @@
   }
  ],
  "knowledge_pack": "docs/avatar_knowledge.md",
- "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-09-30 close, USD/PLN is calm — change risk 0.02, band 0.00 to 0.64, siren 77 of 100. Elsewhere: USD/MXN chop, USD/RUB crisis, USD/BRL calm, USD/ZAR calm. The forward test is on day 32, every forecast hash-chained before its outcome. Ask me anything about the radar.",
+ "greeting": "A quick note before we start: I am the radar's AI presenter — a computer-generated voice and face, not a person. I only describe what the radar has published today. As of the 2026-10-01 close, USD/PLN is calm — change risk 0.04, band 0.00 to 0.66, siren 82 of 100. Elsewhere: USD/MXN chop, USD/RUB crisis, USD/BRL calm, USD/ZAR calm. The forward test is on day 33, every forecast hash-chained before its outcome. Ask me anything about the radar.",
  "allowed_numbers": [
   "0",
-  "0.02",
   "0.03",
-  "0.05",
+  "0.04",
   "0.06",
+  "0.078",
   "0.08",
   "0.1",
   "0.102",
@@ -333,27 +402,28 @@
   "0.5",
   "0.548",
   "0.55",
-  "0.6",
-  "0.64",
+  "0.65",
   "0.66",
+  "0.67",
   "0.7",
   "0.75",
   "0.8",
   "0.89",
   "0.9",
   "0.91",
-  "0.938",
-  "0.94",
+  "0.93",
+  "0.933",
   "1",
   "10",
   "100",
   "11",
-  "117",
+  "118",
   "12",
+  "13",
   "13.5",
-  "135",
   "14",
-  "160",
+  "140",
+  "165",
   "18",
   "2",
   "2005",
@@ -363,37 +433,42 @@
   "2019",
   "2026",
   "23",
-  "244",
+  "24",
+  "27",
   "28",
   "29",
   "3",
   "30",
-  "32",
-  "36",
-  "38",
+  "33",
+  "35",
   "4",
+  "45",
   "5",
   "500",
   "54.8",
   "55",
   "6",
-  "62",
-  "64",
+  "63",
+  "65",
   "66",
   "67",
+  "7",
+  "7.8",
+  "70",
   "71",
-  "73",
+  "74",
   "75",
-  "77",
   "79",
   "8",
+  "82",
+  "883",
   "89",
   "9",
   "90",
   "91",
   "91.6",
-  "93.8",
-  "94",
+  "93",
+  "93.3",
   "98"
  ]
 }

@@ -28,9 +28,9 @@ body{background:var(--nimbus);color:var(--tx1);font-family:var(--sans);font-size
 .head .t{font-family:var(--disp);font-weight:500;letter-spacing:0.03em}
 .head .s{font-family:var(--mono);font-size:11px;color:var(--tx3)}
 /* the face: vendor <video> when connected, else the presenter disc (regime colour, one pulse) */
-.stage{position:relative;aspect-ratio:16/10;max-height:42vh;background:var(--nimbus);
+.stage{position:relative;aspect-ratio:4/3;max-height:56vh;background:var(--nimbus);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 25%;display:none}
 .disc{display:flex;align-items:center;justify-content:center}
 #eye-l,#eye-r{transform-box:fill-box;transform-origin:center}
 .blink #eye-l,.blink #eye-r{transform:scaleY(0.12)}
@@ -70,7 +70,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:
 .src-sheet dt{color:var(--tx3);font-family:var(--mono);font-size:11px}
 .src-sheet dd{margin:0;color:var(--tx1)}
 .src-sheet .close{position:absolute;top:12px;right:16px}
-@media (min-width:1024px){.src-sheet{inset:auto auto 16px 50%;transform:translateX(-50%);
+@media (min-width:860px){.src-sheet{inset:auto auto 16px 50%;transform:translateX(-50%);
   width:min(560px,92vw);border:1px solid var(--line);border-radius:12px}}
 /* the ONE permitted process visualisation: appears only after 400 ms, stays at least 500 ms */
 .waitline{display:flex;align-items:center;gap:8px;color:var(--tx2);font-size:13.5px;
@@ -124,12 +124,12 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
 @media (max-width:400px){body{padding:8px}.stage{aspect-ratio:16/11}.msg{font-size:13.5px}}
 
 /* ------------------------------------------------------------------------------------------
-   FULL-PAGE CHAT (>= 1024px). One page, two layouts: embedded in the Briefing iframe the
-   compact card above is exactly what it was, and in a real browser window the same DOM becomes
+   FULL-PAGE CHAT (>= 860px). One page, two layouts: on phones and narrow embeds the compact
+   card; at 860px and up — which now includes the Briefing iframe on a desktop — the same DOM becomes
    a two-column workspace — the presenter held steady on the left, the conversation given the
    whole right side. No JavaScript changes, so nothing that works today can break here.
    ------------------------------------------------------------------------------------------ */
-@media (min-width:1024px){
+@media (min-width:860px){
   body{padding:0;height:100vh;overflow:hidden;display:block}
   .wrap{max-width:none;height:100vh;gap:0}
   .card{height:100vh;border:0;border-radius:0;display:grid;
@@ -175,7 +175,7 @@ button.voice[aria-pressed="true"] svg{animation:lp 2.4s ease-in-out infinite}
     line-height:1.5;opacity:.85}
 }
 /* a tall, narrow window (a docked side panel) keeps the stacked layout but uses the height */
-@media (min-width:1024px) and (max-width:1200px){
+@media (min-width:860px) and (max-width:1200px){
   .card{grid-template-columns:minmax(300px,340px) minmax(0,1fr)}
 }
 </style>
