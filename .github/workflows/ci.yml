@@ -34,9 +34,10 @@ jobs:
         run: |
           ruff check .
           black --check .
-          make lint-ui
-          make static
-          make budgets
+          # CI has no .venv: point the Makefile's $(PYTHON) at the runner's interpreter
+          make lint-ui PYTHON=python
+          make static PYTHON=python
+          make budgets PYTHON=python
       - name: Tests (no network, no API key needed)
         run: python -m pytest -q
       - name: Ledger hash chain must verify on the committed data

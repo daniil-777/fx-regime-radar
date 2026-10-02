@@ -2171,7 +2171,11 @@ pub fn replay_deterministic(st: &AppState, question: &str) -> ReplayOutcome {
             text: market_answer(uni, blk),
             forced_card: Some(format!(
                 "{}|pair={pair}",
-                if q_lower.contains("volatil") { "vol_trace" } else { "condition_card" }
+                if q_lower.contains("volatil") {
+                    "vol_trace"
+                } else {
+                    "condition_card"
+                }
             )),
         })
     } else {
@@ -2269,7 +2273,11 @@ async fn brain_inner(
             format!("brain turn rate limit reached; retry in {retry}s"),
         ));
     }
-    if req.messages.iter().any(|m| m.content.len() > MAX_TURN_CHARS) {
+    if req
+        .messages
+        .iter()
+        .any(|m| m.content.len() > MAX_TURN_CHARS)
+    {
         return Err(ApiError(
             StatusCode::BAD_REQUEST,
             format!("a message exceeds {MAX_TURN_CHARS} characters"),
@@ -2634,7 +2642,11 @@ async fn brain_inner(
                     source = "template";
                     forced_card = Some(format!(
                         "{}|pair={pair}",
-                        if q_lower.contains("volatil") { "vol_trace" } else { "condition_card" }
+                        if q_lower.contains("volatil") {
+                            "vol_trace"
+                        } else {
+                            "condition_card"
+                        }
                     ));
                 }
                 None => match faq_best(&pack.faq, &effective) {
@@ -2720,8 +2732,7 @@ async fn brain_inner(
                         } else {
                             visual_answer(&st, &effective)
                         }
-                    })
-                    {
+                    }) {
                         Some(text) => {
                             candidate = text;
                             source = if pack_board.is_empty() {
