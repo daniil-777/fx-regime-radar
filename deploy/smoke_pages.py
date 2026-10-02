@@ -21,5 +21,8 @@ for page in pages:
         print(f"{page.name:24s} EXCEPTION {at.exception[0].message[:200]}", flush=True)
     else:
         print(f"{page.name:24s} ok", flush=True)
-print(f"{len(pages) - len(failed)}/{len(pages)} pages render" + (f"; failed: {failed}" if failed else ""))
+print(
+    f"{len(pages) - len(failed)}/{len(pages)} pages render"
+    + (f"; failed: {failed}" if failed else "")
+)
 sys.exit(1 if failed else 0)
