@@ -1,0 +1,12 @@
+# Used INSTEAD of the root .dockerignore when building this Dockerfile from the repo root
+# (docker-compose.yml; BuildKit reads <Dockerfile>.dockerignore). The root file excludes rust/,
+# which this build needs. Only what the Dockerfile COPYs is let in; the bundle and data/ are
+# mounted at run time, never baked.
+*
+!rust/fxradar-serve/Cargo.toml
+!rust/fxradar-serve/Cargo.lock
+!rust/fxradar-serve/src
+!rust/fxradar-serve/static
+!rust/fxradar-serve/benches
+!rust/fxradar-serve/tests
+!prompts
