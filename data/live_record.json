@@ -1,18 +1,26 @@
 {
- "generated_at_utc": "2026-08-21T06:49:12Z",
+ "generated_at_utc": "2026-10-01T12:36:23Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-08-20",
- "days_recorded": 4,
- "n_forecasts": 12,
- "n_resolved": 0,
- "n_pending": 12,
- "n_all_segments": 21,
+ "through": "2026-09-30",
+ "days_recorded": 33,
+ "n_forecasts": 99,
+ "n_resolved": 84,
+ "n_pending": 15,
+ "n_all_segments": 195,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
- "metrics": null,
- "status": "warming up",
+ "metrics": {
+  "pr_auc": null,
+  "precision": 0.0,
+  "recall": null,
+  "brier": 0.019676672273150245,
+  "n": 84,
+  "pos_rate": 0.0,
+  "base_rate_brier": 0.028932758840145872
+ },
+ "status": "live",
  "frozen_test": {
   "pr_auc": 0.5479718086876638,
   "precision": 0.4523809523809524,
@@ -26,34 +34,34 @@
   "threshold": 0.22
  },
  "added_today": 6,
- "resolved_today": 0,
+ "resolved_today": 6,
  "scoreboard": [
   {
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-08-20",
-   "n_forecasts": 12,
-   "n_resolved": 0,
-   "brier": null,
+   "through": "2026-09-30",
+   "n_forecasts": 99,
+   "n_resolved": 84,
+   "brier": 0.019676672273150245,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": null
+   "base_rate_brier": 0.028932758840145872
   },
   {
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-08-20",
-   "n_forecasts": 9,
-   "n_resolved": 0,
-   "brier": null,
+   "through": "2026-09-30",
+   "n_forecasts": 96,
+   "n_resolved": 81,
+   "brier": 0.035084922591966335,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": null
+   "base_rate_brier": 0.02893275884014587
   }
  ],
- "head_hash": "2fb2db21fa7ceb96b1958d856aadeaf2ec816731680f9d4657aece6b50c05347"
+ "head_hash": "feeeafe2764e3a850f597d75a8c940da74e85d34bf1291bc4c3f8ebd19e15850"
 }
