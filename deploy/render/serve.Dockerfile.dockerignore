@@ -1,0 +1,16 @@
+# Used INSTEAD of the root .dockerignore when building deploy/render/serve.Dockerfile (BuildKit
+# reads <Dockerfile>.dockerignore). Everything is excluded except what the image COPYs.
+*
+!rust/fxradar-serve/Cargo.toml
+!rust/fxradar-serve/Cargo.lock
+!rust/fxradar-serve/src
+!rust/fxradar-serve/static
+!rust/fxradar-serve/benches
+!rust/fxradar-serve/tests
+!prompts
+!docs/avatar_knowledge.md
+!models/bundle_v1.4.0
+!data
+# local state that must never enter an image (gitignored anyway; belt and braces for local builds)
+data/arcade.db
+data/keys.db*

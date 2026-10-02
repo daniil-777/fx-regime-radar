@@ -1,0 +1,53 @@
+# Publish the static customer surface (public/) to GitHub Pages. Runs after every successful
+# daily-refresh (that commit carries "[skip ci]", so a push trigger would miss it), on pushes that
+# touch public/, and by hand. The presenter is not static: on Pages, avatar.html becomes a redirect
+# to the live presenter at the repo VARIABLE AVATAR_URL (the Render service), or is left out.
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["public/**", ".github/workflows/pages.yml"]
+  workflow_run:
+    workflows: ["daily-refresh"]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - name: assemble the site
+        env:
+          AVATAR_URL: ${{ vars.AVATAR_URL }}
+        run: |
+          mkdir -p _site && cp -R public/. _site/
+          if [ -n "$AVATAR_URL" ]; then
+            printf '<!doctype html><meta charset="utf-8"><title>Presenter</title><meta http-equiv="refresh" content="0; url=%s"><link rel="canonical" href="%s"><p><a href="%s">Open the presenter</a></p>\n' \
+              "$AVATAR_URL" "$AVATAR_URL" "$AVATAR_URL" > _site/avatar.html
+          else
+            rm -f _site/avatar.html   # its API lives on the server, not on Pages
+          fi
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: redeploy the Render services with today's artifacts (optional)
+        if: github.event_name == 'workflow_run'
+        env:
+          HOOKS: ${{ secrets.RENDER_DEPLOY_HOOKS }}   # space-separated Render deploy-hook URLs
+        run: |
+          if [ -z "$HOOKS" ]; then echo "no RENDER_DEPLOY_HOOKS secret - skipping"; exit 0; fi
+          for h in $HOOKS; do curl -fsS -X POST "$h" -o /dev/null; done

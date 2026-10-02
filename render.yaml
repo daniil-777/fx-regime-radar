@@ -1,0 +1,57 @@
+# Render Blueprint — the two server-side pieces GitHub Pages cannot host. See docs/DEPLOY_RENDER.md.
+#   fxradar-presenter : Rust service — the AI presenter (/avatar), scoring API, widget
+#   fxradar-dashboard : Streamlit console (reads artifacts only, rule 8)
+# The static customer surface (public/) is published by .github/workflows/pages.yml to GitHub Pages.
+# Keys marked `sync: false` are asked for once in the Render dashboard; none is ever committed.
+services:
+  - type: web
+    name: fxradar-presenter
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./deploy/render/serve.Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: FXRADAR_AVATAR
+        value: "on"
+      - key: FXRADAR_AVATAR_VENDOR          # photoreal face; needs ANAM_API_KEY (else set "local")
+        value: anam
+      # Owner decision 2026-10-02: the public site lets every visitor start a session without an
+      # API key. The flag is named DEV because the repo's default production gate is a paid key.
+      # Cost backstop: the caps below (they reset when a free instance restarts) and, above all,
+      # the spend limits set in the Anam, ElevenLabs and Anthropic dashboards.
+      - key: FXRADAR_AVATAR_DEV
+        value: "1"
+      - key: FXRADAR_AVATAR_OPEN            # open conversation, as `make avatar` runs it
+        value: "1"
+      # FXRADAR_AVATAR_ADVICE stays unset (off): hedging decision support to third parties on a
+      # public site likely needs a FinSA review first (docs/AVATAR.md).
+      - key: FXRADAR_AVATAR_MAX_SESSIONS_MONTH
+        value: "300"
+      - key: FXRADAR_AVATAR_MAX_MINUTES_MONTH
+        value: "600"
+      - key: FXRADAR_AVATAR_MAX_TTS_CHARS_MONTH
+        value: "100000"
+      - key: FXRADAR_AVATAR_BRAIN_TOKEN
+        generateValue: true
+      - key: ANAM_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  - type: web
+    name: fxradar-dashboard
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./deploy/Dockerfile
+    dockerContext: .
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: FXRADAR_AVATAR_URL             # https://<presenter host>/avatar — the Briefing embed
+        sync: false
+      - key: ANTHROPIC_API_KEY              # optional: Advisor Q&A via the LLM, template without it
+        sync: false
