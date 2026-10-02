@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-02T07:24:59Z",
+ "generated_at_utc": "2026-10-02T12:03:29Z",
  "model_version": "hmm=0.4.1|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-18",
  "through": "2026-10-01",
@@ -33,7 +33,7 @@
   "test_start": "2023-01-01",
   "threshold": 0.38
  },
- "added_today": 5,
+ "added_today": 0,
  "resolved_today": 0,
  "scoreboard": [
   {

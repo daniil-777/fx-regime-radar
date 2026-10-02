@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-02T07:22:58Z",
+ "generated_at_utc": "2026-10-02T12:01:55Z",
  "as_of": "2026-10-01",
  "levels": [
   0.95,
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668232,
+  "low_risk": 0.09028702194668234,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
