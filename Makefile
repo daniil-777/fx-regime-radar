@@ -3,7 +3,8 @@
 PY      ?= python3.11
 VENV    := .venv
 BIN     := $(VENV)/bin
-PYTHON  := $(BIN)/python
+# the venv's interpreter when it exists; CI runners have no .venv, so fall back to `python`
+PYTHON  := $(if $(wildcard $(BIN)/python),$(BIN)/python,python)
 EVAL_BASE ?= http://127.0.0.1:8090
 AVATAR_BASE ?= http://127.0.0.1:8080
 
