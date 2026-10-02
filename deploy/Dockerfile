@@ -30,6 +30,17 @@ COPY app ./app
 COPY data ./data
 COPY models ./models
 COPY reports ./reports
+# everything else the pages read at run time (found by running every page inside the image):
+# design tokens (imported by every page), the Ask package and its config/eval/prompt files,
+# docs (methodology, weekly report, knowledge pack), the static surface, the README ledger block
+COPY design ./design
+COPY config ./config
+COPY eval ./eval
+COPY prompts ./prompts
+COPY ask ./ask
+COPY docs ./docs
+COPY public ./public
+COPY README.md ./
 
 RUN chown -R radar:radar /app
 USER radar

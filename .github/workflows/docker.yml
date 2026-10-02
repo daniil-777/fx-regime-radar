@@ -4,9 +4,9 @@ name: docker image
 on:
   push:
     branches: [main]
-    paths: ["deploy/**", "requirements.txt", "pyproject.toml", "app/**", "src/**", ".dockerignore"]
+    paths: ["deploy/**", "requirements.txt", "pyproject.toml", "app/**", "src/**", "ask/**", "design/**", "config/**", ".dockerignore"]
   pull_request:
-    paths: ["deploy/**", "requirements.txt", "pyproject.toml", "app/**", "src/**", ".dockerignore"]
+    paths: ["deploy/**", "requirements.txt", "pyproject.toml", "app/**", "src/**", "ask/**", "design/**", "config/**", ".dockerignore"]
   workflow_dispatch:
 jobs:
   build:
@@ -24,3 +24,5 @@ jobs:
             sleep 3
           done
           docker logs radar; exit 1
+      - name: every page renders inside the image (health alone never runs a page)
+        run: docker exec -i radar python - < deploy/smoke_pages.py

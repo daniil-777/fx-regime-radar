@@ -11,7 +11,9 @@
 # the root one excludes rust/ and docs/ to keep the Streamlit image's context small.
 
 # ---- builder ---------------------------------------------------------------------------------
-FROM rust:1-bookworm AS builder
+# trixie, not bookworm: ort's prebuilt static onnxruntime needs libstdc++ from GCC >= 13
+# (bookworm ships 12 → `undefined symbol ... basic_string<wchar_t>::_M_replace_cold` at link time)
+FROM rust:1-trixie AS builder
 WORKDIR /build
 COPY rust/fxradar-serve/Cargo.toml rust/fxradar-serve/Cargo.lock ./
 COPY rust/fxradar-serve/src ./src
@@ -24,7 +26,7 @@ RUN cargo build --release --bin fxradar-serve \
  && find target/release -maxdepth 1 -name '*.so*' -exec cp {} /out/lib/ \;
 
 # ---- runtime ---------------------------------------------------------------------------------
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates libgomp1 \
  && rm -rf /var/lib/apt/lists/* \

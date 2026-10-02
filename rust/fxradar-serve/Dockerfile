@@ -1,6 +1,7 @@
 # ---- builder ---------------------------------------------------------------------------------
 # current stable, the toolchain CI tests (.github/workflows/rust.yml); a pinned 1.83 predates it
-FROM rust:1-bookworm AS builder
+# trixie, not bookworm: ort's prebuilt static onnxruntime needs libstdc++ from GCC >= 13
+FROM rust:1-trixie AS builder
 WORKDIR /build
 COPY rust/fxradar-serve/Cargo.toml rust/fxradar-serve/Cargo.lock* ./
 COPY rust/fxradar-serve/src ./src
@@ -14,7 +15,7 @@ RUN cargo build --release --bin fxradar-serve --bin selftest --bin keys \
  && find target/release -maxdepth 1 -name '*.so*' -exec cp {} /out/lib/ \;
 
 # ---- runtime ---------------------------------------------------------------------------------
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libgomp1 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 # the versioned avatar system prompt (phase 35); the binary also carries a compiled-in fallback

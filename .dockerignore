@@ -1,10 +1,10 @@
 # keep the app image small: no venv, git history, Rust build tree, tests, screenshots or notebooks
+# (docs/ stays IN: the methodology, weekly-report and knowledge pages read it at run time)
 .venv
 .git
 .github
 rust
 tests
-docs
 assets
 tools
 scripts
