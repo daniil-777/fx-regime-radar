@@ -1,13 +1,13 @@
 {
- "generated_at_utc": "2026-10-02T12:01:54Z",
+ "generated_at_utc": "2026-10-05T13:49:55Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-10-01",
- "days_recorded": 34,
- "n_forecasts": 102,
- "n_resolved": 87,
+ "through": "2026-10-02",
+ "days_recorded": 35,
+ "n_forecasts": 105,
+ "n_resolved": 90,
  "n_pending": 15,
- "n_all_segments": 201,
+ "n_all_segments": 207,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
@@ -15,10 +15,10 @@
   "pr_auc": null,
   "precision": 0.0,
   "recall": null,
-  "brier": 0.01904188962731116,
-  "n": 87,
+  "brier": 0.018440577053889348,
+  "n": 90,
   "pos_rate": 0.0,
-  "base_rate_brier": 0.02893275884014588
+  "base_rate_brier": 0.02893275884014587
  },
  "status": "live",
  "frozen_test": {
@@ -33,35 +33,35 @@
   "test_start": "2019-01-01",
   "threshold": 0.22
  },
- "added_today": 0,
- "resolved_today": 0,
+ "added_today": 6,
+ "resolved_today": 6,
  "scoreboard": [
   {
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-10-01",
-   "n_forecasts": 102,
-   "n_resolved": 87,
-   "brier": 0.01904188962731116,
+   "through": "2026-10-02",
+   "n_forecasts": 105,
+   "n_resolved": 90,
+   "brier": 0.018440577053889348,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.02893275884014588
+   "base_rate_brier": 0.02893275884014587
   },
   {
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-10-01",
-   "n_forecasts": 99,
-   "n_resolved": 84,
-   "brier": 0.03395698572809416,
+   "through": "2026-10-02",
+   "n_forecasts": 102,
+   "n_resolved": 87,
+   "brier": 0.032868288923267805,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.028932758840145872
+   "base_rate_brier": 0.02893275884014588
   }
  ],
- "head_hash": "23544e0a11331edc5cfcd517d393134c7713083f0810bff2a793ccb38dfee846"
+ "head_hash": "34880ba445944e17c35923db09d575b86864ad8145c1e6e7f510e549e7e03064"
 }
