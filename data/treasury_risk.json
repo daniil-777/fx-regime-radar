@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-05T13:49:56Z",
- "as_of": "2026-10-02",
+ "generated_at_utc": "2026-10-06T12:55:05Z",
+ "as_of": "2026-10-05",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999997573185394,
-   "days_in_regime": 113,
+   "regime_prob": 0.9999998339555884,
+   "days_in_regime": 114,
    "table": {
     "calm": {
      "n": 766,
@@ -67,22 +67,22 @@
     "es_99": 0.055494997897725204,
     "fallback": false
    },
-   "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "wait",
+   "light_reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.51), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.014695111237843856,
+    "change_risk_5d": 0.01951428129474496,
     "risk_lo": 0.0,
-    "risk_hi": 0.5075428432747212,
+    "risk_hi": 0.5123620133316223,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "NFP"
+    "days_to_next_event": 7,
+    "next_event": "CPI"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9989266833012793,
-   "days_in_regime": 36,
+   "regime_prob": 0.9966164600864897,
+   "days_in_regime": 37,
    "table": {
     "calm": {
      "n": 486,
@@ -125,22 +125,22 @@
     "es_99": 0.060389176000417176,
     "fallback": false
    },
-   "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "wait",
+   "light_reason": "Calm regime, change risk 7% is below the train-era 40th percentile (9%), the interval on it is narrow (0.56), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.05576241801249099,
+    "change_risk_5d": 0.06981373557436413,
     "risk_lo": 0.0,
-    "risk_hi": 0.5486101500493683,
+    "risk_hi": 0.5626614676112415,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "NFP"
+    "days_to_next_event": 7,
+    "next_event": "CPI"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9998708943718915,
-   "days_in_regime": 158,
+   "regime_prob": 0.9999587863097475,
+   "days_in_regime": 159,
    "table": {
     "calm": {
      "n": 1613,
@@ -183,26 +183,26 @@
     "es_99": 0.08255056042201357,
     "fallback": false
    },
-   "light": "ladder",
-   "light_reason": "Neither clear-cut: NFP is 0 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "wait",
+   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.0583076143306001,
+    "change_risk_5d": 0.02556677909740563,
     "risk_lo": 0.0,
-    "risk_hi": 0.5511553463674774,
+    "risk_hi": 0.518414511134283,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 0,
-    "next_event": "NFP"
+    "days_to_next_event": 7,
+    "next_event": "CPI"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.124985933303833,
-  "USDCHF": 0.8305299878120422,
-  "GBPUSD": 1.3199577331542969,
-  "EURCHF": 0.9343345534755514,
-  "GBPCHF": 1.096264480029049,
-  "EURGBP": 0.8522893612778489
+  "EURUSD": 1.1254544258117676,
+  "USDCHF": 0.8281099796295166,
+  "GBPUSD": 1.3242928981781006,
+  "EURCHF": 0.9320000416329322,
+  "GBPCHF": 1.0966601649337804,
+  "EURGBP": 0.8498531007453973
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
