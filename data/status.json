@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-06T12:55:04Z",
- "data_through": "2026-10-05",
+ "generated_at_utc": "2026-10-07T12:48:44Z",
+ "data_through": "2026-10-06",
  "window_days": 60,
  "train_end": "2016-12-31",
  "thresholds": {
@@ -10,15 +10,15 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.4451,
+   "psi": 0.4565,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.362,
    "train_p95": 1.1044,
-   "ks": 0.1416
+   "ks": 0.14
   },
   "vol_20": {
-   "psi": 3.9521,
+   "psi": 3.9711,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.8073,
@@ -26,7 +26,7 @@
    "ks": 0.6195
   },
   "vol_60": {
-   "psi": 6.127,
+   "psi": 6.1233,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 6.8192,
@@ -34,7 +34,7 @@
    "ks": 0.7744
   },
   "vol_ratio": {
-   "psi": 0.0327,
+   "psi": 0.0313,
    "status": "stable",
    "textbook": "stable",
    "train_p75": 0.8669,
@@ -42,7 +42,7 @@
    "ks": 0.0658
   },
   "mom_20": {
-   "psi": 1.4045,
+   "psi": 0.9788,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.1396,
@@ -50,31 +50,31 @@
    "ks": 0.232
   },
   "rng_hl": {
-   "psi": 4.8309,
+   "psi": 4.8129,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.9967,
    "train_p95": 7.3938,
-   "ks": 0.6699
+   "ks": 0.6754
   },
   "corr_20": {
-   "psi": 2.6896,
+   "psi": 2.4997,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.2659,
    "train_p95": 6.2153,
-   "ks": 0.5865
+   "ks": 0.5698
   },
   "ret_5d_abs": {
-   "psi": 1.0149,
+   "psi": 1.0068,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.7999,
    "train_p95": 1.704,
-   "ks": 0.2517
+   "ks": 0.2461
   },
   "hmm_entropy": {
-   "psi": 0.9443,
+   "psi": 0.9503,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.3642,
@@ -84,19 +84,19 @@
  },
  "hmm": {
   "EURUSD": {
-   "recent_mean_loglik": -1.7305,
+   "recent_mean_loglik": -1.7688,
    "train_p5": -4.6772,
    "train_median": -2.5773,
    "stale": false
   },
   "USDCHF": {
-   "recent_mean_loglik": -1.7148,
+   "recent_mean_loglik": -1.7185,
    "train_p5": -4.5383,
    "train_median": -2.2732,
    "stale": false
   },
   "GBPUSD": {
-   "recent_mean_loglik": -1.7471,
+   "recent_mean_loglik": -1.7682,
    "train_p5": -5.1915,
    "train_median": -2.4399,
    "stale": false
@@ -105,5 +105,5 @@
  "drifted_features": [],
  "stale_pairs": [],
  "model_stale": false,
- "worst_psi": 6.127
+ "worst_psi": 6.1233
 }

@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-06T12:55:05Z",
- "as_of": "2026-10-05",
+ "generated_at_utc": "2026-10-07T12:48:45Z",
+ "as_of": "2026-10-06",
  "levels": [
   0.95,
   0.99
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668234,
+  "low_risk": 0.09028702194668232,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999998339555884,
-   "days_in_regime": 114,
+   "regime_prob": 0.9999997995813558,
+   "days_in_regime": 115,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "wait",
-   "light_reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.51), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (CPI) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.01951428129474496,
+    "change_risk_5d": 0.023049043396839435,
     "risk_lo": 0.0,
-    "risk_hi": 0.5123620133316223,
+    "risk_hi": 0.5158967754337168,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 7,
+    "days_to_next_event": 6,
     "next_event": "CPI"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9966164600864897,
-   "days_in_regime": 37,
+   "regime_prob": 0.9984665812545379,
+   "days_in_regime": 38,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "wait",
-   "light_reason": "Calm regime, change risk 7% is below the train-era 40th percentile (9%), the interval on it is narrow (0.56), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Calm regime, change risk 6% is below the train-era 40th percentile (9%), the interval on it is narrow (0.56), next scheduled event (CPI) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.06981373557436413,
+    "change_risk_5d": 0.06272664329815021,
     "risk_lo": 0.0,
-    "risk_hi": 0.5626614676112415,
+    "risk_hi": 0.5555743753350276,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 7,
+    "days_to_next_event": 6,
     "next_event": "CPI"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999587863097475,
-   "days_in_regime": 159,
+   "regime_prob": 0.9999680567999855,
+   "days_in_regime": 160,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "wait",
-   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (CPI) is 7 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (CPI) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.02556677909740563,
+    "change_risk_5d": 0.026718280235045345,
     "risk_lo": 0.0,
-    "risk_hi": 0.518414511134283,
+    "risk_hi": 0.5195660122719227,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 7,
+    "days_to_next_event": 6,
     "next_event": "CPI"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1254544258117676,
-  "USDCHF": 0.8281099796295166,
-  "GBPUSD": 1.3242928981781006,
-  "EURCHF": 0.9320000416329322,
-  "GBPCHF": 1.0966601649337804,
-  "EURGBP": 0.8498531007453973
+  "EURUSD": 1.1217050552368164,
+  "USDCHF": 0.8311200141906738,
+  "GBPUSD": 1.32185959815979,
+  "EURCHF": 0.9322715214261734,
+  "GBPCHF": 1.098623967980643,
+  "EURGBP": 0.8485810874304531
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
