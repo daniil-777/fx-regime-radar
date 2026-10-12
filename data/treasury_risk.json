@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-09T12:43:41Z",
- "as_of": "2026-10-08",
+ "generated_at_utc": "2026-10-12T14:37:48Z",
+ "as_of": "2026-10-09",
  "levels": [
   0.95,
   0.99
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668232,
+  "low_risk": 0.09028702194668234,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999959490116964,
-   "days_in_regime": 117,
+   "regime_prob": 0.9999951314472435,
+   "days_in_regime": 118,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: CPI is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: CPI is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.036358965662255605,
+    "change_risk_5d": 0.04298079659321934,
     "risk_lo": 0.0,
-    "risk_hi": 0.529206697699133,
+    "risk_hi": 0.5358285286300967,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "CPI"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9910473627217388,
-   "days_in_regime": 40,
+   "regime_prob": 0.9937409797481324,
+   "days_in_regime": 41,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: CPI is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: CPI is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.07857838374504447,
+    "change_risk_5d": 0.06122953601126322,
     "risk_lo": 0.0,
-    "risk_hi": 0.5714261157819218,
+    "risk_hi": 0.5540772680481406,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "CPI"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.999967517907857,
-   "days_in_regime": 162,
+   "regime_prob": 0.9999682376704563,
+   "days_in_regime": 163,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: CPI is 4 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: CPI is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.017419790144804555,
+    "change_risk_5d": 0.013797848925830638,
     "risk_lo": 0.0,
-    "risk_hi": 0.5102675221816819,
+    "risk_hi": 0.5066455809627081,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 4,
+    "days_to_next_event": 3,
     "next_event": "CPI"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1201343536376953,
-  "USDCHF": 0.8329799771308899,
-  "GBPUSD": 1.3214927911758423,
-  "EURCHF": 0.9330494882766516,
-  "GBPCHF": 1.100777034972289,
-  "EURGBP": 0.8476280469460741
+  "EURUSD": 1.1213024854660034,
+  "USDCHF": 0.8313800096511841,
+  "GBPUSD": 1.322908878326416,
+  "EURCHF": 0.9322284711886226,
+  "GBPCHF": 1.0998399960306529,
+  "EURGBP": 0.8476037192255746
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
