@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-12T14:37:48Z",
+ "generated_at_utc": "2026-10-13T13:43:31Z",
  "as_of": "2026-10-09",
  "levels": [
   0.95,
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668234,
+  "low_risk": 0.09028702194668232,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -81,7 +81,7 @@
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9937409797481324,
+   "regime_prob": 0.9937409797481315,
    "days_in_regime": 41,
    "table": {
     "calm": {

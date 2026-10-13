@@ -39,7 +39,7 @@ deployed pipeline actually said, written down before the outcome existed.
 | precision · recall @ 0.22 | 0.45 · 0.59 | 0.00 · — |
 | positive rate | 16% | 0% |
 
-**Since 2026-08-17: live PR-AUC — / Brier 0.016 on 105 unseen forecasts, vs frozen test PR-AUC 0.548 / Brier 0.102.** Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-10-12.
+**Since 2026-08-17: live PR-AUC — / Brier 0.016 on 105 unseen forecasts, vs frozen test PR-AUC 0.548 / Brier 0.102.** Every weekday the pipeline appends its just-published forecasts (one row per pair, newest date only, never backfilled) to an append-only SHA-256 hash-chained ledger (`data/ledger.parquet`) *before* the outcome exists; five trading days later each row is resolved against the regimes that actually arrived and scored with the same code as the frozen test. A model refit starts a new segment — it cannot rewrite this one. Chain ✓ verified · updated 2026-10-13.
 <!-- live-record:end -->
 
 Model refits start a new ledger segment (a refit can never rewrite the old record); the ledger's hash
