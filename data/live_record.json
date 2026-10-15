@@ -1,13 +1,13 @@
 {
- "generated_at_utc": "2026-10-14T11:22:32Z",
+ "generated_at_utc": "2026-10-15T10:59:56Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-10-13",
- "days_recorded": 41,
- "n_forecasts": 123,
- "n_resolved": 111,
+ "through": "2026-10-14",
+ "days_recorded": 42,
+ "n_forecasts": 126,
+ "n_resolved": 114,
  "n_pending": 12,
- "n_all_segments": 243,
+ "n_all_segments": 249,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
@@ -15,10 +15,10 @@
   "pr_auc": null,
   "precision": 0.0,
   "recall": null,
-  "brier": 0.015195627368558472,
-  "n": 111,
+  "brier": 0.014877302783651682,
+  "n": 114,
   "pos_rate": 0.0,
-  "base_rate_brier": 0.028932758840145872
+  "base_rate_brier": 0.028932758840145862
  },
  "status": "live",
  "frozen_test": {
@@ -34,34 +34,34 @@
   "threshold": 0.22
  },
  "added_today": 6,
- "resolved_today": 12,
+ "resolved_today": 6,
  "scoreboard": [
   {
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-10-13",
-   "n_forecasts": 123,
-   "n_resolved": 111,
-   "brier": 0.015195627368558472,
+   "through": "2026-10-14",
+   "n_forecasts": 126,
+   "n_resolved": 114,
+   "brier": 0.014877302783651682,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.028932758840145872
+   "base_rate_brier": 0.028932758840145862
   },
   {
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-10-13",
-   "n_forecasts": 120,
-   "n_resolved": 108,
-   "brier": 0.027159143713191322,
+   "through": "2026-10-14",
+   "n_forecasts": 123,
+   "n_resolved": 111,
+   "brier": 0.02655460508663963,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.02893275884014587
+   "base_rate_brier": 0.028932758840145872
   }
  ],
- "head_hash": "d6dad76fe59fd4be723ab41552cc29e5710afc1f0c04b6be68ba29e1f763f377"
+ "head_hash": "19ca642a8fc3fcf531b686627690f9da7734011fc87265a3b70da729083c66c1"
 }
