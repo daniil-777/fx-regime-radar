@@ -1,188 +1,68 @@
 {
  "universe": "crypto",
  "universe_label": "Crypto majors",
- "as_of": "2026-10-14",
- "generated_at": "2026-10-15T11:02:26Z",
- "overall_stability": 97.3,
+ "as_of": "2026-10-15",
+ "generated_at": "2026-10-16T10:54:17Z",
+ "overall_stability": 97.6,
  "overall_word": "Fair",
  "markets": {
   "BTC-USD": {
    "label": "BTC/USD",
-   "date": "2026-10-14",
+   "date": "2026-10-15",
    "regime": "calm",
    "regime_prob": 1.0,
-   "days_in_regime": 7,
-   "change_risk_5d": 0.175,
+   "days_in_regime": 8,
+   "change_risk_5d": 0.133,
    "top_drivers": [
     "hmm_entropy",
     "vol_60",
     "rng_hl"
    ],
-   "anomaly_pct": 10.8,
-   "vol_20": 0.2525,
-   "vol_ratio": 0.763,
-   "corr_20": 0.803,
-   "ret_5d_pct": -1.19,
-   "stability": 96.5,
+   "anomaly_pct": 25.4,
+   "vol_20": 0.255,
+   "vol_ratio": 0.776,
+   "corr_20": 0.831,
+   "ret_5d_pct": -0.93,
+   "stability": 97.3,
    "stability_word": "Fair",
    "stability_components": {
     "regime": 0.0,
-    "change_risk": 0.175,
-    "siren": 0.0,
-    "vol_front": 0.0,
-    "entropy": 0.002
-   },
-   "durability": {
-    "days_in_regime": 7,
-    "typical_days": 14.5,
-    "self_prob": 0.9312,
-    "note": "regimes like this typically last about 15 days; this one is on day 7. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
-   },
-   "risk_budget": {
-    "budget": 1.0,
-    "reasons": [
-     "regime-change risk 17% is low \u2192 no reduction for change risk"
-    ]
-   },
-   "allocation_weight": 0.291
-  },
-  "ETH-USD": {
-   "label": "ETH/USD",
-   "date": "2026-10-14",
-   "regime": "calm",
-   "regime_prob": 0.999,
-   "days_in_regime": 36,
-   "change_risk_5d": 0.151,
-   "top_drivers": [
-    "hmm_entropy",
-    "vol_20",
-    "rng_hl"
-   ],
-   "anomaly_pct": 15.0,
-   "vol_20": 0.3645,
-   "vol_ratio": 0.84,
-   "corr_20": 0.827,
-   "ret_5d_pct": -2.71,
-   "stability": 96.9,
-   "stability_word": "Fair",
-   "stability_components": {
-    "regime": 0.0,
-    "change_risk": 0.151,
-    "siren": 0.0,
-    "vol_front": 0.0,
-    "entropy": 0.006
-   },
-   "durability": {
-    "days_in_regime": 36,
-    "typical_days": 24.3,
-    "self_prob": 0.9588,
-    "note": "regimes like this typically last about 24 days; this one is on day 36. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
-   },
-   "risk_budget": {
-    "budget": 1.0,
-    "reasons": [
-     "regime-change risk 15% is low \u2192 no reduction for change risk"
-    ]
-   },
-   "allocation_weight": 0.202
-  },
-  "XRP-USD": {
-   "label": "XRP/USD",
-   "date": "2026-10-14",
-   "regime": "calm",
-   "regime_prob": 1.0,
-   "days_in_regime": 35,
-   "change_risk_5d": 0.042,
-   "top_drivers": [
-    "hmm_entropy",
-    "vol_20",
-    "rng_hl"
-   ],
-   "anomaly_pct": 26.1,
-   "vol_20": 0.4049,
-   "vol_ratio": 0.673,
-   "corr_20": 0.806,
-   "ret_5d_pct": -4.7,
-   "stability": 99.1,
-   "stability_word": "Fair",
-   "stability_components": {
-    "regime": 0.0,
-    "change_risk": 0.042,
+    "change_risk": 0.133,
     "siren": 0.0,
     "vol_front": 0.0,
     "entropy": 0.001
    },
    "durability": {
-    "days_in_regime": 35,
-    "typical_days": 56.1,
-    "self_prob": 0.9822,
-    "note": "regimes like this typically last about 56 days; this one is on day 35. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
+    "days_in_regime": 8,
+    "typical_days": 14.5,
+    "self_prob": 0.9312,
+    "note": "regimes like this typically last about 15 days; this one is on day 8. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
    },
    "risk_budget": {
     "budget": 1.0,
     "reasons": [
-     "regime-change risk 4% is low \u2192 no reduction for change risk"
+     "regime-change risk 13% is low \u2192 no reduction for change risk"
     ]
    },
-   "allocation_weight": 0.182
+   "allocation_weight": 0.286
   },
-  "BNB-USD": {
-   "label": "BNB/USD",
-   "date": "2026-10-14",
-   "regime": "calm",
-   "regime_prob": 1.0,
-   "days_in_regime": 234,
-   "change_risk_5d": 0.065,
-   "top_drivers": [
-    "hmm_entropy",
-    "days_in_regime",
-    "vol_20"
-   ],
-   "anomaly_pct": 4.6,
-   "vol_20": 0.3222,
-   "vol_ratio": 0.839,
-   "corr_20": 0.736,
-   "ret_5d_pct": -1.73,
-   "stability": 98.7,
-   "stability_word": "Fair",
-   "stability_components": {
-    "regime": 0.0,
-    "change_risk": 0.065,
-    "siren": 0.0,
-    "vol_front": 0.0,
-    "entropy": 0.0
-   },
-   "durability": {
-    "days_in_regime": 234,
-    "typical_days": 55.6,
-    "self_prob": 0.982,
-    "note": "regimes like this typically last about 56 days; this one is on day 234. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
-   },
-   "risk_budget": {
-    "budget": 1.0,
-    "reasons": [
-     "regime-change risk 7% is low \u2192 no reduction for change risk"
-    ]
-   },
-   "allocation_weight": 0.228
-  },
-  "ADA-USD": {
-   "label": "ADA/USD",
-   "date": "2026-10-14",
+  "ETH-USD": {
+   "label": "ETH/USD",
+   "date": "2026-10-15",
    "regime": "calm",
    "regime_prob": 0.999,
-   "days_in_regime": 4,
+   "days_in_regime": 37,
    "change_risk_5d": 0.23,
    "top_drivers": [
-    "vol_trend",
+    "vol_20",
     "hmm_entropy",
-    "vol_20"
+    "pair_BNB-USD"
    ],
-   "anomaly_pct": 24.7,
-   "vol_20": 0.7557,
-   "vol_ratio": 0.952,
-   "corr_20": 0.769,
-   "ret_5d_pct": -5.4,
+   "anomaly_pct": 40.0,
+   "vol_20": 0.3688,
+   "vol_ratio": 0.848,
+   "corr_20": 0.835,
+   "ret_5d_pct": -2.54,
    "stability": 95.3,
    "stability_word": "Fair",
    "stability_components": {
@@ -193,10 +73,10 @@
     "entropy": 0.007
    },
    "durability": {
-    "days_in_regime": 4,
-    "typical_days": 26.2,
-    "self_prob": 0.9618,
-    "note": "regimes like this typically last about 26 days; this one is on day 4. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
+    "days_in_regime": 37,
+    "typical_days": 24.3,
+    "self_prob": 0.9588,
+    "note": "regimes like this typically last about 24 days; this one is on day 37. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
    },
    "risk_budget": {
     "budget": 1.0,
@@ -204,7 +84,127 @@
      "regime-change risk 23% is low \u2192 no reduction for change risk"
     ]
    },
-   "allocation_weight": 0.097
+   "allocation_weight": 0.198
+  },
+  "XRP-USD": {
+   "label": "XRP/USD",
+   "date": "2026-10-15",
+   "regime": "calm",
+   "regime_prob": 1.0,
+   "days_in_regime": 36,
+   "change_risk_5d": 0.059,
+   "top_drivers": [
+    "hmm_entropy",
+    "vol_20",
+    "rng_hl"
+   ],
+   "anomaly_pct": 45.8,
+   "vol_20": 0.3849,
+   "vol_ratio": 0.668,
+   "corr_20": 0.832,
+   "ret_5d_pct": -4.89,
+   "stability": 98.8,
+   "stability_word": "Fair",
+   "stability_components": {
+    "regime": 0.0,
+    "change_risk": 0.059,
+    "siren": 0.0,
+    "vol_front": 0.0,
+    "entropy": 0.001
+   },
+   "durability": {
+    "days_in_regime": 36,
+    "typical_days": 56.1,
+    "self_prob": 0.9822,
+    "note": "regimes like this typically last about 56 days; this one is on day 36. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
+   },
+   "risk_budget": {
+    "budget": 1.0,
+    "reasons": [
+     "regime-change risk 6% is low \u2192 no reduction for change risk"
+    ]
+   },
+   "allocation_weight": 0.189
+  },
+  "BNB-USD": {
+   "label": "BNB/USD",
+   "date": "2026-10-15",
+   "regime": "calm",
+   "regime_prob": 1.0,
+   "days_in_regime": 235,
+   "change_risk_5d": 0.063,
+   "top_drivers": [
+    "hmm_entropy",
+    "days_in_regime",
+    "vol_20"
+   ],
+   "anomaly_pct": 2.3,
+   "vol_20": 0.322,
+   "vol_ratio": 0.771,
+   "corr_20": 0.745,
+   "ret_5d_pct": -2.81,
+   "stability": 98.7,
+   "stability_word": "Fair",
+   "stability_components": {
+    "regime": 0.0,
+    "change_risk": 0.063,
+    "siren": 0.0,
+    "vol_front": 0.0,
+    "entropy": 0.0
+   },
+   "durability": {
+    "days_in_regime": 235,
+    "typical_days": 55.6,
+    "self_prob": 0.982,
+    "note": "regimes like this typically last about 56 days; this one is on day 235. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
+   },
+   "risk_budget": {
+    "budget": 1.0,
+    "reasons": [
+     "regime-change risk 6% is low \u2192 no reduction for change risk"
+    ]
+   },
+   "allocation_weight": 0.227
+  },
+  "ADA-USD": {
+   "label": "ADA/USD",
+   "date": "2026-10-15",
+   "regime": "calm",
+   "regime_prob": 0.999,
+   "days_in_regime": 5,
+   "change_risk_5d": 0.1,
+   "top_drivers": [
+    "hmm_entropy",
+    "vol_20",
+    "vol_trend"
+   ],
+   "anomaly_pct": 26.2,
+   "vol_20": 0.7284,
+   "vol_ratio": 0.851,
+   "corr_20": 0.779,
+   "ret_5d_pct": -7.86,
+   "stability": 97.9,
+   "stability_word": "Fair",
+   "stability_components": {
+    "regime": 0.0,
+    "change_risk": 0.1,
+    "siren": 0.0,
+    "vol_front": 0.0,
+    "entropy": 0.004
+   },
+   "durability": {
+    "days_in_regime": 5,
+    "typical_days": 26.2,
+    "self_prob": 0.9618,
+    "note": "regimes like this typically last about 26 days; this one is on day 5. The model is memoryless: a long run is not 'due' to end \u2014 the change-risk gauge, not the age, carries that information."
+   },
+   "risk_budget": {
+    "budget": 1.0,
+    "reasons": [
+     "regime-change risk 10% is low \u2192 no reduction for change risk"
+    ]
+   },
+   "allocation_weight": 0.1
   }
  },
  "weights": {

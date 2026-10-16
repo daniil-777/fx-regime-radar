@@ -1,92 +1,52 @@
 {
- "generated_at_utc": "2026-10-15T10:59:57Z",
- "data_through": "2026-10-14",
+ "generated_at_utc": "2026-10-16T10:52:37Z",
+ "data_through": "2026-10-15",
  "disclosure": "Before I answer: this is software-generated decision support computed from the radar's published risk numbers and your stated inputs \u2014 not advice from a licensed adviser, and never a view on direction.",
  "method": "deterministic: treasury light -> base hedge ratio (hedge 0.75 / ladder 0.50 / wait 0.25), risk tolerance +/-0.15, consensus >=2/3 +0.05, clipped to [0.10, 0.95] in 5% steps; tranches front-loaded under 'hedge', equal weekly under 'ladder'; price tag = ES of the UNCOVERED share, sqrt-of-time scaled (an approximation)",
  "fx": {
-  "EURUSD": 1.1204482316970825,
-  "USDCHF": 0.8325999975204468,
-  "GBPUSD": 1.3257324695587158,
-  "EURCHF": 0.9328851949327799,
-  "GBPCHF": 1.1038048508673626,
-  "EURGBP": 0.845154099657856
+  "EURUSD": 1.1195074319839478,
+  "USDCHF": 0.83160001039505,
+  "GBPUSD": 1.3230137825012207,
+  "EURCHF": 0.9309823920751867,
+  "GBPCHF": 1.1002182752808096,
+  "EURGBP": 0.8461797199629059
  },
  "pairs": {
   "EURUSD": {
    "conservative": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "conservative",
-    "hedge_ratio": 0.65,
+    "hedge_ratio": 0.4,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.65
+       "fraction": 0.4
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.325
-      },
-      {
-       "week": 1,
-       "fraction": 0.325
+       "fraction": 0.4
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ]
     },
@@ -96,79 +56,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "balanced": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "balanced",
-    "hedge_ratio": 0.5,
+    "hedge_ratio": 0.25,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.5
+       "fraction": 0.25
       }
      ],
      "2": [
       {
        "week": 0,
        "fraction": 0.25
-      },
-      {
-       "week": 1,
-       "fraction": 0.25
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ]
     },
@@ -178,79 +98,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "aggressive": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "aggressive",
-    "hedge_ratio": 0.35,
+    "hedge_ratio": 0.1,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.35
+       "fraction": 0.1
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.175
-      },
-      {
-       "week": 1,
-       "fraction": 0.175
+       "fraction": 0.1
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ]
     },
@@ -262,79 +142,39 @@
   },
   "GBPUSD": {
    "conservative": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "conservative",
-    "hedge_ratio": 0.65,
+    "hedge_ratio": 0.4,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.65
+       "fraction": 0.4
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.325
-      },
-      {
-       "week": 1,
-       "fraction": 0.325
+       "fraction": 0.4
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ]
     },
@@ -344,79 +184,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "balanced": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "balanced",
-    "hedge_ratio": 0.5,
+    "hedge_ratio": 0.25,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.5
+       "fraction": 0.25
       }
      ],
      "2": [
       {
        "week": 0,
        "fraction": 0.25
-      },
-      {
-       "week": 1,
-       "fraction": 0.25
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ]
     },
@@ -426,79 +226,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "aggressive": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "aggressive",
-    "hedge_ratio": 0.35,
+    "hedge_ratio": 0.1,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.35
+       "fraction": 0.1
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.175
-      },
-      {
-       "week": 1,
-       "fraction": 0.175
+       "fraction": 0.1
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ]
     },
@@ -510,79 +270,39 @@
   },
   "USDCHF": {
    "conservative": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "conservative",
-    "hedge_ratio": 0.65,
+    "hedge_ratio": 0.4,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.65
+       "fraction": 0.4
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.325
-      },
-      {
-       "week": 1,
-       "fraction": 0.325
+       "fraction": 0.4
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.163
-      },
-      {
-       "week": 1,
-       "fraction": 0.163
-      },
-      {
-       "week": 2,
-       "fraction": 0.163
-      },
-      {
-       "week": 3,
-       "fraction": 0.163
+       "fraction": 0.4
       }
      ]
     },
@@ -592,79 +312,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "balanced": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "balanced",
-    "hedge_ratio": 0.5,
+    "hedge_ratio": 0.25,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.5
+       "fraction": 0.25
       }
      ],
      "2": [
       {
        "week": 0,
        "fraction": 0.25
-      },
-      {
-       "week": 1,
-       "fraction": 0.25
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.125
-      },
-      {
-       "week": 1,
-       "fraction": 0.125
-      },
-      {
-       "week": 2,
-       "fraction": 0.125
-      },
-      {
-       "week": 3,
-       "fraction": 0.125
+       "fraction": 0.25
       }
      ]
     },
@@ -674,79 +354,39 @@
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "aggressive": {
-    "light": "ladder",
+    "light": "wait",
     "regime": "calm",
     "tolerance": "aggressive",
-    "hedge_ratio": 0.35,
+    "hedge_ratio": 0.1,
     "schedule_by_horizon": {
      "1": [
       {
        "week": 0,
-       "fraction": 0.35
+       "fraction": 0.1
       }
      ],
      "2": [
       {
        "week": 0,
-       "fraction": 0.175
-      },
-      {
-       "week": 1,
-       "fraction": 0.175
+       "fraction": 0.1
       }
      ],
      "4": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "8": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ],
      "12": [
       {
        "week": 0,
-       "fraction": 0.087
-      },
-      {
-       "week": 1,
-       "fraction": 0.087
-      },
-      {
-       "week": 2,
-       "fraction": 0.087
-      },
-      {
-       "week": 3,
-       "fraction": 0.087
+       "fraction": 0.1
       }
      ]
     },
