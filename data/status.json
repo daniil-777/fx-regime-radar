@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-19T12:21:38Z",
- "data_through": "2026-10-16",
+ "generated_at_utc": "2026-10-20T11:02:59Z",
+ "data_through": "2026-10-19",
  "window_days": 60,
  "train_end": "2016-12-31",
  "thresholds": {
@@ -10,20 +10,20 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.518,
+   "psi": 0.498,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.362,
    "train_p95": 1.1044,
-   "ks": 0.1456
+   "ks": 0.14
   },
   "vol_20": {
-   "psi": 4.1875,
+   "psi": 4.227,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.8073,
    "train_p95": 7.3696,
-   "ks": 0.624
+   "ks": 0.6351
   },
   "vol_60": {
    "psi": 6.1481,
@@ -34,23 +34,23 @@
    "ks": 0.7744
   },
   "vol_ratio": {
-   "psi": 0.0702,
+   "psi": 0.0735,
    "status": "stable",
    "textbook": "stable",
    "train_p75": 0.8669,
    "train_p95": 1.5875,
-   "ks": 0.092
+   "ks": 0.0891
   },
   "mom_20": {
-   "psi": 0.7697,
+   "psi": 0.7592,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.1396,
    "train_p95": 3.2745,
-   "ks": 0.1487
+   "ks": 0.138
   },
   "rng_hl": {
-   "psi": 4.6841,
+   "psi": 4.6725,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.9967,
@@ -58,15 +58,15 @@
    "ks": 0.6637
   },
   "corr_20": {
-   "psi": 1.3984,
+   "psi": 1.3462,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.2659,
    "train_p95": 6.2153,
-   "ks": 0.4476
+   "ks": 0.4309
   },
   "ret_5d_abs": {
-   "psi": 1.025,
+   "psi": 1.0293,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.7999,
@@ -74,7 +74,7 @@
    "ks": 0.2461
   },
   "hmm_entropy": {
-   "psi": 1.0008,
+   "psi": 0.995,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.3642,
@@ -84,19 +84,19 @@
  },
  "hmm": {
   "EURUSD": {
-   "recent_mean_loglik": -2.0105,
+   "recent_mean_loglik": -2.0191,
    "train_p5": -4.6772,
    "train_median": -2.5773,
    "stale": false
   },
   "USDCHF": {
-   "recent_mean_loglik": -1.8371,
+   "recent_mean_loglik": -1.853,
    "train_p5": -4.5383,
    "train_median": -2.2732,
    "stale": false
   },
   "GBPUSD": {
-   "recent_mean_loglik": -1.8348,
+   "recent_mean_loglik": -1.8478,
    "train_p5": -5.1915,
    "train_median": -2.4399,
    "stale": false
