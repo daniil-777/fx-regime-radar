@@ -1,13 +1,13 @@
 {
- "generated_at_utc": "2026-10-20T11:02:59Z",
+ "generated_at_utc": "2026-10-21T11:19:50Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-10-19",
- "days_recorded": 45,
- "n_forecasts": 135,
- "n_resolved": 120,
+ "through": "2026-10-20",
+ "days_recorded": 46,
+ "n_forecasts": 138,
+ "n_resolved": 123,
  "n_pending": 15,
- "n_all_segments": 267,
+ "n_all_segments": 273,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
@@ -15,10 +15,10 @@
   "pr_auc": null,
   "precision": 0.0,
   "recall": null,
-  "brier": 0.01424666073993263,
-  "n": 120,
+  "brier": 0.01395173105909337,
+  "n": 123,
   "pos_rate": 0.0,
-  "base_rate_brier": 0.02893275884014586
+  "base_rate_brier": 0.028932758840145862
  },
  "status": "live",
  "frozen_test": {
@@ -34,34 +34,34 @@
   "threshold": 0.22
  },
  "added_today": 6,
- "resolved_today": 0,
+ "resolved_today": 6,
  "scoreboard": [
   {
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-10-19",
-   "n_forecasts": 135,
-   "n_resolved": 120,
-   "brier": 0.01424666073993263,
+   "through": "2026-10-20",
+   "n_forecasts": 138,
+   "n_resolved": 123,
+   "brier": 0.01395173105909337,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.02893275884014586
+   "base_rate_brier": 0.028932758840145862
   },
   {
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-10-19",
-   "n_forecasts": 132,
-   "n_resolved": 117,
-   "brier": 0.025466301127811068,
+   "through": "2026-10-20",
+   "n_forecasts": 135,
+   "n_resolved": 120,
+   "brier": 0.024944148656025837,
    "pr_auc": null,
    "precision": null,
    "recall": null,
-   "base_rate_brier": 0.028932758840145865
+   "base_rate_brier": 0.02893275884014586
   }
  ],
- "head_hash": "422edf5c9305c43011e93a0b006a224b2557c5f478e90b120037da9f7e5c50e0"
+ "head_hash": "057c7e93ab6afaa463441fd7d50b3eea533a5eb23f82db966503aae2b59d990e"
 }
