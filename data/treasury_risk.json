@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-21T11:19:51Z",
- "as_of": "2026-10-20",
+ "generated_at_utc": "2026-10-22T11:18:32Z",
+ "as_of": "2026-10-21",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999975550351443,
-   "days_in_regime": 125,
+   "regime_prob": 0.9999975444489104,
+   "days_in_regime": 126,
    "table": {
     "calm": {
      "n": 766,
@@ -67,22 +67,22 @@
     "es_99": 0.055494997897725204,
     "fallback": false
    },
-   "light": "wait",
-   "light_reason": "Calm regime, change risk 5% is below the train-era 40th percentile (9%), the interval on it is narrow (0.54), next scheduled event (FOMC) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "ladder",
+   "light_reason": "Neither clear-cut: FOMC is 5 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.048045301028960326,
+    "change_risk_5d": 0.026266519557068324,
     "risk_lo": 0.0,
-    "risk_hi": 0.5408930330658377,
+    "risk_hi": 0.5191142515939458,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 6,
+    "days_to_next_event": 5,
     "next_event": "FOMC"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9990449655002593,
-   "days_in_regime": 48,
+   "regime_prob": 0.9969780938769273,
+   "days_in_regime": 49,
    "table": {
     "calm": {
      "n": 486,
@@ -125,22 +125,22 @@
     "es_99": 0.060389176000417176,
     "fallback": false
    },
-   "light": "wait",
-   "light_reason": "Calm regime, change risk 7% is below the train-era 40th percentile (9%), the interval on it is narrow (0.56), next scheduled event (FOMC) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "ladder",
+   "light_reason": "Neither clear-cut: FOMC is 5 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.06565710822520054,
+    "change_risk_5d": 0.0687440116988369,
     "risk_lo": 0.0,
-    "risk_hi": 0.5585048402620779,
+    "risk_hi": 0.5615917437357143,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 6,
+    "days_to_next_event": 5,
     "next_event": "FOMC"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999810108955338,
-   "days_in_regime": 170,
+   "regime_prob": 0.9999827033808458,
+   "days_in_regime": 171,
    "table": {
     "calm": {
      "n": 1613,
@@ -183,26 +183,26 @@
     "es_99": 0.08255056042201357,
     "fallback": false
    },
-   "light": "wait",
-   "light_reason": "Calm regime, change risk 1% is below the train-era 40th percentile (9%), the interval on it is narrow (0.50), next scheduled event (FOMC) is 6 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light": "ladder",
+   "light_reason": "Neither clear-cut: FOMC is 5 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.009144251253863011,
+    "change_risk_5d": 0.010485093671429318,
     "risk_lo": 0.0,
-    "risk_hi": 0.5019919832907404,
+    "risk_hi": 0.5033328257083067,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 6,
+    "days_to_next_event": 5,
     "next_event": "FOMC"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1215791702270508,
-  "USDCHF": 0.8268499970436096,
-  "GBPUSD": 1.330849051475525,
-  "EURCHF": 0.9273777335864111,
-  "GBPCHF": 1.1004125342780284,
-  "EURGBP": 0.8427546076570783
+  "EURUSD": 1.122674584388733,
+  "USDCHF": 0.8256300091743469,
+  "GBPUSD": 1.337327480316162,
+  "EURCHF": 0.9269138274086757,
+  "GBPCHF": 1.1041376998425392,
+  "EURGBP": 0.839491150008611
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
