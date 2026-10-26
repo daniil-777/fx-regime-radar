@@ -2,6 +2,7 @@
 
 One free page every Monday, generated from the published artifacts. Subscribe via RSS: ../feed.xml. Educational tool. Not investment advice.
 
+- [2026-10-26](2026-10-26.md) — EUR/USD calm · USD/CHF calm · GBP/USD calm
 - [2026-10-19](2026-10-19.md) — EUR/USD calm · USD/CHF calm · GBP/USD calm
 - [2026-10-12](2026-10-12.md) — EUR/USD calm · USD/CHF calm · GBP/USD calm
 - [2026-10-05](2026-10-05.md) — EUR/USD calm · USD/CHF calm · GBP/USD calm
