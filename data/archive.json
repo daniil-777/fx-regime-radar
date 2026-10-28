@@ -2,147 +2,147 @@
  "today": {
   "EURUSD": {
    "regime": "calm",
-   "risk": 0.0153,
-   "siren": 31.7
+   "risk": 0.0169,
+   "siren": 5.8
   },
   "GBPUSD": {
    "regime": "calm",
-   "risk": 0.0302,
-   "siren": 20.4
+   "risk": 0.0305,
+   "siren": 21.6
   },
   "USDCHF": {
    "regime": "calm",
-   "risk": 0.023,
-   "siren": 81.3
+   "risk": 0.0267,
+   "siren": 68.8
   },
   "USDCAD": {
    "regime": "calm",
    "risk": 0.01,
-   "siren": 76.0
+   "siren": 45.0
   },
   "AUDUSD": {
    "regime": "calm",
    "risk": 0.02,
-   "siren": 57.0
+   "siren": 20.0
   },
   "NZDUSD": {
    "regime": "calm",
    "risk": 0.02,
-   "siren": 33.0
+   "siren": 5.0
   },
   "EURJPY": {
    "regime": "calm",
-   "risk": 0.75,
-   "siren": 100.0
+   "risk": 0.6,
+   "siren": 96.0
   },
   "EURGBP": {
    "regime": "calm",
-   "risk": 0.2,
-   "siren": 53.0
+   "risk": 0.22,
+   "siren": 34.0
   },
   "USDJPY": {
    "regime": "calm",
-   "risk": 0.37,
-   "siren": 93.0
+   "risk": 0.1,
+   "siren": 47.0
   },
   "USDSEK": {
    "regime": "calm",
    "risk": 0.02,
-   "siren": 32.0
+   "siren": 44.0
   },
   "USDPLN": {
    "regime": "calm",
    "risk": 0.03,
-   "siren": 9.0
+   "siren": 0.0
   },
   "USDMXN": {
    "regime": "trend",
    "risk": 0.07,
-   "siren": 80.0
+   "siren": 87.0
   },
   "USDRUB": {
    "regime": "trend",
-   "risk": 0.16,
+   "risk": 0.15,
    "siren": 100.0
   },
   "USDBRL": {
    "regime": "chop",
-   "risk": 0.26,
+   "risk": 0.37,
    "siren": 99.0
   },
   "USDZAR": {
    "regime": "calm",
    "risk": 0.05,
-   "siren": 42.0
+   "siren": 3.0
   },
   "ETH-USD": {
    "regime": "calm",
-   "risk": 0.18,
-   "siren": 28.0
+   "risk": 0.25,
+   "siren": 42.0
   },
   "BNB-USD": {
    "regime": "calm",
    "risk": 0.08,
-   "siren": 5.0
+   "siren": 9.0
   },
   "BTC-USD": {
    "regime": "calm",
-   "risk": 0.18,
-   "siren": 21.0
+   "risk": 0.19,
+   "siren": 27.0
   },
   "ADA-USD": {
    "regime": "calm",
    "risk": 0.18,
-   "siren": 51.0
+   "siren": 69.0
   },
   "XRP-USD": {
    "regime": "calm",
    "risk": 0.04,
-   "siren": 23.0
+   "siren": 33.0
   }
  },
  "next_events": [
   {
    "name": "FOMC",
    "date": "2026-10-28",
-   "days": 2
+   "days": 1
   },
   {
    "name": "ECB",
    "date": "2026-10-29",
-   "days": 3
+   "days": 2
   },
   {
    "name": "BOE",
    "date": "2026-11-05",
-   "days": 8
+   "days": 7
   },
   {
    "name": "NFP",
    "date": "2026-11-06",
-   "days": 9
+   "days": 8
   },
   {
    "name": "CPI",
    "date": "2026-11-10",
-   "days": 11
+   "days": 10
   },
   {
    "name": "SNB",
    "date": "2026-12-10",
-   "days": 33
+   "days": 32
   }
  ],
  "ledger": {
-  "days_live": 50,
-  "n_forecasts": 150,
-  "n_resolved": 135,
-  "chain_head_short": "00957bc7",
-  "live_brier": 0.014,
+  "days_live": 51,
+  "n_forecasts": 153,
+  "n_resolved": 138,
+  "chain_head_short": "79e37fd1",
+  "live_brier": 0.013,
   "frozen_brier": 0.102
  },
- "generated_at_utc": "2026-10-27T11:44:52Z",
- "data_through": "2026-10-26",
+ "generated_at_utc": "2026-10-28T12:16:54Z",
+ "data_through": "2026-10-27",
  "note": "A closed set of shapes, not a query engine. The serving side may count today's regimes, look up a date, quote a typical duration, compare two periods and read an event window \u2014 and must refuse anything else rather than answer with an adjacent number.",
  "daily_pairs": [
   "EURUSD",
@@ -1137,7 +1137,7 @@
      "calm": 22
     },
     "2026-10": {
-     "calm": 18
+     "calm": 19
     }
    },
    "years": {
@@ -1252,14 +1252,13 @@
      "trend": 25
     },
     "2026": {
-     "calm": 161,
+     "calm": 162,
      "chop": 51
     }
    },
    "first_date": "2005-03-28",
-   "last_date": "2026-10-26",
+   "last_date": "2026-10-27",
    "daily": {
-    "2011-10-26": "crisis",
     "2011-10-27": "crisis",
     "2011-10-28": "crisis",
     "2011-10-31": "crisis",
@@ -5161,10 +5160,10 @@
     "2026-10-21": "calm",
     "2026-10-22": "calm",
     "2026-10-23": "calm",
-    "2026-10-26": "calm"
+    "2026-10-26": "calm",
+    "2026-10-27": "calm"
    },
    "daily_risk": {
-    "2011-10-26": 0.3413,
     "2011-10-27": 0.3207,
     "2011-10-28": 0.0374,
     "2011-10-31": 0.0412,
@@ -9066,10 +9065,10 @@
     "2026-10-21": 0.0263,
     "2026-10-22": 0.0183,
     "2026-10-23": 0.0168,
-    "2026-10-26": 0.0153
+    "2026-10-26": 0.0153,
+    "2026-10-27": 0.0169
    },
    "daily_siren": {
-    "2011-10-26": 85.0,
     "2011-10-27": 90.6,
     "2011-10-28": 97.8,
     "2011-10-31": 89.7,
@@ -12971,7 +12970,8 @@
     "2026-10-21": 43.3,
     "2026-10-22": 35.2,
     "2026-10-23": 25.8,
-    "2026-10-26": 31.7
+    "2026-10-26": 31.7,
+    "2026-10-27": 5.8
    }
   },
   "GBPUSD": {
@@ -13943,7 +13943,7 @@
      "calm": 22
     },
     "2026-10": {
-     "calm": 18
+     "calm": 19
     }
    },
    "years": {
@@ -14057,15 +14057,14 @@
      "trend": 52
     },
     "2026": {
-     "calm": 102,
+     "calm": 103,
      "chop": 95,
      "trend": 15
     }
    },
    "first_date": "2005-03-28",
-   "last_date": "2026-10-26",
+   "last_date": "2026-10-27",
    "daily": {
-    "2011-10-26": "chop",
     "2011-10-27": "chop",
     "2011-10-28": "chop",
     "2011-10-31": "chop",
@@ -17968,10 +17967,10 @@
     "2026-10-21": "calm",
     "2026-10-22": "calm",
     "2026-10-23": "calm",
-    "2026-10-26": "calm"
+    "2026-10-26": "calm",
+    "2026-10-27": "calm"
    },
    "daily_risk": {
-    "2011-10-26": 0.2019,
     "2011-10-27": 0.1779,
     "2011-10-28": 0.1932,
     "2011-10-31": 0.2497,
@@ -21874,10 +21873,10 @@
     "2026-10-21": 0.0687,
     "2026-10-22": 0.0326,
     "2026-10-23": 0.0343,
-    "2026-10-26": 0.0302
+    "2026-10-26": 0.0302,
+    "2026-10-27": 0.0305
    },
    "daily_siren": {
-    "2011-10-26": 53.2,
     "2011-10-27": 29.0,
     "2011-10-28": 35.6,
     "2011-10-31": 12.1,
@@ -25780,7 +25779,8 @@
     "2026-10-21": 10.5,
     "2026-10-22": 37.0,
     "2026-10-23": 23.9,
-    "2026-10-26": 20.4
+    "2026-10-26": 20.4,
+    "2026-10-27": 21.6
    }
   },
   "USDCHF": {
@@ -26659,7 +26659,7 @@
      "calm": 22
     },
     "2026-10": {
-     "calm": 18
+     "calm": 19
     }
    },
    "years": {
@@ -26756,14 +26756,13 @@
      "trend": 37
     },
     "2026": {
-     "calm": 192,
+     "calm": 193,
      "trend": 20
     }
    },
    "first_date": "2005-03-28",
-   "last_date": "2026-10-26",
+   "last_date": "2026-10-27",
    "daily": {
-    "2011-10-26": "chop",
     "2011-10-27": "chop",
     "2011-10-28": "chop",
     "2011-10-31": "chop",
@@ -30664,10 +30663,10 @@
     "2026-10-21": "calm",
     "2026-10-22": "calm",
     "2026-10-23": "calm",
-    "2026-10-26": "calm"
+    "2026-10-26": "calm",
+    "2026-10-27": "calm"
    },
    "daily_risk": {
-    "2011-10-26": 0.032,
     "2011-10-27": 0.0358,
     "2011-10-28": 0.0062,
     "2011-10-31": 0.0196,
@@ -34568,10 +34567,10 @@
     "2026-10-21": 0.0105,
     "2026-10-22": 0.014,
     "2026-10-23": 0.0212,
-    "2026-10-26": 0.023
+    "2026-10-26": 0.023,
+    "2026-10-27": 0.0267
    },
    "daily_siren": {
-    "2011-10-26": 100.0,
     "2011-10-27": 100.0,
     "2011-10-28": 100.0,
     "2011-10-31": 100.0,
@@ -38472,7 +38471,8 @@
     "2026-10-21": 47.0,
     "2026-10-22": 71.8,
     "2026-10-23": 81.9,
-    "2026-10-26": 81.3
+    "2026-10-26": 81.3,
+    "2026-10-27": 68.8
    }
   }
  },
@@ -38538,7 +38538,7 @@
    },
    "calm": {
     "episodes": 48,
-    "mean_days": 80.5,
+    "mean_days": 80.6,
     "median_days": 28.5,
     "longest_days": 529
    },
@@ -38564,7 +38564,7 @@
      "mean_change_risk_after": 0.1803
     },
     "GBPUSD": {
-     "mean_change_risk_before": 0.2083,
+     "mean_change_risk_before": 0.2082,
      "mean_change_risk_after": 0.2148
     },
     "USDCHF": {
@@ -38585,7 +38585,7 @@
      "mean_change_risk_after": 0.2122
     },
     "USDCHF": {
-     "mean_change_risk_before": 0.1095,
+     "mean_change_risk_before": 0.1096,
      "mean_change_risk_after": 0.1114
     }
    },
@@ -38594,15 +38594,15 @@
   "ECB": {
    "pairs": {
     "EURUSD": {
-     "mean_change_risk_before": 0.1999,
+     "mean_change_risk_before": 0.1998,
      "mean_change_risk_after": 0.1755
     },
     "GBPUSD": {
-     "mean_change_risk_before": 0.2084,
+     "mean_change_risk_before": 0.2083,
      "mean_change_risk_after": 0.2031
     },
     "USDCHF": {
-     "mean_change_risk_before": 0.1165,
+     "mean_change_risk_before": 0.1166,
      "mean_change_risk_after": 0.1235
     }
    },
@@ -38615,11 +38615,11 @@
      "mean_change_risk_after": 0.1922
     },
     "GBPUSD": {
-     "mean_change_risk_before": 0.213,
+     "mean_change_risk_before": 0.2129,
      "mean_change_risk_after": 0.2217
     },
     "USDCHF": {
-     "mean_change_risk_before": 0.103,
+     "mean_change_risk_before": 0.1031,
      "mean_change_risk_after": 0.1243
     }
    },
@@ -38645,11 +38645,11 @@
   "SNB": {
    "pairs": {
     "EURUSD": {
-     "mean_change_risk_before": 0.1844,
+     "mean_change_risk_before": 0.1843,
      "mean_change_risk_after": 0.1863
     },
     "GBPUSD": {
-     "mean_change_risk_before": 0.2114,
+     "mean_change_risk_before": 0.2113,
      "mean_change_risk_after": 0.2211
     },
     "USDCHF": {
