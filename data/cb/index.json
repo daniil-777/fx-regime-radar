@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-10-28T12:16:12Z",
- "n_docs": 188,
+ "generated_at_utc": "2026-10-29T12:26:37Z",
+ "n_docs": 189,
  "per_bank": {
-  "FOMC": 56,
+  "FOMC": 57,
   "ECB": 54,
   "SNB": 27,
   "BOE": 51
  },
  "first": "2020-01-23T14:15:00+01:00",
- "last": "2026-09-24T09:30:00+02:00",
+ "last": "2026-10-28T14:00:00-04:00",
  "docs": [
   {
    "bank": "ECB",
@@ -1325,6 +1325,13 @@
    "url": "https://www.snb.ch/en/publications/communication/press-releases-restricted/pre_20260924",
    "published_at": "2026-09-24T09:30:00+02:00",
    "sha256": "11a46dabb644fa30b806e8aa677f9389738e4a9760509157773c726481c179b6"
+  },
+  {
+   "bank": "FOMC",
+   "type": "fomc_statement",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+   "published_at": "2026-10-28T14:00:00-04:00",
+   "sha256": "7733b52e9ed135fd502335640734a258230dcd01277ea0b1c72604327fbde012"
   }
  ]
 }

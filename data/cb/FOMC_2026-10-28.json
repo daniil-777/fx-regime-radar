@@ -1,0 +1,9 @@
+{
+ "bank": "FOMC",
+ "type": "fomc_statement",
+ "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+ "published_at": "2026-10-28T14:00:00-04:00",
+ "fetched_at": "2026-10-29T12:24:37+00:00",
+ "text": "The Federal Open Market Committee approved the following statement for release by a 10 – 2 vote:\n\nThe Committee decided to maintain the target range for the federal funds rate at 3-3/4 to 4 percent, in support of the Federal Reserve's dual mandate. The Committee is continuing its policy of maintaining ample reserves in the banking system.\n\nEconomic activity is expanding at a strong pace. While uncertainty remains elevated owing, in part, to geopolitical developments, domestic spending has been resilient. Productivity growth is strong, and capital investment is robust. Job gains have kept pace with the workforce, and the unemployment rate has changed little.\n\nInflation remains elevated. The accumulation of more information will help the Committee determine the policy stance appropriate to ensure a timely return of inflation to the Committee's 2 percent goal. The Committee will deliver price stability.\n\nVoting against the monetary policy action were Lisa D. Cook and Beth M. Hammack, who preferred to raise the target range for the federal funds rate by 1/4 percentage point at this meeting.",
+ "sha256": "7733b52e9ed135fd502335640734a258230dcd01277ea0b1c72604327fbde012"
+}

@@ -1,65 +1,65 @@
 {
   "EURUSD": {
-    "text": "EUR/USD is in a calm regime (calm) with 100% confidence, now on day 130 of this regime. The model puts the chance of a regime change within five trading days at 2%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 6).",
-    "generated_at": "2026-10-28T12:16:35Z",
+    "text": "EUR/USD is in a calm regime (calm) with 100% confidence, now on day 131 of this regime. The model puts the chance of a regime change within five trading days at 2%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 21).",
+    "generated_at": "2026-10-29T12:26:57Z",
     "source": "template",
     "stats": {
       "pair": "EURUSD",
-      "date": "2026-10-27",
+      "date": "2026-10-28",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 130,
-      "change_risk_5d": 0.017,
+      "days_in_regime": 131,
+      "change_risk_5d": 0.015,
       "top_drivers": [
         "hmm_entropy",
         "vol_60",
         "rng_hl"
       ],
-      "anomaly_pct": 5.8,
-      "nearest_neighbor_date": "2014-04-04",
-      "ret_5d_pct": -0.37
+      "anomaly_pct": 21.1,
+      "nearest_neighbor_date": "2014-09-01",
+      "ret_5d_pct": -0.86
     }
   },
   "USDCHF": {
-    "text": "USD/CHF is in a calm regime (calm) with 100% confidence, now on day 175 of this regime. The model puts the chance of a regime change within five trading days at 3%, which is low, driven mainly by how unsure the regime model is, this being the Swiss franc and how long the current regime has lasted. Nothing looks unusual today compared with calm history (anomaly percentile 69).",
-    "generated_at": "2026-10-28T12:16:35Z",
+    "text": "USD/CHF is in a calm regime (calm) with 100% confidence, now on day 176 of this regime. The model puts the chance of a regime change within five trading days at 2%, which is low, driven mainly by how unsure the regime model is, this being the Swiss franc and how long the current regime has lasted. Nothing looks unusual today compared with calm history (anomaly percentile 48).",
+    "generated_at": "2026-10-29T12:26:57Z",
     "source": "template",
     "stats": {
       "pair": "USDCHF",
-      "date": "2026-10-27",
+      "date": "2026-10-28",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 175,
-      "change_risk_5d": 0.027,
+      "days_in_regime": 176,
+      "change_risk_5d": 0.022,
       "top_drivers": [
         "hmm_entropy",
         "pair_USDCHF",
         "days_in_regime"
       ],
-      "anomaly_pct": 68.8,
-      "nearest_neighbor_date": "2014-01-01",
-      "ret_5d_pct": 0.08
+      "anomaly_pct": 47.6,
+      "nearest_neighbor_date": "2014-01-02",
+      "ret_5d_pct": 0.38
     }
   },
   "GBPUSD": {
-    "text": "GBP/USD is in a calm regime (calm) with 100% confidence, now on day 53 of this regime. The model puts the chance of a regime change within five trading days at 3%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 22).",
-    "generated_at": "2026-10-28T12:16:35Z",
+    "text": "GBP/USD is in a calm regime (calm) with 100% confidence, now on day 54 of this regime. The model puts the chance of a regime change within five trading days at 3%, which is low, driven mainly by how unsure the regime model is, the three-month volatility backdrop and the size of daily trading ranges. Nothing looks unusual today compared with calm history (anomaly percentile 10).",
+    "generated_at": "2026-10-29T12:26:57Z",
     "source": "template",
     "stats": {
       "pair": "GBPUSD",
-      "date": "2026-10-27",
+      "date": "2026-10-28",
       "regime": "calm",
       "regime_prob": 1.0,
-      "days_in_regime": 53,
-      "change_risk_5d": 0.031,
+      "days_in_regime": 54,
+      "change_risk_5d": 0.034,
       "top_drivers": [
         "hmm_entropy",
         "vol_60",
         "rng_hl"
       ],
-      "anomaly_pct": 21.6,
-      "nearest_neighbor_date": "2014-05-28",
-      "ret_5d_pct": 0.27
+      "anomaly_pct": 10.0,
+      "nearest_neighbor_date": "2014-05-23",
+      "ret_5d_pct": -0.5
     }
   }
 }
