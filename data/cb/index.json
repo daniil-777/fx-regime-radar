@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-10-29T12:26:37Z",
- "n_docs": 189,
+ "generated_at_utc": "2026-10-30T12:17:32Z",
+ "n_docs": 190,
  "per_bank": {
   "FOMC": 57,
-  "ECB": 54,
+  "ECB": 55,
   "SNB": 27,
   "BOE": 51
  },
  "first": "2020-01-23T14:15:00+01:00",
- "last": "2026-10-28T14:00:00-04:00",
+ "last": "2026-10-29T14:15:00+01:00",
  "docs": [
   {
    "bank": "ECB",
@@ -1332,6 +1332,13 @@
    "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
    "published_at": "2026-10-28T14:00:00-04:00",
    "sha256": "7733b52e9ed135fd502335640734a258230dcd01277ea0b1c72604327fbde012"
+  },
+  {
+   "bank": "ECB",
+   "type": "monetary_policy_decisions",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html",
+   "published_at": "2026-10-29T14:15:00+01:00",
+   "sha256": "6a9d044bf68bc32e99c2706c246266c9e088b5749277a441098d86588e481db5"
   }
  ]
 }
