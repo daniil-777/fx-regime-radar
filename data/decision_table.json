@@ -1,15 +1,15 @@
 {
- "generated_at_utc": "2026-10-30T12:17:53Z",
- "data_through": "2026-10-29",
+ "generated_at_utc": "2026-11-02T14:57:21Z",
+ "data_through": "2026-10-30",
  "disclosure": "Before I answer: this is software-generated decision support computed from the radar's published risk numbers and your stated inputs \u2014 not advice from a licensed adviser, and never a view on direction.",
  "method": "deterministic: treasury light -> base hedge ratio (hedge 0.75 / ladder 0.50 / wait 0.25), risk tolerance +/-0.15, consensus >=2/3 +0.05, clipped to [0.10, 0.95] in 5% steps; tranches front-loaded under 'hedge', equal weekly under 'ladder'; price tag = ES of the UNCOVERED share, sqrt-of-time scaled (an approximation)",
  "fx": {
-  "EURUSD": 1.1155734062194824,
-  "USDCHF": 0.8279500007629395,
-  "GBPUSD": 1.332800269126892,
-  "EURCHF": 0.9236390025305354,
-  "GBPCHF": 1.1034919838404562,
-  "EURGBP": 0.8370146915938774
+  "EURUSD": 1.1182805299758911,
+  "USDCHF": 0.8236100077629089,
+  "GBPUSD": 1.3378641605377197,
+  "EURCHF": 0.9210270359745536,
+  "GBPCHF": 1.101878311646189,
+  "EURGBP": 0.8358700105445888
  },
  "pairs": {
   "EURUSD": {
