@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-03T13:46:24Z",
- "as_of": "2026-11-02",
+ "generated_at_utc": "2026-11-04T13:54:40Z",
+ "as_of": "2026-11-03",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999999631146095,
-   "days_in_regime": 134,
+   "regime_prob": 0.9999999816373257,
+   "days_in_regime": 135,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: BOE is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.014275965793196812,
+    "change_risk_5d": 0.012708572984922416,
     "risk_lo": 0.0,
-    "risk_hi": 0.5071236978300742,
+    "risk_hi": 0.5055563050217998,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "BOE"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9999933389762152,
-   "days_in_regime": 57,
+   "regime_prob": 0.9999960112374454,
+   "days_in_regime": 58,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: BOE is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.025050504052858913,
+    "change_risk_5d": 0.02704902664741845,
     "risk_lo": 0.0,
-    "risk_hi": 0.5178982360897363,
+    "risk_hi": 0.5198967586842959,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "BOE"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.999982457490838,
-   "days_in_regime": 179,
+   "regime_prob": 0.9999447338795495,
+   "days_in_regime": 180,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: BOE is 3 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: BOE is 2 trading days away. Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.023519493086379368,
+    "change_risk_5d": 0.02967619933744838,
     "risk_lo": 0.0,
-    "risk_hi": 0.5163672251232567,
+    "risk_hi": 0.5225239313743257,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 3,
+    "days_to_next_event": 2,
     "next_event": "BOE"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1156854629516602,
-  "USDCHF": 0.8247699737548828,
-  "GBPUSD": 1.3385626077651978,
-  "EURCHF": 0.920183869997345,
-  "GBPCHF": 1.1040062468757696,
-  "EURGBP": 0.8334951659932867
+  "EURUSD": 1.1192066669464111,
+  "USDCHF": 0.8184000253677368,
+  "GBPUSD": 1.340985894203186,
+  "EURCHF": 0.915958764620683,
+  "GBPCHF": 1.0974628898336647,
+  "EURGBP": 0.8346147948196307
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
