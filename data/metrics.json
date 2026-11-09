@@ -1,13 +1,13 @@
 {
-  "ledger_days_live": 54,
-  "forecasts_recorded": 162,
-  "forecasts_resolved": 147,
+  "ledger_days_live": 59,
+  "forecasts_recorded": 177,
+  "forecasts_resolved": 162,
   "report_subscribers": 0,
   "active_api_keys": 0,
   "design_partners": 0,
   "mrr_chf": 0.0,
-  "weekly_reports_published": 12,
-  "latest_weekly_report": "2026-11-02",
-  "generated_at": "2026-11-02T16:29:07Z",
+  "weekly_reports_published": 13,
+  "latest_weekly_report": "2026-11-09",
+  "generated_at": "2026-11-09T16:46:25Z",
   "note": "Zeros are real zeros: each number is read from an artifact, never estimated. No subscriber data is stored (docs/PRIVACY.md)."
 }
