@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-09T15:25:32Z",
- "data_through": "2026-11-06",
+ "generated_at_utc": "2026-11-10T14:28:48Z",
+ "data_through": "2026-11-09",
  "window_days": 60,
  "train_end": "2016-12-31",
  "thresholds": {
@@ -10,12 +10,12 @@
  },
  "features": {
   "ret_1d": {
-   "psi": 0.539,
+   "psi": 0.5123,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.362,
    "train_p95": 1.1044,
-   "ks": 0.155
+   "ks": 0.1541
   },
   "vol_20": {
    "psi": 5.3397,
@@ -34,15 +34,15 @@
    "ks": 0.7744
   },
   "vol_ratio": {
-   "psi": 0.2009,
+   "psi": 0.1684,
    "status": "stable",
    "textbook": "watch",
    "train_p75": 0.8669,
    "train_p95": 1.5875,
-   "ks": 0.156
+   "ks": 0.1393
   },
   "mom_20": {
-   "psi": 0.5604,
+   "psi": 0.5522,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 2.1396,
@@ -50,23 +50,23 @@
    "ks": 0.1085
   },
   "rng_hl": {
-   "psi": 5.2915,
+   "psi": 5.232,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 4.9967,
    "train_p95": 7.3938,
-   "ks": 0.7043
+   "ks": 0.6988
   },
   "corr_20": {
-   "psi": 0.3953,
+   "psi": 0.4011,
    "status": "stable",
    "textbook": "drifted",
    "train_p75": 4.2659,
    "train_p95": 6.2153,
-   "ks": 0.2046
+   "ks": 0.1991
   },
   "ret_5d_abs": {
-   "psi": 0.9817,
+   "psi": 0.9841,
    "status": "watch",
    "textbook": "drifted",
    "train_p75": 0.7999,
@@ -84,19 +84,19 @@
  },
  "hmm": {
   "EURUSD": {
-   "recent_mean_loglik": -2.0801,
+   "recent_mean_loglik": -2.0986,
    "train_p5": -4.6772,
    "train_median": -2.5773,
    "stale": false
   },
   "USDCHF": {
-   "recent_mean_loglik": -2.0006,
+   "recent_mean_loglik": -2.0174,
    "train_p5": -4.5383,
    "train_median": -2.2732,
    "stale": false
   },
   "GBPUSD": {
-   "recent_mean_loglik": -1.5662,
+   "recent_mean_loglik": -1.5992,
    "train_p5": -5.1915,
    "train_median": -2.4399,
    "stale": false
