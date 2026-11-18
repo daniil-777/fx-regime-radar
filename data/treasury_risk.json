@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-17T15:37:40Z",
- "as_of": "2026-11-16",
+ "generated_at_utc": "2026-11-18T15:15:22Z",
+ "as_of": "2026-11-17",
  "levels": [
   0.95,
   0.99
@@ -11,7 +11,7 @@
  "method": "historical simulation, 5-day overlapping log returns, regime-labelled train era",
  "thresholds": {
   "high_risk": 0.3052325284990942,
-  "low_risk": 0.09028702194668232,
+  "low_risk": 0.09028702194668234,
   "wide": 1.0,
   "narrow": 0.8297945380744868,
   "risk_source": "train-era percentiles (n=9151)",
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9993885361771115,
-   "days_in_regime": 144,
+   "regime_prob": 0.9991315673711451,
+   "days_in_regime": 145,
    "table": {
     "calm": {
      "n": 766,
@@ -68,21 +68,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: change risk 12% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: change risk 16% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.11670646842615173,
+    "change_risk_5d": 0.16038610885660268,
     "risk_lo": 0.0,
-    "risk_hi": 0.6095542004630291,
+    "risk_hi": 0.65323384089348,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 14,
+    "days_to_next_event": 13,
     "next_event": "NFP"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9683600202786957,
-   "days_in_regime": 67,
+   "regime_prob": 0.9683482218215775,
+   "days_in_regime": 68,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: change risk 40% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: change risk 50% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.40422796382328735,
-    "risk_lo": 0.0,
-    "risk_hi": 0.8970756958601647,
+    "change_risk_5d": 0.4965759344491238,
+    "risk_lo": 0.0037282024122464175,
+    "risk_hi": 0.9894236664860012,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 14,
+    "days_to_next_event": 13,
     "next_event": "NFP"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999710527780764,
-   "days_in_regime": 189,
+   "regime_prob": 0.9999764645427419,
+   "days_in_regime": 190,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "wait",
-   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 14 trading days away; holding and re-checking daily is defensible. Model agreement 1/3: 1/3 \u2014 likely a one-day spike; one voter sees stress.",
+   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 13 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.029916094809004232,
+    "change_risk_5d": 0.028148914428612656,
     "risk_lo": 0.0,
-    "risk_hi": 0.5227638268458816,
-    "agreement": 1,
-    "consensus_text": "1/3 \u2014 likely a one-day spike; one voter sees stress",
-    "days_to_next_event": 14,
+    "risk_hi": 0.52099664646549,
+    "agreement": 0,
+    "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
+    "days_to_next_event": 13,
     "next_event": "NFP"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.1024872064590454,
-  "USDCHF": 0.8391100168228149,
-  "GBPUSD": 1.3216499090194702,
-  "EURCHF": 0.9251080583587878,
-  "GBPCHF": 1.1090096773911995,
-  "EURGBP": 0.8341749194966304
+  "EURUSD": 1.0998196601867676,
+  "USDCHF": 0.8398000001907349,
+  "GBPUSD": 1.3184610605239868,
+  "EURCHF": 0.9236285508346214,
+  "GBPCHF": 1.1072435988795206,
+  "EURGBP": 0.8341692395144942
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
