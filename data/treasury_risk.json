@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-18T15:15:22Z",
- "as_of": "2026-11-17",
+ "generated_at_utc": "2026-11-19T15:23:37Z",
+ "as_of": "2026-11-18",
  "levels": [
   0.95,
   0.99
@@ -23,8 +23,8 @@
  "pairs": {
   "EURUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9991315673711451,
-   "days_in_regime": 145,
+   "regime_prob": 0.9991552423656345,
+   "days_in_regime": 146,
    "table": {
     "calm": {
      "n": 766,
@@ -70,19 +70,19 @@
    "light": "ladder",
    "light_reason": "Neither clear-cut: change risk 16% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.16038610885660268,
+    "change_risk_5d": 0.15539564622945137,
     "risk_lo": 0.0,
-    "risk_hi": 0.65323384089348,
+    "risk_hi": 0.6482433782663287,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 13,
+    "days_to_next_event": 12,
     "next_event": "NFP"
    }
   },
   "GBPUSD": {
    "current_regime": "calm",
-   "regime_prob": 0.9683482218215775,
-   "days_in_regime": 68,
+   "regime_prob": 0.9771375366829371,
+   "days_in_regime": 69,
    "table": {
     "calm": {
      "n": 486,
@@ -126,21 +126,21 @@
     "fallback": false
    },
    "light": "ladder",
-   "light_reason": "Neither clear-cut: change risk 50% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Neither clear-cut: change risk 43% is not below the 40th percentile (9%). Split the exposure into tranches over the horizon so no single week carries the whole move. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.4965759344491238,
-    "risk_lo": 0.0037282024122464175,
-    "risk_hi": 0.9894236664860012,
+    "change_risk_5d": 0.43297723754256023,
+    "risk_lo": 0.0,
+    "risk_hi": 0.9258249695794376,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 13,
+    "days_to_next_event": 12,
     "next_event": "NFP"
    }
   },
   "USDCHF": {
    "current_regime": "calm",
-   "regime_prob": 0.9999764645427419,
-   "days_in_regime": 190,
+   "regime_prob": 0.9999788257606751,
+   "days_in_regime": 191,
    "table": {
     "calm": {
      "n": 1613,
@@ -184,25 +184,25 @@
     "fallback": false
    },
    "light": "wait",
-   "light_reason": "Calm regime, change risk 3% is below the train-era 40th percentile (9%), the interval on it is narrow (0.52), next scheduled event (NFP) is 13 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
+   "light_reason": "Calm regime, change risk 2% is below the train-era 40th percentile (9%), the interval on it is narrow (0.51), next scheduled event (NFP) is 12 trading days away; holding and re-checking daily is defensible. Model agreement 0/3: 0/3 agree: quiet conditions \u2014 no voter sees stress.",
    "inputs": {
-    "change_risk_5d": 0.028148914428612656,
+    "change_risk_5d": 0.0213128232802106,
     "risk_lo": 0.0,
-    "risk_hi": 0.52099664646549,
+    "risk_hi": 0.5141605553170879,
     "agreement": 0,
     "consensus_text": "0/3 agree: quiet conditions \u2014 no voter sees stress",
-    "days_to_next_event": 13,
+    "days_to_next_event": 12,
     "next_event": "NFP"
    }
   }
  },
  "fx": {
-  "EURUSD": 1.0998196601867676,
-  "USDCHF": 0.8398000001907349,
-  "GBPUSD": 1.3184610605239868,
-  "EURCHF": 0.9236285508346214,
-  "GBPCHF": 1.1072435988795206,
-  "EURGBP": 0.8341692395144942
+  "EURUSD": 1.0992876291275024,
+  "USDCHF": 0.8412899971008301,
+  "GBPUSD": 1.3204981088638306,
+  "EURCHF": 0.9248196863216549,
+  "GBPCHF": 1.1109218501777036,
+  "EURGBP": 0.8324795179550392
  },
  "disclaimer": "Educational tool. Not investment advice."
 }
