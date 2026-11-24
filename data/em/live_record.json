@@ -1,24 +1,24 @@
 {
- "generated_at_utc": "2026-11-23T17:35:47Z",
+ "generated_at_utc": "2026-11-24T17:06:38Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-18",
- "through": "2026-11-20",
- "days_recorded": 68,
- "n_forecasts": 340,
- "n_resolved": 315,
+ "through": "2026-11-23",
+ "days_recorded": 69,
+ "n_forecasts": 345,
+ "n_resolved": 320,
  "n_pending": 25,
- "n_all_segments": 340,
+ "n_all_segments": 345,
  "threshold": 0.27,
  "min_resolved": 20,
  "chain_ok": true,
  "metrics": {
-  "pr_auc": 0.5720382597970075,
-  "precision": 0.6296296296296297,
-  "recall": 0.3953488372093023,
-  "brier": 0.08734417195061367,
-  "n": 315,
-  "pos_rate": 0.1365079365079365,
-  "base_rate_brier": 0.1188235777189236
+  "pr_auc": 0.5766405813487091,
+  "precision": 0.6428571428571429,
+  "recall": 0.4,
+  "brier": 0.08960626285838846,
+  "n": 320,
+  "pos_rate": 0.140625,
+  "base_rate_brier": 0.12156281694971013
  },
  "status": "live",
  "frozen_test": {
@@ -40,15 +40,15 @@
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-18",
-   "through": "2026-11-20",
-   "n_forecasts": 340,
-   "n_resolved": 315,
-   "brier": 0.08734417195061367,
-   "pr_auc": 0.5720382597970075,
-   "precision": 0.6296296296296297,
-   "recall": 0.3953488372093023,
-   "base_rate_brier": 0.1188235777189236
+   "through": "2026-11-23",
+   "n_forecasts": 345,
+   "n_resolved": 320,
+   "brier": 0.08960626285838846,
+   "pr_auc": 0.5766405813487091,
+   "precision": 0.6428571428571429,
+   "recall": 0.4,
+   "base_rate_brier": 0.12156281694971013
   }
  ],
- "head_hash": "c7fe2766fb86f4cf40d297df3874331f699b32c1c0687e974a8a14a325bbaca0"
+ "head_hash": "a56cc7aa28b881132f5eb16d59af36ba26b09c7c971303f2650b08d82d23ed2f"
 }
