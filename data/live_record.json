@@ -1,24 +1,24 @@
 {
- "generated_at_utc": "2026-11-24T17:05:07Z",
+ "generated_at_utc": "2026-11-25T16:55:20Z",
  "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
  "since": "2026-08-17",
- "through": "2026-11-23",
- "days_recorded": 70,
- "n_forecasts": 210,
- "n_resolved": 195,
+ "through": "2026-11-24",
+ "days_recorded": 71,
+ "n_forecasts": 213,
+ "n_resolved": 198,
  "n_pending": 15,
- "n_all_segments": 417,
+ "n_all_segments": 423,
  "threshold": 0.22,
  "min_resolved": 20,
  "chain_ok": true,
  "metrics": {
-  "pr_auc": null,
-  "precision": 0.0,
-  "recall": null,
-  "brier": 0.01443560874065229,
-  "n": 195,
-  "pos_rate": 0.0,
-  "base_rate_brier": 0.02893275884014587
+  "pr_auc": 0.16666666666666666,
+  "precision": 0.08333333333333333,
+  "recall": 1.0,
+  "brier": 0.01563078565404364,
+  "n": 198,
+  "pos_rate": 0.005050505050505051,
+  "base_rate_brier": 0.03226511922154303
  },
  "status": "live",
  "frozen_test": {
@@ -40,28 +40,28 @@
    "model_version": "hmm=0.4.0|fc=1.1.0|siren=1.2.0",
    "family": "champion",
    "since": "2026-08-17",
-   "through": "2026-11-23",
-   "n_forecasts": 210,
-   "n_resolved": 195,
-   "brier": 0.01443560874065229,
-   "pr_auc": null,
-   "precision": null,
-   "recall": null,
-   "base_rate_brier": 0.02893275884014587
+   "through": "2026-11-24",
+   "n_forecasts": 213,
+   "n_resolved": 198,
+   "brier": 0.01563078565404364,
+   "pr_auc": 0.16666666666666666,
+   "precision": 0.08333333333333333,
+   "recall": 1.0,
+   "base_rate_brier": 0.03226511922154303
   },
   {
    "model_version": "challenger=1.0.0",
    "family": "challenger",
    "since": "2026-08-18",
-   "through": "2026-11-23",
-   "n_forecasts": 207,
-   "n_resolved": 192,
-   "brier": 0.01938559944022247,
-   "pr_auc": null,
-   "precision": null,
-   "recall": null,
-   "base_rate_brier": 0.028932758840145862
+   "through": "2026-11-24",
+   "n_forecasts": 210,
+   "n_resolved": 195,
+   "brier": 0.02085171403104484,
+   "pr_auc": 0.14285714285714285,
+   "precision": 0.08333333333333333,
+   "recall": 1.0,
+   "base_rate_brier": 0.03231638630433375
   }
  ],
- "head_hash": "c8a0e6ba880129cf7f1dbdda46011142ff76a9b8a1a3742447bb86d233a4914c"
+ "head_hash": "311c79c55eb3c8597f40f92c6717bae4d1cbab517801590f38b4083bd89cbed1"
 }

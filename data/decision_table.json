@@ -1,15 +1,15 @@
 {
- "generated_at_utc": "2026-11-24T17:05:09Z",
- "data_through": "2026-11-23",
+ "generated_at_utc": "2026-11-25T16:55:21Z",
+ "data_through": "2026-11-24",
  "disclosure": "Before I answer: this is software-generated decision support computed from the radar's published risk numbers and your stated inputs \u2014 not advice from a licensed adviser, and never a view on direction.",
  "method": "deterministic: treasury light -> base hedge ratio (hedge 0.75 / ladder 0.50 / wait 0.25), risk tolerance +/-0.15, consensus >=2/3 +0.05, clipped to [0.10, 0.95] in 5% steps; tranches front-loaded under 'hedge', equal weekly under 'ladder'; price tag = ES of the UNCOVERED share, sqrt-of-time scaled (an approximation)",
  "fx": {
-  "EURUSD": 1.097152829170227,
-  "USDCHF": 0.8409299850463867,
-  "GBPUSD": 1.3094661235809326,
-  "EURCHF": 0.9226287122277199,
-  "GBPCHF": 1.1011693277216636,
-  "EURGBP": 0.8378627055810326
+  "EURUSD": 1.090809941291809,
+  "USDCHF": 0.8414599895477295,
+  "GBPUSD": 1.303475022315979,
+  "EURCHF": 0.9178729217979651,
+  "GBPCHF": 1.0968220786537302,
+  "EURGBP": 0.8368475978570633
  },
  "pairs": {
   "EURUSD": {
@@ -263,7 +263,7 @@
   "GBPUSD": {
    "conservative": {
     "light": "ladder",
-    "regime": "calm",
+    "regime": "chop",
     "tolerance": "conservative",
     "hedge_ratio": 0.65,
     "schedule_by_horizon": {
@@ -338,14 +338,14 @@
       }
      ]
     },
-    "es_99_1w": 0.03534952577912309,
-    "es_95_1w": 0.026109847933858444,
-    "var_99_1w": 0.03043915401225701,
+    "es_99_1w": 0.03091981845648597,
+    "es_95_1w": 0.024655908100167125,
+    "var_99_1w": 0.027896512041664746,
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "balanced": {
     "light": "ladder",
-    "regime": "calm",
+    "regime": "chop",
     "tolerance": "balanced",
     "hedge_ratio": 0.5,
     "schedule_by_horizon": {
@@ -420,14 +420,14 @@
       }
      ]
     },
-    "es_99_1w": 0.03534952577912309,
-    "es_95_1w": 0.026109847933858444,
-    "var_99_1w": 0.03043915401225701,
+    "es_99_1w": 0.03091981845648597,
+    "es_95_1w": 0.024655908100167125,
+    "var_99_1w": 0.027896512041664746,
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    },
    "aggressive": {
     "light": "ladder",
-    "regime": "calm",
+    "regime": "chop",
     "tolerance": "aggressive",
     "hedge_ratio": 0.35,
     "schedule_by_horizon": {
@@ -502,9 +502,9 @@
       }
      ]
     },
-    "es_99_1w": 0.03534952577912309,
-    "es_95_1w": 0.026109847933858444,
-    "var_99_1w": 0.03043915401225701,
+    "es_99_1w": 0.03091981845648597,
+    "es_95_1w": 0.024655908100167125,
+    "var_99_1w": 0.027896512041664746,
     "review_trigger": "revisit immediately if the regime flips, the consensus reaches 2 of 3, or the change risk leaves its band; otherwise review weekly"
    }
   },
